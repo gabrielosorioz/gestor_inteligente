@@ -1,0 +1,77 @@
+@font-face {
+    font-family: 'Cerapro';
+    src: url('../font/cerapro-bold.otf');
+    font-weight: bold;
+}
+@font-face {
+    font-family: 'Cerapro';
+    src: url('../font/cerapro-medium.otf');
+    font-weight: normal;
+}
+
+
+.pdv-container {
+    -fx-background-color: #fff;
+}
+
+.pdv-btn {
+    -fx-font-family: 'Cerapro';
+    -fx-font-weight: normal;
+    -fx-font-size: 18px;
+    -fx-background-color: #e7e4d9;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+    -fx-border-color: transparent;
+    -fx-text-fill: #000000;
+    -fx-border-width: 2px;
+}
+
+.pdv-btn {
+    -fx-font-family: 'Cerapro';
+    -fx-font-weight: normal;
+    -fx-font-size: 18px;
+    -fx-background-color: #e7e4d9;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+    -fx-border-color: transparent;
+    -fx-text-fill: #000000;
+    -fx-border-width: 2px;
+}
+
+.pdv-btn-pix {
+    -fx-background-color: #c1bdac;
+    -fx-background-radius: 50%;
+}
+
+.trocoLbl {
+    -fx-font-family: 'Cerapro';
+    -fx-font-weight: bold;
+    -fx-font-size: 38px;
+    -fx-text-fill: #000000;
+
+}
+
+.monetaryField {
+    -fx-font-family: 'Cerapro';
+    -fx-font-weight: normal;
+    -fx-font-size: 18px;
+    -fx-background-radius: 18px;
+    -fx-border-radius: 18px;
+    -fx-background-color: #e7e4d9;
+    -fx-min-width: 180px;
+    -fx-min-height: 55px;
+    -fx-border-width: 2px;
+
+}
+
+.monetaryField:focused {
+  -fx-border-color: #000000;
+
+}
+
+.monetaryLbl {
+    -fx-font-family: 'Cerapro';
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+
+}

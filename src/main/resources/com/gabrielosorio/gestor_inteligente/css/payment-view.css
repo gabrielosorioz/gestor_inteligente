@@ -10,14 +10,15 @@
 }
 
 
-.pdv-container {
+.payment-form {
     -fx-background-color: #fff;
 }
 
-.pdv-btn {
+.payment-btn {
     -fx-font-family: 'Cerapro';
-    -fx-font-weight: normal;
-    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+     -fx-padding: 10px 15px 10px 67px;
+    -fx-font-size: 17px;
     -fx-background-color: #e7e4d9;
     -fx-background-radius: 25px;
     -fx-border-radius: 25px;
@@ -26,24 +27,24 @@
     -fx-border-width: 2px;
 }
 
-.pdv-btn {
-    -fx-font-family: 'Cerapro';
-    -fx-font-weight: normal;
-    -fx-font-size: 18px;
+.payment-troco-background {
     -fx-background-color: #e7e4d9;
     -fx-background-radius: 25px;
     -fx-border-radius: 25px;
-    -fx-border-color: transparent;
-    -fx-text-fill: #000000;
-    -fx-border-width: 2px;
 }
 
-.pdv-btn-pix {
+.payment-total-background {
+    -fx-background-color: #93C47D;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;-p
+}
+
+.btn-icon-background {
     -fx-background-color: #c1bdac;
     -fx-background-radius: 50%;
 }
 
-.trocoLbl {
+.payment-troco-lbl {
     -fx-font-family: 'Cerapro';
     -fx-font-weight: bold;
     -fx-font-size: 38px;
@@ -51,10 +52,11 @@
 
 }
 
-.monetaryField {
+.payment-currency-field {
     -fx-font-family: 'Cerapro';
-    -fx-font-weight: normal;
-    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 15px 10px 62px;
+    -fx-font-size: 24px;
     -fx-background-radius: 18px;
     -fx-border-radius: 18px;
     -fx-background-color: #e7e4d9;
@@ -64,12 +66,19 @@
 
 }
 
-.monetaryField:focused {
-  -fx-border-color: #000000;
+.price-label {
+    -fx-font-family: 'Cerapro';
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-opacity: 0.85;
+}
+
+.payment-currency-field:focused {
+  -fx-border-color: #191919;
 
 }
 
-.monetaryLbl {
+.payment-field-label {
     -fx-font-family: 'Cerapro';
     -fx-font-weight: bold;
     -fx-font-size: 24px;

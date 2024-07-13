@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="900.0" styleClass="payment-form" stylesheets="@css/payment-view.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.PaymentViewController">
+   <children>
+      <Button fx:id="btnPix" layoutX="52.0" layoutY="157.0" mnemonicParsing="false" onAction="#setPix" prefHeight="100.0" prefWidth="185.0" styleClass="payment-btn" stylesheets="@css/payment-view.css" text="Pix" />
+      <Label layoutX="64.0" layoutY="180.0" minHeight="52.0" minWidth="52.0" styleClass="btn-icon-background" stylesheets="@css/payment-view.css" />
+      <ImageView fitHeight="35.0" fitWidth="40.0" layoutX="73.0" layoutY="189.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@image/png-transparent-pix-brands-icon-thumbnail-removebg-preview.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="btnCredito" layoutX="263.0" layoutY="34.0" mnemonicParsing="false" onAction="#setCredito" prefHeight="100.0" prefWidth="185.0" styleClass="payment-btn" stylesheets="@css/payment-view.css" text="Crédito" />
+      <Label layoutX="275.0" layoutY="56.0" minHeight="52.0" minWidth="52.0" styleClass="btn-icon-background" stylesheets="@css/payment-view.css" />
+      <ImageView fitHeight="35.0" fitWidth="40.0" layoutX="284.0" layoutY="66.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@image/cartao-removebg-preview.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="btnDebito" layoutX="263.0" layoutY="157.0" mnemonicParsing="false" onAction="#setDebito" prefHeight="100.0" prefWidth="185.0" styleClass="payment-btn" stylesheets="@css/payment-view.css" text="Débito" />
+      <Label layoutX="275.0" layoutY="180.0" minHeight="52.0" minWidth="52.0" styleClass="btn-icon-background" stylesheets="@css/payment-view.css" />
+      <Button fx:id="btnDinheiro" layoutX="56.0" layoutY="34.0" mnemonicParsing="false" onAction="#setDinheiro" prefHeight="100.0" prefWidth="185.0" styleClass="payment-btn" stylesheets="@css/payment-view.css" text="Dinheiro" />
+      <Label layoutX="68.0" layoutY="57.0" minHeight="52.0" minWidth="52.0" styleClass="btn-icon-background" stylesheets="@css/payment-view.css" />
+      <ImageView fitHeight="35.0" fitWidth="40.0" layoutX="74.0" layoutY="70.0" pickOnBounds="true" preserveRatio="true" scaleX="1.2">
+         <image>
+            <Image url="@image/Screenshot_from_2024-07-10_15-15-50-removebg-preview.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="35.0" fitWidth="40.0" layoutX="284.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@image/debito-removebg-preview.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="507.0" layoutY="666.0" minHeight="47.0" minWidth="47.0" prefHeight="79.0" prefWidth="376.0" styleClass="payment-troco-background" stylesheets="@css/payment-view.css" />
+      <Label layoutX="524.0" layoutY="683.0" prefHeight="35.0" prefWidth="160.0" styleClass="payment-troco-lbl" stylesheets="@css/payment-view.css" text="TROCO" />
+      <TextField fx:id="paymentField1" layoutX="45.0" layoutY="365.0" minHeight="54.0" minWidth="211.0" prefHeight="56.0" prefWidth="218.0" styleClass="payment-currency-field" stylesheets="@css/payment-view.css" />
+      <Label fx:id="paymentLbl2" layoutX="302.0" layoutY="326.0" prefHeight="46.0" prefWidth="236.0" styleClass="payment-field-label" stylesheets="@css/payment-view.css" text="Empty2:" />
+      <Label fx:id="paymentLbl1" layoutX="50.0" layoutY="326.0" prefHeight="35.0" prefWidth="207.0" styleClass="payment-field-label" stylesheets="@css/payment-view.css" text="Empty1:" />
+      <Label fx:id="paymentLbl3" layoutX="45.0" layoutY="432.0" prefHeight="46.0" prefWidth="236.0" styleClass="payment-field-label" stylesheets="@css/payment-view.css" text="Empty3:" />
+      <TextField fx:id="paymentField2" layoutX="298.0" layoutY="368.0" minHeight="54.0" minWidth="211.0" prefHeight="56.0" prefWidth="218.0" styleClass="payment-currency-field" stylesheets="@css/payment-view.css" />
+      <TextField fx:id="paymentField3" layoutX="39.0" layoutY="476.0" minHeight="54.0" minWidth="211.0" prefHeight="56.0" prefWidth="218.0" styleClass="payment-currency-field" stylesheets="@css/payment-view.css" />
+      <Label fx:id="paymentLbl4" layoutX="305.0" layoutY="432.0" prefHeight="46.0" prefWidth="236.0" styleClass="payment-field-label" stylesheets="@css/payment-view.css" text="Empty4:" />
+      <TextField fx:id="paymentField4" layoutX="299.0" layoutY="476.0" minHeight="54.0" minWidth="211.0" prefHeight="56.0" prefWidth="218.0" styleClass="payment-currency-field" stylesheets="@css/payment-view.css" />
+      <Label layoutX="502.0" layoutY="577.0" minHeight="47.0" minWidth="47.0" opacity="0.77" prefHeight="79.0" prefWidth="382.0" styleClass="payment-total-background" stylesheets="@css/payment-view.css" />
+      <Label layoutX="699.0" layoutY="683.0" prefHeight="46.0" prefWidth="172.0" styleClass="payment-troco-lbl" stylesheets="@css/payment-view.css" text="R$ 1000,00" />
+      <Label layoutX="521.0" layoutY="593.0" prefHeight="35.0" prefWidth="160.0" styleClass="payment-troco-lbl" stylesheets="@css/payment-view.css" text="TOTAL" />
+      <Label layoutX="687.0" layoutY="593.0" prefHeight="46.0" prefWidth="172.0" styleClass="payment-troco-lbl" stylesheets="@css/payment-view.css" text="R$ 0,00" />
+      <TextField fx:id="descontoField" layoutX="54.0" layoutY="647.0" minHeight="54.0" minWidth="211.0" prefHeight="56.0" prefWidth="218.0" styleClass="payment-currency-field" stylesheets="@css/payment-view.css" />
+      <Label fx:id="descontoLbl" layoutX="101.0" layoutY="592.0" prefHeight="35.0" prefWidth="160.0" styleClass="payment-field-label" stylesheets="@css/payment-view.css" text="Desconto:" />
+      <Label fx:id="paymentCurrency1" layoutX="73.0" layoutY="396.0" styleClass="price-label" stylesheets="@css/payment-view.css" text="R$" visible="false" />
+      <Label fx:id="paymentCurrency2" layoutX="67.0" layoutY="508.0" styleClass="price-label" stylesheets="@css/payment-view.css" text="R$" visible="false" />
+      <Label fx:id="paymentCurrency3" layoutX="65.0" layoutY="612.0" styleClass="price-label" stylesheets="@css/payment-view.css" text="R$" visible="false" />
+      <Label fx:id="paymentCurrency4" layoutX="65.0" layoutY="717.0" styleClass="price-label" stylesheets="@css/payment-view.css" text="R$" visible="false" />
+   </children>
+</AnchorPane>

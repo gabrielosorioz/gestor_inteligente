@@ -10,4 +10,6 @@ module com.example.gestor_inteligente {
     opens com.gabrielosorio.gestor_inteligente.model to javafx.fxml;
     exports com.gabrielosorio.gestor_inteligente.model.enums;
     opens com.gabrielosorio.gestor_inteligente.model.enums to javafx.fxml;
+    exports com.gabrielosorio.gestor_inteligente.controller;
+    opens com.gabrielosorio.gestor_inteligente.controller to javafx.fxml;
 }

@@ -1,86 +1,80 @@
 @font-face {
-    font-family: 'Cerapro';
-    src: url('../font/cerapro-bold.otf');
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Bold.ttf');
     font-weight: bold;
 }
-@font-face {
-    font-family: 'Cerapro';
-    src: url('../font/cerapro-medium.otf');
-    font-weight: normal;
-}
 
-
-.payment-form {
+.form {
     -fx-background-color: #fff;
 }
 
-.payment-btn {
-    -fx-font-family: 'Cerapro';
+.payment-box {
+    -fx-background-color:#fff;
+    -fx-border-width: 0 0 1.2 0px;
+    -fx-border-color: #d8d8d8;
+}
+
+.payment-box:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #E2EFDD;
+}
+
+.payment-box-price-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 26px;
     -fx-font-weight: bold;
-     -fx-padding: 10px 15px 10px 67px;
-    -fx-font-size: 17px;
-    -fx-background-color: #e7e4d9;
-    -fx-background-radius: 25px;
-    -fx-border-radius: 25px;
+}
+
+.payment-box-textfield {
     -fx-border-color: transparent;
-    -fx-text-fill: #000000;
-    -fx-border-width: 2px;
-}
-
-.payment-troco-background {
-    -fx-background-color: #e7e4d9;
-    -fx-background-radius: 25px;
-    -fx-border-radius: 25px;
-}
-
-.payment-total-background {
-    -fx-background-color: #93C47D;
-    -fx-background-radius: 25px;
-    -fx-border-radius: 25px;-p
-}
-
-.btn-icon-background {
-    -fx-background-color: #c1bdac;
-    -fx-background-radius: 50%;
-}
-
-.payment-troco-lbl {
-    -fx-font-family: 'Cerapro';
+    -fx-background-color: transparent;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 26px;
     -fx-font-weight: bold;
-    -fx-font-size: 38px;
-    -fx-text-fill: #000000;
-
 }
 
-.payment-currency-field {
-    -fx-font-family: 'Cerapro';
+
+
+.text-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight:bold;
+    -fx-font-size: 18px;
+}
+
+.btn-payment {
+    -fx-font-family: 'Poppins';
+    -fx-background-color: #194775;
+    -fx-font-size: 18px;
+    -fx-text-fill: #fff;
+}
+
+.price-lbl {
+    -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
-    -fx-padding: 10px 15px 10px 62px;
-    -fx-font-size: 24px;
-    -fx-background-radius: 18px;
-    -fx-border-radius: 18px;
-    -fx-background-color: #e7e4d9;
-    -fx-min-width: 180px;
-    -fx-min-height: 55px;
-    -fx-border-width: 2px;
-
+    -fx-font-size: 40px;
 }
 
-.price-label {
-    -fx-font-family: 'Cerapro';
+.price-amount-lbl {
+    -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
-    -fx-font-size: 24px;
-    -fx-opacity: 0.85;
+    -fx-font-size: 40px;
 }
-
-.payment-currency-field:focused {
-  -fx-border-color: #191919;
-
-}
-
-.payment-field-label {
-    -fx-font-family: 'Cerapro';
+.total-price-lbl {
+    -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
-    -fx-font-size: 24px;
+    -fx-font-size: 20px;
+    -fx-text-fill: #999999;
+}
 
+.amount {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 26px;
+}
+
+.desconto-field {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 20px;
+    -fx-background-color: #E2E2E2;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 15px;
 }

@@ -19,6 +19,10 @@
 
 }
 
+.txt-field:hover {
+    -fx-background-color: #f8f8f8;
+}
+
 .txt-field:focused {
     -fx-border-color: #878787;
 }

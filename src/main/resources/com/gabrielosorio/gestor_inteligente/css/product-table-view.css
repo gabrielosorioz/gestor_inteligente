@@ -14,9 +14,10 @@
     -fx-border-width: 0 0 2.0 0px;
     -fx-border-color: #ACACAC;
     -fx-background-color: #d6d6d6;
+    -fx-background-radius: 15 15 0 0px;
 }
 
-.item{
+.item {
     -fx-border-width: 0 0 1.5 0px;
     -fx-border-color: #C4C4C4;
     -fx-background-color: #FFF;
@@ -42,4 +43,52 @@
 
 .item-qtd-field:hover {
     -fx-background-color: #a8a8a8;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+/* Vertical Scroll Bar */
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: #f0f0f0;
+}
+
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: #c0c0c0;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #8b8b8b;
+    -fx-background-insets: 2;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar:vertical .track {
+    -fx-background-color: #e0e0e0;
+    -fx-background-insets: 0;
+}
+
+/* Horizontal Scroll Bar */
+.scroll-bar:horizontal .increment-button,
+.scroll-bar:horizontal .decrement-button {
+    -fx-background-color: #f0f0f0;
+}
+
+.scroll-bar:horizontal .increment-arrow,
+.scroll-bar:horizontal .decrement-arrow {
+    -fx-background-color: #c0c0c0;
+}
+
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: #8b8b8b;
+    -fx-background-insets: 2;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar:horizontal .track {
+    -fx-background-color: #e0e0e0;
+    -fx-background-insets: 0;
 }

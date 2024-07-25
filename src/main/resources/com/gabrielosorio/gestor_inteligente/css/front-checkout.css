@@ -3,6 +3,7 @@
     src: url('../font/poppins/Poppins-Bold.ttf');
     font-weight: bold;
 }
+
 .container {
     -fx-background-color: #eeeeee;
 }
@@ -45,5 +46,50 @@
 }
 
 .btn-search-icon {
+    -fx-cursor: hand;
+}
+
+.tab-pane .tab {
+    -fx-effect: none;
+    -fx-font-family: 'Poppins';
+    -fx-background-color: #fff;
+    -fx-background-radius: 0 10px;
+    -fx-border-radius: 0 10px;
+    -fx-font-size: 14px;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-radius: 0 10px;
+    -fx-border-radius: 0 10px;
+    -fx-border-width: 1.5px;
+    -fx-border-color: black;
+    -fx-effect: none;
+}
+
+.tab-pane .tab-header-background {
+    -fx-effect: none;
+    -fx-background-color: #808080;
+}
+
+.btn-add-caixa {
+    -fx-background-radius: 10px;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+    -fx-text-fill: #fff;
+    -fx-cursor: hand;
+    -fx-background-color: #008000;
+}
+
+.btn-add-caixa:hover {
+    -fx-background-color: #006600;
+}
+
+.btn-sidebar {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 18px;
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1.4 0px;
+    -fx-border-color: white;
     -fx-cursor: hand;
 }

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<Tab fx:id="currentTab" text="Untitled Tab" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.controller.CheckoutTabController">
+  <content>
+    <AnchorPane fx:id="content" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="1200.0" styleClass="container" stylesheets="@../../css/front-checkout.css">
+      <children>
+        <TextField fx:id="codeField" layoutX="48.0" layoutY="98.0" prefHeight="64.0" prefWidth="630.0" styleClass="txt-field" stylesheets="@../../css/front-checkout.css" AnchorPane.topAnchor="98.0" />
+        <Button layoutX="1101.0" layoutY="89.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="85.0" styleClass="btn-search" stylesheets="@../../css/front-checkout.css" />
+        <Label layoutX="68.0" layoutY="57.0" text="Código" />
+        <Label layoutX="776.0" layoutY="57.0" text="Quantidade" />
+        <VBox layoutX="48.0" layoutY="181.0" prefHeight="400.0" prefWidth="1120.0">
+          <children>
+            <HBox minHeight="68.0" prefHeight="68.0" prefWidth="800.0" spacing="5.0" styleClass="header" stylesheets="@../../css/product-table-view.css">
+              <children>
+                <VBox alignment="CENTER" prefHeight="65.0" prefWidth="67.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="61.0" stylesheets="@../../css/product-table-view.css" text="Item">
+                      <VBox.margin>
+                        <Insets />
+                      </VBox.margin>
+                      <padding>
+                        <Insets left="2.0" right="2.0" />
+                      </padding>
+                    </Label>
+                  </children>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="68.0" prefWidth="88.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="127.0" stylesheets="@../../css/product-table-view.css" text="Cód." />
+                  </children>
+                  <padding>
+                    <Insets left="2.0" right="2.0" />
+                  </padding>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="110.0" layoutY="10.0" prefHeight="68.0" prefWidth="458.0" style="-fx-border-width: 10;">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="490.0" stylesheets="@../../css/product-table-view.css" text="Descrição" />
+                  </children>
+                  <padding>
+                    <Insets left="2.0" right="2.0" />
+                  </padding>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="210.0" layoutY="10.0" prefHeight="66.0" prefWidth="132.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="127.0" stylesheets="@../../css/product-table-view.css" text="Valor (UN)">
+                      <padding>
+                        <Insets left="5.0" right="5.0" />
+                      </padding>
+                    </Label>
+                  </children>
+                  <HBox.margin>
+                    <Insets />
+                  </HBox.margin>
+                  <padding>
+                    <Insets left="2.0" right="2.0" />
+                  </padding>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="310.0" layoutY="10.0" prefHeight="42.0" prefWidth="100.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="98.0" stylesheets="@../../css/product-table-view.css" text="Quant." />
+                  </children>
+                  <padding>
+                    <Insets left="2.0" right="2.0" />
+                  </padding>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="410.0" layoutY="10.0" prefHeight="66.0" prefWidth="120.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="152.0" stylesheets="@../../css/product-table-view.css" text="Desconto">
+                      <padding>
+                        <Insets left="6.0" right="6.0" />
+                      </padding>
+                    </Label>
+                  </children>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="510.0" layoutY="10.0" prefHeight="66.0" prefWidth="141.0">
+                  <children>
+                    <Label alignment="CENTER" prefHeight="27.0" prefWidth="160.0" stylesheets="@../../css/product-table-view.css" text="Subtotal">
+                      <padding>
+                        <Insets left="6.0" right="6.0" />
+                      </padding>
+                    </Label>
+                  </children>
+                </VBox>
+              </children>
+            </HBox>
+            <ScrollPane prefWidth="1119.0" stylesheets="@../../css/product-table-view.css">
+              <content>
+                <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1100.0" style="-fx-background-color: #FFFFFF;" styleClass="header" stylesheets="@../../css/product-table-view.css">
+                  <children>
+                    <HBox layoutX="10.0" layoutY="146.0" prefHeight="68.0" prefWidth="800.0" spacing="5.0" styleClass="item" stylesheets="@../../css/product-table-view.css">
+                      <children>
+                        <VBox alignment="CENTER" prefHeight="66.0" prefWidth="67.0">
+                          <children>
+                            <Label fx:id="itemLbl" alignment="CENTER" prefHeight="27.0" prefWidth="78.0" stylesheets="@../../css/product-table-view.css" text="1">
+                              <VBox.margin>
+                                <Insets />
+                              </VBox.margin>
+                              <padding>
+                                <Insets left="2.0" right="2.0" />
+                              </padding>
+                            </Label>
+                          </children>
+                        </VBox>
+                        <HBox>
+                          <children>
+                            <VBox alignment="CENTER" prefHeight="68.0" prefWidth="88.0">
+                              <children>
+                                <HBox>
+                                  <children>
+                                    <Label fx:id="codeLbl" alignment="CENTER" prefHeight="27.0" prefWidth="84.0" stylesheets="@../../css/product-table-view.css" text="10">
+                                      <padding>
+                                        <Insets left="2.0" right="2.0" />
+                                      </padding>
+                                    </Label>
+                                  </children>
+                                </HBox>
+                              </children>
+                              <padding>
+                                <Insets left="2.0" right="2.0" />
+                              </padding>
+                            </VBox>
+                          </children>
+                        </HBox>
+                        <VBox alignment="CENTER" layoutX="110.0" layoutY="10.0" prefHeight="68.0" prefWidth="458.0" style="-fx-border-width: 10;">
+                          <children>
+                            <Label fx:id="descriptionLbl" prefHeight="28.0" prefWidth="467.0" stylesheets="@../../css/product-table-view.css" text="CHINELO FEMININO HAVAIANAS BRANCO N32000000">
+                              <VBox.margin>
+                                <Insets left="5.0" right="5.0" />
+                              </VBox.margin>
+                            </Label>
+                          </children>
+                          <padding>
+                            <Insets left="2.0" right="2.0" />
+                          </padding>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="210.0" layoutY="10.0" prefHeight="66.0" prefWidth="176.0">
+                          <children>
+                            <HBox>
+                              <children>
+                                <Label alignment="CENTER" prefHeight="27.0" prefWidth="42.0" stylesheets="@../../css/product-table-view.css" text="R$ " />
+                                <Label fx:id="priceLbl" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="27.0" stylesheets="@../../css/product-table-view.css" text="32000,00">
+                                  <padding>
+                                    <Insets right="5.0" />
+                                  </padding>
+                                </Label>
+                              </children>
+                            </HBox>
+                          </children>
+                          <HBox.margin>
+                            <Insets />
+                          </HBox.margin>
+                          <padding>
+                            <Insets left="2.0" right="2.0" />
+                          </padding>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="310.0" layoutY="10.0" prefHeight="42.0" prefWidth="100.0">
+                          <padding>
+                            <Insets left="2.0" right="2.0" />
+                          </padding>
+                          <children>
+                            <HBox>
+                              <children>
+                                <TextField fx:id="qtdFieldHbox" focusTraversable="false" minHeight="48.0" minWidth="53.0" prefHeight="48.0" prefWidth="94.0" styleClass="item-qtd-field" stylesheets="@../../css/product-table-view.css" text="20" />
+                              </children>
+                            </HBox>
+                          </children>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="410.0" layoutY="10.0" prefHeight="66.0" prefWidth="131.0">
+                          <children>
+                            <HBox spacing="1.0">
+                              <children>
+                                <Label alignment="CENTER" prefHeight="48.0" prefWidth="31.0" stylesheets="@../../css/product-table-view.css" text="R$">
+                                  <HBox.margin>
+                                    <Insets />
+                                  </HBox.margin>
+                                </Label>
+                                <TextField fx:id="discountField" focusTraversable="false" minHeight="48.0" minWidth="53.0" prefHeight="48.0" prefWidth="90.0" styleClass="item-qtd-field" stylesheets="@../../css/product-table-view.css" text="20,00" />
+                              </children>
+                            </HBox>
+                          </children>
+                        </VBox>
+                        <VBox alignment="CENTER" layoutX="510.0" layoutY="10.0" prefHeight="66.0" prefWidth="154.0">
+                          <children>
+                            <HBox>
+                              <children>
+                                <Label alignment="CENTER" prefHeight="28.0" prefWidth="40.0" stylesheets="@../../css/product-table-view.css" text="R$">
+                                  <padding>
+                                    <Insets left="2.0" right="6.0" />
+                                  </padding>
+                                </Label>
+                                <Label fx:id="subtotalLbl" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxWidth="105.0" prefHeight="28.0" prefWidth="105.0" stylesheets="@../../css/product-table-view.css" text="31000,00">
+                                  <padding>
+                                    <Insets left="6.0" right="6.0" />
+                                  </padding>
+                                </Label>
+                              </children>
+                            </HBox>
+                          </children>
+                        </VBox>
+                      </children>
+                    </HBox>
+                  </children>
+                </VBox>
+              </content>
+            </ScrollPane>
+          </children>
+        </VBox>
+        <TextField fx:id="qtdField" layoutX="762.0" layoutY="97.0" prefHeight="10.0" prefWidth="241.0" styleClass="txt-field" stylesheets="@../../css/front-checkout.css" />
+        <Label layoutX="988.0" layoutY="582.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../css/front-checkout.css" text="TOTAL:" AnchorPane.bottomAnchor="20.0" />
+        <Label layoutX="1087.0" layoutY="581.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="R$" AnchorPane.bottomAnchor="20.0" />
+        <Label layoutX="1129.0" layoutY="582.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="100,00" AnchorPane.bottomAnchor="20.0" />
+        <ImageView fitHeight="50.0" fitWidth="61.0" layoutX="1119.0" layoutY="105.0" pickOnBounds="true" preserveRatio="true" styleClass="btn-search-icon">
+          <image>
+            <Image url="@../../image/search-icon.png" />
+          </image>
+        </ImageView>
+        <Button fx:id="btnAddCheckout" layoutX="1029.0" layoutY="14.0" minHeight="40.0" minWidth="130.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" styleClass="btn-add-caixa" stylesheets="@../../css/front-checkout.css" text="Adicionar caixa  +" />
+      </children>
+    </AnchorPane>
+  </content>
+</Tab>

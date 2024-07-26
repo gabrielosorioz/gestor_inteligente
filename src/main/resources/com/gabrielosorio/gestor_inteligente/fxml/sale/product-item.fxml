@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<HBox fx:id="productTableRow" layoutX="10.0" layoutY="146.0" prefHeight="68.0" prefWidth="800.0" spacing="5.0" styleClass="item" stylesheets="@../../css/product-table-view.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+            <children>
+                <VBox alignment="CENTER" prefHeight="66.0" prefWidth="67.0">
+                    <children>
+                        <Label fx:id="itemLbl" alignment="CENTER" prefHeight="27.0" prefWidth="78.0" stylesheets="@../../css/product-table-view.css" text="1">
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <padding>
+                                <Insets left="2.0" right="2.0" />
+                            </padding>
+                        </Label>
+                    </children>
+                </VBox>
+                <HBox>
+                    <children>
+                        <VBox alignment="CENTER" prefHeight="68.0" prefWidth="88.0">
+                            <children>
+                                <HBox>
+                                    <children>
+                                        <Label fx:id="codeLbl" alignment="CENTER" prefHeight="27.0" prefWidth="84.0" stylesheets="@../../css/product-table-view.css" text="10">
+                                            <padding>
+                                                <Insets left="2.0" right="2.0" />
+                                            </padding>
+                                        </Label>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets left="2.0" right="2.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </HBox>
+                <VBox alignment="CENTER" layoutX="110.0" layoutY="10.0" prefHeight="68.0" prefWidth="458.0" style="-fx-border-width: 10;">
+                    <children>
+                        <Label fx:id="descriptionLbl" prefHeight="28.0" prefWidth="467.0" stylesheets="@../../css/product-table-view.css" text="CHINELO FEMININO HAVAIANAS BRANCO N32000000">
+                            <VBox.margin>
+                                <Insets left="5.0" right="5.0" />
+                            </VBox.margin>
+                        </Label>
+                    </children>
+                    <padding>
+                        <Insets left="2.0" right="2.0" />
+                    </padding>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="210.0" layoutY="10.0" prefHeight="66.0" prefWidth="176.0">
+                    <children>
+                        <HBox>
+                            <children>
+                                <Label alignment="CENTER" prefHeight="27.0" prefWidth="42.0" stylesheets="@../../css/product-table-view.css" text="R$ " />
+                                <Label fx:id="unitPriceLbl" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="27.0" stylesheets="@../../css/product-table-view.css" text="32000,00">
+                                    <padding>
+                                        <Insets right="5.0" />
+                                    </padding>
+                                </Label>
+                            </children>
+                        </HBox>
+                    </children>
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                    <padding>
+                        <Insets left="2.0" right="2.0" />
+                    </padding>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="310.0" layoutY="10.0" prefHeight="42.0" prefWidth="100.0">
+                    <padding>
+                        <Insets left="2.0" right="2.0" />
+                    </padding>
+                    <children>
+                        <HBox>
+                            <children>
+                                <TextField fx:id="qtdField" focusTraversable="false" minHeight="48.0" minWidth="53.0" prefHeight="48.0" prefWidth="94.0" styleClass="item-qtd-field" stylesheets="@../../css/product-table-view.css" text="20" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="410.0" layoutY="10.0" prefHeight="66.0" prefWidth="131.0">
+                    <children>
+                        <HBox spacing="1.0">
+                            <children>
+                                <Label alignment="CENTER" prefHeight="48.0" prefWidth="31.0" stylesheets="@../../css/product-table-view.css" text="R$">
+                                    <HBox.margin>
+                                        <Insets />
+                                    </HBox.margin>
+                                </Label>
+                                <TextField fx:id="discountField" focusTraversable="false" minHeight="48.0" minWidth="53.0" prefHeight="48.0" prefWidth="90.0" styleClass="item-qtd-field" stylesheets="@../../css/product-table-view.css" text="20,00" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" layoutX="510.0" layoutY="10.0" prefHeight="66.0" prefWidth="154.0">
+                    <children>
+                        <HBox>
+                            <children>
+                                <Label alignment="CENTER" prefHeight="28.0" prefWidth="40.0" stylesheets="@../../css/product-table-view.css" text="R$">
+                                    <padding>
+                                        <Insets left="2.0" right="6.0" />
+                                    </padding>
+                                </Label>
+                                <Label fx:id="subtotalPriceLbl" alignment="CENTER" layoutX="10.0" layoutY="10.0" maxWidth="105.0" prefHeight="28.0" prefWidth="105.0" stylesheets="@../../css/product-table-view.css" text="31000,00">
+                                    <padding>
+                                        <Insets left="6.0" right="6.0" />
+                                    </padding>
+                                </Label>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>

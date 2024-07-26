@@ -1,8 +1,9 @@
 package com.gabrielosorio.gestor_inteligente.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
-public class SaleItem {
+public class SaleProduct {
 
     private Integer id;
     private Integer saleId;
@@ -11,8 +12,9 @@ public class SaleItem {
     private int quantity;
     private BigDecimal unitPrice;
     private BigDecimal subTotal;
+    private BigDecimal discount;
 
-    public SaleItem(Integer id, Integer saleId, Product product, Sale sale, int quantity, BigDecimal unitPrice, BigDecimal subTotal) {
+    public SaleProduct(Integer id, Integer saleId, Product product, Sale sale, int quantity, BigDecimal unitPrice, BigDecimal subTotal, BigDecimal discount) {
         this.id = id;
         this.saleId = saleId;
         this.product = product;
@@ -20,7 +22,10 @@ public class SaleItem {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.subTotal = subTotal;
+        this.discount = discount;
     }
+
+    public SaleProduct(){}
 
     public Integer getId() {
         return id;
@@ -44,6 +49,7 @@ public class SaleItem {
 
     public void setProduct(Product product) {
         this.product = product;
+        unitPrice = product.getSellingPrice().setScale(2, RoundingMode.HALF_UP);
     }
 
     public Sale getSale() {
@@ -71,10 +77,20 @@ public class SaleItem {
     }
 
     public BigDecimal getSubTotal() {
-        return subTotal;
+        return unitPrice.multiply(BigDecimal.valueOf(quantity))
+                .subtract(discount)
+                .setScale(2,RoundingMode.HALF_UP);
     }
 
     public void setSubTotal(BigDecimal subTotal) {
         this.subTotal = subTotal;
+    }
+
+    public BigDecimal getDiscount() {
+        return discount.setScale(2,RoundingMode.HALF_UP);
+    }
+
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
     }
 }

@@ -1,24 +1,25 @@
 package com.gabrielosorio.gestor_inteligente.controller;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.model.Product;
+import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -37,11 +38,14 @@ public class CheckoutTabController implements Initializable {
     private Tab currentTab;
 
     @FXML
-    private Label itemLbl,codeLbl,descriptionLbl,priceLbl,subtotalLbl;
+    private TextField qtdField;
 
     @FXML
-    private TextField qtdFieldHbox,discountField,qtdField;
+    private VBox productTable;
 
+    private Product product;
+
+    private SaleProduct itemProduct;
 
     private FrontCheckoutController FCKController;
 
@@ -127,10 +131,41 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-    private List<Label> labels;
+
+    private void addProduct(SaleProduct saleProduct) {
+        try {
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/product-item.fxml"));
+            ProductItemController controller = new ProductItemController((++itemCounter),saleProduct);
+            loader.setController(controller);
+            HBox productItemRow = loader.load();
+            productTable.getChildren().add(productItemRow);
+
+        } catch (Exception e){
+            log.severe("ERROR at load new tab view: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private int itemCounter;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+
+
+        Product travesseiro = Product.builder()
+                .barCode("789")
+                .productId(54)
+                .description("Travesseiro Bob Conforto".toUpperCase())
+                .sellingPrice(new BigDecimal(1.00))
+                .build();
+
+        SaleProduct travesseiroItem = new SaleProduct();
+
+        travesseiroItem.setProduct(travesseiro);
+        travesseiroItem.setDiscount(new BigDecimal(0.00));
+        travesseiroItem.setQuantity(0);
+
 
         btnAddCheckout.setOnMouseClicked(event -> {
             FCKController.addNewTab();
@@ -141,9 +176,11 @@ public class CheckoutTabController implements Initializable {
         setSelectedTabListener();
         setOnCloseTab(currentTab);
 
+        for (int i=0 ; i <= 10; i++){
+            addProduct(travesseiroItem);
+        }
 
     }
-
 
     public void setFCKController(FrontCheckoutController FCKController){
         this.FCKController = FCKController;

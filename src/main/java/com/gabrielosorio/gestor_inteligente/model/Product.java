@@ -37,7 +37,7 @@ public class Product {
         return new ProductBuilder();
     }
 
-    private static class ProductBuilder {
+    public static class ProductBuilder {
         private Integer id;
         private Integer productId;
         private String barCode;

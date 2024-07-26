@@ -32,8 +32,10 @@ public class MainNavigationController implements Initializable {
     @FXML
     private Button btnSale;
 
-    private void toggleSideBar(){
 
+    private boolean isClosed = true;
+
+    private void toggleSideBar(){
 
         Platform.runLater(() -> {
             TranslateTransition slide = new TranslateTransition();
@@ -50,35 +52,29 @@ public class MainNavigationController implements Initializable {
 
             slide.play();
         });
-
-
-
-
     }
 
 
-    private void loadFXML(String filename){
-        TabPane fxml = null;
+    private void loadFrontCheckout(){
+        TabPane frontCheckout = null;
 
         try {
-            fxml = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/sale/front-checkout.fxml"));
+            frontCheckout = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/sale/front-checkout.fxml"));
             content.getChildren().removeAll();
 
-            AnchorPane.setTopAnchor(fxml,60.00);
-            AnchorPane.setBottomAnchor(fxml,0.00);
-            AnchorPane.setLeftAnchor(fxml,0.00);
-            AnchorPane.setRightAnchor(fxml,0.00);
-            content.getChildren().add(0,fxml);
+            AnchorPane.setTopAnchor(frontCheckout,60.00);
+            AnchorPane.setBottomAnchor(frontCheckout,0.00);
+            AnchorPane.setLeftAnchor(frontCheckout,0.00);
+            AnchorPane.setRightAnchor(frontCheckout,0.00);
+            content.getChildren().add(0,frontCheckout);
 
             Platform.runLater(() -> {
                 toggleSideBar();
             });
 
 
-
-
         } catch (IOException e){
-            System.out.println("ERROR: Error at load FXML file: " + filename);
+            System.out.println("ERROR: Error at load FXML Front of checkout : ");
         }
 
 
@@ -87,17 +83,15 @@ public class MainNavigationController implements Initializable {
 
     @FXML
     private void showSaleView(MouseEvent event) {
-        loadFXML("co");
+        loadFrontCheckout();
     }
 
 
 
-    private boolean isClosed = true;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
 
         btnSlider.setOnMouseClicked(event -> {
            toggleSideBar();

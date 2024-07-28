@@ -25,6 +25,13 @@ public class SaleProduct {
         this.discount = discount;
     }
 
+    public SaleProduct(Product product){
+       this.product = product;
+       unitPrice = product.getSellingPrice().setScale(2, RoundingMode.HALF_UP);
+       discount = new BigDecimal(0.00).setScale(2,RoundingMode.HALF_UP);
+       quantity = 1;
+    }
+
     public SaleProduct(){}
 
     public Integer getId() {

@@ -12,23 +12,21 @@ public class Sale {
     private Timestamp dataSale;
     private Timestamp dataCancel;
     private List<SaleProduct> items;
-    private BigDecimal amount;
-    private BigDecimal totalAmount;
-    private BigDecimal discount;
+    private BigDecimal totalPrice;
+    private BigDecimal totalDiscount;
     private List<Payment> paymentMethods;
     private Cliente cliente;
     private String status;
 
-    public Sale(Integer id, Integer saleId, Product product, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal amount, BigDecimal totalAmount, BigDecimal discount, List<Payment> paymentMethods, Cliente cliente, String status) {
+    public Sale(Integer id, Integer saleId, Product product, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal totalPrice, BigDecimal totalDiscount, List<Payment> paymentMethods, Cliente cliente, String status) {
         this.id = id;
         this.saleId = saleId;
         this.product = product;
         this.dataSale = dataSale;
         this.dataCancel = dataCancel;
         this.items = items;
-        this.amount = amount;
-        this.totalAmount = totalAmount;
-        this.discount = discount;
+        this.totalPrice = totalPrice;
+        this.totalDiscount = totalDiscount;
         this.paymentMethods = paymentMethods;
         this.cliente = cliente;
         this.status = status;
@@ -84,28 +82,24 @@ public class Sale {
         this.items = items;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
+    public BigDecimal getTotalDiscount() {
+        return totalDiscount;
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setTotalDiscount(BigDecimal totalDiscount) {
+        this.totalDiscount = totalDiscount;
     }
 
-    public BigDecimal getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
+    public void setPaymentMethods(List<Payment> paymentMethods) {
+        this.paymentMethods = paymentMethods;
     }
 
     public List<Payment> getPaymentMethods() {

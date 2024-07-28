@@ -8,9 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -20,6 +18,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -43,37 +43,56 @@ public class CheckoutTabController implements Initializable {
     @FXML
     private VBox productTable;
 
-    private Product product;
+    private HashMap<String,Product> productData = new HashMap<>();
 
-    private SaleProduct itemProduct;
+    private HashMap<String,SaleProduct> itemsSales = new HashMap<>();
+
+    private HashMap<String,ProductItemController> saleProductControllers = new HashMap<>();
 
     private FrontCheckoutController FCKController;
 
+    private int itemCounter;
+
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    private void addEventOnKeyPressed(TextField codeField, TextField qtdField){
-        codeField.setOnKeyPressed(event -> {
-            KeyCode pressedKey = event.getCode();
-            boolean isEmpty = (codeField.getText().isEmpty() || codeField.getText().isBlank());
 
-            if(pressedKey.equals(KeyCode.ENTER)){
-                if(isEmpty){
-                    qtdField.requestFocus();
-                }
-            }
+    private HashMap<String, Product> generateProducts() {
+        HashMap<String, Product> productData = new HashMap<>();
 
-            if(KeyCode.F3 == event.getCode()){
-                showPaymentView();
-            }
-        });
+        for (int i = 0; i < 10; i++) {
+            int barCode = 1000 + i;
+            int productId = 2000 + i;
+            Product product = Product.builder()
+                    .barCode(String.valueOf(barCode))
+                    .productId(productId)
+                    .description("Product " + (i + 1))
+                    .sellingPrice(new BigDecimal("17.99"))
+                    .build();
+
+            // adds product with product id and barcode as a key
+            productData.put(String.valueOf(product.getProductID()), product);
+            productData.put(product.getBarCode(), product);
+        }
+
+        return productData;
+    }
+
+    private void addEventOnQtdField(){
+        qtdField.setText("1");
+
+        qtdField.textProperty().addListener(((observableValue, s, t1) -> {
+            String plainText = t1.replaceAll("[^0-9]", "");
+            qtdField.setText(plainText);
+        }));
 
         qtdField.setOnKeyPressed(event -> {
             KeyCode pressedKey = event.getCode();
             boolean isEmpty = (qtdField.getText().isEmpty() || qtdField.getText().isBlank());
 
             if(pressedKey.equals(KeyCode.ENTER)){
-                if(isEmpty){
-                    codeField.requestFocus();
+                codeField.requestFocus();
+                if(qtdField.getText().isBlank()){
+                    qtdField.setText("1");
                 }
             }
 

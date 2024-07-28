@@ -102,6 +102,138 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
+    private void addEventOnCodeField(){
+        codeField.setOnMouseClicked(mouseEvent -> {
+
+            if(qtdField.getText().isBlank()){
+                qtdField.setText("1");
+            }
+        });
+
+        codeField.setOnKeyPressed(keyEvent -> {
+            KeyCode pressedKey = keyEvent.getCode();
+            String id = codeField.getText().trim();
+            String qtdStr = qtdField.getText().trim();
+            boolean isCodeFieldEmpty = id.isEmpty() || id.isBlank();
+
+            if(pressedKey.equals(KeyCode.ENTER)){
+
+                if(isCodeFieldEmpty) {
+                    qtdField.requestFocus();
+                }
+
+                if(!isCodeFieldEmpty){
+                    if(itemsSales.containsKey(id)){
+                        SaleProduct itemSale = getItemSale(id);
+                        int newQuantity = itemSale.getQuantity() + Integer.parseInt(qtdStr);
+                        itemSale.setQuantity(newQuantity);
+                        updateSaleItem(itemSale);
+                        codeField.clear();
+                        qtdField.setText("1");
+                    }
+
+                    if(!itemsSales.containsKey(id)){
+                        Product newItem = getProductData(id);
+                        addItemSale(newItem);
+                        SaleProduct newSaleProduct = itemsSales.get(id);
+                        newSaleProduct.setQuantity(Integer.parseInt(qtdStr));
+                        addItemSaleView(id);
+                        codeField.clear();
+                        qtdField.setText("1");
+
+                    }
+                }
+            }
+
+            if(pressedKey.equals(KeyCode.F3)){
+                showPaymentView();
+            }
+
+        });
+
+
+    }
+
+    private void addItemSale(Product product){
+        if(product == null){
+            log.severe("Error at add product to list of products for sale: Product is null.");
+            throw new IllegalArgumentException("Product is null");
+        }
+        if(product.getProductID() == null && (product.getBarCode() == null)){
+            log.severe("Product ID and BarCode are null or empty.");
+            throw new IllegalArgumentException("Product ID and BarCode are empty.");
+        }
+
+        SaleProduct newSaleItem = new SaleProduct(product);
+
+        if(newSaleItem.getProduct().getProductID() != null){
+           String productId = String.valueOf(newSaleItem.getProduct().getProductID());
+           itemsSales.put(productId,newSaleItem);
+        }
+
+        if(newSaleItem.getProduct().getBarCode() != null && !newSaleItem.getProduct().getBarCode().isBlank()){
+            String barCode = newSaleItem.getProduct().getBarCode();
+            itemsSales.put(barCode,newSaleItem);
+        }
+
+        log.info("Product added to the list of products for sale." + " BarCode: " + itemsSales.get(newSaleItem.getProduct().getBarCode()).getProduct().getBarCode() + " ID: " + itemsSales.get(String.valueOf(newSaleItem.getProduct().getProductID())).getProduct().getProductID());
+    }
+
+    private void addItemSaleView(String id){
+
+        if(itemsSales.containsKey(id)){
+
+            SaleProduct newItemSaleView = getItemSale(id);
+
+            try {
+                FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/product-item.fxml"));
+                ProductItemController controller = new ProductItemController((++itemCounter), newItemSaleView);
+                loader.setController(controller);
+
+                saleProductControllers.put(newItemSaleView.getProduct().getBarCode(), controller);
+                saleProductControllers.put(String.valueOf(newItemSaleView.getProduct().getProductID()),controller);
+
+                HBox productItemRow = loader.load();
+                productTable.getChildren().add(productItemRow);
+
+            } catch (Exception e) {
+                log.severe("ERROR at load new tab view: " + e.getMessage());
+            }
+
+        }
+
+    }
+
+    private Product getProductData(String id){
+        Product product = productData.get(id);
+        if(product != null){
+            return product;
+        } else {
+            log.severe("Product not found for id " + id);
+        }
+        throw new IllegalArgumentException("Invalid Product ID: " + id);
+    }
+
+    private SaleProduct getItemSale(String id){
+        SaleProduct saleProduct = itemsSales.get(id);
+        if(saleProduct != null){
+            return saleProduct;
+        } else {
+            log.severe("Item Sale not found: " + id);
+        }
+        throw new IllegalArgumentException("Invalid item sale ID" + id);
+    }
+
+    private ProductItemController getItemController(String id){
+        ProductItemController controller = saleProductControllers.get(id);
+        if(controller != null){
+            return controller;
+        } else {
+            log.severe("Item controller not found: " + id);
+        }
+        throw new IllegalArgumentException("Invalid ID Controller " + id);
+    }
+
     private void setFocusOnCodeField(){
         Platform.runLater(() -> {
             if (currentTab.isSelected()) {
@@ -122,6 +254,19 @@ public class CheckoutTabController implements Initializable {
         }
     }
 
+    private void setOnCloseTab(Tab tab){
+        Platform.runLater(() -> {
+            tab.setOnCloseRequest(event -> {
+                if(FCKController.getListTabLength() == 1){
+                    event.consume();
+                    Platform.runLater(()->{
+                        codeField.requestFocus();
+                    });
+                }
+            });
+        });
+    }
+
     private void showPaymentView(){
         FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/payment-view.fxml"));
         Stage paymentRoot = new Stage();
@@ -137,67 +282,28 @@ public class CheckoutTabController implements Initializable {
         }
     }
 
-    private void setOnCloseTab(Tab tab){
-        Platform.runLater(() -> {
-            tab.setOnCloseRequest(event -> {
-                if(FCKController.getListTabLength() == 1){
-                    event.consume();
-                    Platform.runLater(()->{
-                        codeField.requestFocus();
-                    });
-                }
-            });
-        });
+    private void updateSaleItem(SaleProduct saleProduct){
+        String id = String.valueOf(saleProduct.getProduct().getProductID());
+        ProductItemController controller = getItemController(id);
+        controller.setSaleProduct(saleProduct);
     }
 
-
-    private void addProduct(SaleProduct saleProduct) {
-        try {
-            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/product-item.fxml"));
-            ProductItemController controller = new ProductItemController((++itemCounter),saleProduct);
-            loader.setController(controller);
-            HBox productItemRow = loader.load();
-            productTable.getChildren().add(productItemRow);
-
-        } catch (Exception e){
-            log.severe("ERROR at load new tab view: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private int itemCounter;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
 
-
-        Product travesseiro = Product.builder()
-                .barCode("789")
-                .productId(54)
-                .description("Travesseiro Bob Conforto".toUpperCase())
-                .sellingPrice(new BigDecimal(1.00))
-                .build();
-
-        SaleProduct travesseiroItem = new SaleProduct();
-
-        travesseiroItem.setProduct(travesseiro);
-        travesseiroItem.setDiscount(new BigDecimal(0.00));
-        travesseiroItem.setQuantity(0);
-
+        productData = generateProducts();
 
         btnAddCheckout.setOnMouseClicked(event -> {
             FCKController.addNewTab();
         });
 
-        addEventOnKeyPressed(codeField,qtdField);
         setFocusOnCodeField();
+        addEventOnCodeField();
+        addEventOnQtdField();
         setSelectedTabListener();
         setOnCloseTab(currentTab);
-
-        for (int i=0 ; i <= 10; i++){
-            addProduct(travesseiroItem);
-        }
 
     }
 

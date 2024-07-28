@@ -52,10 +52,10 @@ public class ProductItemController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         changeQuantity(saleProduct);
         changeDiscount(saleProduct);
-        showProductData(saleProduct);
+        showProductData();
     }
 
-    private void showProductData(SaleProduct saleProduct){
+    public void showProductData(){
         itemLbl.setText(String.valueOf(itemOrder));
         codeLbl.setText(String.valueOf(saleProduct.getProduct().getProductID()));
         descriptionLbl.setText(saleProduct.getProduct().getDescription());
@@ -66,12 +66,10 @@ public class ProductItemController implements Initializable {
     }
 
 
-//    public void setSaleProduct(SaleProduct saleProduct){
-//        this.saleProduct = saleProduct;
-//    }
 
-    public void setItem(int itemQtd){
-        itemLbl.setText(String.valueOf(itemQtd));
+    public void setSaleProduct(SaleProduct saleProduct) {
+        this.saleProduct = saleProduct;
+        showProductData();
     }
 
     private void changeQuantity(SaleProduct saleProduct){

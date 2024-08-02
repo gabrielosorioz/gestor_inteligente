@@ -1,17 +1,26 @@
-    package com.gabrielosorio.gestor_inteligente.controller;
+package com.gabrielosorio.gestor_inteligente.controller;
+import com.gabrielosorio.gestor_inteligente.model.Payment;
+import com.gabrielosorio.gestor_inteligente.model.Sale;
+import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
+import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Logger;
 
-    import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
-    import javafx.application.Platform;
-    import javafx.fxml.FXML;
-    import javafx.fxml.Initializable;
-    import javafx.scene.control.Button;
-    import javafx.scene.control.TextField;
-    import javafx.scene.input.MouseEvent;
-    import javafx.scene.layout.HBox;
-    import java.net.URL;
-    import java.util.ResourceBundle;
+import static com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils.formatText;
 
-    public class PaymentViewController implements Initializable {
+public class PaymentViewController implements Initializable {
+
+    private final Logger log = Logger.getLogger(PaymentViewController.class.getName());
 
     @FXML
     private TextField cashField,creditField,debitField,pixField;
@@ -28,15 +37,19 @@
        requestPayment(cashField);
     }
 
-    @FXML
-    private void setCredit(MouseEvent mouseEvent){
-       requestPayment(creditField);
-    }
+    private Sale sale;
 
-    @FXML
-    private void setDebit(MouseEvent mouseEvent){
-        requestPayment(debitField);
-    }
+    public PaymentViewController(Sale sale){
+        if (sale == null) {
+            throw new IllegalArgumentException("Error at initialize Payment View Controller: Sale is null");
+        }
+        if (sale.getItems() == null || sale.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Error at initialize Payment View Controller: Sale items are null or empty");
+        }
+        if (sale.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Error at initialize Payment View Controller: Total price is <= 0");
+        }
+        this.sale = sale;
 
     @FXML
     private void setPix(MouseEvent mouseEvent){

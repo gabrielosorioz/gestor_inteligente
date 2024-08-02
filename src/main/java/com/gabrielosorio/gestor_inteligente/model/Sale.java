@@ -1,14 +1,17 @@
 package com.gabrielosorio.gestor_inteligente.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Sale {
 
     private Integer id;
     private Integer saleId;
-    private Product product;
     private Timestamp dataSale;
     private Timestamp dataCancel;
     private List<SaleProduct> items;
@@ -18,10 +21,28 @@ public class Sale {
     private Cliente cliente;
     private String status;
 
-    public Sale(Integer id, Integer saleId, Product product, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal totalPrice, BigDecimal totalDiscount, List<Payment> paymentMethods, Cliente cliente, String status) {
+    public Sale (List<SaleProduct> items){
+
+        if(items.isEmpty() || items == null){
+            throw new IllegalArgumentException("Error at initializing Sale constructor:Product items for sale is null.");
+        }
+
+        this.items = items;
+        dataSale = Timestamp.from(Instant.now());
+        totalDiscount = new BigDecimal(0.00).setScale(2, RoundingMode.HALF_UP);
+        totalPrice = new BigDecimal(0.00).setScale(2, RoundingMode.HALF_UP);
+        items.forEach(item -> {
+            totalPrice = totalPrice.add(item.getSubTotal());
+            totalDiscount =  totalDiscount.add(item.getDiscount());
+        });
+
+        paymentMethods = new ArrayList<Payment>();
+
+    }
+
+    public Sale(Integer id, Integer saleId, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal totalPrice, BigDecimal totalDiscount, List<Payment> paymentMethods, Cliente cliente, String status) {
         this.id = id;
         this.saleId = saleId;
-        this.product = product;
         this.dataSale = dataSale;
         this.dataCancel = dataCancel;
         this.items = items;
@@ -48,14 +69,6 @@ public class Sale {
 
     public void setSaleId(Integer saleId) {
         this.saleId = saleId;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public Timestamp getDataSale() {
@@ -99,15 +112,14 @@ public class Sale {
     }
 
     public void setPaymentMethods(List<Payment> paymentMethods) {
+        if (paymentMethods == null || paymentMethods.isEmpty()) {
+            throw new IllegalArgumentException("Error to set payment: Sale items are null or empty");
+        }
         this.paymentMethods = paymentMethods;
     }
 
     public List<Payment> getPaymentMethods() {
         return paymentMethods;
-    }
-
-    public void setPaymentMethod(List<Payment> paymentMethods) {
-        this.paymentMethods = paymentMethods;
     }
 
     public Cliente getCliente() {

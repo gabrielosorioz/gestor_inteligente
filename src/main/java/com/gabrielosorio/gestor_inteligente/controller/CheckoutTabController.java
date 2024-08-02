@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.controller;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
+import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,6 +19,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -97,7 +99,7 @@ public class CheckoutTabController implements Initializable {
             }
 
             if(KeyCode.F3 == event.getCode()){
-                showPaymentView();
+                createSale();
             }
         });
     }
@@ -146,12 +148,19 @@ public class CheckoutTabController implements Initializable {
             }
 
             if(pressedKey.equals(KeyCode.F3)){
-                showPaymentView();
+                createSale();
             }
 
         });
 
 
+    }
+
+    private void createSale(){
+        HashSet<SaleProduct> itemSet = new HashSet<>(itemsSales.values());
+        ArrayList<SaleProduct> items = new ArrayList<>(itemSet);
+        final Sale sale = new Sale(items);
+        showPaymentView(sale);
     }
 
     private void addItemSale(Product product){
@@ -267,16 +276,18 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-    private void showPaymentView(){
-        FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/payment-view.fxml"));
-        Stage paymentRoot = new Stage();
+    private void showPaymentView(Sale sale){
 
         try {
+            FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/payment-view.fxml"));
+            Stage paymentRoot = new Stage();
+            PaymentViewController controller = new PaymentViewController(sale);
+            fxmlLoader.setController(controller);
             Scene scene = new Scene(fxmlLoader.load());
             paymentRoot.setScene(scene);
             paymentRoot.show();
 
-        } catch (IOException e){
+        } catch (Exception e){
             log.severe("ERROR at load payment view: " + e.getMessage());
             e.printStackTrace();
         }

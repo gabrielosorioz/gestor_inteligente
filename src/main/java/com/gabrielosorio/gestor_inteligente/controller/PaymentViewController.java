@@ -32,10 +32,10 @@ public class PaymentViewController implements Initializable {
     private Button btnCheckout;
 
 
-    @FXML
-    private void setCash(MouseEvent mouseEvent){
-       requestPayment(cashField);
-    }
+    private Map<HBox, PaymentMethod> paymentHboxMap = new HashMap<>();
+    private Map<PaymentMethod,Payment> paymentMethods;
+    private final Set<TextField> paymentFieldSet = new HashSet<>();
+    private Map<PaymentMethod,TextField> paymentFieldMap = new HashMap<>();
 
     private Sale sale;
 
@@ -51,40 +51,135 @@ public class PaymentViewController implements Initializable {
         }
         this.sale = sale;
 
-    @FXML
-    private void setPix(MouseEvent mouseEvent){
-        requestPayment(pixField);
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        paymentMethods = new HashMap<>();
+
+        /** Link payment methods to TextField elements JavaFX **/
+        paymentFieldMap.put(PaymentMethod.DINHEIRO,cashField);
+        paymentFieldMap.put(PaymentMethod.DEBITO,debitField);
+        paymentFieldMap.put(PaymentMethod.CREDIT0,creditField);
+        paymentFieldMap.put(PaymentMethod.PIX,pixField);
+
+        /** Link payment methods to Hbox elements JavaFX **/
+        paymentHboxMap.put(cashHbox,PaymentMethod.DINHEIRO);
+        paymentHboxMap.put(debitHbox,PaymentMethod.DEBITO);
+        paymentHboxMap.put(creditHbox,PaymentMethod.CREDIT0);
+        paymentHboxMap.put(pixHbox,PaymentMethod.PIX);
+
+        /** load payment events in node elements JavaFX*/
+        loadHboxPaymentEvents(paymentHboxMap);
+        loadPaymentFieldEvents(paymentFieldMap);
+
         Platform.runLater(() -> {
             creditHbox.requestFocus();
-            addClickListener(cashField);
-            addClickListener(debitField);
-            addClickListener(creditField);
-            addClickListener(pixField);
         });
 
     }
 
+    private void loadPaymentFieldEvents(Map<PaymentMethod,TextField> paymentFieldMap){
+        paymentFieldMap.forEach((paymentMethod, paymentField) -> {
+            paymentField.setOnMouseClicked(mouseEvent -> {
+                requestPayment(paymentField, paymentMethod);
+                paymentField.requestFocus();
+                paymentField.positionCaret(paymentField.getText().length());
+            });
 
-    private void requestPayment(TextField paymentField){
-        setCurrencyMask(paymentField);
-        paymentField.requestFocus();
-        paymentField.positionCaret(paymentField.getText().length());
+            paymentField.setOnKeyPressed(keyPressed -> {
+                if(keyPressed.getCode().equals(KeyCode.F2)) {
+                    processPayment(sale);
+                }
+            });
+        });
     }
 
-    private void addClickListener(TextField textField) {
-            textField.setOnMouseClicked(event -> {
-                setCurrencyMask(textField);
-                // Mover o cursor para a última posição quando o campo for clicado
-                Platform.runLater(() -> textField.positionCaret(textField.getText().length()));
+    private void loadHboxPaymentEvents(Map<HBox, PaymentMethod> paymentHboxMap){
+        paymentHboxMap.forEach((paymentHbox, paymentMethod) -> {
+            paymentHbox.setOnMouseClicked(mouseEvent -> {
+
+                TextField paymentField = paymentFieldMap.get(paymentMethod);
+                requestPayment(paymentField,paymentMethod);
+                paymentField.requestFocus();
+                paymentField.positionCaret(paymentField.getText().length());
+
+                paymentField.setOnKeyPressed(keyPressed -> {
+                    if(keyPressed.getCode().equals(KeyCode.F2)) {
+                        processPayment(sale);
+                    }
+                });
             });
+        });
+    }
+
+    private void requestPayment(TextField paymentField, PaymentMethod paymentMethod){
+
+        if (paymentField.getText().isBlank() || paymentField.getText().isEmpty()) {
+            paymentField.setText("0,00");
+            setPaymentValue(paymentMethod, "0,00");
         }
 
-    private void setCurrencyMask(TextField currencyField){
-        TextFieldUtils.addPriceListener(currencyField);
+        if(!paymentFieldSet.contains(paymentField)){
+            paymentField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+                String formattedText = formatText(newValue);
+                setPaymentValue(paymentMethod,formattedText);
+                if (!newValue.equals(formattedText)) {
+                    Platform.runLater(() -> {
+                        paymentField.setText(formattedText);
+                        paymentField.positionCaret(paymentField.getText().length());
+                    });
+                }
+            });
+            paymentFieldSet.add(paymentField);
+            System.out.println("Listener adicionado");
+        }
+    }
+
+    private void processPayment(Sale sale) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        if (sale == null) {
+            throw new IllegalArgumentException("Error processing payment: Sale is null");
+        }
+        if (sale.getItems() == null || sale.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Error processing payment: Sale items are null or empty");
+        }
+        if (sale.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Error processing payment: Total price is <= 0");
+        }
+
+        final Set<Payment> uniquePayments = new HashSet<>(paymentMethods.values());
+        final List<Payment> listPayment = new ArrayList<>(uniquePayments);
+        sale.setPaymentMethods(listPayment);
+
+        for (Payment payment : listPayment) {
+            totalAmount = totalAmount.add(payment.getValue());
+        }
+
+        if (totalAmount.compareTo(sale.getTotalPrice()) < 0) {
+            throw new IllegalArgumentException("Error processing payment: Total amount of payments is less than the sale total price. Total Payments: " + totalAmount + ", Sale Total: " + sale.getTotalPrice());
+        }
+
+        listPayment.forEach(payment -> {
+            log.info(payment.getPaymentMethod().getDescription() + " R$: " + payment.getValue());
+        });
+    }
+
+    private void setPaymentValue(PaymentMethod paymentMethod, String value){
+        BigDecimal newValue;
+
+        try {
+            String formattedValue = formatText(value);
+            newValue = TextFieldUtils.formatCurrency(formattedValue);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        final Payment payment = paymentMethods.getOrDefault(paymentMethod, new Payment(paymentMethod));
+        payment.setValue(newValue);
+        paymentMethods.put(paymentMethod,payment);
     }
 
 }

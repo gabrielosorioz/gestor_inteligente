@@ -3,7 +3,11 @@ package com.gabrielosorio.gestor_inteligente.utils;
 import javafx.application.Platform;
 import javafx.scene.control.TextField;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -47,7 +51,7 @@ public class TextFieldUtils {
      * @param text The text to be formatted.
      * @return The text formatted as currency.
      */
-    private static String formatText(String text) {
+    public static String formatText(String text) {
         // Remove all non-numeric characters
         String plainText = text.replaceAll("[^0-9]", "");
 
@@ -67,4 +71,25 @@ public class TextFieldUtils {
             return "0,00";
         }
     }
+
+    public static BigDecimal formatCurrency(String value) throws ParseException {
+        // Define os símbolos de formato, aqui usamos o ponto como separador decimal e a vírgula como separador de milhar
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+        symbols.setDecimalSeparator(',');
+        symbols.setGroupingSeparator('.');
+
+        // Define o padrão de formato, considerando que pode haver separadores de milhar
+        DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
+        df.setParseBigDecimal(true);
+
+        // Converte a string para BigDecimal
+        BigDecimal bigDecimal = (BigDecimal) df.parse(value);
+        return bigDecimal;
+    }
+
+
+
+
+
+
 }

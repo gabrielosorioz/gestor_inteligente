@@ -31,7 +31,7 @@ public class GestorInteligenteApp extends Application {
 
 
 
-        FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/main_navigation.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/register-product.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         primaryStage.setScene(scene);
         primaryStage.initStyle(StageStyle.UNDECORATED);

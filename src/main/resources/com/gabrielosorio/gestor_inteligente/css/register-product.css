@@ -1,0 +1,109 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Regular.ttf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Bold.ttf');
+    font-weight: bold;
+}
+
+
+.form {
+    -fx-background-color: #fff;
+}
+
+.title {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.line {
+    -fx-background-color: linear-gradient(to bottom right, #00d4ff, #9700ff);
+    -fx-background-radius: 3px;
+}
+
+.field {
+    -fx-background-color: #fff;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: normal;
+    -fx-font-size: 16px;
+    -fx-border-width: 1.5 1.5 2.7 1.5px;
+    -fx-border-color: #cccccc;
+    -fx-text-fill: black;
+}
+
+.field:hover {
+    -fx-background-color: #eff0f0;
+
+}
+
+.field:focused {
+    -fx-border-color: #7f7f7f;
+}
+
+.field-name {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #262626;
+}
+
+.field-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: normal;
+    -fx-font-size: 16px;
+}
+/* Estilo para o ListView */
+.list-view {
+    -fx-background-color: #f0f0f0; /* Cor de fundo do ListView */
+    -fx-border-color: #cccccc; /* Cor da borda do ListView */
+}
+
+/* Estilo para as células do ListView */
+.list-cell {
+    -fx-font-size: 14px;
+    -fx-font-family: 'Poppins';
+    /** -fx-font-weight: normal; **/
+    -fx-background-color: #ffffff; /* Cor de fundo das células */
+    -fx-text-fill: #333333; /* Cor do texto das células */
+    -fx-padding: 10px; /* Espaçamento interno das células */
+    -fx-border-color: #e0e0e0; /* Cor da borda das células */
+    -fx-border-width: 0 0 1px 0; /* Largura da borda das células */
+}
+
+.list-cell:hover {
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+    -fx-background-color: #ebeded;
+}
+/* ListCell Vertical Scroll Bar */
+.list-view .scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: #f0f0f0;
+}
+
+.list-view .scroll-bar:vertical .increment-arrow,
+.list-view .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: #c0c0c0;
+}
+
+.list-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #c5c5c5;
+    -fx-background-insets: 2;
+    -fx-background-radius: 5;
+}
+
+.list-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #a2a2a2;
+}
+
+.list-view .scroll-bar:vertical .track {
+    -fx-background-color: #e0e0e0;
+    -fx-background-insets: 0;
+}

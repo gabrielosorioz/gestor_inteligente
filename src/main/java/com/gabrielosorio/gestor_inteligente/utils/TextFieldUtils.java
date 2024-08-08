@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.utils;
 
 import javafx.application.Platform;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -11,6 +12,7 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 public class TextFieldUtils {
 
@@ -85,6 +87,15 @@ public class TextFieldUtils {
         // Converte a string para BigDecimal
         BigDecimal bigDecimal = (BigDecimal) df.parse(value);
         return bigDecimal;
+    }
+
+    public static void setUpperCaseTextFormatter(TextField textField) {
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            change.setText(change.getText().toUpperCase());
+            return change;
+        };
+        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+        textField.setTextFormatter(textFormatter);
     }
 
 

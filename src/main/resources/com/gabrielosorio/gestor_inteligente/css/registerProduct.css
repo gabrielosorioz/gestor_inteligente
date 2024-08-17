@@ -40,7 +40,6 @@
 
 .field:hover {
     -fx-background-color: #eff0f0;
-
 }
 
 .field:focused {

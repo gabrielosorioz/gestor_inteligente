@@ -5,14 +5,14 @@ import java.sql.Timestamp;
 public class AuditInventory {
 
     private Integer id;
-    private Inventory inventory;
+    private Stock stock;
     private String productName;
     private Timestamp lastUpdate;
     private String movementType;
 
-    public AuditInventory(Integer id, Inventory inventory, String productName, Timestamp lastUpdate, String movementType) {
+    public AuditInventory(Integer id, Stock stock, String productName, Timestamp lastUpdate, String movementType) {
         this.id = id;
-        this.inventory = inventory;
+        this.stock = stock;
         this.productName = productName;
         this.lastUpdate = lastUpdate;
         this.movementType = movementType;
@@ -26,12 +26,12 @@ public class AuditInventory {
         this.id = id;
     }
 
-    public Inventory getInventory() {
-        return inventory;
+    public Stock getInventory() {
+        return stock;
     }
 
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
+    public void setInventory(Stock stock) {
+        this.stock = stock;
     }
 
     public String getProductName() {

@@ -3,7 +3,7 @@ package com.gabrielosorio.gestor_inteligente.model;
 
 import java.sql.Timestamp;
 
-public class Inventory {
+public class Stock {
 
     private Integer id;
     private Product product;
@@ -13,7 +13,7 @@ public class Inventory {
     private int quantity;
     private Timestamp lastUpdate;
 
-    public Inventory(Integer id, Product product, Integer productId, String barCode, String productName, int quantity, Timestamp lastUpdate) {
+    public Stock(Integer id, Product product, Integer productId, String barCode, String productName, int quantity, Timestamp lastUpdate) {
         this.id = id;
         this.product = product;
         this.productId = productId;
@@ -21,6 +21,12 @@ public class Inventory {
         this.productName = productName;
         this.quantity = quantity;
         this.lastUpdate = lastUpdate;
+    }
+
+    public Stock(int id, Product product){
+        this.product = product;
+        this.quantity = 10;
+        this.id = id;
     }
 
     public Integer getId() {

@@ -5,7 +5,6 @@ import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 public class Supplier {
     private Integer id;
     private String name;
-    PaymentMethod pay;
 
     public Supplier(Integer id, String name) {
         this.id = id;

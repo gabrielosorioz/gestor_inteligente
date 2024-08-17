@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+
+<TableView fx:id="inventoryTable" minHeight="160.0" prefWidth="1140.0" stylesheets="@../../css/stockTableView.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.controller.StockTableViewController">
+      <columns>
+          <TableColumn fx:id="idCol" maxWidth="129.0" minWidth="-Infinity" prefWidth="120.0" style="-fx-alignment: center;" text="Código" />
+          <TableColumn fx:id="descriptionCol" maxWidth="430.0" minWidth="400.0" prefWidth="410.0" style="-fx-alignment: center;" text="Descrição" />
+          <TableColumn fx:id="costPriceCol" maxWidth="203.0" minWidth="160.0" prefWidth="160.0" style="-fx-alignment: center;" text="Preço de custo" />
+          <TableColumn fx:id="sellingPriceCol" maxWidth="170.0" minWidth="154.0" prefWidth="160.0" style="-fx-alignment: center;" text="Preço de venda" />
+          <TableColumn fx:id="inventoryColumn" maxWidth="140.0" minWidth="102.0" prefWidth="130.0" style="-fx-alignment: center;" text="Estoque" />
+          <TableColumn fx:id="categoryColumn" maxWidth="156.0" minWidth="106.0" prefWidth="140.0" style="-fx-alignment: center;" text="Categoria" />
+      </columns>
+  </TableView>

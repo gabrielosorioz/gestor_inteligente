@@ -18,7 +18,6 @@ public class Sale {
     private BigDecimal totalPrice;
     private BigDecimal totalDiscount;
     private List<Payment> paymentMethods;
-    private Cliente cliente;
     private String status;
 
     public Sale (List<SaleProduct> items){
@@ -40,7 +39,7 @@ public class Sale {
 
     }
 
-    public Sale(Integer id, Integer saleId, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal totalPrice, BigDecimal totalDiscount, List<Payment> paymentMethods, Cliente cliente, String status) {
+    public Sale(Integer id, Integer saleId, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal totalPrice, BigDecimal totalDiscount, List<Payment> paymentMethods,String status) {
         this.id = id;
         this.saleId = saleId;
         this.dataSale = dataSale;
@@ -49,7 +48,6 @@ public class Sale {
         this.totalPrice = totalPrice;
         this.totalDiscount = totalDiscount;
         this.paymentMethods = paymentMethods;
-        this.cliente = cliente;
         this.status = status;
     }
 
@@ -122,13 +120,6 @@ public class Sale {
         return paymentMethods;
     }
 
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
 
     public String getStatus() {
         return status;

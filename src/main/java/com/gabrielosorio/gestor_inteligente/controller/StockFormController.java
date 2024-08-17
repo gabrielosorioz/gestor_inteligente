@@ -6,18 +6,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class RegisterProductController implements Initializable {
+public class StockFormController implements Initializable {
 
     @FXML
     private TextField idField,barCodeField,descriptionField,costPriceField,sellingPriceField,
-    profitPercentField,quantityField;
+    markupField,quantityField;
 
     @FXML
     private TextField categoryField,supplierField;
@@ -45,7 +44,7 @@ public class RegisterProductController implements Initializable {
                 idField,
                 barCodeField,descriptionField,
                 costPriceField,sellingPriceField,
-                profitPercentField,quantityField)
+                markupField,quantityField)
         );
 
         setUpperCaseField(fields);

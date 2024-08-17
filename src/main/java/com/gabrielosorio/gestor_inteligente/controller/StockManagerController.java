@@ -74,7 +74,7 @@ public class StockManagerController implements Initializable {
     private void loadStockForm(){
         try {
 
-            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/register/StockRegisterForm.fxml"));
+            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockRegisterForm.fxml"));
             loader.setController(new StockFormController());
             stockForm = loader.load();
             controller = loader.getController();

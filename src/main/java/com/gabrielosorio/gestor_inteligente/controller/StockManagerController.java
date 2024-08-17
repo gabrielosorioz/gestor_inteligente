@@ -102,7 +102,7 @@ public class StockManagerController implements Initializable {
 
     private void loadTableView(){
         try {
-            TableView tableView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/register/StockTableView.fxml"));
+            TableView tableView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/stock/StockTableView.fxml"));
             AnchorPane.setTopAnchor(tableView,252.00);
             AnchorPane.setRightAnchor(tableView,105.00);
             AnchorPane.setBottomAnchor(tableView,148.00);

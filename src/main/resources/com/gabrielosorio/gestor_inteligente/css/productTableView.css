@@ -7,13 +7,13 @@
 .label {
     -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
-    -fx-font-size: 20px;
+    -fx-font-size: 18px;
 }
 
 .header {
     -fx-border-width: 0 0 2.0 0px;
     -fx-border-color: #ACACAC;
-    -fx-background-color: #d6d6d6;
+    -fx-background-color: #dedede;
     -fx-background-radius: 15 15 0 0px;
 }
 
@@ -25,6 +25,7 @@
 
 .item:hover {
     -fx-background-color: #F1F1F1;
+    -fx-cursor: hand;
 }
 
 .item-qtd {
@@ -35,7 +36,8 @@
 .item-qtd-field {
     -fx-alignment: center;
     -fx-font-family: 'Poppins';
-    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
     -fx-background-color: #d8d8d8;
     -fx-background-radius: 5px;
     -fx-border-color: transparent;
@@ -44,6 +46,25 @@
 .item-qtd-field:hover {
     -fx-background-color: #a8a8a8;
 }
+
+.item-category-field {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+
+.icon-trash {
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-background-color: #d8d8d8;
+    -fx-cursor: hand;
+}
+
+.icon-trash:hover {
+    -fx-background-color: #a8a8a8;
+}
+
 
 .scroll-bar {
     -fx-background-color: transparent;

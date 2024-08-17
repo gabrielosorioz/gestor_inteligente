@@ -5,12 +5,16 @@ import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
+import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 import java.math.BigDecimal;
@@ -52,6 +56,11 @@ public class StockTableViewController implements Initializable {
         inventoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
         sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getSellingPrice().toPlainString()));
 
+        // set monetary label
+        monetaryLabel(costPriceCol);
+        monetaryLabel(sellingPriceCol);
+
+
         // Remove resizable and reorderable properties
         categoryColumn.setResizable(false);
         costPriceCol.setResizable(false);
@@ -66,31 +75,6 @@ public class StockTableViewController implements Initializable {
         idCol.setReorderable(false);
         inventoryColumn.setReorderable(false);
         sellingPriceCol.setReorderable(false);
-    }
-
-
-
-
-    private void setUpTableView() {
-        inventoryTable.setRowFactory(new Callback<TableView<Stock>, TableRow<Stock>>() {
-            @Override
-            public TableRow<Stock> call(TableView<Stock> tableView) {
-                TableRow<Stock> row = new TableRow<Stock>() {
-                    @Override
-                    protected void updateItem(Stock item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item == null || empty) {
-                            setPrefHeight(30); // Altura da linha
-                            setGraphic(null);
-                            setText(null);
-                        } else {
-                            setPrefHeight(68);
-                        }
-                    }
-                };
-                return row;
-            }
-        });
     }
 
     private Product createExampleProduct(int id, String description, BigDecimal costPrice, BigDecimal sellingPrice) {
@@ -115,14 +99,40 @@ public class StockTableViewController implements Initializable {
                 .build();
     }
 
+    private void monetaryLabel(TableColumn<Stock,String> currencyColumn){
+        currencyColumn.setCellFactory(column -> {
+            TableCell<Stock, String> cell = new TableCell<>() {
+                private final Label currencyLabel = new Label("R$");
+                private final Text valueText = new Text();
+
+                {
+                    HBox hbox = new HBox(5, currencyLabel, valueText);
+                    hbox.setAlignment(Pos.CENTER);
+                    setGraphic(hbox);
+                    setText(null);
+                }
+
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setGraphic(null);
+                    } else {
+                        valueText.setText(item);
+                        setGraphic(getGraphic());
+                    }
+                }
+            };
+            return cell;
+        });
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();
-        setUpTableView();
 
         // Creating 10 different products
         for (int i = 1; i <= 10; i++) {
-            Product product = createExampleProduct(i, "Produto " + i, new BigDecimal("100.00").add(new BigDecimal(i * 10)), new BigDecimal("150.00").add(new BigDecimal(i * 15)));
+            Product product = createExampleProduct(i, "Produto " + i, new BigDecimal("100.00").add(new BigDecimal(i * 10)), new BigDecimal("1500.00").add(new BigDecimal(i * 15)));
             stockList.add(new Stock(i, product)); // Assuming quantity of 10 for each product
         }
 

@@ -37,7 +37,7 @@ public class FrontCheckoutController implements Initializable {
 
 
     private Tab getCheckoutTab() throws IOException {
-        FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/checkout-tab.fxml"));
+        FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/CheckoutTab.fxml"));
         Tab newTab = loader.load();
         CheckoutTabController controller = loader.getController();
         newTab.setText("Caixa " + (++tabCounter));

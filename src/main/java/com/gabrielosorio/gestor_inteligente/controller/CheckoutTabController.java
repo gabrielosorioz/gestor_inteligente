@@ -68,6 +68,7 @@ public class CheckoutTabController implements Initializable {
                     .barCode(String.valueOf(barCode))
                     .productId(productId)
                     .description("Product " + (i + 1))
+                    .costPrice(new BigDecimal("10.00"))
                     .sellingPrice(new BigDecimal("17.99"))
                     .build();
 
@@ -195,7 +196,7 @@ public class CheckoutTabController implements Initializable {
             SaleProduct newItemSaleView = getItemSale(id);
 
             try {
-                FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/product-item.fxml"));
+                FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/ProductItem.fxml"));
                 ProductItemController controller = new ProductItemController((++itemCounter), newItemSaleView);
                 loader.setController(controller);
 
@@ -279,7 +280,7 @@ public class CheckoutTabController implements Initializable {
     private void showPaymentView(Sale sale){
 
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/payment-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/PaymentView.fxml"));
             Stage paymentRoot = new Stage();
             PaymentViewController controller = new PaymentViewController(sale);
             fxmlLoader.setController(controller);

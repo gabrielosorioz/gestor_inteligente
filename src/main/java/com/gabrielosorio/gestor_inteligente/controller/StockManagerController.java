@@ -133,7 +133,7 @@ public class StockManagerController implements Initializable {
 
                             setOnMouseClicked(mouseEvent -> {
                                 Stock selectedItem = tableView.getSelectionModel().getSelectedItem();
-                                controller.setInventory(selectedItem);
+                                controller.setStock(selectedItem);
                                 toggleStockForm();
                             });
                         }

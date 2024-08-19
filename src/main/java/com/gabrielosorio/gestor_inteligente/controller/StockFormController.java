@@ -1,19 +1,33 @@
 package com.gabrielosorio.gestor_inteligente.controller;
+import com.gabrielosorio.gestor_inteligente.model.Category;
+import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
+import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.utils.AutoCompleteField;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 public class StockFormController implements Initializable {
+
+    private final Logger log = Logger.getLogger(getClass().getName());
 
     @FXML
     private TextField idField,barCodeField,descriptionField,costPriceField,sellingPriceField,
@@ -30,15 +44,76 @@ public class StockFormController implements Initializable {
 
     private Stock stock;
 
+    ArrayList<String> categories = new ArrayList<>();
 
-    ArrayList<String> categories = new ArrayList<>(Arrays.asList("Cozinha", "Caneca", "Brinquedos", "Dia dos pais", "Dia das mães",
-            "Dia dos namorados", "Cozinha utensílios"));
-    ArrayList<String> suppliers = new ArrayList<>(Arrays.asList("Loja 1","Loja 2", "Fornecedor X", "Fornecedor Y"));
-
+    ArrayList<String> suppliers = new ArrayList<>();
 
     public void setStock(Stock stock){
         this.stock = stock;
         populateFields();
+    }
+
+    private void fetchCategoryData(){
+        String filePath = "src/main/resources/com/gabrielosorio/gestor_inteligente/data/categories.json";
+        try(BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+
+            StringBuilder jsonString = new StringBuilder();
+
+            String line;
+
+            while((line = reader.readLine()) != null){
+                jsonString.append(line);
+            }
+
+            JSONArray jsonArray = new JSONArray(jsonString.toString());
+
+            jsonArray.forEach(jsonObject -> {
+                JSONObject categoryJsonObject = (JSONObject) jsonObject;
+                String description = categoryJsonObject.getString("category");
+                int id = categoryJsonObject.getInt("id");
+                final Category category = new Category(id,description);
+
+                categories.add(category.getDescription());
+
+            });
+
+        } catch (FileNotFoundException e) {
+            System.out.println("Arquivo json das categorias não foi encontrado " + e.getMessage());
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            System.out.println("Arquivo json das categorias não foi encontrado " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void fetchSupplierData(){
+        String filePath = "src/main/resources/com/gabrielosorio/gestor_inteligente/data/suppliers.json";
+        try(BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            StringBuilder jsonString = new StringBuilder();
+            String line;
+
+            while((line = reader.readLine()) != null){
+                jsonString.append(line);
+            }
+
+            JSONArray jsonArray = new JSONArray(jsonString.toString());
+
+            jsonArray.forEach(e ->{
+                JSONObject supplierJsonObject = (JSONObject) e;
+                String description = supplierJsonObject.getString("name");
+                int id = supplierJsonObject.getInt("id");
+                final Supplier supplier = new Supplier(id,description);
+                suppliers.add(supplier.getName());
+            });
+
+        } catch (FileNotFoundException e) {
+            log.severe("Error loading suppliers json, file not founded" + e.getMessage());
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            log.severe("Error loading suppliers json" + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void populateFields() {
@@ -77,6 +152,8 @@ public class StockFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        fetchSupplierData();
+        fetchCategoryData();
         List<TextField> fields = new ArrayList<>(Arrays.asList(
                 idField,
                 barCodeField,descriptionField,

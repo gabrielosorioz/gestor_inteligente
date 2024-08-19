@@ -1,11 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.controller;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
-import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.model.Supplier;
-import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -15,17 +11,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.Duration;
-
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -44,7 +34,7 @@ public class StockManagerController implements Initializable {
 
     private AnchorPane stockForm;
 
-    private StockFormController controller;
+    private StockFormController stockController;
 
     private boolean isStockFormVisible;
 
@@ -77,7 +67,7 @@ public class StockManagerController implements Initializable {
             FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockRegisterForm.fxml"));
             loader.setController(new StockFormController());
             stockForm = loader.load();
-            controller = loader.getController();
+            stockController = loader.getController();
             mainContent.getChildren().add(stockForm);
             AnchorPane.setLeftAnchor(stockForm,550.0);
             AnchorPane.setRightAnchor(stockForm,0.0);
@@ -110,6 +100,7 @@ public class StockManagerController implements Initializable {
             setCellEvent(tableView);
             mainContent.getChildren().add(0,tableView);
         } catch (IOException e) {
+            log.severe("Error loading StockTableView :" + e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -132,9 +123,8 @@ public class StockManagerController implements Initializable {
                             setPrefHeight(68);
 
                             setOnMouseClicked(mouseEvent -> {
-                                Stock selectedItem = tableView.getSelectionModel().getSelectedItem();
-                                controller.setStock(selectedItem);
-                                toggleStockForm();
+                                Stock selectedStockItem = tableView.getSelectionModel().getSelectedItem();
+                                showStockData(selectedStockItem);
                             });
                         }
                     }
@@ -144,16 +134,15 @@ public class StockManagerController implements Initializable {
         });
     }
 
-
+    private void showStockData(Stock stock){
+        stockController.setStock(stock);
+        toggleStockForm();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadStockForm();
         loadTableView();
-
-        productLabel.setOnMouseClicked(mouseEvent -> {
-            toggleStockForm();
-        });
 
         shadow.setOnMouseClicked(mouseEvent -> {
             toggleStockForm();

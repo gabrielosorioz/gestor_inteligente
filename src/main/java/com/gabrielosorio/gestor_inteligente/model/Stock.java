@@ -1,7 +1,10 @@
 package com.gabrielosorio.gestor_inteligente.model;
 
 
+import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
+
 import java.sql.Timestamp;
+import java.util.Random;
 
 public class Stock {
 
@@ -23,10 +26,11 @@ public class Stock {
         this.lastUpdate = lastUpdate;
     }
 
-    public Stock(int id, Product product){
+    public Stock(Product product){
+        ProductValidator.validate(product);
         this.product = product;
-        this.quantity = 10;
-        this.id = id;
+        Random random = new Random();
+        this.quantity = random.nextInt(100) + 1;
     }
 
     public Integer getId() {
@@ -84,4 +88,6 @@ public class Stock {
     public void setLastUpdate(Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
+
+
 }

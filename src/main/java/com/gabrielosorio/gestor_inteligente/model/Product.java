@@ -1,10 +1,10 @@
 package com.gabrielosorio.gestor_inteligente.model;
 
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
-
+import com.gabrielosorio.gestor_inteligente.utils.ProductCalculationUtils;
+import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.Locale;
 
 public class Product {
 
@@ -16,7 +16,7 @@ public class Product {
     private BigDecimal sellingPrice;
     private Supplier supplier;
     private Category category;
-    private double profitPercent;
+    private double profitMargin;
     private double markupPercent;
     private Status status;
     private Timestamp dateCreate;
@@ -31,7 +31,7 @@ public class Product {
         this.description = productBuilder.description;
         this.costPrice = productBuilder.costPrice;
         this.sellingPrice = productBuilder.sellingPrice;
-        this.profitPercent = productBuilder.profitPercent;
+        this.profitMargin = productBuilder.profitMargin;
         this.status = productBuilder.status;
         this.dateCreate = productBuilder.dateCreate;
         this.dateUpdate = productBuilder.dateUpdate;
@@ -53,7 +53,7 @@ public class Product {
         private String description;
         private BigDecimal costPrice;
         private BigDecimal sellingPrice;
-        private double profitPercent;
+        private double profitMargin;
         private double markupPercent;
         private Status status;
         private Timestamp dateCreate;
@@ -68,7 +68,7 @@ public class Product {
         }
 
         public ProductBuilder productId(Integer productId){
-            this.productId = productId ;
+            this.productId = productId;
             return this;
         }
 
@@ -89,11 +89,6 @@ public class Product {
 
         public ProductBuilder sellingPrice(BigDecimal sellingPrice){
             this.sellingPrice = sellingPrice;
-            return this;
-        }
-
-        public ProductBuilder profitPercent(double profitPercent){
-            this.profitPercent = profitPercent;
             return this;
         }
 
@@ -127,31 +122,24 @@ public class Product {
             return this;
         }
 
-        public ProductBuilder markupPercent(double markupPercent){
-            this.markupPercent = markupPercent;
-            return this;
-        }
-
 
         public Product build() {
-            if (costPrice == null || sellingPrice == null) {
-                throw new IllegalArgumentException("Cost price and selling price must not be null");
-            }
-            if (sellingPrice.compareTo(costPrice) <= 0) {
-                throw new IllegalArgumentException("Selling price must be greater than cost price");
-            }
-
-            BigDecimal grossMargin = sellingPrice.subtract(costPrice);
-            BigDecimal percentProfitMargin = grossMargin.divide(sellingPrice, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
-            this.profitPercent = percentProfitMargin.doubleValue();
-
-            BigDecimal markup = grossMargin.divide(costPrice, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
-            this.markupPercent = markup.doubleValue();
-
-            return new Product(this);
+            this.markupPercent = ProductCalculationUtils.calculateMarkup(this.costPrice,this.sellingPrice);
+            this.profitMargin = ProductCalculationUtils.calculateProfitMargin(this.costPrice,this.sellingPrice);
+            Product product = new Product(this);
+            ProductValidator.validate(product);
+            return product;
         }
 
+    }
 
+    private void validate() {
+        ProductValidator.validate(this);
+    }
+
+    private void updateCalculations(){
+        this.markupPercent = ProductCalculationUtils.calculateMarkup(this.costPrice,this.sellingPrice);
+        this.profitMargin = ProductCalculationUtils.calculateProfitMargin(this.costPrice,this.sellingPrice);
     }
 
 
@@ -180,7 +168,7 @@ public class Product {
     }
 
     public double getProfitPercent() {
-        return profitPercent;
+        return profitMargin;
     }
 
     public Status getStatus() {
@@ -209,5 +197,68 @@ public class Product {
 
     public double getMarkupPercent() {
         return markupPercent;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setProductID(Integer productID) {
+        this.productID = productID;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCostPrice(BigDecimal costPrice) {
+        ProductValidator.validatePrices(costPrice,this.sellingPrice);
+        this.costPrice = costPrice;
+        validate();
+        updateCalculations();
+    }
+
+    public void setSellingPrice(BigDecimal sellingPrice) {
+        ProductValidator.validatePrices(this.costPrice,sellingPrice);
+        this.sellingPrice = sellingPrice;
+        updateCalculations();
+        validate();
+    }
+
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setProfitPercent(double profitMargin) {
+        this.profitMargin = profitMargin;
+    }
+
+    public void setMarkupPercent(double markupPercent) {
+        this.markupPercent = markupPercent;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public void setDateCreate(Timestamp dateCreate) {
+        this.dateCreate = dateCreate;
+    }
+
+    public void setDateUpdate(Timestamp dateUpdate) {
+        this.dateUpdate = dateUpdate;
+    }
+
+    public void setDateDelete(Timestamp dateDelete) {
+        this.dateDelete = dateDelete;
     }
 }

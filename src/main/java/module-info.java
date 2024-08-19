@@ -3,6 +3,7 @@ module com.example.gestor_inteligente {
     requires javafx.fxml;
     requires java.sql;
     requires com.jfoenix;
+    requires org.json;
 
 
     opens com.gabrielosorio.gestor_inteligente to javafx.fxml;

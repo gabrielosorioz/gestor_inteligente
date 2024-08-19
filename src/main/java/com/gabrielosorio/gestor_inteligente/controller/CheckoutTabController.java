@@ -4,6 +4,7 @@ import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -58,26 +59,14 @@ public class CheckoutTabController implements Initializable {
     private final Logger log = Logger.getLogger(getClass().getName());
 
 
-    private HashMap<String, Product> generateProducts() {
-        HashMap<String, Product> productData = new HashMap<>();
-
-        for (int i = 0; i < 10; i++) {
-            int barCode = 1000 + i;
-            int productId = 2000 + i;
-            Product product = Product.builder()
-                    .barCode(String.valueOf(barCode))
-                    .productId(productId)
-                    .description("Product " + (i + 1))
-                    .costPrice(new BigDecimal("10.00"))
-                    .sellingPrice(new BigDecimal("17.99"))
-                    .build();
-
-            // adds product with product id and barcode as a key
-            productData.put(String.valueOf(product.getProductID()), product);
-            productData.put(product.getBarCode(), product);
-        }
-
-        return productData;
+    private void fetchProductsData() {
+        StockDataUtils.fetchStockData().forEach(item -> {
+            Product product = item.getProduct();
+            String productId = String.valueOf(product.getProductID());
+            String barCode = product.getBarCode();
+            productData.put(productId,product);
+            productData.put(barCode,product);
+        });
     }
 
     private void addEventOnQtdField(){
@@ -303,10 +292,7 @@ public class CheckoutTabController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
-        productData = generateProducts();
-
+        fetchProductsData();
         btnAddCheckout.setOnMouseClicked(event -> {
             FCKController.addNewTab();
         });

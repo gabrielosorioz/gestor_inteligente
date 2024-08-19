@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "category": "Eletrodomésticos"
+  },
+  {
+    "id": 2,
+    "category": "Cozinha"
+  },
+  {
+    "id": 3,
+    "category": "Utensílios de Cozinha"
+  },
+  {
+    "id": 4,
+    "category": "Cama e Banho"
+  },
+  {
+    "id": 5,
+    "category": "Móveis"
+  },
+  {
+    "id": 6,
+    "category": "Climatização"
+  },
+  {
+    "id": 7,
+    "category": "Utensílios de Passar"
+  }
+]

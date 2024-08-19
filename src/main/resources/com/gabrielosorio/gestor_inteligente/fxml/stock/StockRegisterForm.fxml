@@ -41,14 +41,14 @@
          </padding>
       </TextField>
       <Label layoutX="560.0" layoutY="230.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Margem de acréscimo" AnchorPane.leftAnchor="560.0" />
-      <TextField fx:id="supplierField" layoutX="384.0" layoutY="339.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira o fornecedor" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.bottomAnchor="361.0" />
-      <Label layoutX="387.0" layoutY="310.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Fornecedor" AnchorPane.bottomAnchor="407.0" />
-      <Label layoutX="33.0" layoutY="310.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Categoria" AnchorPane.bottomAnchor="407.0" AnchorPane.leftAnchor="30.0" />
-      <ListView fx:id="supplierList" layoutX="384.0" layoutY="379.0" maxHeight="130.0" maxWidth="320.0" prefHeight="137.0" prefWidth="320.0" />
+      <TextField fx:id="supplierField" layoutX="384.0" layoutY="369.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira o fornecedor" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.bottomAnchor="331.0" />
+      <Label layoutX="387.0" layoutY="340.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Fornecedor" AnchorPane.bottomAnchor="377.0" />
+      <Label layoutX="30.0" layoutY="340.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Categoria" AnchorPane.bottomAnchor="377.0" AnchorPane.leftAnchor="30.0" />
+      <ListView fx:id="supplierList" layoutX="384.0" layoutY="409.0" maxHeight="130.0" maxWidth="320.0" prefHeight="137.0" prefWidth="320.0" />
       <Label layoutX="33.0" layoutY="266.0" styleClass="field-lbl" stylesheets="@../../css/registerProduct.css" text="R$" />
       <Label layoutX="304.0" layoutY="266.0" styleClass="field-lbl" stylesheets="@../../css/registerProduct.css" text="R$" />
       <Label layoutX="568.0" layoutY="267.0" styleClass="field-lbl" stylesheets="@../../css/registerProduct.css" text="(%)" />
-      <TextField fx:id="categoryField" layoutX="29.0" layoutY="339.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira a categoria" styleClass="field" stylesheets="@../../css/registerProduct.css" />
-      <ListView fx:id="categoryList" layoutX="29.0" layoutY="379.0" maxHeight="130.0" maxWidth="320.0" prefHeight="137.0" prefWidth="320.0" />
+      <TextField fx:id="categoryField" layoutX="29.0" layoutY="369.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira a categoria" styleClass="field" stylesheets="@../../css/registerProduct.css" />
+      <ListView fx:id="categoryList" layoutX="29.0" layoutY="409.0" maxHeight="130.0" maxWidth="320.0" prefHeight="137.0" prefWidth="320.0" />
    </children>
 </AnchorPane>

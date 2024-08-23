@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class StockFormController implements Initializable {
+public class StockRegisterFormController implements Initializable {
 
     private final Logger log = Logger.getLogger(getClass().getName());
 

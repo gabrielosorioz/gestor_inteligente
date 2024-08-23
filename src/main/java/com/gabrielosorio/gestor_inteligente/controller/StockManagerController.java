@@ -34,7 +34,7 @@ public class StockManagerController implements Initializable {
 
     private AnchorPane stockForm;
 
-    private StockFormController stockController;
+    private StockRegisterFormController stockController;
 
     private boolean isStockFormVisible;
 
@@ -65,7 +65,7 @@ public class StockManagerController implements Initializable {
         try {
 
             FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockRegisterForm.fxml"));
-            loader.setController(new StockFormController());
+            loader.setController(new StockRegisterFormController());
             stockForm = loader.load();
             stockController = loader.getController();
             mainContent.getChildren().add(stockForm);

@@ -92,7 +92,10 @@ public class StockManagerController implements Initializable {
 
     private void loadTableView(){
         try {
-            TableView tableView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/stock/StockTableView.fxml"));
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockTableView.fxml"));
+            StockTableViewController stockTableViewController = new StockTableViewController();
+            loader.setController(stockTableViewController);
+            TableView tableView = loader.load();
             AnchorPane.setTopAnchor(tableView,252.00);
             AnchorPane.setRightAnchor(tableView,105.00);
             AnchorPane.setBottomAnchor(tableView,148.00);
@@ -141,8 +144,8 @@ public class StockManagerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loadStockForm();
         loadTableView();
+        loadStockForm();
 
         shadow.setOnMouseClicked(mouseEvent -> {
             toggleStockForm();

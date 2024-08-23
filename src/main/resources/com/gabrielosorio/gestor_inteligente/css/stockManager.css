@@ -1,7 +1,15 @@
 @font-face {
     font-family: 'Poppins';
-    src: url('../font/poppins/Poppins-Bold.ttf');
+    src: url('../font/poppins/Poppins-Regular.ttf');
+    font-weight: normal;
 }
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Bold.ttf');
+    font-weight: bold;
+}
+
 
 
 .search-field {
@@ -49,6 +57,10 @@
     -fx-background-color: #9700ff;
 }
 
+.btn-add:hover {
+    -fx-cursor: hand;
+}
+
 .btn-filter {
     -fx-border-width: 1.5px;
     -fx-border-color: #cccccc;
@@ -60,8 +72,12 @@
 .label-btn-add {
     -fx-font-size: 14px;
     -fx-font-family: 'Poppins';
-    -fx-font-weight: normal;
+    -fx-font-weight: bold;
     -fx-text-fill: #fff;
+}
+
+.label-btn-add:hover {
+    -fx-cursor: hand;
 }
 
 .header {

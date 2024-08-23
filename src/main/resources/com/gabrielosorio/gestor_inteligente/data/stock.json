@@ -1,0 +1,274 @@
+[
+    {
+        "product": {
+            "productId": 100,
+            "costPrice": "100.00",
+            "description": "LIQUIDIFICADOR TURBO 600W",
+            "dateCreate": "2024-08-22 21:17:31.507",
+            "barCode": "999",
+            "sellingPrice": "200.00",
+            "markupPercent": 100,
+            "profitPercent": 50,
+            "dateUpdate": "2024-08-23 12:24:49.239400114",
+            "supplier": {
+                "supplier": "ELETRODOMÉSTICOS",
+                "name": "ELETRODOMÉSTICOS",
+                "id": 12
+            },
+            "id": 1,
+            "category": {
+                "description": "ELETRODOMÉSTICOS",
+                "id": 12
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 10,
+        "lastUpdate": "2024-08-23 12:24:49.239400114",
+        "id": 1
+    },
+    {
+        "product": {
+            "productId": 101,
+            "costPrice": "100.00",
+            "description": "PANELA DE PRESSÃO 4L",
+            "dateCreate": "2024-08-22 21:07:44.472000000",
+            "barCode": "2345678901234",
+            "sellingPrice": "129.9",
+            "markupPercent": 29.9,
+            "profitPercent": 23.02,
+            "dateUpdate": "2024-08-22 21:07:44.472000000",
+            "supplier": {
+                "supplier": "Cozinha",
+                "name": "CozinhaTop",
+                "id": 102
+            },
+            "id": 2,
+            "category": {
+                "description": "Cozinha",
+                "id": 2
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 12,
+        "lastUpdate": "2024-08-16 12:05:00.000000000",
+        "id": 2
+    },
+    {
+        "product": {
+            "productId": 102,
+            "costPrice": "70.00",
+            "description": "Conjunto de Facas 6 Peças",
+            "dateCreate": "2024-08-16 10:10:00.000000000",
+            "barCode": "3456789012345",
+            "sellingPrice": "89.90",
+            "markupPercent": 28.43,
+            "profitPercent": 21,
+            "dateUpdate": "2024-08-16 12:10:00.000000000",
+            "supplier": {
+                "name": "UtensílioPerfeito",
+                "id": 103
+            },
+            "id": 3,
+            "category": {
+                "description": "Utensílios de Cozinha",
+                "id": 3
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 20,
+        "lastUpdate": "2024-08-16 12:10:00.000000000",
+        "id": 3
+    },
+    {
+        "product": {
+            "productId": 103,
+            "costPrice": "270.00",
+            "description": "Aspirador de Pó Vertical",
+            "dateCreate": "2024-08-16 10:15:00.000000000",
+            "barCode": "4567890123456",
+            "sellingPrice": "349.99",
+            "markupPercent": 29.6,
+            "profitPercent": 29.6,
+            "dateUpdate": "2024-08-16 12:15:00.000000000",
+            "supplier": {
+                "name": "LimpezaFácil",
+                "id": 104
+            },
+            "id": 4,
+            "category": {
+                "description": "Eletrodomésticos",
+                "id": 4
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 10,
+        "lastUpdate": "2024-08-16 12:15:00.000000000",
+        "id": 4
+    },
+    {
+        "product": {
+            "productId": 104,
+            "costPrice": "80.00",
+            "description": "Jogo de Toalhas 6 Peças",
+            "dateCreate": "2024-08-16 10:20:00.000000000",
+            "barCode": "5678901234567",
+            "sellingPrice": "99.99",
+            "markupPercent": 24.99,
+            "profitPercent": 24.99,
+            "dateUpdate": "2024-08-16 12:20:00.000000000",
+            "supplier": {
+                "name": "ConfortoCasa",
+                "id": 105
+            },
+            "id": 5,
+            "category": {
+                "description": "Cama e Banho",
+                "id": 5
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 25,
+        "lastUpdate": "2024-08-16 12:20:00.000000000",
+        "id": 5
+    },
+    {
+        "product": {
+            "productId": 105,
+            "costPrice": "700.00",
+            "description": "Sofá 3 Lugares Veludo",
+            "dateCreate": "2024-08-16 10:25:00.000000000",
+            "barCode": "6789012345678",
+            "sellingPrice": "899.99",
+            "markupPercent": 28.57,
+            "profitPercent": 28.57,
+            "dateUpdate": "2024-08-16 12:25:00.000000000",
+            "supplier": {
+                "name": "MóveisElegantes",
+                "id": 106
+            },
+            "id": 6,
+            "category": {
+                "description": "Móveis",
+                "id": 6
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 5,
+        "lastUpdate": "2024-08-16 12:25:00.000000000",
+        "id": 6
+    },
+    {
+        "product": {
+            "productId": 106,
+            "costPrice": "120.00",
+            "description": "Ferro de Passar a Vapor",
+            "dateCreate": "2024-08-16 10:30:00.000000000",
+            "barCode": "7890123456789",
+            "sellingPrice": "149.99",
+            "markupPercent": 24.9,
+            "profitPercent": 24.9,
+            "dateUpdate": "2024-08-16 12:30:00.000000000",
+            "supplier": {
+                "name": "PassaRápido",
+                "id": 107
+            },
+            "id": 7,
+            "category": {
+                "description": "Eletrodomésticos",
+                "id": 7
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 15,
+        "lastUpdate": "2024-08-16 12:30:00.000000000",
+        "id": 7
+    },
+    {
+        "product": {
+            "productId": 107,
+            "costPrice": "45.00",
+            "description": "Balança Digital de Cozinha",
+            "dateCreate": "2024-08-16 10:35:00.000000000",
+            "barCode": "8901234567890",
+            "sellingPrice": "59.99",
+            "markupPercent": 25,
+            "profitPercent": 25,
+            "dateUpdate": "2024-08-16 12:35:00.000000000",
+            "supplier": {
+                "name": "PrecisãoCozinha",
+                "id": 108
+            },
+            "id": 8,
+            "category": {
+                "description": "Utensílios de Cozinha",
+                "id": 8
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 40,
+        "lastUpdate": "2024-08-16 12:35:00.000000000",
+        "id": 8
+    },
+    {
+        "product": {
+            "productId": 108,
+            "costPrice": "60.00",
+            "description": "Ventilador de Mesa 30cm",
+            "dateCreate": "2024-08-16 10:40:00.000000000",
+            "barCode": "9012345678901",
+            "sellingPrice": "79.99",
+            "markupPercent": 25,
+            "profitPercent": 25,
+            "dateUpdate": "2024-08-16 12:40:00.000000000",
+            "supplier": {
+                "name": "ArVent",
+                "id": 109
+            },
+            "id": 9,
+            "category": {
+                "description": "Climatização",
+                "id": 9
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 35,
+        "lastUpdate": "2024-08-16 12:40:00.000000000",
+        "id": 9
+    },
+    {
+        "product": {
+            "productId": 109,
+            "costPrice": "150.00",
+            "description": "Tábua de Passar com Ferro Embutido",
+            "dateCreate": "2024-08-16 10:45:00.000000000",
+            "barCode": "0123456789012",
+            "sellingPrice": "199.99",
+            "markupPercent": 25,
+            "profitPercent": 25,
+            "dateUpdate": "2024-08-16 12:45:00.000000000",
+            "supplier": {
+                "name": "PassaFácil",
+                "id": 110
+            },
+            "id": 10,
+            "category": {
+                "description": "Utensílios de Passar",
+                "id": 10
+            },
+            "dateDelete": null,
+            "status": "AVAILABLE"
+        },
+        "quantity": 12,
+        "lastUpdate": "2024-08-16 12:45:00.000000000",
+        "id": 10
+    }
+]

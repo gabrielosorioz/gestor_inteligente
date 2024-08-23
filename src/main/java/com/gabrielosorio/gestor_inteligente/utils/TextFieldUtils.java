@@ -35,6 +35,7 @@ public class TextFieldUtils {
         if(!textFieldSet.contains(field)){
             field.textProperty().addListener((observableValue, oldValue, newValue) -> {
                 String formattedText = formatText(newValue);
+
                 if (!newValue.equals(formattedText)) {
                     Platform.runLater(() -> {
                         field.setText(formattedText);
@@ -74,18 +75,57 @@ public class TextFieldUtils {
         }
     }
 
-    public static BigDecimal formatCurrency(String value) throws ParseException {
-        // Define os símbolos de formato, aqui usamos o ponto como separador decimal e a vírgula como separador de milhar
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
-        symbols.setDecimalSeparator(',');
-        symbols.setGroupingSeparator('.');
+    public static BigDecimal formatCurrency(String value) {
+        value = normalizeCurrencyString(value);
+        DecimalFormat df = createDecimalFormat();
+        return parseToBigDecimal(value, df);
+    }
 
-        // Define o padrão de formato, considerando que pode haver separadores de milhar
+    // Normalizes the currency string to a format that DecimalFormat can parse
+    private static String normalizeCurrencyString(String value) {
+        value = value.trim();
+        boolean hasComma = value.contains(",");
+        boolean hasDot = value.contains(".");
+
+        if (hasComma && hasDot) {
+            if (value.indexOf(',') > value.indexOf('.')) {
+                // Comma is the decimal separator, dot is the thousand separator
+                value = value.replace(".", "");
+                value = value.replace(",", ".");
+            } else {
+                // Dot is the decimal separator
+                value = value.replace(",", "");
+            }
+        } else if (hasComma) {
+            // Only comma present, assume it's the decimal separator
+            value = value.replace(",", ".");
+        } else if (hasDot) {
+            // Only dot present, assume it's the decimal separator
+            // No changes are needed as the format is already suitable
+        }
+
+        return value;
+    }
+
+    // Creates a DecimalFormat instance with appropriate symbols
+    private static DecimalFormat createDecimalFormat() {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.US);
+        symbols.setDecimalSeparator('.'); // Set dot as the decimal separator
+        symbols.setGroupingSeparator(','); // Set comma as the thousand separator
+
         DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
         df.setParseBigDecimal(true);
+        return df;
+    }
 
-        // Converte a string para BigDecimal
-        BigDecimal bigDecimal = (BigDecimal) df.parse(value);
+    // Parses the normalized string to BigDecimal using the provided DecimalFormat
+    private static BigDecimal parseToBigDecimal(String value, DecimalFormat df) {
+        BigDecimal bigDecimal = null;
+        try {
+            bigDecimal = (BigDecimal) df.parse(value);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
         return bigDecimal;
     }
 
@@ -97,10 +137,6 @@ public class TextFieldUtils {
         TextFormatter<String> textFormatter = new TextFormatter<>(filter);
         textField.setTextFormatter(textFormatter);
     }
-
-
-
-
 
 
 }

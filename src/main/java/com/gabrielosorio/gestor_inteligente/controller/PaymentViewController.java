@@ -170,12 +170,10 @@ public class PaymentViewController implements Initializable {
     private void setPaymentValue(PaymentMethod paymentMethod, String value){
         BigDecimal newValue;
 
-        try {
-            String formattedValue = formatText(value);
-            newValue = TextFieldUtils.formatCurrency(formattedValue);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+
+        String formattedValue = formatText(value);
+        newValue = TextFieldUtils.formatCurrency(formattedValue);
+
 
         final Payment payment = paymentMethods.getOrDefault(paymentMethod, new Payment(paymentMethod));
         payment.setValue(newValue);

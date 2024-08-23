@@ -106,3 +106,37 @@
     -fx-background-color: #e0e0e0;
     -fx-background-insets: 0;
 }
+
+.btn-save {
+    -fx-background-color: #741aac;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1.5px;
+    -fx-border-color: transparent;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff;
+    -fx-font-size: 16px;
+}
+
+.btn-cancel {
+    -fx-background-color: transparent;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 7px;
+    -fx-border-width: 1.5px;
+    -fx-border-color: #741aac;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-text-fill: #741aac;
+    -fx-font-size: 16px;
+}
+
+.btn-save:hover {
+    -fx-cursor:hand;
+    -fx-background-color:#511278;
+}
+
+.btn-cancel:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #f1e8f6;
+}

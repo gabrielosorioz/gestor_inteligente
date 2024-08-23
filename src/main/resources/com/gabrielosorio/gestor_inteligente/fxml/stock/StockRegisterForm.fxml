@@ -1,54 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="productForm" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="740.0" prefWidth="750.0" style="-fx-background-color: #fff;" styleClass="form" stylesheets="@../../css/registerProduct.css" translateX="0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="productForm" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="740.0" prefWidth="750.0" style="-fx-background-color: #fff;" styleClass="form" stylesheets="@../../css/stockRegisterForm.css" translateX="0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label layoutX="30.0" layoutY="24.0" styleClass="title" stylesheets="@../../css/registerProduct.css" text="Cadastrar Produto" />
-      <Label layoutX="32.0" layoutY="56.0" prefHeight="4.0" prefWidth="50.0" styleClass="line" stylesheets="@../../css/registerProduct.css">
+      <Label layoutX="30.0" layoutY="24.0" styleClass="title" stylesheets="@../../css/stockRegisterForm.css" text="Cadastrar Produto" />
+      <Label layoutX="32.0" layoutY="56.0" prefHeight="4.0" prefWidth="50.0" styleClass="line" stylesheets="@../../css/stockRegisterForm.css">
          <font>
             <Font size="1.0" />
          </font>
       </Label>
-      <TextField fx:id="idField" layoutX="30.0" layoutY="99.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira o ID" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.leftAnchor="30.0" />
-      <TextField fx:id="descriptionField" layoutX="30.0" layoutY="175.0" prefHeight="40.0" prefWidth="463.0" promptText="Insira a descrição" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.bottomAnchor="525.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="257.0" />
-      <Label layoutX="30.0" layoutY="73.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="ID" AnchorPane.leftAnchor="30.0" />
-      <Label layoutX="30.0" layoutY="147.0" prefHeight="20.0" prefWidth="197.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Descrição" AnchorPane.leftAnchor="30.0" />
-      <TextField fx:id="barCodeField" layoutX="384.0" layoutY="99.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira o código de barras" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.bottomAnchor="601.0" AnchorPane.leftAnchor="384.0" />
-      <Label layoutX="386.0" layoutY="72.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Código de barras (EAN)" AnchorPane.leftAnchor="386.0" />
-      <TextField fx:id="sellingPriceField" layoutX="297.0" layoutY="258.0" prefHeight="40.0" prefWidth="240.0" promptText="Insira o preço de Venda" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.bottomAnchor="442.0" AnchorPane.rightAnchor="213.0">
+      <TextField fx:id="idField" layoutX="30.0" layoutY="99.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira o ID" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" AnchorPane.leftAnchor="30.0" />
+      <TextField fx:id="descriptionField" layoutX="30.0" layoutY="175.0" prefHeight="40.0" prefWidth="463.0" promptText="Insira a descrição" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" AnchorPane.bottomAnchor="525.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="257.0" />
+      <Label layoutX="30.0" layoutY="73.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="ID" AnchorPane.leftAnchor="30.0" />
+      <Label layoutX="30.0" layoutY="147.0" prefHeight="20.0" prefWidth="197.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="Descrição" AnchorPane.leftAnchor="30.0" />
+      <TextField fx:id="barCodeField" layoutX="384.0" layoutY="99.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira o código de barras" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" AnchorPane.bottomAnchor="601.0" AnchorPane.leftAnchor="384.0" />
+      <Label layoutX="386.0" layoutY="72.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="Código de barras (EAN)" AnchorPane.leftAnchor="386.0" />
+      <TextField fx:id="sellingPriceField" layoutX="297.0" layoutY="258.0" prefHeight="40.0" prefWidth="240.0" promptText="Insira o preço de Venda" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" AnchorPane.bottomAnchor="442.0" AnchorPane.rightAnchor="213.0">
          <padding>
             <Insets left="30.0" />
          </padding>
       </TextField>
-      <Label layoutX="297.0" layoutY="231.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Preço de Venda" />
-      <TextField fx:id="costPriceField" layoutX="26.0" layoutY="258.0" prefHeight="40.0" prefWidth="240.0" promptText="Insira o preço de custo" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.bottomAnchor="442.0" AnchorPane.leftAnchor="26.0">
+      <Label layoutX="297.0" layoutY="231.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="Preço de Venda" />
+      <TextField fx:id="costPriceField" layoutX="26.0" layoutY="258.0" prefHeight="40.0" prefWidth="240.0" promptText="Insira o preço de custo" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" AnchorPane.bottomAnchor="442.0" AnchorPane.leftAnchor="26.0">
          <padding>
             <Insets left="30.0" />
          </padding>
       </TextField>
-      <Label layoutX="30.0" layoutY="231.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Preço de Custo" AnchorPane.leftAnchor="30.0" />
-      <TextField fx:id="quantityField" layoutX="534.0" layoutY="175.0" prefHeight="40.0" prefWidth="200.0" promptText="Insira a quantidade" styleClass="field" stylesheets="@../../css/registerProduct.css" text="1" AnchorPane.bottomAnchor="525.0" AnchorPane.rightAnchor="16.0" />
-      <Label layoutX="535.0" layoutY="147.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Quantidade" />
-      <TextField fx:id="markupField" layoutX="560.0" layoutY="258.0" prefHeight="40.0" prefWidth="163.0" promptText="Margem" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.bottomAnchor="442.0" AnchorPane.leftAnchor="560.0">
+      <Label layoutX="30.0" layoutY="231.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="Preço de Custo" AnchorPane.leftAnchor="30.0" />
+      <TextField fx:id="quantityField" layoutX="534.0" layoutY="175.0" prefHeight="40.0" prefWidth="200.0" promptText="Insira a quantidade" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" text="1" AnchorPane.bottomAnchor="525.0" AnchorPane.rightAnchor="16.0" />
+      <Label layoutX="535.0" layoutY="147.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="Quantidade" />
+      <TextField fx:id="markupField" layoutX="560.0" layoutY="258.0" prefHeight="40.0" prefWidth="163.0" promptText="Margem" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" AnchorPane.bottomAnchor="442.0" AnchorPane.leftAnchor="560.0">
          <padding>
             <Insets left="35.0" />
          </padding>
       </TextField>
-      <Label layoutX="560.0" layoutY="230.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Margem de acréscimo" AnchorPane.leftAnchor="560.0" />
-      <TextField fx:id="supplierField" layoutX="384.0" layoutY="369.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira o fornecedor" styleClass="field" stylesheets="@../../css/registerProduct.css" AnchorPane.bottomAnchor="331.0" />
-      <Label layoutX="387.0" layoutY="340.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Fornecedor" AnchorPane.bottomAnchor="377.0" />
-      <Label layoutX="30.0" layoutY="340.0" styleClass="field-name" stylesheets="@../../css/registerProduct.css" text="Categoria" AnchorPane.bottomAnchor="377.0" AnchorPane.leftAnchor="30.0" />
+      <Label layoutX="560.0" layoutY="230.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="Margem de acréscimo" AnchorPane.leftAnchor="560.0" />
+      <TextField fx:id="supplierField" layoutX="384.0" layoutY="369.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira o fornecedor" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" AnchorPane.bottomAnchor="331.0" />
+      <Label layoutX="387.0" layoutY="340.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="Fornecedor" AnchorPane.bottomAnchor="377.0" />
+      <Label layoutX="30.0" layoutY="340.0" styleClass="field-name" stylesheets="@../../css/stockRegisterForm.css" text="Categoria" AnchorPane.bottomAnchor="377.0" AnchorPane.leftAnchor="30.0" />
       <ListView fx:id="supplierList" layoutX="384.0" layoutY="409.0" maxHeight="130.0" maxWidth="320.0" prefHeight="137.0" prefWidth="320.0" />
-      <Label layoutX="33.0" layoutY="266.0" styleClass="field-lbl" stylesheets="@../../css/registerProduct.css" text="R$" />
-      <Label layoutX="304.0" layoutY="266.0" styleClass="field-lbl" stylesheets="@../../css/registerProduct.css" text="R$" />
-      <Label layoutX="568.0" layoutY="267.0" styleClass="field-lbl" stylesheets="@../../css/registerProduct.css" text="(%)" />
-      <TextField fx:id="categoryField" layoutX="29.0" layoutY="369.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira a categoria" styleClass="field" stylesheets="@../../css/registerProduct.css" />
+      <Label layoutX="33.0" layoutY="266.0" styleClass="field-lbl" stylesheets="@../../css/stockRegisterForm.css" text="R$" />
+      <Label layoutX="304.0" layoutY="266.0" styleClass="field-lbl" stylesheets="@../../css/stockRegisterForm.css" text="R$" />
+      <Label layoutX="568.0" layoutY="267.0" styleClass="field-lbl" stylesheets="@../../css/stockRegisterForm.css" text="(%)" />
+      <TextField fx:id="categoryField" layoutX="29.0" layoutY="369.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira a categoria" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" />
       <ListView fx:id="categoryList" layoutX="29.0" layoutY="409.0" maxHeight="130.0" maxWidth="320.0" prefHeight="137.0" prefWidth="320.0" />
+      <Button fx:id="btnSave" layoutX="26.0" layoutY="629.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="292.0" styleClass="btn-save" stylesheets="@../../css/stockRegisterForm.css" text="Salvar (F2)" />
+      <Button layoutX="347.0" layoutY="629.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="292.0" styleClass="btn-cancel" stylesheets="@../../css/stockRegisterForm.css" text="Cancelar (ESC)" />
+      <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="595.0" layoutY="640.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../image/icons8-x-48.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="274.0" layoutY="640.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../image/icons8-selecionado-24.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

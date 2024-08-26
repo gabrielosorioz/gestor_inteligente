@@ -84,5 +84,16 @@ public class Stock {
         this.lastUpdate = lastUpdate;
     }
 
-
+    @Override
+    public String toString() {
+        return "Stock{" +
+                "id=" + id +
+                ", product=" + product +
+                ", productId=" + productId +
+                ", barCode='" + barCode + '\'' +
+                ", productName='" + productName + '\'' +
+                ", quantity=" + quantity +
+                ", lastUpdate=" + lastUpdate +
+                '}';
+    }
 }

@@ -261,4 +261,24 @@ public class Product {
     public void setDateDelete(Timestamp dateDelete) {
         this.dateDelete = dateDelete;
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", productCode=" + productCode +
+                ", barCode='" + barCode + '\'' +
+                ", description='" + description + '\'' +
+                ", costPrice=" + costPrice +
+                ", sellingPrice=" + sellingPrice +
+                ", supplier=" + supplier +
+                ", category=" + category +
+                ", profitMargin=" + profitMargin +
+                ", markupPercent=" + markupPercent +
+                ", status=" + status +
+                ", dateCreate=" + dateCreate +
+                ", dateUpdate=" + dateUpdate +
+                ", dateDelete=" + dateDelete +
+                '}';
+    }
 }

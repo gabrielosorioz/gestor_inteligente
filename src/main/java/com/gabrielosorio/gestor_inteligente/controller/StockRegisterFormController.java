@@ -126,7 +126,7 @@ public class StockRegisterFormController implements Initializable {
 
         final Stock productStock = stock;
 
-        final String id = String.valueOf(productStock.getProduct().getProductID());
+        final String id = String.valueOf(productStock.getProduct().getProductCode());
         final String barCode = productStock.getProduct().getBarCode();
         final String description = productStock.getProduct().getDescription();
         final String costPrice = productStock.getProduct().getCostPrice().toPlainString();
@@ -163,7 +163,7 @@ public class StockRegisterFormController implements Initializable {
 
         Product stockProduct = Product.builder()
                 .id(this.stock.getProduct().getId())
-                .productId(productCode)
+                .productCode(productCode)
                 .barCode(barCode)
                 .description(description)
                 .costPrice(costPrice)

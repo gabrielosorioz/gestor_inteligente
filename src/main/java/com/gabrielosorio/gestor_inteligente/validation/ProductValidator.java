@@ -26,7 +26,7 @@ public class ProductValidator {
 
 
     public static void validateProductIdOrBarCode(Product product){
-        if(product.getProductID() == null && product.getBarCode() == null){
+        if(product.getProductCode() == null && product.getBarCode() == null){
             throw new InvalidProductException("Product must have either a Product Id or a Barcode. ");
         }
     }

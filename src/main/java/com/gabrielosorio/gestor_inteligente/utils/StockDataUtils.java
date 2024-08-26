@@ -66,7 +66,7 @@ public class StockDataUtils {
     private static Product parseProduct(JSONObject productJSONObject){
 
         Integer id = productJSONObject.getInt("id");
-        Integer productID = productJSONObject.getInt("productId");
+        Integer productCode = productJSONObject.getInt("productCode");
         String description = productJSONObject.getString("description");
         String barCode = productJSONObject.getString("barCode");
         BigDecimal costPrice = productJSONObject.getBigDecimal("costPrice");
@@ -86,7 +86,7 @@ public class StockDataUtils {
 
         Product product = Product.builder()
                 .id(id)
-                .productId(productID)
+                .productCode(productCode)
                 .barCode(barCode)
                 .description(description)
                 .costPrice(costPrice)
@@ -141,7 +141,7 @@ public class StockDataUtils {
         /** extract data from product and put */
         JSONObject productJSONObject = stockJSONObject.getJSONObject("product");
         productJSONObject.put("id",stockProduct.getId());
-        productJSONObject.put("productId",stockProduct.getProductID());
+        productJSONObject.put("productCode",stockProduct.getProductCode());
         productJSONObject.put("costPrice",stockProduct.getCostPrice().toPlainString());
         productJSONObject.put("description",stockProduct.getDescription());
         productJSONObject.put("dateCreate",stockProduct.getDateCreate());
@@ -163,24 +163,24 @@ public class StockDataUtils {
 
     }
 
-    private static JSONObject findStockJSONObjectByProductId(JSONArray stockJSONArray, Integer productId){
+    private static JSONObject findStockJSONObjectByProductId(JSONArray stockJSONArray, Integer productCode){
         for (Object o : stockJSONArray) {
             JSONObject stockJSONObject = (JSONObject) o;
             JSONObject productJSONObject = stockJSONObject.getJSONObject("product");
 
-            if (productJSONObject.getInt("productId") == productId) {
+            if (productJSONObject.getInt("productCode") == productCode) {
                 log.info("Product found. ");
                 final JSONObject stockJSONObjectFound = stockJSONObject;
                 return stockJSONObjectFound;
             }
         }
         log.severe("Error searching for product, ID not found.");
-        throw new IllegalArgumentException("Invalid product ID to find Stock JSON object. " + "ID: " + productId);
+        throw new IllegalArgumentException("Invalid product ID to find Stock JSON object. " + "ID: " + productCode);
     }
 
     public static void updateStock(Stock updatedStock){
         JSONArray stockJSONArray = getJSONArray(stockFilePath);
-        JSONObject stockJSONObjectFound = findStockJSONObjectByProductId(stockJSONArray,updatedStock.getProduct().getProductID());
+        JSONObject stockJSONObjectFound = findStockJSONObjectByProductId(stockJSONArray,updatedStock.getProduct().getProductCode());
         putStockJSONObject(stockJSONObjectFound,updatedStock);
         saveJSONToFile(stockFilePath,stockJSONArray);
     }

@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 public class Product {
 
     private Integer id;
-    private Integer productID;
+    private Integer productCode;
     private String barCode;
     private String description;
     private BigDecimal costPrice;
@@ -26,7 +26,7 @@ public class Product {
 
     public Product(ProductBuilder productBuilder) {
         this.id = productBuilder.id;
-        this.productID = productBuilder.productId;
+        this.productCode = productBuilder.productCode;
         this.barCode = productBuilder.barCode;
         this.description = productBuilder.description;
         this.costPrice = productBuilder.costPrice;
@@ -48,7 +48,7 @@ public class Product {
 
     public static class ProductBuilder {
         private Integer id;
-        private Integer productId;
+        private Integer productCode;
         private String barCode;
         private String description;
         private BigDecimal costPrice;
@@ -67,8 +67,8 @@ public class Product {
             return this;
         }
 
-        public ProductBuilder productId(Integer productId){
-            this.productId = productId;
+        public ProductBuilder productCode(Integer productCode){
+            this.productCode = productCode;
             return this;
         }
 
@@ -147,8 +147,8 @@ public class Product {
         return id;
     }
 
-    public Integer getProductID() {
-        return productID;
+    public Integer getProductCode() {
+        return productCode;
     }
 
     public String getBarCode() {
@@ -203,8 +203,8 @@ public class Product {
         this.id = id;
     }
 
-    public void setProductID(Integer productID) {
-        this.productID = productID;
+    public void setProductID(Integer productCode) {
+        this.productCode = productCode;
     }
 
     public void setBarCode(String barCode) {

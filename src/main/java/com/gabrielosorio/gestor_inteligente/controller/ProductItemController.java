@@ -1,6 +1,5 @@
 package com.gabrielosorio.gestor_inteligente.controller;
 
-import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.fxml.FXML;
@@ -57,7 +56,7 @@ public class ProductItemController implements Initializable {
 
     public void showProductData(){
         itemLbl.setText(String.valueOf(itemOrder));
-        codeLbl.setText(String.valueOf(saleProduct.getProduct().getProductID()));
+        codeLbl.setText(String.valueOf(saleProduct.getProduct().getProductCode()));
         descriptionLbl.setText(saleProduct.getProduct().getDescription());
         unitPriceLbl.setText(String.valueOf(saleProduct.getUnitPrice()));
         qtdField.setText(String.valueOf(saleProduct.getQuantity()));

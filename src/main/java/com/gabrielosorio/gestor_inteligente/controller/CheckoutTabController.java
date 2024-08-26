@@ -17,8 +17,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,9 +60,9 @@ public class CheckoutTabController implements Initializable {
     private void fetchProductsData() {
         StockDataUtils.fetchStockData().forEach(item -> {
             Product product = item.getProduct();
-            String productId = String.valueOf(product.getProductID());
+            String productCode = String.valueOf(product.getProductCode());
             String barCode = product.getBarCode();
-            productData.put(productId,product);
+            productData.put(productCode,product);
             productData.put(barCode,product);
         });
     }
@@ -158,16 +156,16 @@ public class CheckoutTabController implements Initializable {
             log.severe("Error at add product to list of products for sale: Product is null.");
             throw new IllegalArgumentException("Product is null");
         }
-        if(product.getProductID() == null && (product.getBarCode() == null)){
+        if(product.getProductCode() == null && (product.getBarCode() == null)){
             log.severe("Product ID and BarCode are null or empty.");
             throw new IllegalArgumentException("Product ID and BarCode are empty.");
         }
 
         SaleProduct newSaleItem = new SaleProduct(product);
 
-        if(newSaleItem.getProduct().getProductID() != null){
-           String productId = String.valueOf(newSaleItem.getProduct().getProductID());
-           itemsSales.put(productId,newSaleItem);
+        if(newSaleItem.getProduct().getProductCode() != null){
+           String productCode = String.valueOf(newSaleItem.getProduct().getProductCode());
+           itemsSales.put(productCode,newSaleItem);
         }
 
         if(newSaleItem.getProduct().getBarCode() != null && !newSaleItem.getProduct().getBarCode().isBlank()){
@@ -175,7 +173,7 @@ public class CheckoutTabController implements Initializable {
             itemsSales.put(barCode,newSaleItem);
         }
 
-        log.info("Product added to the list of products for sale." + " BarCode: " + itemsSales.get(newSaleItem.getProduct().getBarCode()).getProduct().getBarCode() + " ID: " + itemsSales.get(String.valueOf(newSaleItem.getProduct().getProductID())).getProduct().getProductID());
+        log.info("Product added to the list of products for sale." + " BarCode: " + itemsSales.get(newSaleItem.getProduct().getBarCode()).getProduct().getBarCode() + " ID: " + itemsSales.get(String.valueOf(newSaleItem.getProduct().getProductCode())).getProduct().getProductCode());
     }
 
     private void addItemSaleView(String id){
@@ -190,7 +188,7 @@ public class CheckoutTabController implements Initializable {
                 loader.setController(controller);
 
                 saleProductControllers.put(newItemSaleView.getProduct().getBarCode(), controller);
-                saleProductControllers.put(String.valueOf(newItemSaleView.getProduct().getProductID()),controller);
+                saleProductControllers.put(String.valueOf(newItemSaleView.getProduct().getProductCode()),controller);
 
                 HBox productItemRow = loader.load();
                 productTable.getChildren().add(productItemRow);
@@ -284,7 +282,7 @@ public class CheckoutTabController implements Initializable {
     }
 
     private void updateSaleItem(SaleProduct saleProduct){
-        String id = String.valueOf(saleProduct.getProduct().getProductID());
+        String id = String.valueOf(saleProduct.getProduct().getProductCode());
         ProductItemController controller = getItemController(id);
         controller.setSaleProduct(saleProduct);
     }

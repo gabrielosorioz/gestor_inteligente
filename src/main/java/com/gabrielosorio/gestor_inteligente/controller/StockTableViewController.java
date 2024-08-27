@@ -12,6 +12,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -94,6 +96,8 @@ public class StockTableViewController implements Initializable {
                     currencyLabel.setStyle(
                              "-fx-text-fill: black;"
                     );
+                    currencyLabel.setPrefWidth(50);
+                    valueText.setTextAlignment(TextAlignment.RIGHT);
                     HBox hbox = new HBox(5, currencyLabel, valueText);
                     hbox.setAlignment(Pos.CENTER_LEFT);
                     setGraphic(hbox);

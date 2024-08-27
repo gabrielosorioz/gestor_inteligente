@@ -1,5 +1,4 @@
 package com.gabrielosorio.gestor_inteligente.controller;
-
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import javafx.animation.FadeTransition;
@@ -21,6 +20,11 @@ import java.util.logging.Logger;
 
 public class StockManagerController implements Initializable {
 
+    private final Duration FORM_ANIMATION_DURATION = Duration.seconds(0.4);
+    private final Duration FADE_DURATION = Duration.seconds(0.2);
+    private final double FORM_HIDDEN_POSITION = 750;
+    private final double FORM_VISIBLE_POSITION = 0;
+
     private final Logger log = Logger.getLogger(getClass().getName());
 
     @FXML
@@ -33,34 +37,60 @@ public class StockManagerController implements Initializable {
     private Label productLabel;
 
     private AnchorPane stockForm;
-
     private StockRegisterFormController stockRegisterFormController;
-
     private StockTableViewController stockTableViewController;
 
     private boolean isStockFormVisible;
 
-    private void showStockForm(){
-        TranslateTransition translateStockForm = new TranslateTransition(Duration
-                .seconds(0.4),stockForm);
-        translateStockForm.setToX(0);
-        shadow.setVisible(true);
-        FadeTransition fade = new FadeTransition(Duration.seconds(0.1),shadow);
-        fade.setFromValue(0.0);
-        fade.setToValue(0.2);
-        fade.play();
-        translateStockForm.play();
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        loadTableView();
+        loadStockForm();
+        configureShadowClick();
     }
 
-    private void hideStockForm(){
-        TranslateTransition translateProduct = new TranslateTransition(Duration.seconds(0.4),stockForm);
-        translateProduct.setToX(750);
-        FadeTransition fade = new FadeTransition(Duration.seconds(0.05),shadow);
-        fade.setFromValue(0.2);
-        fade.setToValue(0.0);
-        fade.setOnFinished(event -> shadow.setVisible(false));
-        fade.play();
-        translateProduct.play();
+    private void loadTableView() {
+        try {
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockTableView.fxml"));
+            this.stockTableViewController = new StockTableViewController();
+            loader.setController(this.stockTableViewController);
+            TableView tableView = loader.load();
+            configureTableViewLayout(tableView);
+            configureTableRowFactory(tableView);
+            mainContent.getChildren().add(0, tableView);
+        } catch (IOException e) {
+            log.severe("Error loading StockTableView :" + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private void configureTableViewLayout(TableView<Stock> tableView){
+        AnchorPane.setTopAnchor(tableView, 252.0);
+        AnchorPane.setRightAnchor(tableView,105.0);
+        AnchorPane.setBottomAnchor(tableView,148.00);
+        AnchorPane.setLeftAnchor(tableView,55.0);
+    }
+
+    private void configureTableRowFactory(TableView<Stock> stockTableView) {
+        stockTableView.setRowFactory(new Callback<>() {
+            @Override
+            public TableRow<Stock> call(TableView<Stock> tableView) {
+                TableRow<Stock> row = new TableRow<>() {
+                    @Override
+                    protected void updateItem(Stock item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setPrefHeight(empty || item == null ? 30 : 68);
+                        setOnMouseClicked(event -> {
+                            if (item != null) {
+                                showStockData(item);
+                            }
+                        });
+                    }
+                };
+                return row;
+            }
+        });
     }
 
     private void loadStockForm(){
@@ -71,15 +101,51 @@ public class StockManagerController implements Initializable {
             stockForm = loader.load();
             stockRegisterFormController = loader.getController();
             stockRegisterFormController.setStockTableViewController(this.stockTableViewController);
-            mainContent.getChildren().add(stockForm);
-            AnchorPane.setLeftAnchor(stockForm,550.0);
-            AnchorPane.setRightAnchor(stockForm,0.0);
-            AnchorPane.setTopAnchor(stockForm,60.00);
-            stockForm.setTranslateX(stockForm.getPrefWidth());
+            configureStockFormLayout();
         } catch (IOException e){
             log.severe("Error loading the product form: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void configureStockFormLayout(){
+        mainContent.getChildren().add(stockForm);
+        AnchorPane.setLeftAnchor(stockForm, 550.0);
+        AnchorPane.setRightAnchor(stockForm,0.0);
+        AnchorPane.setTopAnchor(stockForm,60.0);
+        stockForm.setTranslateX(FORM_HIDDEN_POSITION);
+    }
+
+    private void configureShadowClick(){
+        shadow.setOnMouseClicked(mouseEvent -> toggleStockForm());
+    }
+
+    private void showStockForm(){
+        animateForm(FORM_VISIBLE_POSITION,0.2);
+        shadow.setVisible(true);
+    }
+
+    private void hideStockForm(){
+        animateForm(FORM_HIDDEN_POSITION,0.0);
+        shadow.setVisible(false);
+    }
+
+    private void animateForm(double translateX, double fadeToValue){
+        TranslateTransition translateTransition = new TranslateTransition(FORM_ANIMATION_DURATION,stockForm);
+        translateTransition.setToX(translateX);
+
+        FadeTransition fadeTransition = new FadeTransition(FADE_DURATION, shadow);
+        fadeTransition.setFromValue(shadow.getOpacity());
+        fadeTransition.setToValue(fadeToValue);
+
+        fadeTransition.setOnFinished(actionEvent -> {
+            if(fadeToValue == 0.0){
+                shadow.setVisible(false);
+            }
+        });
+
+        fadeTransition.play();
+        translateTransition.play();
     }
 
     private void toggleStockForm(){
@@ -91,68 +157,8 @@ public class StockManagerController implements Initializable {
         isStockFormVisible = !isStockFormVisible;
     }
 
-
-
-    private void loadTableView(){
-        try {
-            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockTableView.fxml"));
-            this.stockTableViewController = new StockTableViewController();
-            loader.setController(this.stockTableViewController);
-            TableView tableView = loader.load();
-            AnchorPane.setTopAnchor(tableView,252.00);
-            AnchorPane.setRightAnchor(tableView,105.00);
-            AnchorPane.setBottomAnchor(tableView,148.00);
-            AnchorPane.setLeftAnchor(tableView,55.00);
-            setCellEvent(tableView);
-            mainContent.getChildren().add(0,tableView);
-        } catch (IOException e) {
-            log.severe("Error loading StockTableView :" + e.getMessage());
-            throw new RuntimeException(e);
-        }
-
-
-    }
-
-    private void setCellEvent(TableView stockTableView){
-        stockTableView.setRowFactory(new Callback<TableView<Stock>, TableRow<Stock>>() {
-            @Override
-            public TableRow<Stock> call(TableView<Stock> tableView) {
-                TableRow<Stock> row = new TableRow<Stock>() {
-                    @Override
-                    protected void updateItem(Stock item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item == null || empty) {
-                            setPrefHeight(30); // Altura da linha
-                            setGraphic(null);
-                            setText(null);
-                        } else {
-                            setPrefHeight(68);
-
-                            setOnMouseClicked(mouseEvent -> {
-                                Stock selectedStockItem = tableView.getSelectionModel().getSelectedItem();
-                                showStockData(selectedStockItem);
-                            });
-                        }
-                    }
-                };
-                return row;
-            }
-        });
-    }
-
     private void showStockData(Stock stock){
         stockRegisterFormController.setStock(stock);
         toggleStockForm();
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        loadTableView();
-        loadStockForm();
-
-        shadow.setOnMouseClicked(mouseEvent -> {
-            toggleStockForm();
-        });
-
     }
 }

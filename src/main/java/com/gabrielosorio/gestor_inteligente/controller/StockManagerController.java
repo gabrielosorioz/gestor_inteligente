@@ -34,7 +34,9 @@ public class StockManagerController implements Initializable {
 
     private AnchorPane stockForm;
 
-    private StockRegisterFormController stockController;
+    private StockRegisterFormController stockRegisterFormController;
+
+    private StockTableViewController stockTableViewController;
 
     private boolean isStockFormVisible;
 
@@ -67,7 +69,8 @@ public class StockManagerController implements Initializable {
             FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockRegisterForm.fxml"));
             loader.setController(new StockRegisterFormController());
             stockForm = loader.load();
-            stockController = loader.getController();
+            stockRegisterFormController = loader.getController();
+            stockRegisterFormController.setStockTableViewController(this.stockTableViewController);
             mainContent.getChildren().add(stockForm);
             AnchorPane.setLeftAnchor(stockForm,550.0);
             AnchorPane.setRightAnchor(stockForm,0.0);
@@ -93,8 +96,8 @@ public class StockManagerController implements Initializable {
     private void loadTableView(){
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockTableView.fxml"));
-            StockTableViewController stockTableViewController = new StockTableViewController();
-            loader.setController(stockTableViewController);
+            this.stockTableViewController = new StockTableViewController();
+            loader.setController(this.stockTableViewController);
             TableView tableView = loader.load();
             AnchorPane.setTopAnchor(tableView,252.00);
             AnchorPane.setRightAnchor(tableView,105.00);
@@ -138,7 +141,7 @@ public class StockManagerController implements Initializable {
     }
 
     private void showStockData(Stock stock){
-        stockController.setStock(stock);
+        stockRegisterFormController.setStock(stock);
         toggleStockForm();
     }
 

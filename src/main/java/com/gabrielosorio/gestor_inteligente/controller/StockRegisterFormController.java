@@ -3,6 +3,7 @@ import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
+import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.utils.AutoCompleteField;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
@@ -48,7 +49,7 @@ public class StockRegisterFormController implements Initializable {
 
     private Stock stock;
 
-    private StockTableViewController stockTableController;
+    private StockTableViewController stockTableViewController;
 
     ArrayList<String> categories = new ArrayList<>();
 
@@ -57,6 +58,10 @@ public class StockRegisterFormController implements Initializable {
     public void setStock(Stock stock){
         this.stock = stock;
         populateFields();
+    }
+
+    public void setStockTableViewController(StockTableViewController stockTableViewController){
+        this.stockTableViewController = stockTableViewController;
     }
 
     private void fetchCategoryData(){
@@ -152,34 +157,34 @@ public class StockRegisterFormController implements Initializable {
     }
 
     private void saveProduct(){
-        Integer productCode = Integer.parseInt(idField.getText());
-        String barCode = barCodeField.getText();
-        String description = descriptionField.getText();
-        BigDecimal costPrice = TextFieldUtils.formatCurrency(costPriceField.getText());
-        BigDecimal sellingPrice = TextFieldUtils.formatCurrency(sellingPriceField.getText());
-        int quantity = Integer.parseInt(quantityField.getText());
+        Stock newStockRegister = createUpdatedStock();
+        StockDataUtils.updateStock(newStockRegister);
+        stockTableViewController.updateStockUI(newStockRegister);
+    }
 
-        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
-
-        Product stockProduct = Product.builder()
-                .id(this.stock.getProduct().getId())
-                .productCode(productCode)
-                .barCode(barCode)
-                .description(description)
-                .costPrice(costPrice)
-                .sellingPrice(sellingPrice)
-                .supplier(this.stock.getProduct().getSupplier())
-                .category(this.stock.getProduct().getCategory())
-                .status(this.stock.getProduct().getStatus())
-                .dateCreate(this.stock.getProduct().getDateCreate())
-                .dateUpdate(now)
+    private Product createUpdatedProduct(){
+        return Product.builder()
+                .id(stock.getProduct().getId())
+                .productCode(Integer.parseInt(idField.getText()))
+                .barCode(barCodeField.getText())
+                .description(descriptionField.getText())
+                .costPrice(TextFieldUtils.formatCurrency(costPriceField.getText()))
+                .sellingPrice(TextFieldUtils.formatCurrency(sellingPriceField.getText()))
+                .supplier(new Supplier(stock.getProduct().getSupplier().getId(), stock.getProduct().getSupplier().getName()))
+                .category(new Category(stock.getProduct().getCategory().getId(), stock.getProduct().getCategory().getDescription()))
+                .status(stock.getProduct().getStatus())
+                .dateCreate(stock.getProduct().getDateCreate())
+                .dateUpdate(Timestamp.valueOf(LocalDateTime.now()))
                 .dateDelete(null)
                 .build();
+    }
 
-        Stock updatedStock = new Stock(stockProduct,quantity);
-        updatedStock.setId(this.stock.getId());
-        updatedStock.setLastUpdate(now);
-        StockDataUtils.updateStock(updatedStock);
+    private Stock createUpdatedStock(){
+        Product updatedProduct = createUpdatedProduct();
+        Stock updatedStock = new Stock(updatedProduct,  Integer.parseInt(quantityField.getText()));
+        updatedStock.setId(stock.getId());
+        updatedStock.setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
+        return updatedStock;
     }
 
     private void priceListener(TextField priceField){

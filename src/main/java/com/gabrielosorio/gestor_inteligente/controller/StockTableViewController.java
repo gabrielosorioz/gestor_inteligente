@@ -115,7 +115,7 @@ public class StockTableViewController implements Initializable {
         });
     }
 
-    public void updateStock(Stock updatedStock) {
+    public void updateStockUI(Stock updatedStock) {
         if (stockList != null && !stockList.isEmpty()) {
             for (int i = 0; i < stockList.size(); i++) {
                 Stock stock = stockList.get(i);

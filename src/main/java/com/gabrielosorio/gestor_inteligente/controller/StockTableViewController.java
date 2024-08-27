@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.controller;
 
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
+import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,7 +12,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -48,11 +48,11 @@ public class StockTableViewController implements Initializable {
 
     private void setUpColumns() {
         categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getCategory().getDescription()));
-        costPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getCostPrice().toPlainString()));
+        costPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getProduct().getCostPrice().toPlainString())));
         descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
         idCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getProductCode().toString()));
         stockColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
-        sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getSellingPrice().toPlainString()));
+        sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getProduct().getSellingPrice().toPlainString())));
 
         // set monetary label
         monetaryLabel(costPriceCol);
@@ -73,6 +73,14 @@ public class StockTableViewController implements Initializable {
         idCol.setReorderable(false);
         stockColumn.setReorderable(false);
         sellingPriceCol.setReorderable(false);
+
+        categoryColumn.setSortable(false);
+        costPriceCol.setSortable(false);
+        descriptionCol.setSortable(false);
+        idCol.setSortable(false);
+        stockColumn.setSortable(false);
+        sellingPriceCol.setSortable(false);
+
     }
 
 
@@ -83,8 +91,11 @@ public class StockTableViewController implements Initializable {
                 private final Text valueText = new Text();
 
                 {
+                    currencyLabel.setStyle(
+                             "-fx-text-fill: black;"
+                    );
                     HBox hbox = new HBox(5, currencyLabel, valueText);
-                    hbox.setAlignment(Pos.CENTER);
+                    hbox.setAlignment(Pos.CENTER_LEFT);
                     setGraphic(hbox);
                     setText(null);
                 }

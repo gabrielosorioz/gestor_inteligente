@@ -163,7 +163,7 @@ public class StockDataUtils {
 
     }
 
-    private static JSONObject findStockJSONObjectByProductId(JSONArray stockJSONArray, Integer productCode){
+    private static JSONObject findStockJSONObjectByProductCode(JSONArray stockJSONArray, Integer productCode){
         for (Object o : stockJSONArray) {
             JSONObject stockJSONObject = (JSONObject) o;
             JSONObject productJSONObject = stockJSONObject.getJSONObject("product");
@@ -180,7 +180,7 @@ public class StockDataUtils {
 
     public static void updateStock(Stock updatedStock){
         JSONArray stockJSONArray = getJSONArray(stockFilePath);
-        JSONObject stockJSONObjectFound = findStockJSONObjectByProductId(stockJSONArray,updatedStock.getProduct().getProductCode());
+        JSONObject stockJSONObjectFound = findStockJSONObjectByProductCode(stockJSONArray,updatedStock.getProduct().getProductCode());
         putStockJSONObject(stockJSONObjectFound,updatedStock);
         saveJSONToFile(stockFilePath,stockJSONArray);
     }

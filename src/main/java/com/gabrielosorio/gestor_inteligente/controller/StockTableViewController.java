@@ -104,6 +104,22 @@ public class StockTableViewController implements Initializable {
         });
     }
 
+    public void updateStock(Stock updatedStock) {
+        if (stockList != null && !stockList.isEmpty()) {
+            for (int i = 0; i < stockList.size(); i++) {
+                Stock stock = stockList.get(i);
+                if (stock.getId() == updatedStock.getId()) {
+                    stockList.set(i, updatedStock);
+                    stockTable.refresh();
+                    break;
+                }
+            }
+        } else {
+            log.warning("Stock list is empty or null.");
+        }
+    }
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpColumns();

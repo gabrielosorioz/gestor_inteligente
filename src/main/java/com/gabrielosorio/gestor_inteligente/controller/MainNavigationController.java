@@ -2,14 +2,20 @@ package com.gabrielosorio.gestor_inteligente.controller;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.jfoenix.controls.JFXButton;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -22,25 +28,56 @@ import java.util.ResourceBundle;
 public class MainNavigationController implements Initializable {
 
     @FXML
-    private AnchorPane slider;
+    private HBox btnHBoxSale,btnHBoxStock;
 
     @FXML
-    private AnchorPane content;
+    private Label btnHBoxSaleLbl,btnHBoxStockLbl;
 
     @FXML
     private Button btnSlider;
 
     @FXML
-    private Button btnSale;
+    private AnchorPane content;
 
     @FXML
-    private HBox btnHbox;
+    private ImageView iconSaleViewer,iconStockViewer;
 
     @FXML
-    private HBox btnRegisterHbox;
+    private AnchorPane slider;
 
-    @FXML
-    private Button btnRegister;
+    private final String LBL_DEFAULT_COLOR = "#707070";
+    private final String LBL_COLOR_HOVER = "#fff";
+    private final String BACKGROUND_DEFAULT_COLOR = "#fff";
+    private final String BACKGROUND_COLOR_HOVER = "#695CFE";
+
+    private final Image ICON_SALE_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png");
+    private final Image ICON_SALE_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png");
+
+    private final Image ICON_STOCK_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png");
+    private final Image ICON_STOCK_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png");
+
+
+    private void setUpBtnHoverEffect(Node btn, Node btnLabel, ImageView iconViewer, Image defaultImage, Image imageHover,FadeTransition fadeTransitionBackground){
+        fadeTransitionBackground.setNode(btn);
+        fadeTransitionBackground.setFromValue(0.0);
+        fadeTransitionBackground.setToValue(1.0);
+
+        btn.setOnMouseEntered(mouseEvent -> {
+            btn.setStyle("-fx-background-color: " + BACKGROUND_COLOR_HOVER + ";");
+            btnLabel.setStyle("-fx-text-fill: " + LBL_COLOR_HOVER + ";");
+            iconViewer.setImage(imageHover);
+            fadeTransitionBackground.play();
+        });
+
+        btn.setOnMouseExited(mouseEvent -> {
+            btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+            btnLabel.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
+            iconViewer.setImage(defaultImage);
+            fadeTransitionBackground.play();
+        });
+
+    }
+
 
 
 
@@ -110,53 +147,25 @@ public class MainNavigationController implements Initializable {
     }
 
 
-    @FXML
-    private void showSaleView(MouseEvent event) {
-        loadFrontCheckout();
-    }
-
-
 
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        setUpBtnHoverEffect(btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect(btnHBoxStock,btnHBoxStockLbl,iconStockViewer,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
 
         btnSlider.setOnMouseClicked(event -> {
            toggleSideBar();
         });
 
-        btnSale.setOnMouseEntered(mouseEvent -> {
-            btnHbox.setStyle("-fx-background-color: #511278");
+        btnHBoxSale.setOnMouseClicked(mouseEvent -> {
+            loadFrontCheckout();
         });
 
-        btnSale.setOnMouseExited(mouseEvent -> {
-            btnHbox.setStyle("-fx-background-color: #741AAC");
-        });
-
-        btnSale.setOnMousePressed(mouseEvent -> {
-           btnHbox.setStyle("-fx-background-color: #3a0d56");
-        });
-
-        btnRegister.setOnMouseEntered(mouseEvent -> {
-            btnRegisterHbox.setStyle("-fx-background-color: #511278");
-        });
-
-        btnRegister.setOnMouseExited(mouseEvent -> {
-            btnRegisterHbox.setStyle("-fx-background-color: #741AAC");
-        });
-
-        btnRegister.setOnMousePressed(mouseEvent -> {
-           btnRegisterHbox.setStyle("-fx-background-color: #3a0d56");
-        });
-
-        btnRegister.setOnMouseClicked(event -> {
+        btnHBoxStock.setOnMouseClicked(mouseEvent -> {
             loadFindProductView();
         });
-
-
-
-
 
 
 

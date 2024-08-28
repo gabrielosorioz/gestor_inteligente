@@ -1,6 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.controller;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
+import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
@@ -36,6 +38,9 @@ public class StockManagerController implements Initializable {
     @FXML
     private Label productLabel;
 
+    @FXML
+    private TextField searchField;
+
     private AnchorPane stockForm;
     private StockRegisterFormController stockRegisterFormController;
     private StockTableViewController stockTableViewController;
@@ -47,6 +52,8 @@ public class StockManagerController implements Initializable {
         loadTableView();
         loadStockForm();
         configureShadowClick();
+        setUpSearchField(searchField);
+
     }
 
     private void loadTableView() {
@@ -65,6 +72,13 @@ public class StockManagerController implements Initializable {
 
     }
 
+    private void setUpSearchField(TextField searchField){
+        TextFieldUtils.setUpperCaseTextFormatter(searchField);
+        searchField.textProperty().addListener((obsValue, OldValue, newValue) -> {
+            stockTableViewController.searchFilteredStock(newValue);
+        });
+    }
+
     private void configureTableViewLayout(TableView<Stock> tableView){
         AnchorPane.setTopAnchor(tableView, 252.0);
         AnchorPane.setRightAnchor(tableView,105.0);
@@ -80,7 +94,7 @@ public class StockManagerController implements Initializable {
                     @Override
                     protected void updateItem(Stock item, boolean empty) {
                         super.updateItem(item, empty);
-                        setPrefHeight(empty || item == null ? 30 : 68);
+                        setPrefHeight(empty || item == null ? 0 : 68);
                         setOnMouseClicked(event -> {
                             if (item != null) {
                                 showStockData(item);

@@ -134,6 +134,23 @@ public class StockTableViewController implements Initializable {
         }
     }
 
+    public void searchFilteredStock(String search){
+        if(search == null || search.trim().isEmpty()){
+            stockTable.setItems(stockList);
+            stockTable.refresh();
+            return;
+        }
+
+        final String searchLower = search.toLowerCase();
+
+        stockTable.setItems(stockList.filtered(stock ->
+            stock.getProduct().getProductCode().toString().toLowerCase().contains(searchLower) ||
+            stock.getProduct().getDescription().toLowerCase().contains(searchLower)
+        ));
+        stockTable.refresh();
+
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

@@ -4,6 +4,7 @@ module com.example.gestor_inteligente {
     requires java.sql;
     requires com.jfoenix;
     requires org.json;
+    requires java.desktop;
 
 
     opens com.gabrielosorio.gestor_inteligente to javafx.fxml;

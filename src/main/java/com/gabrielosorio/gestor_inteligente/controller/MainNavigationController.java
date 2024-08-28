@@ -28,10 +28,10 @@ import java.util.ResourceBundle;
 public class MainNavigationController implements Initializable {
 
     @FXML
-    private HBox btnHBoxSale,btnHBoxStock;
+    private HBox btnHBoxSale,btnHBoxProductManager,btnHBoxStockManager;
 
     @FXML
-    private Label btnHBoxSaleLbl,btnHBoxStockLbl;
+    private Label btnHBoxSaleLbl,btnHBoxProductManagerLbl,btnHBoxStockManagerLbl;
 
     @FXML
     private Button btnSlider;
@@ -40,7 +40,7 @@ public class MainNavigationController implements Initializable {
     private AnchorPane content;
 
     @FXML
-    private ImageView iconSaleViewer,iconStockViewer;
+    private ImageView iconSaleViewer,iconProductViewer,iconStockViewer;
 
     @FXML
     private AnchorPane slider;
@@ -53,9 +53,11 @@ public class MainNavigationController implements Initializable {
     private final Image ICON_SALE_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png");
     private final Image ICON_SALE_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png");
 
-    private final Image ICON_STOCK_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png");
-    private final Image ICON_STOCK_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png");
+    private final Image ICON_PRODUCT_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png");
+    private final Image ICON_PRODUCT_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png");
 
+    private final Image ICON_STOCK_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lista-da-área-de-transferência-48-white.png");
+    private final Image ICON_STOCK_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lista-da-área-de-transferência-48.png");
 
     private void setUpBtnHoverEffect(Node btn, Node btnLabel, ImageView iconViewer, Image defaultImage, Image imageHover,FadeTransition fadeTransitionBackground){
         fadeTransitionBackground.setNode(btn);
@@ -153,7 +155,8 @@ public class MainNavigationController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpBtnHoverEffect(btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect(btnHBoxStock,btnHBoxStockLbl,iconStockViewer,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect(btnHBoxProductManager,btnHBoxProductManagerLbl,iconProductViewer,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect(btnHBoxStockManager,btnHBoxStockManagerLbl,iconStockViewer,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
 
         btnSlider.setOnMouseClicked(event -> {
            toggleSideBar();
@@ -163,7 +166,7 @@ public class MainNavigationController implements Initializable {
             loadFrontCheckout();
         });
 
-        btnHBoxStock.setOnMouseClicked(mouseEvent -> {
+        btnHBoxProductManager.setOnMouseClicked(mouseEvent -> {
             loadFindProductView();
         });
 

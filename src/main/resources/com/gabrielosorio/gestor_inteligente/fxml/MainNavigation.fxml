@@ -41,11 +41,11 @@
                         </HBox>
                      </children>
                   </HBox>
-                  <HBox fx:id="btnHBoxStock" layoutX="10.0" layoutY="10.0" prefHeight="55.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+                  <HBox fx:id="btnHBoxProductManager" layoutX="10.0" layoutY="10.0" prefHeight="55.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
                      <children>
                         <VBox alignment="CENTER" prefHeight="55.0" prefWidth="44.0">
                            <children>
-                              <ImageView fx:id="iconStockViewer" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="iconProductViewer" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../image/icons8-produto-novo-48.png" />
                                  </image>
@@ -57,7 +57,32 @@
                         </VBox>
                         <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="221.0">
                            <children>
-                              <Label fx:id="btnHBoxStockLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Estoque">
+                              <Label fx:id="btnHBoxProductManagerLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Produtos">
+                                 <HBox.margin>
+                                    <Insets left="20.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="btnHBoxStockManager" layoutX="10.0" layoutY="65.0" prefHeight="55.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="55.0" prefWidth="44.0">
+                           <children>
+                              <ImageView fx:id="iconStockViewer" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/icons8-lista-da-área-de-transferência-48.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </VBox>
+                        <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="221.0">
+                           <children>
+                              <Label fx:id="btnHBoxStockManagerLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Estoque">
                                  <HBox.margin>
                                     <Insets left="20.0" />
                                  </HBox.margin>

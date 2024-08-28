@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-public class StockTableViewController implements Initializable {
+public class ProductRegistrationTableViewController implements Initializable {
 
     @FXML
     private TableColumn<Stock, String> categoryColumn;

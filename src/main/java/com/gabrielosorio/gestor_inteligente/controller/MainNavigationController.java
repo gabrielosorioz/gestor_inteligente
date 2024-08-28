@@ -134,7 +134,7 @@ public class MainNavigationController implements Initializable {
 
         try {
             content.getChildren().clear();
-            findProductView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/stock/StockManager.fxml"));
+            findProductView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/stock/ProductManager.fxml"));
             content.getChildren().add(0,findProductView);
 
             Platform.runLater(() -> {

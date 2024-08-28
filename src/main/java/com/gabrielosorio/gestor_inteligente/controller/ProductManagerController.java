@@ -18,7 +18,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-public class StockManagerController implements Initializable {
+public class ProductManagerController implements Initializable {
 
     private final Duration FORM_ANIMATION_DURATION = Duration.seconds(0.4);
     private final Duration FADE_DURATION = Duration.seconds(0.2);
@@ -44,8 +44,8 @@ public class StockManagerController implements Initializable {
     private HBox btnHBoxNewProduct;
 
     private AnchorPane stockForm;
-    private StockRegisterFormController stockRegisterFormController;
-    private StockTableViewController stockTableViewController;
+    private ProductRegistrationFormController productRegistrationFormController;
+    private ProductRegistrationTableViewController productRegistrationTableViewController;
 
     private boolean isStockFormVisible;
 
@@ -60,9 +60,9 @@ public class StockManagerController implements Initializable {
 
     private void loadTableView() {
         try {
-            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockTableView.fxml"));
-            this.stockTableViewController = new StockTableViewController();
-            loader.setController(this.stockTableViewController);
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/ProductRegistrationTableView.fxml"));
+            this.productRegistrationTableViewController = new ProductRegistrationTableViewController();
+            loader.setController(this.productRegistrationTableViewController);
             TableView tableView = loader.load();
             configureTableViewLayout(tableView);
             configureTableRowFactory(tableView);
@@ -77,7 +77,7 @@ public class StockManagerController implements Initializable {
     private void setUpSearchField(TextField searchField){
         TextFieldUtils.setUpperCaseTextFormatter(searchField);
         searchField.textProperty().addListener((obsValue, OldValue, newValue) -> {
-            stockTableViewController.searchFilteredStock(newValue);
+            productRegistrationTableViewController.searchFilteredStock(newValue);
         });
     }
 
@@ -112,11 +112,11 @@ public class StockManagerController implements Initializable {
     private void loadStockForm(){
         try {
 
-            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockRegisterForm.fxml"));
-            loader.setController(new StockRegisterFormController(this));
+            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/ProductRegistrationForm.fxml"));
+            loader.setController(new ProductRegistrationFormController(this));
             stockForm = loader.load();
-            stockRegisterFormController = loader.getController();
-            stockRegisterFormController.setStockTableViewController(this.stockTableViewController);
+            productRegistrationFormController = loader.getController();
+            productRegistrationFormController.setProductTableViewController(this.productRegistrationTableViewController);
             configureStockFormLayout();
         } catch (IOException e){
             log.severe("Error loading the product form: " + e.getMessage());
@@ -174,7 +174,7 @@ public class StockManagerController implements Initializable {
     }
 
     private void showStockData(Stock stock){
-        stockRegisterFormController.setStock(stock);
+        productRegistrationFormController.setStock(stock);
         toggleStockForm();
     }
 }

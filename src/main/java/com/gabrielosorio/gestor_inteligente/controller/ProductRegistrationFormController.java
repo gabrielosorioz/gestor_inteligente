@@ -3,7 +3,6 @@ import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
-import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.utils.AutoCompleteField;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
@@ -20,14 +19,13 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class StockRegisterFormController implements Initializable {
+public class ProductRegistrationFormController implements Initializable {
 
     private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -50,16 +48,16 @@ public class StockRegisterFormController implements Initializable {
 
     private Stock stock;
 
-    private StockTableViewController stockTableViewController;
+    private ProductRegistrationTableViewController productRegistrationTableViewController;
 
-    private final StockManagerController stockManagerController;
+    private final ProductManagerController productManagerController;
 
     ArrayList<String> categories = new ArrayList<>();
 
     ArrayList<String> suppliers = new ArrayList<>();
 
-    public StockRegisterFormController(StockManagerController stockManagerController){
-        this.stockManagerController = stockManagerController;
+    public ProductRegistrationFormController(ProductManagerController productManagerController){
+        this.productManagerController = productManagerController;
     }
 
     public void setStock(Stock stock){
@@ -67,8 +65,8 @@ public class StockRegisterFormController implements Initializable {
         populateFields();
     }
 
-    public void setStockTableViewController(StockTableViewController stockTableViewController){
-        this.stockTableViewController = stockTableViewController;
+    public void setProductTableViewController(ProductRegistrationTableViewController productRegistrationTableViewController){
+        this.productRegistrationTableViewController = productRegistrationTableViewController;
     }
 
     private void fetchCategoryData(){
@@ -165,14 +163,14 @@ public class StockRegisterFormController implements Initializable {
 
     private void cancel(){
         this.stock = null;
-        stockManagerController.toggleStockForm();
+        productManagerController.toggleStockForm();
     }
 
     private void saveProduct(){
         Stock newStockRegister = createUpdatedStock();
         StockDataUtils.updateStock(newStockRegister);
-        stockTableViewController.updateStockUI(newStockRegister);
-        stockManagerController.toggleStockForm();
+        productRegistrationTableViewController.updateStockUI(newStockRegister);
+        productManagerController.toggleStockForm();
         this.stock = null;
     }
 

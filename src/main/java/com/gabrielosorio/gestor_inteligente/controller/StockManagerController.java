@@ -7,11 +7,9 @@ import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import javafx.util.Duration;
@@ -40,6 +38,10 @@ public class StockManagerController implements Initializable {
 
     @FXML
     private TextField searchField;
+
+
+    @FXML
+    private HBox btnHBoxNewProduct;
 
     private AnchorPane stockForm;
     private StockRegisterFormController stockRegisterFormController;
@@ -111,7 +113,7 @@ public class StockManagerController implements Initializable {
         try {
 
             FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/StockRegisterForm.fxml"));
-            loader.setController(new StockRegisterFormController());
+            loader.setController(new StockRegisterFormController(this));
             stockForm = loader.load();
             stockRegisterFormController = loader.getController();
             stockRegisterFormController.setStockTableViewController(this.stockTableViewController);
@@ -162,7 +164,7 @@ public class StockManagerController implements Initializable {
         translateTransition.play();
     }
 
-    private void toggleStockForm(){
+    public void toggleStockForm(){
         if(isStockFormVisible){
             hideStockForm();
         } else {

@@ -10,7 +10,9 @@
     font-weight: bold;
 }
 
-
+.body {
+    -fx-background-color: #fff;
+}
 
 .search-field {
     -fx-background-color: #eeeeee;

@@ -45,15 +45,22 @@ public class StockRegisterFormController implements Initializable {
     private ListView<String> supplierList;
 
     @FXML
-    private Button btnSave;
+    private Button btnSave,btnCancel;
+
 
     private Stock stock;
 
     private StockTableViewController stockTableViewController;
 
+    private final StockManagerController stockManagerController;
+
     ArrayList<String> categories = new ArrayList<>();
 
     ArrayList<String> suppliers = new ArrayList<>();
+
+    public StockRegisterFormController(StockManagerController stockManagerController){
+        this.stockManagerController = stockManagerController;
+    }
 
     public void setStock(Stock stock){
         this.stock = stock;
@@ -156,10 +163,17 @@ public class StockRegisterFormController implements Initializable {
 
     }
 
+    private void cancel(){
+        this.stock = null;
+        stockManagerController.toggleStockForm();
+    }
+
     private void saveProduct(){
         Stock newStockRegister = createUpdatedStock();
         StockDataUtils.updateStock(newStockRegister);
         stockTableViewController.updateStockUI(newStockRegister);
+        stockManagerController.toggleStockForm();
+        this.stock = null;
     }
 
     private Product createUpdatedProduct(){
@@ -243,6 +257,10 @@ public class StockRegisterFormController implements Initializable {
 
         btnSave.setOnMouseClicked(mouseEvent -> {
             saveProduct();
+        });
+
+        btnCancel.setOnMouseClicked(mouseEvent -> {
+            cancel();
         });
 
     }

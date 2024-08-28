@@ -54,7 +54,7 @@
       <TextField fx:id="categoryField" layoutX="29.0" layoutY="369.0" prefHeight="40.0" prefWidth="320.0" promptText="Insira a categoria" styleClass="field" stylesheets="@../../css/stockRegisterForm.css" />
       <ListView fx:id="categoryList" layoutX="29.0" layoutY="409.0" maxHeight="130.0" maxWidth="320.0" prefHeight="137.0" prefWidth="320.0" />
       <Button fx:id="btnSave" layoutX="26.0" layoutY="629.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="292.0" styleClass="btn-save" stylesheets="@../../css/stockRegisterForm.css" text="Salvar (F2)" />
-      <Button layoutX="347.0" layoutY="629.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="292.0" styleClass="btn-cancel" stylesheets="@../../css/stockRegisterForm.css" text="Cancelar (ESC)" />
+      <Button fx:id="btnCancel" layoutX="347.0" layoutY="629.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="292.0" styleClass="btn-cancel" stylesheets="@../../css/stockRegisterForm.css" text="Cancelar (ESC)" />
       <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="595.0" layoutY="640.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../image/icons8-x-48.png" />

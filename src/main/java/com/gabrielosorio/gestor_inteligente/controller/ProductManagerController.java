@@ -60,7 +60,7 @@ public class ProductManagerController implements Initializable {
 
     private void loadTableView() {
         try {
-            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/ProductRegistrationTableView.fxml"));
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductRegistrationTableView.fxml"));
             this.productRegistrationTableViewController = new ProductRegistrationTableViewController();
             loader.setController(this.productRegistrationTableViewController);
             TableView tableView = loader.load();
@@ -112,7 +112,7 @@ public class ProductManagerController implements Initializable {
     private void loadStockForm(){
         try {
 
-            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/stock/ProductRegistrationForm.fxml"));
+            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductRegistrationForm.fxml"));
             loader.setController(new ProductRegistrationFormController(this));
             stockForm = loader.load();
             productRegistrationFormController = loader.getController();

@@ -8,9 +8,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import java.io.IOException;
@@ -28,7 +30,7 @@ public class ProductManagerController implements Initializable {
     private final Logger log = Logger.getLogger(getClass().getName());
 
     @FXML
-    private AnchorPane mainContent;
+    private AnchorPane mainContent,tableBody;
 
     @FXML
     private Pane shadow;
@@ -51,6 +53,12 @@ public class ProductManagerController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Color.web("#999999"));
+        shadow.setRadius(15);
+        shadow.setOffsetX(0);
+        shadow.setOffsetY(0);
+        tableBody.setEffect(shadow);
         loadTableView();
         loadStockForm();
         configureShadowClick();
@@ -66,7 +74,7 @@ public class ProductManagerController implements Initializable {
             TableView tableView = loader.load();
             configureTableViewLayout(tableView);
             configureTableRowFactory(tableView);
-            mainContent.getChildren().add(0, tableView);
+            tableBody.getChildren().add(0, tableView);
         } catch (IOException e) {
             log.severe("Error loading StockTableView :" + e.getMessage());
             throw new RuntimeException(e);
@@ -82,10 +90,10 @@ public class ProductManagerController implements Initializable {
     }
 
     private void configureTableViewLayout(TableView<Stock> tableView){
-        AnchorPane.setTopAnchor(tableView, 252.0);
-        AnchorPane.setRightAnchor(tableView,105.0);
-        AnchorPane.setBottomAnchor(tableView,148.00);
-        AnchorPane.setLeftAnchor(tableView,55.0);
+        AnchorPane.setTopAnchor(tableView, 109.0);
+        AnchorPane.setRightAnchor(tableView,9.0);
+        AnchorPane.setBottomAnchor(tableView,0.0);
+        AnchorPane.setLeftAnchor(tableView,9.0);
     }
 
     private void configureTableRowFactory(TableView<Stock> stockTableView) {

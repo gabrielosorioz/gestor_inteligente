@@ -10,14 +10,9 @@
     font-weight: bold;
 }
 
-.sidebar {
-    -fx-background-color: #fff;
-    -fx-padding: 10px;
-}
-
 .sidebar-btn-lbl {
     -fx-font-family: 'Poppins';
-    -fx-font-weight: bold;
+    -fx-font-weight: regular;
     -fx-font-size: 18px;
     -fx-text-fill: #747474;
 }
@@ -26,4 +21,23 @@
 .sidebar-hbox-btn {
     -fx-background-radius: 10px;
     -fx-cursor: hand;
+}
+
+.shortcut-sidebar-btn {
+    -fx-background-radius: 7px;
+    -fx-cursor: hand;
+}
+
+.menuIcon {
+    -fx-cursor: hand;
+}
+
+.sideMenu {
+    -fx-background-color: #fff;
+    -fx-border-width: 1.2 0 0 0px;
+    -fx-border-color: #cccccc;
+}
+
+.header {
+    -fx-background-color: #fff;
 }

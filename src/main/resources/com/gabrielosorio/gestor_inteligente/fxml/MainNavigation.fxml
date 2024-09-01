@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -12,92 +11,133 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.controller.MainNavigationController">
    <children>
       <AnchorPane fx:id="content" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: green;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <AnchorPane fx:id="slider" layoutY="59.0" prefHeight="747.0" prefWidth="277.0" styleClass="sidebar" stylesheets="@../css/mainNavigation.css">
+      <AnchorPane fx:id="header" layoutX="634.0" layoutY="35.0" prefHeight="40.0" prefWidth="1300.0" style="-fx-background-color: ;" styleClass="header" stylesheets="@../css/mainNavigation.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox layoutX="116.0" layoutY="209.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+            <VBox fx:id="menuBtn" prefHeight="40.0" prefWidth="45.0" styleClass="menuIcon" stylesheets="@../css/mainNavigation.css" AnchorPane.leftAnchor="5.0">
                <children>
-                  <HBox fx:id="btnHBoxSale" prefHeight="55.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+                  <ImageView fx:id="menuIcon" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/icons8-cardápio-64.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
+         </children></AnchorPane>
+      <VBox fx:id="slider2" layoutX="-275.0" prefHeight="696.0" prefWidth="265.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
+         <children>
+            <HBox fx:id="btnHBoxSale" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
                      <children>
-                        <VBox alignment="CENTER" prefHeight="55.0" prefWidth="44.0">
-                           <children>
-                              <ImageView fx:id="iconSaleViewer" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../image/icons8-tag-de-preço-de-venda-48.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </VBox>
-                        <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="221.0">
-                           <children>
-                              <Label fx:id="btnHBoxSaleLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Vender">
-                                 <HBox.margin>
-                                    <Insets left="20.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                        </HBox>
+                        <ImageView fx:id="iconSaleViewer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-tag-de-preço-de-venda-48.png" />
+                           </image>
+                        </ImageView>
                      </children>
-                  </HBox>
-                  <HBox fx:id="btnHBoxProductManager" layoutX="10.0" layoutY="10.0" prefHeight="55.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="203.0">
                      <children>
-                        <VBox alignment="CENTER" prefHeight="55.0" prefWidth="44.0">
-                           <children>
-                              <ImageView fx:id="iconProductViewer" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../image/icons8-produto-novo-48.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
+                        <Label fx:id="btnHBoxSaleLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Vender">
                            <HBox.margin>
-                              <Insets left="10.0" />
+                              <Insets left="20.0" />
                            </HBox.margin>
-                        </VBox>
-                        <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="221.0">
-                           <children>
-                              <Label fx:id="btnHBoxProductManagerLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Produtos">
-                                 <HBox.margin>
-                                    <Insets left="20.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                        </HBox>
-                     </children>
-                  </HBox>
-                  <HBox fx:id="btnHBoxStockManager" layoutX="10.0" layoutY="65.0" prefHeight="55.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="55.0" prefWidth="44.0">
-                           <children>
-                              <ImageView fx:id="iconStockViewer" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../image/icons8-lista-da-área-de-transferência-48.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                           <HBox.margin>
-                              <Insets left="10.0" />
-                           </HBox.margin>
-                        </VBox>
-                        <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="221.0">
-                           <children>
-                              <Label fx:id="btnHBoxStockManagerLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Estoque">
-                                 <HBox.margin>
-                                    <Insets left="20.0" />
-                                 </HBox.margin>
-                              </Label>
-                           </children>
-                        </HBox>
+                        </Label>
                      </children>
                   </HBox>
                </children>
+            </HBox>
+            <HBox fx:id="btnHBoxProductManager" layoutX="10.0" layoutY="10.0" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
+                     <children>
+                        <ImageView fx:id="iconProductViewer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-produto-novo-48.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="203.0">
+                     <children>
+                        <Label fx:id="btnHBoxProductManagerLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Produtos">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <HBox fx:id="btnHBoxStockManager" layoutX="10.0" layoutY="65.0" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
+                     <children>
+                        <ImageView fx:id="iconStockViewer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-lista-da-área-de-transferência-48.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="203.0">
+                     <children>
+                        <Label fx:id="btnHBoxStockManagerLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Estoque">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets left="5.0" right="5.0" top="10.0" />
+         </padding>
+      </VBox>
+      <VBox fx:id="shortCutSideBar" fillWidth="false" prefHeight="200.0" prefWidth="55.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
+         <children>
+            <VBox fx:id="shortCutBtnSale" alignment="CENTER" prefHeight="45.0" prefWidth="45.0" styleClass="shortcut-sidebar-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <ImageView fx:id="iconSaleShortcut" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/icons8-tag-de-preço-de-venda-48.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
+            <VBox fx:id="shortCutBtnProductManager" alignment="CENTER" layoutX="20.0" layoutY="10.0" prefHeight="45.0" prefWidth="45.0" styleClass="shortcut-sidebar-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <ImageView fx:id="iconProductShortcut" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/icons8-produto-novo-48.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
+            <VBox fx:id="shortCutBtnStockManager" alignment="CENTER" layoutX="20.0" layoutY="65.0" prefHeight="45.0" prefWidth="45.0" styleClass="shortcut-sidebar-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <ImageView fx:id="iconStockShortcut" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/icons8-lista-da-área-de-transferência-48.png" />
+                     </image>
+                  </ImageView>
+               </children>
             </VBox>
          </children>
-      </AnchorPane>
-      <AnchorPane layoutX="634.0" layoutY="35.0" prefHeight="59.0" prefWidth="1300.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="741.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Button fx:id="btnSlider" layoutX="26.0" layoutY="18.0" mnemonicParsing="false" text="MENU" />
-         </children></AnchorPane>
+         <padding>
+            <Insets left="5.0" right="5.0" top="10.0" />
+         </padding>
+      </VBox>
    </children>
 </AnchorPane>

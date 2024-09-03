@@ -23,7 +23,7 @@
                </children>
             </VBox>
          </children></AnchorPane>
-      <VBox fx:id="slider2" layoutX="-275.0" prefHeight="696.0" prefWidth="265.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
+      <VBox fx:id="slider2" layoutX="-275.0" prefHeight="696.0" prefWidth="265.0" spacing="5.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
          <children>
             <HBox fx:id="btnHBoxSale" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
                <children>
@@ -105,7 +105,7 @@
             <Insets left="5.0" right="5.0" top="10.0" />
          </padding>
       </VBox>
-      <VBox fx:id="shortCutSideBar" fillWidth="false" prefHeight="200.0" prefWidth="55.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
+      <VBox fx:id="shortCutSideBar" fillWidth="false" prefHeight="200.0" prefWidth="55.0" spacing="5.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
          <children>
             <VBox fx:id="shortCutBtnSale" alignment="CENTER" prefHeight="45.0" prefWidth="45.0" styleClass="shortcut-sidebar-btn" stylesheets="@../css/mainNavigation.css">
                <children>

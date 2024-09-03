@@ -67,7 +67,9 @@ public class MainNavigationController implements Initializable {
     private final Image ICON_MENU_DEFAULT = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64.png");
     private final Image ICON_MENU_ACTIVE = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64-active.png");
 
-    private void setUpBtnHoverEffect(Node btn, Node btnLabel, ImageView iconViewer, Image defaultImage, Image imageHover,FadeTransition fadeTransitionBackground){
+    private String activeScreen = "";
+
+    private void setUpBtnHoverEffect(String currentBtn,Node btn, Node btnLabel, ImageView iconViewer, Image defaultImage, Image imageHover,FadeTransition fadeTransitionBackground){
         fadeTransitionBackground.setNode(btn);
         fadeTransitionBackground.setFromValue(0.0);
         fadeTransitionBackground.setToValue(1.0);
@@ -80,13 +82,56 @@ public class MainNavigationController implements Initializable {
         });
 
         btn.setOnMouseExited(mouseEvent -> {
-            btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-            btnLabel.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-            iconViewer.setImage(defaultImage);
-            fadeTransitionBackground.play();
+            if(activeScreen.isEmpty() || activeScreen.isBlank()){
+                btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+                btnLabel.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
+                iconViewer.setImage(defaultImage);
+                fadeTransitionBackground.play();
+            }
+            else if (currentBtn.equals(activeScreen)){
+
+            } else {
+                btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+                btnLabel.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
+                iconViewer.setImage(defaultImage);
+                fadeTransitionBackground.play();
+            }
+
+
         });
 
     }
+
+    private void setUpBtnHoverEffect(String currentBtn,Node btn, ImageView iconViewer, Image defaultImage, Image imageHover,FadeTransition fadeTransitionBackground){
+        fadeTransitionBackground.setNode(btn);
+        fadeTransitionBackground.setFromValue(0.0);
+        fadeTransitionBackground.setToValue(1.0);
+
+        btn.setOnMouseEntered(mouseEvent -> {
+            btn.setStyle("-fx-background-color: " + BACKGROUND_COLOR_HOVER + ";");
+            iconViewer.setImage(imageHover);
+            fadeTransitionBackground.play();
+        });
+
+        btn.setOnMouseExited(mouseEvent -> {
+            if(activeScreen.isEmpty() || activeScreen.isBlank()){
+                btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+                iconViewer.setImage(defaultImage);
+                fadeTransitionBackground.play();
+            }
+            else if (currentBtn.equals(activeScreen)){
+
+            } else {
+                btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+                iconViewer.setImage(defaultImage);
+                fadeTransitionBackground.play();
+            }
+
+
+        });
+
+    }
+
 
     private boolean isOpen = true;
 
@@ -135,6 +180,14 @@ public class MainNavigationController implements Initializable {
             AnchorPane.setRightAnchor(frontCheckout,0.00);
             content.getChildren().add(0,frontCheckout);
 
+            activeScreen = "sale";
+
+            resetAllBtnStyles();
+            resetAllShortcutStyles();
+            updateBtnActiveStyle(btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_COLOR_HOVER);
+            updateBtnActiveStyle(shortCutBtnSale,iconSaleShortcut,ICON_SALE_COLOR_HOVER);
+
+
             Platform.runLater(() -> {
                 toggleSideBar();
             });
@@ -154,10 +207,19 @@ public class MainNavigationController implements Initializable {
             content.getChildren().clear();
             findProductView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductManager.fxml"));
             content.getChildren().add(0,findProductView);
+            activeScreen = "product";
+
+            resetAllBtnStyles();
+            resetAllShortcutStyles();
+            updateBtnActiveStyle(btnHBoxProductManager,btnHBoxProductManagerLbl,iconProductViewer,ICON_PRODUCT_COLOR_HOVER);
+            updateBtnActiveStyle(shortCutBtnProductManager,iconProductShortcut,ICON_PRODUCT_COLOR_HOVER);
+
+
 
             Platform.runLater(() -> {
                 toggleSideBar();
             });
+
 
         } catch (IOException e){
             e.printStackTrace();
@@ -171,6 +233,12 @@ public class MainNavigationController implements Initializable {
             content.getChildren().clear();
             stockManagerView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/stock/StockManager.fxml"));
             content.getChildren().add(0,stockManagerView);
+            activeScreen = "stock";
+
+            resetAllBtnStyles();
+            resetAllShortcutStyles();
+            updateBtnActiveStyle(btnHBoxStockManager,btnHBoxStockManagerLbl,iconStockViewer,ICON_STOCK_COLOR_HOVER);
+            updateBtnActiveStyle(shortCutBtnStockManager,iconStockShortcut,ICON_STOCK_COLOR_HOVER);
 
             Platform.runLater(() -> {
                 toggleSideBar();
@@ -181,7 +249,43 @@ public class MainNavigationController implements Initializable {
         }
     }
 
+    private void resetAllBtnStyles(){
 
+        btnHBoxSale.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+        btnHBoxSaleLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
+        iconSaleViewer.setImage(ICON_SALE_DEFAULT_COLOR);
+
+        btnHBoxProductManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+        btnHBoxProductManagerLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
+        iconProductViewer.setImage(ICON_PRODUCT_DEFAULT_COLOR);
+
+        btnHBoxStockManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+        btnHBoxStockManagerLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
+        iconStockViewer.setImage(ICON_STOCK_DEFAULT_COLOR);
+
+    }
+
+    private void resetAllShortcutStyles(){
+        shortCutBtnSale.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+        iconSaleShortcut.setImage(ICON_SALE_DEFAULT_COLOR);
+
+        shortCutBtnStockManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+        iconStockShortcut.setImage(ICON_STOCK_DEFAULT_COLOR);
+
+        shortCutBtnProductManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+        iconProductShortcut.setImage(ICON_PRODUCT_DEFAULT_COLOR);
+    }
+
+    private void updateBtnActiveStyle(Node btn, Node btnLabel, ImageView imageView,Image imageHover){
+        btn.setStyle("-fx-background-color: " + BACKGROUND_COLOR_HOVER + ";");
+        btnLabel.setStyle("-fx-text-fill: " + LBL_COLOR_HOVER + ";");
+        imageView.setImage(imageHover);
+    }
+
+    private void updateBtnActiveStyle(Node btn,ImageView imageView,Image imageHover){
+        btn.setStyle("-fx-background-color: " + BACKGROUND_COLOR_HOVER + ";");
+        imageView.setImage(imageHover);
+    }
 
 
 
@@ -205,12 +309,12 @@ public class MainNavigationController implements Initializable {
         shortCutSideBar.setEffect(shadow);
 
 
-        setUpBtnHoverEffect(btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect(btnHBoxProductManager,btnHBoxProductManagerLbl,iconProductViewer,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect(btnHBoxStockManager,btnHBoxStockManagerLbl,iconStockViewer,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect(shortCutBtnSale, new Label(),iconSaleShortcut,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect(shortCutBtnProductManager, new Label(),iconProductShortcut,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect(shortCutBtnStockManager, new Label(),iconStockShortcut,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("sale",btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("product",btnHBoxProductManager,btnHBoxProductManagerLbl,iconProductViewer,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("stock",btnHBoxStockManager,btnHBoxStockManagerLbl,iconStockViewer,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("sale",shortCutBtnSale, new Label(),iconSaleShortcut,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("product",shortCutBtnProductManager, new Label(),iconProductShortcut,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("stock",shortCutBtnStockManager, new Label(),iconStockShortcut,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
 
         btnHBoxSale.setOnMouseClicked(mouseEvent -> {
             loadFrontCheckout();

@@ -14,16 +14,6 @@ public class SaleProduct {
     private BigDecimal subTotal;
     private BigDecimal discount;
 
-    public SaleProduct(Integer id, Integer saleId, Product product, Sale sale, int quantity, BigDecimal unitPrice, BigDecimal subTotal, BigDecimal discount) {
-        this.id = id;
-        this.saleId = saleId;
-        this.product = product;
-        this.sale = sale;
-        this.quantity = quantity;
-        this.unitPrice = unitPrice;
-        this.subTotal = subTotal;
-        this.discount = discount;
-    }
 
     public SaleProduct(Product product){
        this.product = product;

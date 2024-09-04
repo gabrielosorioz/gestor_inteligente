@@ -168,17 +168,15 @@ public class MainNavigationController implements Initializable {
     }
 
 
-    private void loadFrontCheckout(){
-        TabPane frontCheckout = null;
+    private void loadCheckoutTabPane(){
+        Node frontCheckout = null;
 
         try {
             content.getChildren().clear();
-            frontCheckout = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/sale/FrontCheckout.fxml"));
-            AnchorPane.setTopAnchor(frontCheckout,60.00);
-            AnchorPane.setBottomAnchor(frontCheckout,0.00);
-            AnchorPane.setLeftAnchor(frontCheckout,0.00);
-            AnchorPane.setRightAnchor(frontCheckout,0.00);
+            frontCheckout = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/sale/CheckoutTabPane.fxml"));
             content.getChildren().add(0,frontCheckout);
+            AnchorPane.setTopAnchor(frontCheckout,45.0);
+            AnchorPane.setLeftAnchor(frontCheckout,55.0);
 
             activeScreen = "sale";
 
@@ -194,7 +192,8 @@ public class MainNavigationController implements Initializable {
 
 
         } catch (IOException e){
-            System.out.println("ERROR: Error at load FXML Front of checkout : ");
+            System.out.println("ERROR: Error at load FXML Front of checkout : " + e.getCause());
+            e.printStackTrace();
         }
 
 
@@ -295,7 +294,7 @@ public class MainNavigationController implements Initializable {
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.web("#999999")); // Cor da sombra
         shadow.setRadius(15); // O quão difusa é a sombra
-        shadow.setOffsetX(0); // Deslocamento horizontal da sombra
+        shadow.setOffsetX(-3); // Deslocamento horizontal da sombra
         shadow.setOffsetY(10); //
         slider2.setEffect(shadow);
 
@@ -303,10 +302,16 @@ public class MainNavigationController implements Initializable {
         shadowHeader.setColor(Color.web("#999999")); // Cor da sombra
         shadowHeader.setRadius(15); // O quão difusa é a sombra
         shadowHeader.setOffsetX(0); // Deslocamento horizontal da sombra
-        shadowHeader.setOffsetY(0);
+        shadowHeader.setOffsetY(-5);
         header.setEffect(shadowHeader);
 
-        shortCutSideBar.setEffect(shadow);
+        DropShadow shadowShortCut = new DropShadow();
+        shadowShortCut.setColor(Color.web("#999999")); // Cor da sombra
+        shadowShortCut.setRadius(15); // O quão difusa é a sombra
+        shadowShortCut.setOffsetX(-3); // Deslocamento horizontal da sombra
+        shadowShortCut.setOffsetY(10);
+
+        shortCutSideBar.setEffect(shadowShortCut);
 
 
         setUpBtnHoverEffect("sale",btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
@@ -317,7 +322,7 @@ public class MainNavigationController implements Initializable {
         setUpBtnHoverEffect("stock",shortCutBtnStockManager, new Label(),iconStockShortcut,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
 
         btnHBoxSale.setOnMouseClicked(mouseEvent -> {
-            loadFrontCheckout();
+            loadCheckoutTabPane();
         });
 
         btnHBoxProductManager.setOnMouseClicked(mouseEvent -> {

@@ -1,0 +1,107 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Regular.ttf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Bold.ttf');
+    font-weight: bold;
+}
+
+
+.tab-pane .tab {
+    -fx-effect: none;
+    -fx-font-family: 'Poppins';
+    -fx-background-color: #fff;
+    -fx-background-radius: 5 5 0 0px;
+    -fx-border-radius: 5 5 0 0px;
+    -fx-font-size: 14px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.tab-pane .tab:selected {
+    -fx-border-width: 0 0 3.5 0px;
+    -fx-background-color: #f2f2f2;
+    -fx-border-color: #695CFE;
+    -fx-effect: none;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-font-weight: bold;
+}
+
+.tab-pane .tab-header-background {
+    -fx-effect: none;
+    -fx-background-color: #fff;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.body {
+    -fx-background-color: #eee;
+}
+
+.container {
+    -fx-background-color: #fff;
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-border-color: transparent;
+}
+
+.title {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.line {
+    -fx-background-color: linear-gradient(to bottom right, #00d4ff, #9700ff);
+    -fx-background-radius: 3px;
+}
+
+.price-HBox{
+    -fx-background-color: #fff;
+    -fx-background-radius: 20 0 0 0px;
+    -fx-border-width: 0 0 5 0px;
+    -fx-border-color: linear-gradient(to bottom right, #00d4ff, #9700ff);
+}
+.price-HBox-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-font-size: 26px;
+}
+
+.search-field {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-color: #eee;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-width: 2px;
+}
+
+.search-field:hover {
+    -fx-border-color: #999999;
+}
+
+.search-field:focused {
+    -fx-border-color: #999999;
+}
+
+.btn-HBox-add-new-checkout {
+    -fx-border-color: transparent;
+    -fx-background-radius: 25px;
+    -fx-background-color: #329932;
+    -fx-cursor: hand;
+}
+
+.btn-add-new-checkout-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #fff;
+}

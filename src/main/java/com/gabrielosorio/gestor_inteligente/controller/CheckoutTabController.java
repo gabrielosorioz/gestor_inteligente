@@ -1,204 +1,224 @@
 package com.gabrielosorio.gestor_inteligente.controller;
 
-import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
+import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class CheckoutTabController implements Initializable {
 
-    @FXML
-    private Button btnAddCheckout;
-
-    @FXML
-    private TextField codeField;
-
-    @FXML
-    private AnchorPane content;
-
-    @FXML
-    private Tab currentTab;
-
-    @FXML
-    private TextField qtdField;
-
-    @FXML
-    private VBox productTable;
-
     private HashMap<String,Product> productData = new HashMap<>();
 
-    private HashMap<String,SaleProduct> itemsSales = new HashMap<>();
-
-    private HashMap<String,ProductItemController> saleProductControllers = new HashMap<>();
-
-    private FrontCheckoutController FCKController;
-
-    private int itemCounter;
-
+    private HashMap<String,SaleProduct> cartProduct = new HashMap<>();
+    private ObservableList<SaleProduct> cartProductObsList = FXCollections.observableArrayList();
     private final Logger log = Logger.getLogger(getClass().getName());
 
+    @FXML
+    private TableView<SaleProduct> cartTable;
 
-    private void fetchProductsData() {
-        StockDataUtils.fetchStockData().forEach(item -> {
-            Product product = item.getProduct();
-            String productCode = String.valueOf(product.getProductCode());
-            String barCode = product.getBarCode();
-            productData.put(productCode,product);
-            productData.put(barCode,product);
-        });
+    @FXML
+    private TableColumn<SaleProduct, String> descriptionCol;
+
+    @FXML
+    private TableColumn<SaleProduct, String> discountCol;
+
+    @FXML
+    private TableColumn<SaleProduct, String> codeCol;
+
+    @FXML
+    private TableColumn<SaleProduct, String> quantityCol;
+
+    @FXML
+    private TableColumn<SaleProduct, String> sellingPriceCol;
+
+    @FXML
+    private TableColumn<SaleProduct, String> subTotalCol;
+
+    @FXML
+    private Tab checkoutTab;
+
+    @FXML
+    private HBox btnAddNewCheckoutTab;
+
+    @FXML
+    private TextField searchField,qtdField;
+
+
+
+
+    private final CheckoutTabPaneController checkoutTabPaneController;
+
+    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController){
+        this.checkoutTabPaneController = checkoutTabPaneController;
     }
 
-    private void addEventOnQtdField(){
-        qtdField.setText("1");
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        fetchProductsData();
+        setUpColumns();
 
-        qtdField.textProperty().addListener(((observableValue, s, t1) -> {
-            String plainText = t1.replaceAll("[^0-9]", "");
-            qtdField.setText(plainText);
-        }));
+        setFocusOnSearchField();
+        setSelectedTabListener();
+        setOnCloseTab();
+        cartTable.setItems(cartProductObsList);
 
-        qtdField.setOnKeyPressed(event -> {
-            KeyCode pressedKey = event.getCode();
-            boolean isEmpty = (qtdField.getText().isEmpty() || qtdField.getText().isBlank());
+        cartTable.setFocusTraversable(false);
 
-            if(pressedKey.equals(KeyCode.ENTER)){
-                codeField.requestFocus();
-                if(qtdField.getText().isBlank()){
-                    qtdField.setText("1");
+        btnAddNewCheckoutTab.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getClickCount() == 1){
+                checkoutTabPaneController.addNewCheckoutTab();
+            }
+        });
+
+        setUpEventSearchField();
+
+    }
+
+    private void monetaryLabel(TableColumn<SaleProduct,String> currencyColumn){
+        currencyColumn.setCellFactory(column -> {
+            TableCell<SaleProduct, String> cell = new TableCell<>() {
+                private final Label currencyLabel = new Label("R$");
+                private final Text valueText = new Text();
+
+                {
+                    currencyLabel.setStyle(
+                            "-fx-text-fill: black;"
+                    );
+                    currencyLabel.setPrefWidth(50);
+                    valueText.setTextAlignment(TextAlignment.RIGHT);
+                    HBox hbox = new HBox(5, currencyLabel, valueText);
+                    hbox.setAlignment(Pos.CENTER_LEFT);
+                    setGraphic(hbox);
+                    setText(null);
                 }
-            }
 
-            if(KeyCode.F3 == event.getCode()){
-                createSale();
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setGraphic(null);
+                    } else {
+                        valueText.setText(item);
+                        setGraphic(getGraphic());
+                    }
+                }
+            };
+            return cell;
+        });
+    }
+
+
+    private void setUpColumns(){
+        codeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getProductCode().toString()));
+        descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
+        sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getSellingPrice().toPlainString()));
+        quantityCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
+        discountCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDiscount().toPlainString()));
+        subTotalCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSubTotal().toPlainString()));
+
+        monetaryLabel(subTotalCol);
+        monetaryLabel(discountCol);
+        monetaryLabel(sellingPriceCol);
+
+        codeCol.setResizable(false);
+        descriptionCol.setResizable(false);
+        sellingPriceCol.setResizable(false);
+        quantityCol.setResizable(false);
+        discountCol.setResizable(false);
+        subTotalCol.setResizable(false);
+
+        codeCol.setReorderable(false);
+        descriptionCol.setReorderable(false);
+        sellingPriceCol.setReorderable(false);
+        discountCol.setReorderable(false);
+        subTotalCol.setReorderable(false);
+        quantityCol.setReorderable(false);
+
+        codeCol.setSortable(false);
+        descriptionCol.setSortable(false);
+        sellingPriceCol.setSortable(false);
+        subTotalCol.setSortable(false);
+        discountCol.setSortable(false);
+        quantityCol.setSortable(false);
+    }
+
+    private void setFocusOnSearchField(){
+        Platform.runLater(() -> {
+            if (checkoutTab.isSelected()) {
+                searchField.requestFocus();
             }
         });
     }
 
-    private void addEventOnCodeField(){
-        codeField.setOnMouseClicked(mouseEvent -> {
+    private void setSelectedTabListener(){
+        if(checkoutTab != null) {
+            checkoutTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    Platform.runLater(() -> {
+                        searchField.requestFocus();
+                    });
+                }
+            });
+        }
+    }
 
-            if(qtdField.getText().isBlank()){
-                qtdField.setText("1");
-            }
+    private void setOnCloseTab(){
+        Platform.runLater(() -> {
+            checkoutTab.setOnCloseRequest(event -> {
+                if(checkoutTabPaneController.getListTabLength() == 1){
+                    event.consume();
+                    Platform.runLater(()->{
+                        searchField.requestFocus();
+                    });
+                }
+            });
         });
+    }
 
-        codeField.setOnKeyPressed(keyEvent -> {
+    private void setUpEventSearchField(){
+        searchField.setOnKeyPressed(keyEvent -> {
             KeyCode pressedKey = keyEvent.getCode();
-            String id = codeField.getText().trim();
+            String search = searchField.getText().trim();
             String qtdStr = qtdField.getText().trim();
-            boolean isCodeFieldEmpty = id.isEmpty() || id.isBlank();
+            boolean isCodeFieldEmpty = search.isEmpty() || search.isBlank();
 
             if(pressedKey.equals(KeyCode.ENTER)){
-
-                if(isCodeFieldEmpty) {
-                    qtdField.requestFocus();
-                }
-
                 if(!isCodeFieldEmpty){
-                    if(itemsSales.containsKey(id)){
-                        SaleProduct itemSale = getItemSale(id);
-                        int newQuantity = itemSale.getQuantity() + Integer.parseInt(qtdStr);
-                        itemSale.setQuantity(newQuantity);
-                        updateSaleItem(itemSale);
-                        codeField.clear();
-                        qtdField.setText("1");
+
+                    if(cartProduct.containsKey(search)){
+                        increaseProductToCart(search,Integer.parseInt(qtdStr));
+                    } else {
+                        insertProductToCart(search, Integer.parseInt(qtdStr));
                     }
 
-                    if(!itemsSales.containsKey(id)){
-                        Product newItem = getProductData(id);
-                        addItemSale(newItem);
-                        SaleProduct newSaleProduct = itemsSales.get(id);
-                        newSaleProduct.setQuantity(Integer.parseInt(qtdStr));
-                        addItemSaleView(id);
-                        codeField.clear();
-                        qtdField.setText("1");
+                    searchField.clear();
+                    qtdField.setText("1");
 
-                    }
                 }
-            }
 
-            if(pressedKey.equals(KeyCode.F3)){
-                createSale();
+
             }
 
         });
-
-
-    }
-
-    private void createSale(){
-        HashSet<SaleProduct> itemSet = new HashSet<>(itemsSales.values());
-        ArrayList<SaleProduct> items = new ArrayList<>(itemSet);
-        final Sale sale = new Sale(items);
-        showPaymentView(sale);
-    }
-
-    private void addItemSale(Product product){
-        if(product == null){
-            log.severe("Error at add product to list of products for sale: Product is null.");
-            throw new IllegalArgumentException("Product is null");
-        }
-        if(product.getProductCode() == null && (product.getBarCode() == null)){
-            log.severe("Product ID and BarCode are null or empty.");
-            throw new IllegalArgumentException("Product ID and BarCode are empty.");
-        }
-
-        SaleProduct newSaleItem = new SaleProduct(product);
-
-        if(newSaleItem.getProduct().getProductCode() != null){
-           String productCode = String.valueOf(newSaleItem.getProduct().getProductCode());
-           itemsSales.put(productCode,newSaleItem);
-        }
-
-        if(newSaleItem.getProduct().getBarCode() != null && !newSaleItem.getProduct().getBarCode().isBlank()){
-            String barCode = newSaleItem.getProduct().getBarCode();
-            itemsSales.put(barCode,newSaleItem);
-        }
-
-        log.info("Product added to the list of products for sale." + " BarCode: " + itemsSales.get(newSaleItem.getProduct().getBarCode()).getProduct().getBarCode() + " ID: " + itemsSales.get(String.valueOf(newSaleItem.getProduct().getProductCode())).getProduct().getProductCode());
-    }
-
-    private void addItemSaleView(String id){
-
-        if(itemsSales.containsKey(id)){
-
-            SaleProduct newItemSaleView = getItemSale(id);
-
-            try {
-                FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/ProductItem.fxml"));
-                ProductItemController controller = new ProductItemController((++itemCounter), newItemSaleView);
-                loader.setController(controller);
-
-                saleProductControllers.put(newItemSaleView.getProduct().getBarCode(), controller);
-                saleProductControllers.put(String.valueOf(newItemSaleView.getProduct().getProductCode()),controller);
-
-                HBox productItemRow = loader.load();
-                productTable.getChildren().add(productItemRow);
-
-            } catch (Exception e) {
-                log.severe("ERROR at load new tab view: " + e.getMessage());
-            }
-
-        }
-
     }
 
     private Product getProductData(String id){
@@ -211,100 +231,50 @@ public class CheckoutTabController implements Initializable {
         throw new IllegalArgumentException("Invalid Product ID: " + id);
     }
 
-    private SaleProduct getItemSale(String id){
-        SaleProduct saleProduct = itemsSales.get(id);
+    private void insertProductToCart(String id, int quantity){
+        Product product = getProductData(id);
+        ProductValidator.validate(product);
+        final SaleProduct newSaleItem = new SaleProduct(product);
+        newSaleItem.setQuantity(quantity);
+
+        cartProduct.put(String.valueOf(newSaleItem.getProduct().getProductCode()),newSaleItem);
+        if(newSaleItem.getProduct().hasBarCode()){
+            cartProduct.put(newSaleItem.getProduct().getBarCode(),newSaleItem);
+        }
+
+        cartProductObsList.add(newSaleItem);
+        cartTable.refresh();
+        log.info("Product added to the list of products for sale." + " BarCode: " + cartProduct.get(newSaleItem.getProduct().getBarCode()).getProduct().getBarCode() + " ID: " + cartProduct.get(String.valueOf(newSaleItem.getProduct().getProductCode())).getProduct().getProductCode());
+    }
+
+    private void increaseProductToCart(String id, int quantity){
+        SaleProduct itemSale = searchProductInCart(id);
+        itemSale.setQuantity(itemSale.getQuantity() + quantity);
+        cartTable.refresh();
+    }
+
+    private SaleProduct searchProductInCart(String search){
+        SaleProduct saleProduct = cartProduct.get(search);
         if(saleProduct != null){
             return saleProduct;
         } else {
-            log.severe("Item Sale not found: " + id);
+            log.severe("Cart product not found: " + search);
         }
-        throw new IllegalArgumentException("Invalid item sale ID" + id);
+        throw new IllegalArgumentException("Invalid cart product ID" + search);
     }
 
-    private ProductItemController getItemController(String id){
-        ProductItemController controller = saleProductControllers.get(id);
-        if(controller != null){
-            return controller;
-        } else {
-            log.severe("Item controller not found: " + id);
-        }
-        throw new IllegalArgumentException("Invalid ID Controller " + id);
-    }
-
-    private void setFocusOnCodeField(){
-        Platform.runLater(() -> {
-            if (currentTab.isSelected()) {
-                codeField.requestFocus();
-            }
+    private void fetchProductsData() {
+        StockDataUtils.fetchStockData().forEach(item -> {
+            Product product = item.getProduct();
+            String productCode = String.valueOf(product.getProductCode());
+            String barCode = product.getBarCode();
+            productData.put(productCode,product);
+            productData.put(barCode,product);
+            System.out.println(product);
         });
     }
 
-    private void setSelectedTabListener(){
-        if(currentTab != null) {
-            currentTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    Platform.runLater(() -> {
-                        codeField.requestFocus();
-                    });
-                }
-            });
-        }
-    }
-
-    private void setOnCloseTab(Tab tab){
-        Platform.runLater(() -> {
-            tab.setOnCloseRequest(event -> {
-                if(FCKController.getListTabLength() == 1){
-                    event.consume();
-                    Platform.runLater(()->{
-                        codeField.requestFocus();
-                    });
-                }
-            });
-        });
-    }
-
-    private void showPaymentView(Sale sale){
-
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/PaymentView.fxml"));
-            Stage paymentRoot = new Stage();
-            PaymentViewController controller = new PaymentViewController(sale);
-            fxmlLoader.setController(controller);
-            Scene scene = new Scene(fxmlLoader.load());
-            paymentRoot.setScene(scene);
-            paymentRoot.show();
-
-        } catch (Exception e){
-            log.severe("ERROR at load payment view: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void updateSaleItem(SaleProduct saleProduct){
-        String id = String.valueOf(saleProduct.getProduct().getProductCode());
-        ProductItemController controller = getItemController(id);
-        controller.setSaleProduct(saleProduct);
-    }
 
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        fetchProductsData();
-        btnAddCheckout.setOnMouseClicked(event -> {
-            FCKController.addNewTab();
-        });
-
-        setFocusOnCodeField();
-        addEventOnCodeField();
-        addEventOnQtdField();
-        setSelectedTabListener();
-        setOnCloseTab(currentTab);
-
-    }
-
-    public void setFCKController(FrontCheckoutController FCKController){
-        this.FCKController = FCKController;
-    }
 
 }

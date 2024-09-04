@@ -262,6 +262,10 @@ public class Product {
         this.dateDelete = dateDelete;
     }
 
+    public boolean hasBarCode(){
+        return this.barCode != null && !this.barCode.isBlank();
+    }
+
     @Override
     public String toString() {
         return "Product{" +

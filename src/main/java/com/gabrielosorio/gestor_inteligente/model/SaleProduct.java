@@ -5,11 +5,11 @@ import java.math.RoundingMode;
 
 public class SaleProduct {
 
-    private Integer id;
-    private Integer saleId;
+    private long id;
+    private long saleId;
     private Product product;
     private Sale sale;
-    private int quantity;
+    private long quantity;
     private BigDecimal unitPrice;
     private BigDecimal subTotal;
     private BigDecimal discount;
@@ -24,19 +24,19 @@ public class SaleProduct {
 
     public SaleProduct(){}
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public Integer getSaleId() {
+    public long getSaleId() {
         return saleId;
     }
 
-    public void setSaleId(Integer saleId) {
+    public void setSaleId(long saleId) {
         this.saleId = saleId;
     }
 
@@ -57,11 +57,11 @@ public class SaleProduct {
         this.sale = sale;
     }
 
-    public int getQuantity() {
+    public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(long quantity) {
         this.quantity = quantity;
     }
 

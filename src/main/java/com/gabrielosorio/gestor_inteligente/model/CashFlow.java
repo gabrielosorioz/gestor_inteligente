@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 public class CashFlow {
 
-    private Integer id;
+    private long id;
     private Sale sale;
     private BigDecimal pettyCash;
     private BigDecimal exitCash;
@@ -13,7 +13,7 @@ public class CashFlow {
     private String movementType;
     private LocalDateTime dateTime;
 
-    public CashFlow(Integer id, Sale sale, BigDecimal pettyCash, BigDecimal exitCash, BigDecimal entryCash, String movementType, LocalDateTime dateTime) {
+    public CashFlow(long id, Sale sale, BigDecimal pettyCash, BigDecimal exitCash, BigDecimal entryCash, String movementType, LocalDateTime dateTime) {
         this.id = id;
         this.sale = sale;
         this.pettyCash = pettyCash;
@@ -23,11 +23,11 @@ public class CashFlow {
         this.dateTime = dateTime;
     }
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -163,7 +163,7 @@ public class StockDataUtils {
 
     }
 
-    private static JSONObject findStockJSONObjectByProductCode(JSONArray stockJSONArray, Integer productCode){
+    private static JSONObject findStockJSONObjectByProductCode(JSONArray stockJSONArray, long productCode){
         for (Object o : stockJSONArray) {
             JSONObject stockJSONObject = (JSONObject) o;
             JSONObject productJSONObject = stockJSONObject.getJSONObject("product");

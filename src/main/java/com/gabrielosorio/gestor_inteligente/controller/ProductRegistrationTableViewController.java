@@ -52,7 +52,7 @@ public class ProductRegistrationTableViewController implements Initializable {
         categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getCategory().getDescription()));
         costPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getProduct().getCostPrice().toPlainString())));
         descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
-        idCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getProductCode().toString()));
+        idCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProduct().getProductCode())));
         stockColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
         sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getProduct().getSellingPrice().toPlainString())));
 
@@ -144,8 +144,9 @@ public class ProductRegistrationTableViewController implements Initializable {
         final String searchLower = search.toLowerCase();
 
         stockTable.setItems(stockList.filtered(stock ->
-            stock.getProduct().getProductCode().toString().toLowerCase().contains(searchLower) ||
-            stock.getProduct().getDescription().toLowerCase().contains(searchLower)
+            String.valueOf(stock.getProduct().getProductCode()).toLowerCase().contains(searchLower) ||
+            stock.getProduct().getDescription().toLowerCase().contains(searchLower) ||
+            stock.getProduct().getBarCode().toLowerCase().contains(searchLower)
         ));
         stockTable.refresh();
 

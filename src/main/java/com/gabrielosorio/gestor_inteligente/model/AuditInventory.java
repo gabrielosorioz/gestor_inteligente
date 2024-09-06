@@ -4,13 +4,13 @@ import java.sql.Timestamp;
 
 public class AuditInventory {
 
-    private Integer id;
+    private long id;
     private Stock stock;
     private String productName;
     private Timestamp lastUpdate;
     private String movementType;
 
-    public AuditInventory(Integer id, Stock stock, String productName, Timestamp lastUpdate, String movementType) {
+    public AuditInventory(long id, Stock stock, String productName, Timestamp lastUpdate, String movementType) {
         this.id = id;
         this.stock = stock;
         this.productName = productName;
@@ -18,11 +18,11 @@ public class AuditInventory {
         this.movementType = movementType;
     }
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 

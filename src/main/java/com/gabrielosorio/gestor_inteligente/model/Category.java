@@ -2,15 +2,15 @@ package com.gabrielosorio.gestor_inteligente.model;
 
 public class Category {
 
-    private Integer id;
+    private long id;
     private String description;
 
-    public Category(Integer id, String description) {
+    public Category(long id, String description) {
         this.id = id;
         this.description = description;
     }
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
@@ -18,7 +18,7 @@ public class Category {
         return description;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -4,35 +4,26 @@ import java.sql.Timestamp;
 
 public class Stock {
 
-    private Integer id;
+    private long id;
     private Product product;
-    private Integer productId;
+    private long productId;
     private String barCode;
     private String productName;
-    private int quantity;
+    private long quantity;
     private Timestamp lastUpdate;
 
-    public Stock(Integer id, Product product, Integer productId, String barCode, String productName, int quantity, Timestamp lastUpdate) {
-        this.id = id;
-        this.product = product;
-        this.productId = productId;
-        this.barCode = barCode;
-        this.productName = productName;
-        this.quantity = quantity;
-        this.lastUpdate = lastUpdate;
-    }
 
-    public Stock(Product product, int quantity){
+    public Stock(Product product, long quantity){
         ProductValidator.validate(product);
         this.product = product;
         this.quantity = quantity;
     }
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -44,11 +35,11 @@ public class Stock {
         this.product = product;
     }
 
-    public Integer getProductId() {
+    public long getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(long productId) {
         this.productId = productId;
     }
 
@@ -68,11 +59,11 @@ public class Stock {
         this.productName = productName;
     }
 
-    public int getQuantity() {
+    public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(long quantity) {
         this.quantity = quantity;
     }
 

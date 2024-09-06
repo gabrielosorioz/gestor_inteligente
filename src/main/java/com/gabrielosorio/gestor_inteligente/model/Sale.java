@@ -10,8 +10,8 @@ import java.util.List;
 
 public class Sale {
 
-    private Integer id;
-    private Integer saleId;
+    private long id;
+    private long saleId;
     private Timestamp dataSale;
     private Timestamp dataCancel;
     private List<SaleProduct> items;
@@ -39,7 +39,7 @@ public class Sale {
 
     }
 
-    public Sale(Integer id, Integer saleId, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal totalPrice, BigDecimal totalDiscount, List<Payment> paymentMethods,String status) {
+    public Sale(long id, long saleId, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal totalPrice, BigDecimal totalDiscount, List<Payment> paymentMethods,String status) {
         this.id = id;
         this.saleId = saleId;
         this.dataSale = dataSale;
@@ -53,19 +53,19 @@ public class Sale {
 
     public Sale(){}
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public Integer getSaleId() {
+    public long getSaleId() {
         return saleId;
     }
 
-    public void setSaleId(Integer saleId) {
+    public void setSaleId(long saleId) {
         this.saleId = saleId;
     }
 

@@ -8,8 +8,8 @@ import java.sql.Timestamp;
 
 public class Product {
 
-    private Integer id;
-    private Integer productCode;
+    private long id;
+    private long productCode;
     private String barCode;
     private String description;
     private BigDecimal costPrice;
@@ -47,8 +47,8 @@ public class Product {
     }
 
     public static class ProductBuilder {
-        private Integer id;
-        private Integer productCode;
+        private long id;
+        private long productCode;
         private String barCode;
         private String description;
         private BigDecimal costPrice;
@@ -62,12 +62,12 @@ public class Product {
         private Supplier supplier;
         private Category category;
 
-        public ProductBuilder id(Integer id){
+        public ProductBuilder id(long id){
             this.id = id;
             return this;
         }
 
-        public ProductBuilder productCode(Integer productCode){
+        public ProductBuilder productCode(long productCode){
             this.productCode = productCode;
             return this;
         }
@@ -143,11 +143,11 @@ public class Product {
     }
 
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public Integer getProductCode() {
+    public long getProductCode() {
         return productCode;
     }
 

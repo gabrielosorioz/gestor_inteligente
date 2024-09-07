@@ -1,7 +1,11 @@
 package com.gabrielosorio.gestor_inteligente.model;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 
 public class SaleProduct {
 
@@ -13,13 +17,15 @@ public class SaleProduct {
     private BigDecimal unitPrice;
     private BigDecimal subTotal;
     private BigDecimal discount;
-
+    private ObjectProperty<BigDecimal> subTotalProperty;
 
     public SaleProduct(Product product){
-       this.product = product;
-       unitPrice = product.getSellingPrice().setScale(2, RoundingMode.HALF_UP);
-       discount = new BigDecimal(0.00).setScale(2,RoundingMode.HALF_UP);
-       quantity = 1;
+        this.product = product;
+        unitPrice = product.getSellingPrice().setScale(2, RoundingMode.HALF_UP);
+        discount = new BigDecimal(0.00).setScale(2,RoundingMode.HALF_UP);
+        quantity = 1;
+        subTotal = calculateSubtotal();
+        subTotalProperty = new SimpleObjectProperty<>(calculateSubtotal());
     }
 
     public SaleProduct(){}
@@ -47,6 +53,8 @@ public class SaleProduct {
     public void setProduct(Product product) {
         this.product = product;
         unitPrice = product.getSellingPrice().setScale(2, RoundingMode.HALF_UP);
+        subTotal = calculateSubtotal();
+        subtotalProperty().set(subTotal);
     }
 
     public Sale getSale() {
@@ -63,6 +71,8 @@ public class SaleProduct {
 
     public void setQuantity(long quantity) {
         this.quantity = quantity;
+        subTotal = calculateSubtotal();
+        subTotalProperty.set(subTotal);
     }
 
     public BigDecimal getUnitPrice() {
@@ -71,12 +81,17 @@ public class SaleProduct {
 
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
+        subTotal = calculateSubtotal();
+        subTotalProperty.set(subTotal);
     }
 
     public BigDecimal getSubTotal() {
-        return unitPrice.multiply(BigDecimal.valueOf(quantity))
-                .subtract(discount)
-                .setScale(2,RoundingMode.HALF_UP);
+        subTotal = calculateSubtotal();
+        return subTotal;
+    }
+
+    public ObjectProperty<BigDecimal> subtotalProperty(){
+        return subTotalProperty;
     }
 
     public void setSubTotal(BigDecimal subTotal) {
@@ -89,5 +104,13 @@ public class SaleProduct {
 
     public void setDiscount(BigDecimal discount) {
         this.discount = discount;
+        subTotal = calculateSubtotal();
+        subTotalProperty.set(subTotal);
+    }
+
+    private BigDecimal calculateSubtotal(){
+        return unitPrice.multiply(BigDecimal.valueOf(quantity))
+                .subtract(discount)
+                .setScale(2,RoundingMode.HALF_UP);
     }
 }

@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.controller;
 
+import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
@@ -12,14 +13,21 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
@@ -272,6 +280,30 @@ public class CheckoutTabController implements Initializable {
             productData.put(barCode,product);
             System.out.println(product);
         });
+    }
+
+    private void createSale(){
+        HashSet<SaleProduct> itemSet = new HashSet<>(cartProduct.values());
+        ArrayList<SaleProduct> items = new ArrayList<>(itemSet);
+        final Sale sale = new Sale(items);
+        showPaymentView(sale);
+    }
+
+    private void showPaymentView(Sale sale){
+
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/PaymentView.fxml"));
+            Stage paymentRoot = new Stage();
+            PaymentViewController controller = new PaymentViewController(sale);
+            fxmlLoader.setController(controller);
+            Scene scene = new Scene(fxmlLoader.load());
+            paymentRoot.setScene(scene);
+            paymentRoot.show();
+
+        } catch (Exception e){
+            log.severe("ERROR at load payment view: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 

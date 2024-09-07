@@ -62,16 +62,24 @@
 }
 
 .price-HBox{
-    -fx-background-color: #fff;
+    -fx-background-color: transparent;
     -fx-background-radius: 20 0 0 0px;
     -fx-border-width: 0 0 5 0px;
     -fx-border-color: linear-gradient(to bottom right, #00d4ff, #9700ff);
 }
+
 .price-HBox-lbl {
     -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
     -fx-text-fill: black;
     -fx-font-size: 26px;
+}
+
+.field-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
 }
 
 .search-field {
@@ -85,7 +93,7 @@
 }
 
 .search-field:hover {
-    -fx-border-color: #999999;
+    -fx-background-color: #d6d6d6;
 }
 
 .search-field:focused {

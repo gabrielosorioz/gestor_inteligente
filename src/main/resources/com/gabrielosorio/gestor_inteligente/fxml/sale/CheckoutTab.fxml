@@ -13,71 +13,72 @@
 <?import javafx.scene.layout.HBox?>
 
 
-<Tab text="Untitled Pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:id="checkoutTab">
-   <content>
-      <AnchorPane minHeight="800.0" minWidth="1300.0" styleClass="body" stylesheets="@../../css/checkoutTabPane.css">
-         <children>
-            <AnchorPane layoutX="65.0" layoutY="38.0" prefHeight="626.0" prefWidth="1105.0" styleClass="container" stylesheets="@../../css/checkoutTabPane.css">
-               <children>
-                  <Label layoutX="23.0" layoutY="12.0" styleClass="title" stylesheets="@../../css/checkoutTabPane.css" text="Carrinho" />
-                  <Label layoutX="23.0" layoutY="47.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="5.0" prefWidth="40.0" styleClass="line" stylesheets="@../../css/checkoutTabPane.css" />
-                  <TableView fx:id="cartTable" layoutX="4.0" layoutY="126.0" minHeight="160.0" prefHeight="436.0" prefWidth="1102.0" stylesheets="@../../css/checkoutTabTableView.css" AnchorPane.bottomAnchor="53.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="3.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
-                    <columns>
-                      <TableColumn fx:id="codeCol" maxWidth="129.0" minWidth="-Infinity" prefWidth="109.0" style="-fx-alignment: center;" text="Código" />
-                      <TableColumn fx:id="descriptionCol" maxWidth="430.0" minWidth="400.0" prefWidth="421.0" style="-fx-alignment: center;" text="Descrição" />
-                      <TableColumn fx:id="sellingPriceCol" maxWidth="203.0" minWidth="160.0" prefWidth="160.0" style="-fx-alignment: center;" text="Valor" />
-                      <TableColumn fx:id="quantityCol" maxWidth="170.0" minWidth="114.0" prefWidth="114.0" style="-fx-alignment: center;" text="Quant." />
-                      <TableColumn fx:id="discountCol" maxWidth="165.0" minWidth="102.0" prefWidth="165.0" style="-fx-alignment: center;" text="Desconto" />
-                      <TableColumn fx:id="subTotalCol" maxWidth="156.0" minWidth="104.0" prefWidth="107.0" style="-fx-alignment: center;" text="Subtotal" />
-                   </columns>
-                 </TableView>
-                  <HBox layoutX="705.0" layoutY="551.0" prefHeight="45.0" prefWidth="440.0" styleClass="price-HBox" stylesheets="@../../css/checkoutTabPane.css" AnchorPane.bottomAnchor="-1.0" AnchorPane.rightAnchor="-1.0">
-                     <children>
-                        <HBox alignment="CENTER" prefHeight="51.0" prefWidth="85.0">
-                           <children>
-                              <Label styleClass="price-HBox-lbl" stylesheets="@../../css/checkoutTabPane.css" text="R$" />
-                           </children>
+<Tab fx:id="checkoutTab" text="Untitled Pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+        <AnchorPane minHeight="800.0" minWidth="1300.0" styleClass="body" stylesheets="@../../css/checkoutTabPane.css">
+            <children>
+                <AnchorPane fx:id="content" layoutX="65.0" layoutY="22.0" prefHeight="642.0" prefWidth="1105.0" styleClass="container" stylesheets="@../../css/checkoutTabPane.css">
+                    <children>
+                        <Label layoutX="23.0" layoutY="9.0" styleClass="title" stylesheets="@../../css/checkoutTabPane.css" text="Carrinho" />
+                        <Label layoutX="23.0" layoutY="45.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="5.0" prefWidth="40.0" styleClass="line" stylesheets="@../../css/checkoutTabPane.css" />
+                        <TableView fx:id="cartTable" layoutX="6.0" layoutY="126.0" minHeight="160.0" prefHeight="430.0" prefWidth="1096.0" stylesheets="@../../css/checkoutTabTableView.css" AnchorPane.bottomAnchor="54.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="4.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+                            <columns>
+                                <TableColumn fx:id="codeCol" maxWidth="129.0" minWidth="-Infinity" prefWidth="109.0" style="-fx-alignment: center;" text="Código" />
+                                <TableColumn fx:id="descriptionCol" maxWidth="430.0" minWidth="400.0" prefWidth="421.0" style="-fx-alignment: center;" text="Descrição" />
+                                <TableColumn fx:id="sellingPriceCol" maxWidth="203.0" minWidth="160.0" prefWidth="160.0" style="-fx-alignment: center;" text="Valor" />
+                                <TableColumn fx:id="quantityCol" maxWidth="170.0" minWidth="114.0" prefWidth="114.0" style="-fx-alignment: center;" text="Quant." />
+                                <TableColumn fx:id="discountCol" maxWidth="165.0" minWidth="102.0" prefWidth="165.0" style="-fx-alignment: center;" text="Desconto" />
+                                <TableColumn fx:id="subTotalCol" maxWidth="156.0" minWidth="104.0" prefWidth="107.0" style="-fx-alignment: center;" text="Subtotal" />
+                            </columns>
+                        </TableView>
+                        <HBox layoutX="705.0" layoutY="551.0" prefHeight="45.0" prefWidth="440.0" styleClass="price-HBox" stylesheets="@../../css/checkoutTabPane.css" AnchorPane.bottomAnchor="-1.0" AnchorPane.rightAnchor="10.0">
+                            <children>
+                                <HBox alignment="CENTER" prefHeight="51.0" prefWidth="85.0">
+                                    <children>
+                                        <Label styleClass="price-HBox-lbl" stylesheets="@../../css/checkoutTabPane.css" text="R$" />
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="51.0" prefWidth="365.0">
+                                    <children>
+                                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="37.0" prefWidth="390.0" styleClass="price-HBox-lbl" stylesheets="@../../css/checkoutTabPane.css" text="100,00" />
+                                    </children>
+                                </HBox>
+                            </children>
                         </HBox>
-                        <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="51.0" prefWidth="365.0">
-                           <children>
-                              <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="37.0" prefWidth="390.0" styleClass="price-HBox-lbl" stylesheets="@../../css/checkoutTabPane.css" text="100,00" />
-                           </children>
+                        <TextField fx:id="searchField" layoutX="14.0" layoutY="96.0" prefHeight="45.0" prefWidth="370.0" promptText="Buscar produto" styleClass="search-field" stylesheets="@../../css/checkoutTabPane.css">
+                            <padding>
+                                <Insets left="10.0" />
+                            </padding>
+                        </TextField>
+                        <HBox fx:id="btnAddNewCheckoutTab" alignment="CENTER" layoutX="941.0" layoutY="96.0" prefHeight="45.0" prefWidth="150.0" styleClass="btn-HBox-add-new-checkout" stylesheets="@../../css/checkoutTabTableView.css">
+                            <children>
+                                <Label prefHeight="20.0" prefWidth="82.0" styleClass="btn-add-new-checkout-lbl" stylesheets="@../../css/checkoutTabTableView.css" text="Novo caixa" />
+                                <HBox alignment="CENTER" prefHeight="43.0" prefWidth="41.0">
+                                    <children>
+                                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../../image/icons8-cart-add-48.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                </HBox>
+                            </children>
                         </HBox>
-                     </children>
-                  </HBox>
-                  <TextField fx:id="searchField" layoutX="14.0" layoutY="73.0" prefHeight="45.0" prefWidth="370.0" promptText="Buscar produto" styleClass="search-field" stylesheets="@../../css/checkoutTabPane.css">
-                     <padding>
-                        <Insets left="10.0" />
-                     </padding>
-                  </TextField>
-                  <HBox fx:id="btnAddNewCheckoutTab" alignment="CENTER" layoutX="941.0" layoutY="73.0" prefHeight="45.0" prefWidth="150.0" styleClass="btn-HBox-add-new-checkout" stylesheets="@../../css/checkoutTabTableView.css">
-                     <children>
-                        <Label prefHeight="20.0" prefWidth="87.0" styleClass="btn-add-new-checkout-lbl" stylesheets="@../../css/checkoutTabTableView.css" text="Novo caixa" />
-                        <HBox alignment="CENTER" prefHeight="43.0" prefWidth="41.0">
-                           <children>
-                              <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../image/icons8-cart-add-48.png" />
-                                 </image>
-                              </ImageView>
-                           </children>
-                        </HBox>
-                     </children>
-                  </HBox>
-                  <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="341.0" layoutY="78.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../image/icons8-pesquisar-64-checkout.png" />
-                     </image>
-                  </ImageView>
-                  <TextField fx:id="qtdField" layoutX="411.0" layoutY="73.0" prefHeight="45.0" prefWidth="249.0" promptText="Quantidade" styleClass="search-field" stylesheets="@../../css/checkoutTabPane.css">
-                     <padding>
-                        <Insets left="10.0" />
-                     </padding>
-                  </TextField>
-               </children>
-            </AnchorPane>
-         </children>
-      </AnchorPane>
-   </content>
+                        <ImageView fitHeight="35.0" fitWidth="35.0" layoutX="341.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../../image/icons8-pesquisar-64-checkout.png" />
+                            </image>
+                        </ImageView>
+                        <TextField fx:id="qtdField" layoutX="411.0" layoutY="96.0" prefHeight="45.0" prefWidth="249.0" promptText="Quantidade" styleClass="search-field" stylesheets="@../../css/checkoutTabPane.css">
+                            <padding>
+                                <Insets left="10.0" />
+                            </padding>
+                        </TextField>
+                        <Label layoutX="23.0" layoutY="70.0" styleClass="field-title" stylesheets="@../../css/checkoutTabPane.css" text="Código" />
+                        <Label layoutX="419.0" layoutY="70.0" styleClass="field-title" stylesheets="@../../css/checkoutTabPane.css" text="Quantidade" />
+                    </children>
+                </AnchorPane>
+            </children>
+        </AnchorPane>
+    </content>
 </Tab>
-

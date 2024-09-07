@@ -59,7 +59,7 @@ public class CheckoutTabController implements Initializable {
     private TableColumn<SaleProduct, String> sellingPriceCol;
 
     @FXML
-    private TableColumn<SaleProduct, String> subTotalCol;
+    private TableColumn<SaleProduct, BigDecimal> subTotalCol;
 
     @FXML
     private Tab checkoutTab;
@@ -69,6 +69,9 @@ public class CheckoutTabController implements Initializable {
 
     @FXML
     private TextField searchField,qtdField;
+
+    @FXML
+    private AnchorPane content;
 
 
 
@@ -83,22 +86,10 @@ public class CheckoutTabController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         fetchProductsData();
         setUpColumns();
-
-        setFocusOnSearchField();
-        setSelectedTabListener();
-        setOnCloseTab();
+        setUpEvents();
+        setDropShadowToBody();
         cartTable.setItems(cartProductObsList);
-
         cartTable.setFocusTraversable(false);
-
-        btnAddNewCheckoutTab.setOnMouseClicked(mouseEvent -> {
-            if(mouseEvent.getClickCount() == 1){
-                checkoutTabPaneController.addNewCheckoutTab();
-            }
-        });
-
-        setUpEventSearchField();
-
     }
 
     private void monetaryLabel(TableColumn<SaleProduct,String> currencyColumn){
@@ -134,18 +125,17 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-
     private void setUpColumns(){
-        codeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getProductCode().toString()));
+        codeCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProduct().getProductCode())));
         descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
         sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getSellingPrice().toPlainString()));
         quantityCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
         discountCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDiscount().toPlainString()));
-        subTotalCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSubTotal().toPlainString()));
+        subTotalCol.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty());
 
-        monetaryLabel(subTotalCol);
         monetaryLabel(discountCol);
         monetaryLabel(sellingPriceCol);
+        setUpQtdColumn();
 
         codeCol.setResizable(false);
         descriptionCol.setResizable(false);
@@ -169,6 +159,14 @@ public class CheckoutTabController implements Initializable {
         quantityCol.setSortable(false);
     }
 
+    private void setUpEvents(){
+        setFocusOnSearchField();
+        setUpTabActions();
+        setUpEventSearchField();
+        setUpEventQtdField();
+        setUpEventBtnAddCheckout();
+    }
+
     private void setFocusOnSearchField(){
         Platform.runLater(() -> {
             if (checkoutTab.isSelected()) {
@@ -177,7 +175,7 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-    private void setSelectedTabListener(){
+    private void setUpSelectTabListener(){
         if(checkoutTab != null) {
             checkoutTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue) {
@@ -189,7 +187,7 @@ public class CheckoutTabController implements Initializable {
         }
     }
 
-    private void setOnCloseTab(){
+    private void setUpEventCloseTab(){
         Platform.runLater(() -> {
             checkoutTab.setOnCloseRequest(event -> {
                 if(checkoutTabPaneController.getListTabLength() == 1){
@@ -202,6 +200,11 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
+    private void setUpTabActions(){
+        setUpSelectTabListener();
+        setUpEventCloseTab();
+    }
+
     private void setUpEventSearchField(){
         searchField.setOnKeyPressed(keyEvent -> {
             KeyCode pressedKey = keyEvent.getCode();
@@ -209,23 +212,135 @@ public class CheckoutTabController implements Initializable {
             String qtdStr = qtdField.getText().trim();
             boolean isCodeFieldEmpty = search.isEmpty() || search.isBlank();
 
+            if(pressedKey.equals(KeyCode.F3)){
+                createSale();
+            }
+
             if(pressedKey.equals(KeyCode.ENTER)){
-                if(!isCodeFieldEmpty){
-
-                    if(cartProduct.containsKey(search)){
-                        increaseProductToCart(search,Integer.parseInt(qtdStr));
-                    } else {
-                        insertProductToCart(search, Integer.parseInt(qtdStr));
-                    }
-
-                    searchField.clear();
-                    qtdField.setText("1");
-
+                if(isCodeFieldEmpty) {
+                    qtdField.requestFocus();
                 }
 
+                if(!isCodeFieldEmpty){
+                    if(cartProduct.containsKey(search)){
+                        increaseProductToCart(search,Long.parseLong(qtdStr));
+                    } else {
+                        insertProductToCart(search, Long.parseLong(qtdStr));
+                    }
+                    searchField.clear();
+                    qtdField.setText("1");
+                }
+            }
+        });
+    }
+
+    private void setDropShadowToBody(){
+        DropShadow shadow = new DropShadow();
+        shadow.setColor(Color.web("#b7b7b7"));
+        shadow.setRadius(15);
+        shadow.setOffsetX(0);
+        shadow.setOffsetY(0);
+        content.setEffect(shadow);
+    }
+
+    private void setUpEventQtdField(){
+        qtdField.setText("1");
+
+
+        qtdField.textProperty().addListener(((observableValue, s, t1) -> {
+            String plainText = t1.replaceAll("[^0-9]", "");
+            qtdField.setText(plainText);
+        }));
+
+        qtdField.focusedProperty().addListener((obsValue, oldValue, newValue) -> {
+            if (!newValue) {
+                // Verifica se o conteúdo do TextField está vazio ou em branco
+                String text = qtdField.getText().trim();
+                if (text.isEmpty()) {
+                    // Se estiver vazio ou em branco, define o texto como "1"
+                    qtdField.setText("1");
+                }
+            }
+        });
+
+        qtdField.setOnKeyPressed(event -> {
+            KeyCode pressedKey = event.getCode();
+
+            if(KeyCode.F3 == event.getCode()){
+                createSale();
+            }
+
+            if(pressedKey.equals(KeyCode.ENTER)){
+                searchField.requestFocus();
+                if(qtdField.getText().isBlank()){
+                    qtdField.setText("1");
+                }
+            }
+        });
+    }
+
+    private void setUpQtdColumn(){
+        quantityCol.setCellFactory(column -> new TableCell<SaleProduct, String>() {
+            private final TextField textField = new TextField();
+            {
+                textField.setTextFormatter(new TextFormatter<>(change -> {
+                    if (change.getControlNewText().matches("\\d*")) {
+                        return change;
+                    }
+                    return null;
+                }));
+
+                textField.focusedProperty().addListener((obsValue, wasFocused, isNowFocused) -> {
+                    if (!isNowFocused) {
+                        String text = textField.getText().trim();
+                        if (text.isEmpty() || text.equals("0")) {
+                            textField.setText("1");
+                            text = "1";
+                        }
+
+                        if (getTableRow() != null && getTableRow().getItem() != null) {
+                            try {
+                                int newValueInt = Integer.parseInt(text);
+                                getTableRow().getItem().setQuantity(newValueInt);
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
+                textField.textProperty().addListener((observable, oldValue, newValue) -> {
+                    if (getTableRow() != null && getTableRow().getItem() != null) {
+                        try {
+                            int newValueInt = Integer.parseInt(newValue.isEmpty() || newValue.equals("0") ? "1" : newValue);
+                            getTableRow().getItem().setQuantity(newValueInt);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
 
             }
 
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    textField.setText(item);
+                    setGraphic(textField);
+                }
+            }
+        });
+
+    }
+    private void setUpEventBtnAddCheckout(){
+        btnAddNewCheckoutTab.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getClickCount() == 1){
+                checkoutTabPaneController.addNewCheckoutTab();
+            }
         });
     }
 
@@ -239,7 +354,7 @@ public class CheckoutTabController implements Initializable {
         throw new IllegalArgumentException("Invalid Product ID: " + id);
     }
 
-    private void insertProductToCart(String id, int quantity){
+    private void insertProductToCart(String id, long quantity){
         Product product = getProductData(id);
         ProductValidator.validate(product);
         final SaleProduct newSaleItem = new SaleProduct(product);
@@ -255,7 +370,7 @@ public class CheckoutTabController implements Initializable {
         log.info("Product added to the list of products for sale." + " BarCode: " + cartProduct.get(newSaleItem.getProduct().getBarCode()).getProduct().getBarCode() + " ID: " + cartProduct.get(String.valueOf(newSaleItem.getProduct().getProductCode())).getProduct().getProductCode());
     }
 
-    private void increaseProductToCart(String id, int quantity){
+    private void increaseProductToCart(String id, long quantity){
         SaleProduct itemSale = searchProductInCart(id);
         itemSale.setQuantity(itemSale.getQuantity() + quantity);
         cartTable.refresh();

@@ -17,7 +17,7 @@ public class CheckoutTabPaneController implements Initializable {
     @FXML
     private TabPane checkoutTabPanel;
     private final Logger log = Logger.getLogger(getClass().getName());
-    private static int tabCounter;
+    private int tabCounter;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

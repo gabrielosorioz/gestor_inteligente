@@ -15,6 +15,7 @@ public class SaleProduct {
     private Sale sale;
     private long quantity;
     private BigDecimal unitPrice;
+    private BigDecimal originalSubtotal;
     private BigDecimal subTotal;
     private BigDecimal discount;
     private ObjectProperty<BigDecimal> subTotalProperty;
@@ -24,6 +25,7 @@ public class SaleProduct {
         unitPrice = product.getSellingPrice().setScale(2, RoundingMode.HALF_UP);
         discount = new BigDecimal(0.00).setScale(2,RoundingMode.HALF_UP);
         quantity = 1;
+        originalSubtotal = calculateOriginalSubtotal();
         subTotal = calculateSubtotal();
         subTotalProperty = new SimpleObjectProperty<>(calculateSubtotal());
     }
@@ -72,6 +74,7 @@ public class SaleProduct {
     public void setQuantity(long quantity) {
         this.quantity = quantity;
         subTotal = calculateSubtotal();
+        originalSubtotal = calculateOriginalSubtotal();
         subTotalProperty.set(subTotal);
     }
 
@@ -82,6 +85,7 @@ public class SaleProduct {
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
         subTotal = calculateSubtotal();
+        originalSubtotal = calculateOriginalSubtotal();
         subTotalProperty.set(subTotal);
     }
 
@@ -105,6 +109,7 @@ public class SaleProduct {
     public void setDiscount(BigDecimal discount) {
         this.discount = discount;
         subTotal = calculateSubtotal();
+        originalSubtotal = calculateOriginalSubtotal();
         subTotalProperty.set(subTotal);
     }
 
@@ -112,5 +117,32 @@ public class SaleProduct {
         return unitPrice.multiply(BigDecimal.valueOf(quantity))
                 .subtract(discount)
                 .setScale(2,RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal calculateOriginalSubtotal(){
+        return unitPrice.multiply(BigDecimal.valueOf(quantity)).setScale(2,RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal getOriginalSubtotal() {
+        return originalSubtotal;
+    }
+
+    public void setOriginalSubtotal(BigDecimal originalSubtotal) {
+        this.originalSubtotal = originalSubtotal;
+    }
+
+    @Override
+    public String toString() {
+        return "SaleProduct{" +
+                "id=" + id +
+                ", saleId=" + saleId +
+                ", product=" + product +
+                ", sale=" + sale +
+                ", quantity=" + quantity +
+                ", unitPrice=" + unitPrice +
+                ", subTotal=" + subTotal +
+                ", discount=" + discount +
+                ", subTotalProperty=" + subTotalProperty +
+                '}';
     }
 }

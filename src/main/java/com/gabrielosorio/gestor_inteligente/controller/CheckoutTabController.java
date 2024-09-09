@@ -6,6 +6,7 @@ import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
+import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -28,15 +29,16 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
 
 public class CheckoutTabController implements Initializable {
 
-    private HashMap<String,Product> productData = new HashMap<>();
+    private HashMap<String, Product> productData = new HashMap<>();
 
-    private HashMap<String,SaleProduct> cartProduct = new HashMap<>();
+    private HashMap<String, SaleProduct> cartProduct = new HashMap<>();
     private ObservableList<SaleProduct> cartProductObsList = FXCollections.observableArrayList();
     private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -68,17 +70,18 @@ public class CheckoutTabController implements Initializable {
     private HBox btnAddNewCheckoutTab;
 
     @FXML
-    private TextField searchField,qtdField;
+    private TextField searchField, qtdField;
 
     @FXML
     private AnchorPane content;
 
-
+    @FXML
+    private Label priceLbl;
 
 
     private final CheckoutTabPaneController checkoutTabPaneController;
 
-    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController){
+    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController) {
         this.checkoutTabPaneController = checkoutTabPaneController;
     }
 
@@ -92,7 +95,7 @@ public class CheckoutTabController implements Initializable {
         cartTable.setFocusTraversable(false);
     }
 
-    private void monetaryLabel(TableColumn<SaleProduct,String> currencyColumn){
+    private void monetaryLabel(TableColumn<SaleProduct, String> currencyColumn) {
         currencyColumn.setCellFactory(column -> {
             TableCell<SaleProduct, String> cell = new TableCell<>() {
                 private final Label currencyLabel = new Label("R$");
@@ -125,7 +128,7 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-    private void setUpColumns(){
+    private void setUpColumns() {
         codeCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProduct().getProductCode())));
         descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
         sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getSellingPrice().toPlainString()));
@@ -133,9 +136,9 @@ public class CheckoutTabController implements Initializable {
         discountCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDiscount().toPlainString()));
         subTotalCol.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty());
 
-        monetaryLabel(discountCol);
         monetaryLabel(sellingPriceCol);
         setUpQtdColumn();
+        setUpDiscountColumn();
 
         codeCol.setResizable(false);
         descriptionCol.setResizable(false);
@@ -159,7 +162,7 @@ public class CheckoutTabController implements Initializable {
         quantityCol.setSortable(false);
     }
 
-    private void setUpEvents(){
+    private void setUpEvents() {
         setFocusOnSearchField();
         setUpTabActions();
         setUpEventSearchField();
@@ -167,7 +170,7 @@ public class CheckoutTabController implements Initializable {
         setUpEventBtnAddCheckout();
     }
 
-    private void setFocusOnSearchField(){
+    private void setFocusOnSearchField() {
         Platform.runLater(() -> {
             if (checkoutTab.isSelected()) {
                 searchField.requestFocus();
@@ -175,8 +178,8 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-    private void setUpSelectTabListener(){
-        if(checkoutTab != null) {
+    private void setUpSelectTabListener() {
+        if (checkoutTab != null) {
             checkoutTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue) {
                     Platform.runLater(() -> {
@@ -187,12 +190,12 @@ public class CheckoutTabController implements Initializable {
         }
     }
 
-    private void setUpEventCloseTab(){
+    private void setUpEventCloseTab() {
         Platform.runLater(() -> {
             checkoutTab.setOnCloseRequest(event -> {
-                if(checkoutTabPaneController.getListTabLength() == 1){
+                if (checkoutTabPaneController.getListTabLength() == 1) {
                     event.consume();
-                    Platform.runLater(()->{
+                    Platform.runLater(() -> {
                         searchField.requestFocus();
                     });
                 }
@@ -200,30 +203,30 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-    private void setUpTabActions(){
+    private void setUpTabActions() {
         setUpSelectTabListener();
         setUpEventCloseTab();
     }
 
-    private void setUpEventSearchField(){
+    private void setUpEventSearchField() {
         searchField.setOnKeyPressed(keyEvent -> {
             KeyCode pressedKey = keyEvent.getCode();
             String search = searchField.getText().trim();
             String qtdStr = qtdField.getText().trim();
             boolean isCodeFieldEmpty = search.isEmpty() || search.isBlank();
 
-            if(pressedKey.equals(KeyCode.F3)){
+            if (pressedKey.equals(KeyCode.F3)) {
                 createSale();
             }
 
-            if(pressedKey.equals(KeyCode.ENTER)){
-                if(isCodeFieldEmpty) {
+            if (pressedKey.equals(KeyCode.ENTER)) {
+                if (isCodeFieldEmpty) {
                     qtdField.requestFocus();
                 }
 
-                if(!isCodeFieldEmpty){
-                    if(cartProduct.containsKey(search)){
-                        increaseProductToCart(search,Long.parseLong(qtdStr));
+                if (!isCodeFieldEmpty) {
+                    if (cartProduct.containsKey(search)) {
+                        increaseProductToCart(search, Long.parseLong(qtdStr));
                     } else {
                         insertProductToCart(search, Long.parseLong(qtdStr));
                     }
@@ -234,7 +237,7 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-    private void setDropShadowToBody(){
+    private void setDropShadowToBody() {
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.web("#b7b7b7"));
         shadow.setRadius(15);
@@ -243,7 +246,7 @@ public class CheckoutTabController implements Initializable {
         content.setEffect(shadow);
     }
 
-    private void setUpEventQtdField(){
+    private void setUpEventQtdField() {
         qtdField.setText("1");
 
 
@@ -266,23 +269,25 @@ public class CheckoutTabController implements Initializable {
         qtdField.setOnKeyPressed(event -> {
             KeyCode pressedKey = event.getCode();
 
-            if(KeyCode.F3 == event.getCode()){
+            if (KeyCode.F3 == event.getCode()) {
                 createSale();
             }
 
-            if(pressedKey.equals(KeyCode.ENTER)){
+            if (pressedKey.equals(KeyCode.ENTER)) {
                 searchField.requestFocus();
-                if(qtdField.getText().isBlank()){
+                if (qtdField.getText().isBlank()) {
                     qtdField.setText("1");
                 }
             }
         });
     }
 
-    private void setUpQtdColumn(){
+    private void setUpQtdColumn() {
         quantityCol.setCellFactory(column -> new TableCell<SaleProduct, String>() {
             private final TextField textField = new TextField();
+
             {
+                setUpTableFieldStyle(textField);
                 textField.setTextFormatter(new TextFormatter<>(change -> {
                     if (change.getControlNewText().matches("\\d*")) {
                         return change;
@@ -302,6 +307,7 @@ public class CheckoutTabController implements Initializable {
                             try {
                                 int newValueInt = Integer.parseInt(text);
                                 getTableRow().getItem().setQuantity(newValueInt);
+                                refreshTotalPrice();
                             } catch (NumberFormatException e) {
                                 e.printStackTrace();
                             }
@@ -312,7 +318,7 @@ public class CheckoutTabController implements Initializable {
                 textField.textProperty().addListener((observable, oldValue, newValue) -> {
                     if (getTableRow() != null && getTableRow().getItem() != null) {
                         try {
-                            int newValueInt = Integer.parseInt(newValue.isEmpty() || newValue.equals("0") ? "1" : newValue);
+                            long newValueInt = Long.parseLong(newValue.isEmpty() || newValue.equals("0") ? "1" : newValue);
                             getTableRow().getItem().setQuantity(newValueInt);
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
@@ -334,19 +340,151 @@ public class CheckoutTabController implements Initializable {
                 }
             }
         });
-
     }
-    private void setUpEventBtnAddCheckout(){
+
+    private void setUpDiscountColumn() {
+        discountCol.setCellFactory(column -> new TableCell<SaleProduct, String>() {
+            private final TextField discountField = new TextField();
+
+            {
+                setUpTableFieldStyle(discountField);
+                if (discountField.getText().isBlank() || discountField.getText().isEmpty()) {
+                    discountField.setText("0,00");
+                } else {
+                    String formattedValue = TextFieldUtils.formatText(discountField.getText());
+                    discountField.setText(formattedValue);
+                }
+
+                discountField.setOnKeyPressed(keyEvent -> {
+                    KeyCode keyCodePressed = keyEvent.getCode();
+                    if (keyCodePressed.isArrowKey()) {
+                        discountField.positionCaret(discountField.getText().length());
+                    }
+                });
+
+                discountField.setOnMouseClicked(mouseEvent -> {
+                    discountField.positionCaret(discountField.getText().length());
+                });
+
+                discountField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+                    String formattedText = TextFieldUtils.formatText(newValue);
+
+                    if (!newValue.equals(formattedText)) {
+                        Platform.runLater(() -> {
+                            discountField.setText(formattedText);
+                            discountField.positionCaret(discountField.getText().length());
+                            if (getTableRow() != null && getTableRow().getItem() != null) {
+                                try {
+                                    getTableRow().getItem().setDiscount(TextFieldUtils.formatCurrency(discountField.getText()));
+                                    refreshTotalPrice();
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                });
+
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    discountField.setText(item);
+                    setGraphic(discountField);
+                }
+            }
+        });
+    }
+
+    private void setUpEventBtnAddCheckout() {
         btnAddNewCheckoutTab.setOnMouseClicked(mouseEvent -> {
-            if(mouseEvent.getClickCount() == 1){
+            if (mouseEvent.getClickCount() == 1) {
                 checkoutTabPaneController.addNewCheckoutTab();
             }
         });
     }
 
-    private Product getProductData(String id){
+    private void setUpTableFieldStyle(TextField textField) {
+        textField.setStyle(
+                "-fx-background-color: #eee;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-background-radius: 5px;" +
+                        "-fx-border-radius: 5px;"
+        );
+
+        textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                textField.setStyle(
+                        "-fx-background-color: #eee;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-radius: 5px;" +
+                                "-fx-border-radius: 5px;" +
+                                "-fx-border-width: 1.7px;" +
+                                "-fx-border-color: #999999;"
+                );
+            } else {
+                textField.setStyle(
+                        "-fx-background-color: #eee;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-radius: 5px;" +
+                                "-fx-border-radius: 5px;"
+                );
+            }
+
+        });
+
+        textField.setOnMouseExited(event -> {
+            if (textField.isFocused()) {
+                textField.setStyle(
+                        "-fx-background-color: #eee;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-radius: 5px;" +
+                                "-fx-border-radius: 5px;" +
+                                "-fx-border-width: 1.7px;" +
+                                "-fx-border-color: #999999;"
+                );
+            } else {
+                textField.setStyle(
+                        "-fx-background-color: #eee;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-radius: 5px;" +
+                                "-fx-border-radius: 5px;"
+                );
+
+            }
+        });
+
+        textField.setOnMouseEntered(event -> {
+            if (textField.isFocused()) {
+                textField.setStyle(
+                        "-fx-background-color: #d6d6d6;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-radius: 5px;" +
+                                "-fx-border-radius: 5px;" +
+                                "-fx-border-width: 1.7px;" +
+                                "-fx-border-color: #999999;"
+                );
+            } else {
+                textField.setStyle(
+                        "-fx-background-color: #d6d6d6;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-background-radius: 5px;" +
+                                "-fx-border-radius: 5px;"
+                );
+
+            }
+        });
+
+    }
+
+    private Product getProductData(String id) {
         Product product = productData.get(id);
-        if(product != null){
+        if (product != null) {
             return product;
         } else {
             log.severe("Product not found for id " + id);
@@ -354,31 +492,32 @@ public class CheckoutTabController implements Initializable {
         throw new IllegalArgumentException("Invalid Product ID: " + id);
     }
 
-    private void insertProductToCart(String id, long quantity){
+    private void insertProductToCart(String id, long quantity) {
         Product product = getProductData(id);
         ProductValidator.validate(product);
         final SaleProduct newSaleItem = new SaleProduct(product);
         newSaleItem.setQuantity(quantity);
 
-        cartProduct.put(String.valueOf(newSaleItem.getProduct().getProductCode()),newSaleItem);
-        if(newSaleItem.getProduct().hasBarCode()){
-            cartProduct.put(newSaleItem.getProduct().getBarCode(),newSaleItem);
+        cartProduct.put(String.valueOf(newSaleItem.getProduct().getProductCode()), newSaleItem);
+        if (newSaleItem.getProduct().hasBarCode()) {
+            cartProduct.put(newSaleItem.getProduct().getBarCode(), newSaleItem);
         }
 
         cartProductObsList.add(newSaleItem);
         cartTable.refresh();
+        refreshTotalPrice();
         log.info("Product added to the list of products for sale." + " BarCode: " + cartProduct.get(newSaleItem.getProduct().getBarCode()).getProduct().getBarCode() + " ID: " + cartProduct.get(String.valueOf(newSaleItem.getProduct().getProductCode())).getProduct().getProductCode());
     }
 
-    private void increaseProductToCart(String id, long quantity){
+    private void increaseProductToCart(String id, long quantity) {
         SaleProduct itemSale = searchProductInCart(id);
         itemSale.setQuantity(itemSale.getQuantity() + quantity);
         cartTable.refresh();
     }
 
-    private SaleProduct searchProductInCart(String search){
+    private SaleProduct searchProductInCart(String search) {
         SaleProduct saleProduct = cartProduct.get(search);
-        if(saleProduct != null){
+        if (saleProduct != null) {
             return saleProduct;
         } else {
             log.severe("Cart product not found: " + search);
@@ -391,20 +530,28 @@ public class CheckoutTabController implements Initializable {
             Product product = item.getProduct();
             String productCode = String.valueOf(product.getProductCode());
             String barCode = product.getBarCode();
-            productData.put(productCode,product);
-            productData.put(barCode,product);
-            System.out.println(product);
+            productData.put(productCode, product);
+            productData.put(barCode, product);
         });
     }
 
-    private void createSale(){
+    private void createSale() {
         HashSet<SaleProduct> itemSet = new HashSet<>(cartProduct.values());
         ArrayList<SaleProduct> items = new ArrayList<>(itemSet);
         final Sale sale = new Sale(items);
         showPaymentView(sale);
     }
 
-    private void showPaymentView(Sale sale){
+    private void refreshTotalPrice() {
+        HashSet<SaleProduct> itemSet = new HashSet<>(cartProduct.values());
+        ArrayList<SaleProduct> items = new ArrayList<>(itemSet);
+        Sale sale = new Sale(items);
+        final String finalPrice = TextFieldUtils.formatText(sale.getTotalPrice().toPlainString());
+        priceLbl.setText(finalPrice);
+
+    }
+
+    private void showPaymentView(Sale sale) {
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/PaymentView.fxml"));
@@ -415,13 +562,11 @@ public class CheckoutTabController implements Initializable {
             paymentRoot.setScene(scene);
             paymentRoot.show();
 
-        } catch (Exception e){
+        } catch (Exception e) {
             log.severe("ERROR at load payment view: " + e.getMessage());
             e.printStackTrace();
         }
     }
-
-
 
 
 }

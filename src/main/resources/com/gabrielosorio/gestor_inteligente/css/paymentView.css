@@ -21,7 +21,7 @@
 
 .payment-box-price-lbl {
     -fx-font-family: 'Poppins';
-    -fx-font-size: 24px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
@@ -29,7 +29,7 @@
     -fx-border-color: transparent;
     -fx-background-color: transparent;
     -fx-font-family: 'Poppins';
-    -fx-font-size: 26px;
+    -fx-font-size: 22px;
     -fx-font-weight: bold;
 }
 
@@ -51,7 +51,7 @@
 .price-lbl {
     -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
-    -fx-font-size: 40px;
+    -fx-font-size: 32px;
 }
 
 .price-amount-lbl {
@@ -59,11 +59,23 @@
     -fx-font-weight: bold;
     -fx-font-size: 40px;
 }
+
 .total-price-lbl {
     -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
-    -fx-font-size: 20px;
+    -fx-font-size: 18px;
     -fx-text-fill: #999999;
+}
+
+
+.receive-price-lbl {
+
+}
+
+
+.total-amount-box {
+    -fx-border-width: 0 0 5 0px;
+    -fx-border-color: linear-gradient(to bottom right, #00d4ff, #9700ff);
 }
 
 .amount {
@@ -73,8 +85,37 @@
 
 .desconto-field {
     -fx-font-family: 'Poppins';
-    -fx-font-size: 20px;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
     -fx-background-color: #E2E2E2;
     -fx-background-radius: 10px;
     -fx-border-radius: 15px;
+}
+
+.discount-monetary-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #191919;
+}
+
+.receive-price-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #198c19;
+}
+
+.change-price-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1919ff;
+}
+
+.balance-lbl-price {
+    -fx-font-family: 'Poppins';
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-font-size: 22px;
 }

@@ -1,5 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.model;
 
+import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -12,9 +14,12 @@ public class Sale {
 
     private long id;
     private long saleId;
-    private Timestamp dataSale;
+    private Timestamp dateSale;
     private Timestamp dataCancel;
     private List<SaleProduct> items;
+    private BigDecimal totalChange;
+    private BigDecimal totalAmountPaid;
+    private BigDecimal originalTotalPrice;
     private BigDecimal totalPrice;
     private BigDecimal totalDiscount;
     private List<Payment> paymentMethods;
@@ -26,31 +31,18 @@ public class Sale {
             throw new IllegalArgumentException("Error at initializing Sale constructor:Product items for sale is null.");
         }
 
-        this.items = items;
-        dataSale = Timestamp.from(Instant.now());
-        totalDiscount = new BigDecimal(0.00).setScale(2, RoundingMode.HALF_UP);
-        totalPrice = new BigDecimal(0.00).setScale(2, RoundingMode.HALF_UP);
-        items.forEach(item -> {
-            totalPrice = totalPrice.add(item.getSubTotal());
-            totalDiscount =  totalDiscount.add(item.getDiscount());
-        });
+        this.items = new ArrayList<>(items);
+        this.dateSale = Timestamp.from(Instant.now());
+        this.paymentMethods = new ArrayList<>();
 
-        paymentMethods = new ArrayList<Payment>();
+        this.totalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        this.originalTotalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        this.totalDiscount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        this.totalAmountPaid = BigDecimal.ZERO.setScale(2,RoundingMode.HALF_UP);
 
+        calculateTotals();
     }
-
-    public Sale(long id, long saleId, Timestamp dataSale, Timestamp dataCancel, List<SaleProduct> items, BigDecimal totalPrice, BigDecimal totalDiscount, List<Payment> paymentMethods,String status) {
-        this.id = id;
-        this.saleId = saleId;
-        this.dataSale = dataSale;
-        this.dataCancel = dataCancel;
-        this.items = items;
-        this.totalPrice = totalPrice;
-        this.totalDiscount = totalDiscount;
-        this.paymentMethods = paymentMethods;
-        this.status = status;
-    }
-
+    
     public Sale(){}
 
     public long getId() {
@@ -69,12 +61,12 @@ public class Sale {
         this.saleId = saleId;
     }
 
-    public Timestamp getDataSale() {
-        return dataSale;
+    public Timestamp getDateSale() {
+        return dateSale;
     }
 
-    public void setDataSale(Timestamp dataSale) {
-        this.dataSale = dataSale;
+    public void setDateSale(Timestamp dateSale) {
+        this.dateSale = dateSale;
     }
 
     public Timestamp getDataCancel() {
@@ -90,11 +82,23 @@ public class Sale {
     }
 
     public void setItems(List<SaleProduct> items) {
+        if(items == null || items.isEmpty()){
+            throw new IllegalArgumentException("Items for sale cannot be null or empty.");
+        }
         this.items = items;
+        calculateTotals();
     }
 
     public BigDecimal getTotalPrice() {
         return totalPrice;
+    }
+
+    public BigDecimal getOriginalTotalPrice() {
+        return originalTotalPrice;
+    }
+
+    public void setOriginalTotalPrice(BigDecimal originalTotalPrice) {
+        this.originalTotalPrice = originalTotalPrice;
     }
 
     public void setTotalPrice(BigDecimal totalPrice) {
@@ -107,6 +111,8 @@ public class Sale {
 
     public void setTotalDiscount(BigDecimal totalDiscount) {
         this.totalDiscount = totalDiscount;
+        this.totalPrice = originalTotalPrice.subtract(this.totalDiscount).setScale(2,RoundingMode.HALF_UP).max(BigDecimal.ZERO);
+        calculateChange();
     }
 
     public void setPaymentMethods(List<Payment> paymentMethods) {
@@ -120,12 +126,48 @@ public class Sale {
         return paymentMethods;
     }
 
-
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    private void calculateTotals(){
+        BigDecimal subtotal = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        BigDecimal discountTotal = BigDecimal.ZERO.setScale(2,RoundingMode.HALF_UP);
+
+        for(SaleProduct item : this.items){
+            subtotal = subtotal.add(item.getOriginalSubtotal());
+            discountTotal = discountTotal.add(item.getDiscount());
+        }
+
+        this.originalTotalPrice = subtotal;
+        this.totalDiscount = discountTotal;
+        this.totalPrice = subtotal.subtract(discountTotal).max(BigDecimal.ZERO).max(BigDecimal.ZERO);
+
+    }
+
+    public BigDecimal getTotalAmountPaid() {
+        return totalAmountPaid;
+    }
+
+    public void setTotalAmountPaid(BigDecimal totalAmountPaid) {
+        this.totalAmountPaid = totalAmountPaid;
+        calculateChange();
+    }
+
+    private void calculateChange() {
+        if(totalPrice.compareTo(totalAmountPaid) > 0){
+            totalChange = BigDecimal.ZERO;
+        } else {
+            totalChange = totalAmountPaid.subtract(totalPrice).setScale(2,RoundingMode.HALF_UP);
+        }
+    }
+
+    public BigDecimal getTotalChange(){
+        calculateChange();
+        return totalChange.max(BigDecimal.ZERO);
     }
 }

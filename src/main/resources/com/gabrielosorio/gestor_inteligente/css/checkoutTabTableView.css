@@ -22,7 +22,7 @@
 }
 
 .table-row-cell:selected {
-    -fx-background-color: #a3a3a3;
+    -fx-background-color: #cccccc;
 }
 
 /* Estilo das células da tabela */

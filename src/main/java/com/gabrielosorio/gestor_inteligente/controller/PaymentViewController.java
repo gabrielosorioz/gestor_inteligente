@@ -7,12 +7,13 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -23,13 +24,16 @@ public class PaymentViewController implements Initializable {
     private final Logger log = Logger.getLogger(PaymentViewController.class.getName());
 
     @FXML
-    private TextField cashField,creditField,debitField,pixField;
+    private TextField cashField,creditField,debitField,pixField,discountField;
 
     @FXML
     private HBox cashHbox,creditHbox,debitHbox,pixHbox;
 
     @FXML
     private Button btnCheckout;
+
+    @FXML
+    private Label totalPriceLbl,receiveLbl,paybackLbl,receiveValueLbl,paybackValueLbl,monetaryReceiveLbl,monetaryChangeLbl;
 
 
     private Map<HBox, PaymentMethod> paymentHboxMap = new HashMap<>();
@@ -56,6 +60,10 @@ public class PaymentViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        refreshTotalPrice();
+        refreshDiscountPrice();
+        setUpDiscountField();
+
         paymentMethods = new HashMap<>();
 
         /** Link payment methods to TextField elements JavaFX **/
@@ -73,6 +81,13 @@ public class PaymentViewController implements Initializable {
         /** load payment events in node elements JavaFX*/
         loadHboxPaymentEvents(paymentHboxMap);
         loadPaymentFieldEvents(paymentFieldMap);
+
+        receiveLbl.setVisible(false);
+        receiveValueLbl.setVisible(false);
+        monetaryReceiveLbl.setVisible(false);
+        paybackLbl.setVisible(false);
+        paybackValueLbl.setVisible(false);
+        monetaryChangeLbl.setVisible(false);
 
         Platform.runLater(() -> {
             creditHbox.requestFocus();
@@ -125,6 +140,7 @@ public class PaymentViewController implements Initializable {
             paymentField.textProperty().addListener((observableValue, oldValue, newValue) -> {
                 String formattedText = formatText(newValue);
                 setPaymentValue(paymentMethod,formattedText);
+
                 if (!newValue.equals(formattedText)) {
                     Platform.runLater(() -> {
                         paymentField.setText(formattedText);
@@ -133,7 +149,6 @@ public class PaymentViewController implements Initializable {
                 }
             });
             paymentFieldSet.add(paymentField);
-            System.out.println("Listener adicionado");
         }
     }
 
@@ -170,14 +185,100 @@ public class PaymentViewController implements Initializable {
     private void setPaymentValue(PaymentMethod paymentMethod, String value){
         BigDecimal newValue;
 
-
         String formattedValue = formatText(value);
         newValue = TextFieldUtils.formatCurrency(formattedValue);
-
 
         final Payment payment = paymentMethods.getOrDefault(paymentMethod, new Payment(paymentMethod));
         payment.setValue(newValue);
         paymentMethods.put(paymentMethod,payment);
+        calculateTotalAmountPaid();
+
+    }
+
+    private void calculateTotalAmountPaid(){
+        final Set<Payment> uniquePayments = new HashSet<>(paymentMethods.values());
+        BigDecimal totalAmountPaid = BigDecimal.ZERO.setScale(2,RoundingMode.HALF_UP);
+
+        for (Payment uniquePayment : uniquePayments) {
+            totalAmountPaid = totalAmountPaid.add(uniquePayment.getValue());
+        }
+        sale.setTotalAmountPaid(totalAmountPaid);
+        refreshValuesLabel();
+
+    }
+
+    private void refreshValuesLabel(){
+        final BigDecimal receiveValue = sale.getTotalPrice().subtract(sale.getTotalAmountPaid()).max(BigDecimal.ZERO).setScale(2,RoundingMode.HALF_UP);
+        final BigDecimal changeAmount = sale.getTotalChange();
+
+        if(receiveValue.compareTo(BigDecimal.ZERO) == 0){
+            receiveLbl.setVisible(false);
+            receiveValueLbl.setVisible(false);
+            monetaryReceiveLbl.setVisible(false);
+        } else {
+            receiveLbl.setVisible(true);
+            receiveValueLbl.setVisible(true);
+            monetaryReceiveLbl.setVisible(true);
+
+            receiveValueLbl.setText(TextFieldUtils.formatText(receiveValue.toPlainString()));
+        }
+
+        if(changeAmount.compareTo(BigDecimal.ZERO) == 0){
+            paybackLbl.setVisible(false);
+            paybackValueLbl.setVisible(false);
+            monetaryChangeLbl.setVisible(false);
+        } else {
+            paybackLbl.setVisible(true);
+            paybackValueLbl.setVisible(true);
+            monetaryChangeLbl.setVisible(true);
+            paybackValueLbl.setText(TextFieldUtils.formatText(sale.getTotalChange().toPlainString()));
+        }
+
+    }
+
+    private void refreshTotalPrice(){
+        String totalPriceString = TextFieldUtils.formatText(sale.getTotalPrice().toPlainString());
+        totalPriceLbl.setText(totalPriceString);
+    }
+    
+    private void refreshDiscountPrice(){
+        String totalDiscount = TextFieldUtils.formatText(sale.getTotalDiscount().toPlainString());
+        discountField.setText(totalDiscount);
+    }
+
+    private void setUpDiscountField(){
+        if (discountField.getText().isBlank() || discountField.getText().isEmpty()) {
+            discountField.setText("0,00");
+        } else {
+            String formattedValue = TextFieldUtils.formatText(discountField.getText());
+            discountField.setText(formattedValue);
+        }
+
+        discountField.setOnKeyPressed(keyEvent -> {
+            KeyCode keyCodePressed = keyEvent.getCode();
+            if (keyCodePressed.isArrowKey()) {
+                discountField.positionCaret(discountField.getText().length());
+            }
+        });
+
+        discountField.setOnMouseClicked(mouseEvent -> {
+            discountField.positionCaret(discountField.getText().length());
+        });
+
+        discountField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            String formattedText = TextFieldUtils.formatText(newValue);
+
+            if (!newValue.equals(formattedText)) {
+                Platform.runLater(() -> {
+                    discountField.setText(formattedText);
+                    discountField.positionCaret(discountField.getText().length());
+                    sale.setTotalDiscount(TextFieldUtils.formatCurrency(discountField.getText()));
+                    refreshValuesLabel();
+                    refreshTotalPrice();
+                });
+            }
+        });
+
     }
 
 }

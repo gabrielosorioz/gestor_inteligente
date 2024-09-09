@@ -320,9 +320,16 @@ public class CheckoutTabController implements Initializable {
                         try {
                             long newValueInt = Long.parseLong(newValue.isEmpty() || newValue.equals("0") ? "1" : newValue);
                             getTableRow().getItem().setQuantity(newValueInt);
+                            refreshTotalPrice();
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
+                    }
+                });
+
+                textField.setOnKeyPressed(mouseEvent -> {
+                    if(mouseEvent.getCode().equals(KeyCode.F3)){
+                        createSale();
                     }
                 });
 
@@ -382,6 +389,12 @@ public class CheckoutTabController implements Initializable {
                                 }
                             }
                         });
+                    }
+                });
+
+                discountField.setOnKeyPressed(mouseEvent -> {
+                    if(mouseEvent.getCode().equals(KeyCode.F3)){
+                        createSale();
                     }
                 });
 

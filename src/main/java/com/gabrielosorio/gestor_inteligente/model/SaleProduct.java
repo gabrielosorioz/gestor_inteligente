@@ -19,6 +19,7 @@ public class SaleProduct {
     private BigDecimal subTotal;
     private BigDecimal discount;
     private ObjectProperty<BigDecimal> subTotalProperty;
+    private ObjectProperty<BigDecimal> unitPriceProperty;
 
     public SaleProduct(Product product){
         this.product = product;
@@ -28,6 +29,7 @@ public class SaleProduct {
         originalSubtotal = calculateOriginalSubtotal();
         subTotal = calculateSubtotal();
         subTotalProperty = new SimpleObjectProperty<>(calculateSubtotal());
+        unitPriceProperty = new SimpleObjectProperty<>(unitPrice);
     }
 
     public SaleProduct(){}
@@ -55,6 +57,7 @@ public class SaleProduct {
     public void setProduct(Product product) {
         this.product = product;
         unitPrice = product.getSellingPrice().setScale(2, RoundingMode.HALF_UP);
+        unitPriceProperty.set(unitPrice);
         subTotal = calculateSubtotal();
         subtotalProperty().set(subTotal);
     }
@@ -84,6 +87,7 @@ public class SaleProduct {
 
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
+        unitPriceProperty.set(this.unitPrice);
         subTotal = calculateSubtotal();
         originalSubtotal = calculateOriginalSubtotal();
         subTotalProperty.set(subTotal);
@@ -96,6 +100,10 @@ public class SaleProduct {
 
     public ObjectProperty<BigDecimal> subtotalProperty(){
         return subTotalProperty;
+    }
+
+    public ObjectProperty<BigDecimal> unitPriceProperty(){
+        return unitPriceProperty;
     }
 
     public void setSubTotal(BigDecimal subTotal) {

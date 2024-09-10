@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.controller;
+package com.gabrielosorio.gestor_inteligente.view;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import javafx.fxml.FXML;

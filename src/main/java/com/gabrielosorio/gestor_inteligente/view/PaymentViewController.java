@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.controller;
+package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;

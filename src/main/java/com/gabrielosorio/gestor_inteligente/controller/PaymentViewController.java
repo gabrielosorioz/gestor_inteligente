@@ -33,7 +33,8 @@ public class PaymentViewController implements Initializable {
     private Button btnCheckout;
 
     @FXML
-    private Label totalPriceLbl,receiveLbl,paybackLbl,receiveValueLbl,paybackValueLbl,monetaryReceiveLbl,monetaryChangeLbl;
+    private Label totalPriceLbl,receiveLbl,paybackLbl,receiveValueLbl,paybackValueLbl,monetaryReceiveLbl,monetaryChangeLbl,
+            originalPriceLbl,monetaryOriginalPriceLbl,originalPriceValueLbl;
 
 
     private Map<HBox, PaymentMethod> paymentHboxMap = new HashMap<>();
@@ -63,6 +64,7 @@ public class PaymentViewController implements Initializable {
         refreshTotalPrice();
         refreshDiscountPrice();
         setUpDiscountField();
+        showOriginalPrice();
 
         paymentMethods = new HashMap<>();
 
@@ -246,6 +248,20 @@ public class PaymentViewController implements Initializable {
         discountField.setText(totalDiscount);
     }
 
+    private void showOriginalPrice(){
+        if(sale.getTotalDiscount().compareTo(BigDecimal.ZERO) > 0){
+            originalPriceLbl.setVisible(true);
+            monetaryOriginalPriceLbl.setVisible(true);
+            originalPriceValueLbl.setVisible(true);
+            originalPriceValueLbl.setText(TextFieldUtils.formatText(sale.getOriginalTotalPrice().toPlainString()));
+        } else {
+            originalPriceLbl.setVisible(false);
+            monetaryOriginalPriceLbl.setVisible(false);
+            originalPriceValueLbl.setVisible(false);
+        }
+    }
+
+
     private void setUpDiscountField(){
         if (discountField.getText().isBlank() || discountField.getText().isEmpty()) {
             discountField.setText("0,00");
@@ -275,6 +291,7 @@ public class PaymentViewController implements Initializable {
                     sale.setTotalDiscount(TextFieldUtils.formatCurrency(discountField.getText()));
                     refreshValuesLabel();
                     refreshTotalPrice();
+                    showOriginalPrice();
                 });
             }
         });

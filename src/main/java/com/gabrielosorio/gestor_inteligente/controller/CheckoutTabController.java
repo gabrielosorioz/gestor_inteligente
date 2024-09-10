@@ -10,6 +10,7 @@ import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,6 +31,7 @@ import javafx.stage.Stage;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
@@ -58,7 +60,7 @@ public class CheckoutTabController implements Initializable {
     private TableColumn<SaleProduct, String> quantityCol;
 
     @FXML
-    private TableColumn<SaleProduct, String> sellingPriceCol;
+    private TableColumn<SaleProduct, BigDecimal> sellingPriceCol;
 
     @FXML
     private TableColumn<SaleProduct, BigDecimal> subTotalCol;
@@ -78,7 +80,6 @@ public class CheckoutTabController implements Initializable {
     @FXML
     private Label priceLbl;
 
-
     private final CheckoutTabPaneController checkoutTabPaneController;
 
     public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController) {
@@ -95,50 +96,20 @@ public class CheckoutTabController implements Initializable {
         cartTable.setFocusTraversable(false);
     }
 
-    private void monetaryLabel(TableColumn<SaleProduct, String> currencyColumn) {
-        currencyColumn.setCellFactory(column -> {
-            TableCell<SaleProduct, String> cell = new TableCell<>() {
-                private final Label currencyLabel = new Label("R$");
-                private final Text valueText = new Text();
-
-                {
-                    currencyLabel.setStyle(
-                            "-fx-text-fill: black;"
-                    );
-                    currencyLabel.setPrefWidth(50);
-                    valueText.setTextAlignment(TextAlignment.RIGHT);
-                    HBox hbox = new HBox(5, currencyLabel, valueText);
-                    hbox.setAlignment(Pos.CENTER_LEFT);
-                    setGraphic(hbox);
-                    setText(null);
-                }
-
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setGraphic(null);
-                    } else {
-                        valueText.setText(item);
-                        setGraphic(getGraphic());
-                    }
-                }
-            };
-            return cell;
-        });
-    }
 
     private void setUpColumns() {
         codeCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProduct().getProductCode())));
         descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
-        sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getSellingPrice().toPlainString()));
+        sellingPriceCol.setCellValueFactory(cellData ->  cellData.getValue().unitPriceProperty());
         quantityCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
         discountCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDiscount().toPlainString()));
         subTotalCol.setCellValueFactory(cellData -> cellData.getValue().subtotalProperty());
 
         monetaryLabel(sellingPriceCol);
+        monetaryLabel(subTotalCol);
         setUpQtdColumn();
         setUpDiscountColumn();
+
 
         codeCol.setResizable(false);
         descriptionCol.setResizable(false);
@@ -280,7 +251,6 @@ public class CheckoutTabController implements Initializable {
     private void setUpQtdColumn() {
         quantityCol.setCellFactory(column -> new TableCell<SaleProduct, String>() {
             private final TextField textField = new TextField();
-
             {
                 setUpTableFieldStyle(textField);
                 textField.setTextFormatter(new TextFormatter<>(change -> {
@@ -347,9 +317,16 @@ public class CheckoutTabController implements Initializable {
     private void setUpDiscountColumn() {
         discountCol.setCellFactory(column -> new TableCell<SaleProduct, String>() {
             private final TextField discountField = new TextField();
+            private final Label currencyLabel = new Label("R$");
+            HBox hbox = new HBox(2, currencyLabel, discountField);
 
             {
+                currencyLabel.setStyle("-fx-text-fill: black; ");
+                currencyLabel.setPrefWidth(35);
+                discountField.setPrefWidth(95);
                 setUpTableFieldStyle(discountField);
+                hbox.setAlignment(Pos.CENTER_LEFT);
+
                 if (discountField.getText().isBlank() || discountField.getText().isEmpty()) {
                     discountField.setText("0,00");
                 } else {
@@ -403,9 +380,40 @@ public class CheckoutTabController implements Initializable {
                     setText(null);
                 } else {
                     discountField.setText(item);
-                    setGraphic(discountField);
+                    setGraphic(hbox);
                 }
             }
+        });
+    }
+
+    private void monetaryLabel(TableColumn<SaleProduct, BigDecimal> currencyColumn){
+        currencyColumn.setCellFactory(column -> new TableCell<SaleProduct, BigDecimal>() {
+            private final Label currencyLabel = new Label("R$");
+            private final Text valueText = new Text();
+
+            {
+                currencyLabel.setStyle(
+                        "-fx-text-fill: black;"
+                );
+                currencyLabel.setPrefWidth(35);
+                valueText.setTextAlignment(TextAlignment.RIGHT);
+                HBox hbox = new HBox(5, currencyLabel, valueText);
+                hbox.setAlignment(Pos.CENTER_LEFT);
+                setGraphic(hbox);
+                setText(null);
+            }
+
+            @Override
+            protected void updateItem(BigDecimal item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    valueText.setText(TextFieldUtils.formatText(item.setScale(2, RoundingMode.HALF_DOWN).toPlainString()));
+                    setGraphic(getGraphic());
+                }
+            }
+
         });
     }
 

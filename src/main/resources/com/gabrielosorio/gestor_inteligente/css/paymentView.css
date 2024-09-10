@@ -119,3 +119,17 @@
     -fx-font-weight: bold;
     -fx-font-size: 22px;
 }
+
+.originalPrice-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #a3a3a3;
+}
+
+.originalPrice {
+       -fx-font-family: 'Poppins';
+        -fx-font-weight: bold;
+        -fx-font-size: 22px;
+        -fx-text-fill: #666666;
+}

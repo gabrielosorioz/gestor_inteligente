@@ -116,6 +116,7 @@ public class SaleProduct {
     private BigDecimal calculateSubtotal(){
         return unitPrice.multiply(BigDecimal.valueOf(quantity))
                 .subtract(discount)
+                .max(BigDecimal.ZERO)
                 .setScale(2,RoundingMode.HALF_UP);
     }
 

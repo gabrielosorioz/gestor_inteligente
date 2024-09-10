@@ -256,13 +256,8 @@ public class CheckoutTabController implements Initializable {
         }));
 
         qtdField.focusedProperty().addListener((obsValue, oldValue, newValue) -> {
-            if (!newValue) {
-                // Verifica se o conteúdo do TextField está vazio ou em branco
-                String text = qtdField.getText().trim();
-                if (text.isEmpty()) {
-                    // Se estiver vazio ou em branco, define o texto como "1"
-                    qtdField.setText("1");
-                }
+            if (qtdField.getText().isEmpty() || qtdField.getText().matches("^0+$")) {
+                qtdField.setText("1");
             }
         });
 
@@ -298,7 +293,7 @@ public class CheckoutTabController implements Initializable {
                 textField.focusedProperty().addListener((obsValue, wasFocused, isNowFocused) -> {
                     if (!isNowFocused) {
                         String text = textField.getText().trim();
-                        if (text.isEmpty() || text.equals("0")) {
+                        if (text.isEmpty() || text.matches("^0+$")) {
                             textField.setText("1");
                             text = "1";
                         }
@@ -318,7 +313,7 @@ public class CheckoutTabController implements Initializable {
                 textField.textProperty().addListener((observable, oldValue, newValue) -> {
                     if (getTableRow() != null && getTableRow().getItem() != null) {
                         try {
-                            long newValueInt = Long.parseLong(newValue.isEmpty() || newValue.equals("0") ? "1" : newValue);
+                            long newValueInt = Long.parseLong(newValue.isEmpty() || newValue.matches("^0+$") ? "1" : newValue);
                             getTableRow().getItem().setQuantity(newValueInt);
                             refreshTotalPrice();
                         } catch (NumberFormatException e) {

@@ -6,9 +6,6 @@ public class Stock {
 
     private long id;
     private Product product;
-    private long productId;
-    private String barCode;
-    private String productName;
     private long quantity;
     private Timestamp lastUpdate;
 
@@ -35,30 +32,6 @@ public class Stock {
         this.product = product;
     }
 
-    public long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(long productId) {
-        this.productId = productId;
-    }
-
-    public String getBarCode() {
-        return barCode;
-    }
-
-    public void setBarCode(String barCode) {
-        this.barCode = barCode;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
     public long getQuantity() {
         return quantity;
     }
@@ -80,9 +53,9 @@ public class Stock {
         return "Stock{" +
                 "id=" + id +
                 ", product=" + product +
-                ", productId=" + productId +
-                ", barCode='" + barCode + '\'' +
-                ", productName='" + productName + '\'' +
+                ", productId=" + product.getProductCode() +
+                ", barCode='" + getProduct().getBarCode() + '\'' +
+                ", productName='" + getProduct().getDescription() + '\'' +
                 ", quantity=" + quantity +
                 ", lastUpdate=" + lastUpdate +
                 '}';

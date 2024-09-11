@@ -146,7 +146,9 @@ public class ProductRegistrationTableViewController implements Initializable {
         stockTable.setItems(stockList.filtered(stock ->
             String.valueOf(stock.getProduct().getProductCode()).toLowerCase().contains(searchLower) ||
             stock.getProduct().getDescription().toLowerCase().contains(searchLower) ||
-            stock.getProduct().getBarCode().toLowerCase().contains(searchLower)
+            stock.getProduct().getBarCode()
+                    .map(barCode -> barCode.toLowerCase().contains(searchLower))
+                    .orElse(false)
         ));
         stockTable.refresh();
 

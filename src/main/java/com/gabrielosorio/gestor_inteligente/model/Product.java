@@ -5,12 +5,13 @@ import com.gabrielosorio.gestor_inteligente.utils.ProductCalculationUtils;
 import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Optional;
 
 public class Product {
 
     private long id;
     private long productCode;
-    private String barCode;
+    private Optional<String> barCode;
     private String description;
     private BigDecimal costPrice;
     private BigDecimal sellingPrice;
@@ -22,7 +23,6 @@ public class Product {
     private Timestamp dateCreate;
     private Timestamp dateUpdate;
     private Timestamp dateDelete;
-
 
     public Product(ProductBuilder productBuilder) {
         this.id = productBuilder.id;
@@ -39,17 +39,16 @@ public class Product {
         this.supplier = productBuilder.supplier;
         this.category = productBuilder.category;
         this.markupPercent = productBuilder.markupPercent;
-
     }
 
-    public static ProductBuilder builder(){
+    public static ProductBuilder builder() {
         return new ProductBuilder();
     }
 
     public static class ProductBuilder {
         private long id;
         private long productCode;
-        private String barCode;
+        private Optional<String> barCode = Optional.empty();
         private String description;
         private BigDecimal costPrice;
         private BigDecimal sellingPrice;
@@ -62,86 +61,83 @@ public class Product {
         private Supplier supplier;
         private Category category;
 
-        public ProductBuilder id(long id){
+        public ProductBuilder id(long id) {
             this.id = id;
             return this;
         }
 
-        public ProductBuilder productCode(long productCode){
+        public ProductBuilder productCode(long productCode) {
             this.productCode = productCode;
             return this;
         }
 
-        public ProductBuilder barCode(String barCode){
+        public ProductBuilder barCode(Optional<String> barCode) {
             this.barCode = barCode;
             return this;
         }
 
-        public ProductBuilder description(String description){
+        public ProductBuilder description(String description) {
             this.description = description;
             return this;
         }
 
-        public ProductBuilder costPrice(BigDecimal costPrice){
+        public ProductBuilder costPrice(BigDecimal costPrice) {
             this.costPrice = costPrice;
             return this;
         }
 
-        public ProductBuilder sellingPrice(BigDecimal sellingPrice){
+        public ProductBuilder sellingPrice(BigDecimal sellingPrice) {
             this.sellingPrice = sellingPrice;
             return this;
         }
 
-        public ProductBuilder status(Status status){
+        public ProductBuilder status(Status status) {
             this.status = status;
             return this;
         }
 
-        public ProductBuilder dateCreate(Timestamp dateCreate){
+        public ProductBuilder dateCreate(Timestamp dateCreate) {
             this.dateCreate = dateCreate;
             return this;
         }
 
-        public ProductBuilder dateUpdate(Timestamp dateUpdate){
+        public ProductBuilder dateUpdate(Timestamp dateUpdate) {
             this.dateUpdate = dateUpdate;
             return this;
         }
 
-        public ProductBuilder dateDelete(Timestamp dateDelete){
+        public ProductBuilder dateDelete(Timestamp dateDelete) {
             this.dateDelete = dateDelete;
             return this;
         }
 
-        public ProductBuilder category(Category category){
+        public ProductBuilder category(Category category) {
             this.category = category;
             return this;
         }
 
-        public ProductBuilder supplier(Supplier supplier){
+        public ProductBuilder supplier(Supplier supplier) {
             this.supplier = supplier;
             return this;
         }
 
-
         public Product build() {
-            this.markupPercent = ProductCalculationUtils.calculateMarkup(this.costPrice,this.sellingPrice);
-            this.profitMargin = ProductCalculationUtils.calculateProfitMargin(this.costPrice,this.sellingPrice);
+            this.markupPercent = ProductCalculationUtils.calculateMarkup(this.costPrice, this.sellingPrice);
+            this.profitMargin = ProductCalculationUtils.calculateProfitMargin(this.costPrice, this.sellingPrice);
             Product product = new Product(this);
             ProductValidator.validate(product);
             return product;
         }
-
     }
 
     private void validate() {
         ProductValidator.validate(this);
     }
 
-    private void updateCalculations(){
-        this.markupPercent = ProductCalculationUtils.calculateMarkup(this.costPrice,this.sellingPrice);
-        this.profitMargin = ProductCalculationUtils.calculateProfitMargin(this.costPrice,this.sellingPrice);
+    private void updateCalculations() {
+        this.markupPercent = ProductCalculationUtils.calculateMarkup(this.costPrice, this.sellingPrice);
+        this.profitMargin = ProductCalculationUtils.calculateProfitMargin(this.costPrice, this.sellingPrice);
     }
-
 
     public long getId() {
         return id;
@@ -151,7 +147,7 @@ public class Product {
         return productCode;
     }
 
-    public String getBarCode() {
+    public Optional<String> getBarCode() {
         return barCode;
     }
 
@@ -199,15 +195,15 @@ public class Product {
         return markupPercent;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public void setProductID(Integer productCode) {
+    public void setProductCode(long productCode) {
         this.productCode = productCode;
     }
 
-    public void setBarCode(String barCode) {
+    public void setBarCode(Optional<String> barCode) {
         this.barCode = barCode;
     }
 
@@ -216,19 +212,18 @@ public class Product {
     }
 
     public void setCostPrice(BigDecimal costPrice) {
-        ProductValidator.validatePrices(costPrice,this.sellingPrice);
+        ProductValidator.validatePrices(costPrice, this.sellingPrice);
         this.costPrice = costPrice;
         validate();
         updateCalculations();
     }
 
     public void setSellingPrice(BigDecimal sellingPrice) {
-        ProductValidator.validatePrices(this.costPrice,sellingPrice);
+        ProductValidator.validatePrices(this.costPrice, sellingPrice);
         this.sellingPrice = sellingPrice;
         updateCalculations();
         validate();
     }
-
 
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
@@ -262,16 +257,12 @@ public class Product {
         this.dateDelete = dateDelete;
     }
 
-    public boolean hasBarCode(){
-        return this.barCode != null && !this.barCode.isBlank();
-    }
-
     @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +
                 ", productCode=" + productCode +
-                ", barCode='" + barCode + '\'' +
+                ", barCode=" + barCode.orElse("N/A") +
                 ", description='" + description + '\'' +
                 ", costPrice=" + costPrice +
                 ", sellingPrice=" + sellingPrice +

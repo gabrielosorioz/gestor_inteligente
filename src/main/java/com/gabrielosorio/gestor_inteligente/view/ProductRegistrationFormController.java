@@ -137,7 +137,7 @@ public class ProductRegistrationFormController implements Initializable {
         final Stock productStock = stock;
 
         final String id = String.valueOf(productStock.getProduct().getProductCode());
-        final String barCode = productStock.getProduct().getBarCode();
+        final String barCode = productStock.getProduct().getBarCode().orElse("");
         final String description = productStock.getProduct().getDescription();
         final String costPrice = productStock.getProduct().getCostPrice().toPlainString();
         final String sellingPrice = productStock.getProduct().getSellingPrice().toPlainString();
@@ -175,10 +175,13 @@ public class ProductRegistrationFormController implements Initializable {
     }
 
     private Product createUpdatedProduct(){
+        String barCodeText = barCodeField.getText().trim();
+        Optional<String> optionalBarCode = barCodeText.isEmpty() ? Optional.empty() : Optional.of(barCodeText);
+
         return Product.builder()
                 .id(stock.getProduct().getId())
                 .productCode(Integer.parseInt(idField.getText()))
-                .barCode(barCodeField.getText())
+                .barCode(optionalBarCode)
                 .description(descriptionField.getText())
                 .costPrice(TextFieldUtils.formatCurrency(costPriceField.getText()))
                 .sellingPrice(TextFieldUtils.formatCurrency(sellingPriceField.getText()))

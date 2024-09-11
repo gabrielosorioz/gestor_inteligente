@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class StockDataUtils {
@@ -68,7 +69,7 @@ public class StockDataUtils {
         Integer id = productJSONObject.getInt("id");
         Integer productCode = productJSONObject.getInt("productCode");
         String description = productJSONObject.getString("description");
-        String barCode = productJSONObject.getString("barCode");
+        Optional<String> barCode = Optional.ofNullable(productJSONObject.optString("barCode"));
         BigDecimal costPrice = productJSONObject.getBigDecimal("costPrice");
         BigDecimal sellingPrice = productJSONObject.getBigDecimal("sellingPrice");
         String lastUpdateString = productJSONObject.getString("dateUpdate");

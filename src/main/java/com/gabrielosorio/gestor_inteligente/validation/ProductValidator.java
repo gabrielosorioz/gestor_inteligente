@@ -4,6 +4,7 @@ import com.gabrielosorio.gestor_inteligente.exception.InvalidProductException;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public class ProductValidator {
 
@@ -13,14 +14,21 @@ public class ProductValidator {
             throw new InvalidProductException("Product cannot be null.");
         }
 
+        try {
 
-        validateProductIdOrBarCode(product);
-        validateCostPrice(product);
-        validateSellingPrice(product);
-        validatePrices(product.getCostPrice(),product.getSellingPrice());
-        validateCreationDate(product);
-        validateProfitMargin(product);
-        validateMarkupPercentage(product);
+            validateProductIdOrBarCode(product);
+            validateCostPrice(product);
+            validateSellingPrice(product);
+            validatePrices(product.getCostPrice(),product.getSellingPrice());
+            validateCreationDate(product);
+            validateProfitMargin(product);
+            validateMarkupPercentage(product);
+            validateUniqueCodeAndBarCode(product);
+
+        } catch (InvalidProductException e){
+            throw new InvalidProductException("Validation failed for product: " + product + ". " + e.getMessage());
+        }
+
     }
 
 
@@ -70,9 +78,17 @@ public class ProductValidator {
             throw new InvalidProductException("Selling price and cost price must be greater than zero. ");
         }
         if (costPrice.compareTo(sellingPrice) > 0) {
-            throw new InvalidProductException("Cost price cannot be greater than selling price. ");
+            throw new InvalidProductException("Cost price cannot be greater than selling price. " + "costPrice=" + costPrice + " sellingPrice=" + sellingPrice);
         }
     }
+
+    private static void validateUniqueCodeAndBarCode(Product product) {
+        Optional<String> barCode = product.getBarCode();
+        if (product.getProductCode() >= 0 && barCode.isPresent() && barCode.get().equals(String.valueOf(product.getProductCode()))) {
+            throw new InvalidProductException("Product code and barcode cannot be the same.");
+        }
+    }
+
 
 
 }

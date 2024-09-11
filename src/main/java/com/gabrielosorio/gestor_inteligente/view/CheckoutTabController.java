@@ -4,6 +4,7 @@ import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.repository.storage.ProductStorage;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
@@ -494,31 +495,44 @@ public class CheckoutTabController implements Initializable {
 
     }
 
-    private Product getProductData(String id) {
+    private Optional<Product> getProductData(String id) {
         Product product = productData.get(id);
-        if (product != null) {
-            return product;
-        } else {
-            log.severe("Product not found for id " + id);
-        }
-        throw new IllegalArgumentException("Invalid Product ID: " + id);
+        return Optional.ofNullable(product);
     }
 
     private void insertProductToCart(String id, long quantity) {
-        Product product = getProductData(id);
-        ProductValidator.validate(product);
+        Optional<Product> productOptional = getProductData(id);
+
+        if(productOptional.isEmpty()){
+            showProductNotFoundMessage();
+            searchField.clear();
+            qtdField.setText("1");
+            return;
+        }
+
+        Product product = productOptional.get();
+
         final SaleProduct newSaleItem = new SaleProduct(product);
         newSaleItem.setQuantity(quantity);
 
         cartProduct.put(String.valueOf(newSaleItem.getProduct().getProductCode()), newSaleItem);
-        if (newSaleItem.getProduct().hasBarCode()) {
-            cartProduct.put(newSaleItem.getProduct().getBarCode(), newSaleItem);
-        }
+
+        newSaleItem.getProduct().getBarCode().ifPresent(barCode -> cartProduct.put(barCode,newSaleItem));
+
+
+        SaleProduct capturedProductByCode = cartProduct.get(String.valueOf(newSaleItem.getProduct().getProductCode()));
+        SaleProduct capturedProductByBarCode = newSaleItem.getProduct().getBarCode()
+                        .map(barCode -> cartProduct.get(barCode))
+                                .orElse(null);
+
 
         cartProductObsList.add(newSaleItem);
         cartTable.refresh();
         refreshTotalPrice();
-        log.info("Product added to the list of products for sale." + " BarCode: " + cartProduct.get(newSaleItem.getProduct().getBarCode()).getProduct().getBarCode() + " ID: " + cartProduct.get(String.valueOf(newSaleItem.getProduct().getProductCode())).getProduct().getProductCode());
+
+        log.info("Product added to the list of products for sale. " +
+                "BarCode: " + (capturedProductByBarCode != null ? capturedProductByBarCode.getProduct().getBarCode().orElse("N/A") : "N/A") + " " +
+                "ID: " + (capturedProductByCode != null ? capturedProductByCode.getProduct().getProductCode() : "Unknown"));
     }
 
     private void increaseProductToCart(String id, long quantity) {
@@ -538,13 +552,14 @@ public class CheckoutTabController implements Initializable {
     }
 
     private void fetchProductsData() {
-        StockDataUtils.fetchStockData().forEach(item -> {
-            Product product = item.getProduct();
-            String productCode = String.valueOf(product.getProductCode());
-            String barCode = product.getBarCode();
-            productData.put(productCode, product);
-            productData.put(barCode, product);
+        ProductStorage.getInstance().getProducts().forEach(product -> {
+           String productCode = String.valueOf(product.getProductCode());
+           Optional<String> barCode = product.getBarCode();
+
+           productData.put(productCode,product);
+           barCode.ifPresent(bc -> productData.put(bc,product));
         });
+
     }
 
     private void createSale() {
@@ -578,6 +593,15 @@ public class CheckoutTabController implements Initializable {
             log.severe("ERROR at load payment view: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void showProductNotFoundMessage(){
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(null);
+            alert.setContentText("Produto não encontrado");
+            alert.showAndWait();
+        });
     }
 
 

@@ -50,17 +50,17 @@ public class StockDataUtils {
         return stock;
     }
 
-    private static Category parseCategory(JSONObject categoryJSONObject){
+    private static Optional<Category> parseCategory(JSONObject categoryJSONObject){
         Integer id = categoryJSONObject.getInt("id");
         String description = categoryJSONObject.getString("description");
-        Category category = new Category(id,description);
+        Optional<Category> category =  Optional.of(new Category(id,description));
         return category;
     }
 
-    private static Supplier parseSupplier(JSONObject supplierJSONObject){
+    private static Optional<Supplier> parseSupplier(JSONObject supplierJSONObject){
         Integer id = supplierJSONObject.getInt("id");
         String name = supplierJSONObject.getString("name");
-        Supplier supplier = new Supplier(id,name);
+        Optional<Supplier> supplier = Optional.of(new Supplier(id,name));
         return supplier;
     }
 
@@ -82,8 +82,8 @@ public class StockDataUtils {
         JSONObject categoryJSONObject = productJSONObject.getJSONObject("category");
         JSONObject supplierJSONObject = productJSONObject.getJSONObject("supplier");
 
-        Category category = parseCategory(categoryJSONObject);
-        Supplier supplier = parseSupplier(supplierJSONObject);
+        Optional<Category> category = parseCategory(categoryJSONObject);
+        Optional<Supplier> supplier = parseSupplier(supplierJSONObject);
 
         Product product = Product.builder()
                 .id(id)
@@ -154,13 +154,13 @@ public class StockDataUtils {
 
         /**extract data from supplier of product and put */
         JSONObject supplierJSONObject = productJSONObject.getJSONObject("supplier");
-        supplierJSONObject.put("id",stockProduct.getSupplier().getId());
-        supplierJSONObject.put("supplier",stockProduct.getSupplier().getName());
+        supplierJSONObject.put("id",stockProduct.getSupplier().get().getId());
+        supplierJSONObject.put("supplier",stockProduct.getSupplier().get().getName());
 
         /**extract data from supplier of product and put */
         JSONObject categoryJSONObject = productJSONObject.getJSONObject("category");
-        categoryJSONObject.put("id",stockProduct.getCategory().getId());
-        supplierJSONObject.put("supplier",stockProduct.getCategory().getDescription());
+        categoryJSONObject.put("id",stockProduct.getCategory().get().getId());
+        supplierJSONObject.put("supplier",stockProduct.getCategory().get().getDescription());
 
     }
 

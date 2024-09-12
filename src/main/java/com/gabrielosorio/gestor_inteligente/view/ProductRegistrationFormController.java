@@ -143,8 +143,8 @@ public class ProductRegistrationFormController implements Initializable {
         final String sellingPrice = productStock.getProduct().getSellingPrice().toPlainString();
         final String markupPercent = String.valueOf(productStock.getProduct().getMarkupPercent());
         final String quantity = String.valueOf(productStock.getQuantity());
-        final String category = String.valueOf(productStock.getProduct().getCategory().getDescription());
-        final String supplier = String.valueOf(productStock.getProduct().getSupplier().getName());
+        final String category = String.valueOf(productStock.getProduct().getCategory().get().getDescription());
+        final String supplier = String.valueOf(productStock.getProduct().getSupplier().get().getName());
 
         this.idField.setText(id);
         this.barCodeField.setText(barCode);
@@ -185,8 +185,8 @@ public class ProductRegistrationFormController implements Initializable {
                 .description(descriptionField.getText())
                 .costPrice(TextFieldUtils.formatCurrency(costPriceField.getText()))
                 .sellingPrice(TextFieldUtils.formatCurrency(sellingPriceField.getText()))
-                .supplier(new Supplier(stock.getProduct().getSupplier().getId(), stock.getProduct().getSupplier().getName()))
-                .category(new Category(stock.getProduct().getCategory().getId(), stock.getProduct().getCategory().getDescription()))
+                .supplier(Optional.of(new Supplier(stock.getProduct().getSupplier().get().getId(), stock.getProduct().getSupplier().get().getName())))
+                .category(Optional.of(new Category(stock.getProduct().getCategory().get().getId(), stock.getProduct().getCategory().get().getDescription())))
                 .status(stock.getProduct().getStatus())
                 .dateCreate(stock.getProduct().getDateCreate())
                 .dateUpdate(Timestamp.valueOf(LocalDateTime.now()))

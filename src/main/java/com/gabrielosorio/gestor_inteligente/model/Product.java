@@ -15,10 +15,11 @@ public class Product {
     private String description;
     private BigDecimal costPrice;
     private BigDecimal sellingPrice;
-    private Supplier supplier;
-    private Category category;
+    private Optional<Supplier> supplier;
+    private Optional<Category> category;
     private double profitMargin;
     private double markupPercent;
+    private long quantity;
     private Status status;
     private Timestamp dateCreate;
     private Timestamp dateUpdate;
@@ -39,6 +40,7 @@ public class Product {
         this.supplier = productBuilder.supplier;
         this.category = productBuilder.category;
         this.markupPercent = productBuilder.markupPercent;
+        this.quantity = productBuilder.quantity;
     }
 
     public static ProductBuilder builder() {
@@ -54,12 +56,13 @@ public class Product {
         private BigDecimal sellingPrice;
         private double profitMargin;
         private double markupPercent;
+        private long quantity;
         private Status status;
         private Timestamp dateCreate;
         private Timestamp dateUpdate;
         private Timestamp dateDelete;
-        private Supplier supplier;
-        private Category category;
+        private Optional<Supplier> supplier = Optional.empty();
+        private Optional<Category> category = Optional.empty();
 
         public ProductBuilder id(long id) {
             this.id = id;
@@ -111,13 +114,18 @@ public class Product {
             return this;
         }
 
-        public ProductBuilder category(Category category) {
+        public ProductBuilder category(Optional<Category> category) {
             this.category = category;
             return this;
         }
 
-        public ProductBuilder supplier(Supplier supplier) {
+        public ProductBuilder supplier(Optional<Supplier> supplier) {
             this.supplier = supplier;
+            return this;
+        }
+
+        public ProductBuilder quantity(long quantity) {
+            this.quantity = quantity;
             return this;
         }
 
@@ -183,11 +191,11 @@ public class Product {
         return dateDelete;
     }
 
-    public Supplier getSupplier() {
+    public Optional<Supplier> getSupplier() {
         return supplier;
     }
 
-    public Category getCategory() {
+    public Optional<Category> getCategory() {
         return category;
     }
 
@@ -225,11 +233,11 @@ public class Product {
         validate();
     }
 
-    public void setSupplier(Supplier supplier) {
+    public void setSupplier(Optional<Supplier> supplier) {
         this.supplier = supplier;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(Optional<Category> category) {
         this.category = category;
     }
 
@@ -257,6 +265,14 @@ public class Product {
         this.dateDelete = dateDelete;
     }
 
+    public long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -266,14 +282,15 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", costPrice=" + costPrice +
                 ", sellingPrice=" + sellingPrice +
-                ", supplier=" + supplier +
-                ", category=" + category +
+                ", supplier=" + supplier.map(Supplier::toString).orElse("N/A") +
+                ", category=" + category.map(Category::toString).orElse("N/A") +
                 ", profitMargin=" + profitMargin +
                 ", markupPercent=" + markupPercent +
                 ", status=" + status +
                 ", dateCreate=" + dateCreate +
                 ", dateUpdate=" + dateUpdate +
                 ", dateDelete=" + dateDelete +
+                ", quantity " + quantity +
                 '}';
     }
 }

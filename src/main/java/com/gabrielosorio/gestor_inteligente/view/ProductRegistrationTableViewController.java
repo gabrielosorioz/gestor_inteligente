@@ -49,7 +49,7 @@ public class ProductRegistrationTableViewController implements Initializable {
     private final Logger log = Logger.getLogger(getClass().getName());
 
     private void setUpColumns() {
-        categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getCategory().getDescription()));
+        categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getCategory().get().getDescription()));
         costPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getProduct().getCostPrice().toPlainString())));
         descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
         idCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProduct().getProductCode())));

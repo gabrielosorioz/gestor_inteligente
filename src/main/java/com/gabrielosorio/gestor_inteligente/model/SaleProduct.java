@@ -32,6 +32,17 @@ public class SaleProduct {
         unitPriceProperty = new SimpleObjectProperty<>(unitPrice);
     }
 
+    public SaleProduct(Product product,long quantity){
+        this.product = product;
+        unitPrice = product.getSellingPrice().setScale(2, RoundingMode.HALF_UP);
+        discount = new BigDecimal(0.00).setScale(2,RoundingMode.HALF_UP);
+        this.quantity = quantity;
+        originalSubtotal = calculateOriginalSubtotal();
+        subTotal = calculateSubtotal();
+        subTotalProperty = new SimpleObjectProperty<>(calculateSubtotal());
+        unitPriceProperty = new SimpleObjectProperty<>(unitPrice);
+    }
+
     public SaleProduct(){}
 
     public long getId() {

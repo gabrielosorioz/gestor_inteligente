@@ -1,11 +1,17 @@
 package com.gabrielosorio.gestor_inteligente.view;
 
+import com.gabrielosorio.gestor_inteligente.model.Category;
+import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
+import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
+import com.gabrielosorio.gestor_inteligente.repository.Repository;
+import com.gabrielosorio.gestor_inteligente.repository.storage.H2DBProductStrategy;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -15,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -22,39 +29,44 @@ import java.util.logging.Logger;
 public class ProductRegistrationTableViewController implements Initializable {
 
     @FXML
-    private TableColumn<Stock, String> categoryColumn;
+    private TableColumn<Product, String> categoryColumn;
 
     @FXML
-    private TableColumn<Stock, String> costPriceCol;
+    private TableColumn<Product, String> costPriceCol;
 
     @FXML
-    private TableColumn<Stock, String> descriptionCol;
+    private TableColumn<Product, String> descriptionCol;
 
     @FXML
-    private TableColumn<Stock, String> idCol;
+    private TableColumn<Product, String> idCol;
 
     @FXML
-    private TableColumn<Stock, String> stockColumn;
+    private TableColumn<Product, String> stockColumn;
 
     @FXML
-    private TableColumn<Stock, String> sellingPriceCol;
+    private TableColumn<Product, String> sellingPriceCol;
 
     @FXML
-    private TableView<Stock> stockTable;
+    private TableView<Product> productsTable;
 
-    ObservableList<Stock> stockList = FXCollections.observableArrayList();
+    private Repository<Product> productRepository;
 
-    List<Stock> stockData = StockDataUtils.fetchStockData();
+    private List<Product> allProducts;
+
+    private FilteredList<Product> filteredTableProducts;
+
+    private ObservableList<Product> productsList;
 
     private final Logger log = Logger.getLogger(getClass().getName());
 
     private void setUpColumns() {
-        categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getCategory().get().getDescription()));
-        costPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getProduct().getCostPrice().toPlainString())));
-        descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
-        idCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProduct().getProductCode())));
+
+        categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategory().map(Category::getDescription).orElse("N/A")));
+        costPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getCostPrice().toPlainString())));
+        descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
+        idCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProductCode())));
         stockColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
-        sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getProduct().getSellingPrice().toPlainString())));
+        sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getSellingPrice().toPlainString())));
 
         // set monetary label
         monetaryLabel(costPriceCol);
@@ -86,9 +98,9 @@ public class ProductRegistrationTableViewController implements Initializable {
     }
 
 
-    private void monetaryLabel(TableColumn<Stock,String> currencyColumn){
+    private void monetaryLabel(TableColumn<Product,String> currencyColumn){
         currencyColumn.setCellFactory(column -> {
-            TableCell<Stock, String> cell = new TableCell<>() {
+            TableCell<Product, String> cell = new TableCell<>() {
                 private final Label currencyLabel = new Label("R$");
                 private final Text valueText = new Text();
 
@@ -120,46 +132,70 @@ public class ProductRegistrationTableViewController implements Initializable {
     }
 
     public void updateStockUI(Stock updatedStock) {
-        if (stockList != null && !stockList.isEmpty()) {
-            for (int i = 0; i < stockList.size(); i++) {
-                Stock stock = stockList.get(i);
-                if (stock.getId() == updatedStock.getId()) {
-                    stockList.set(i, updatedStock);
-                    stockTable.refresh();
-                    break;
-                }
-            }
-        } else {
-            log.warning("Stock list is empty or null.");
-        }
+//        if (products != null && !products.isEmpty()) {
+//            for (int i = 0; i < products.size(); i++) {
+//                Product  = products.get(i);
+//                if (stock.getId() == updatedStock.getId()) {
+//                    products.set(i, updatedStock);
+//                    stockTable.refresh();
+//                    break;
+//                }
+//            }
+//        } else {
+//            log.warning("Stock list is empty or null.");
+//        }
     }
 
     public void searchFilteredStock(String search){
         if(search == null || search.trim().isEmpty()){
-            stockTable.setItems(stockList);
-            stockTable.refresh();
+            productsTable.setItems(productsList);
+            productsTable.refresh();
             return;
         }
 
-        final String searchLower = search.toLowerCase();
+        final var searchLower = search.toLowerCase();
 
-        stockTable.setItems(stockList.filtered(stock ->
-            String.valueOf(stock.getProduct().getProductCode()).toLowerCase().contains(searchLower) ||
-            stock.getProduct().getDescription().toLowerCase().contains(searchLower) ||
-            stock.getProduct().getBarCode()
-                    .map(barCode -> barCode.toLowerCase().contains(searchLower))
-                    .orElse(false)
-        ));
-        stockTable.refresh();
+        productsTable.setItems(productsList.filtered(product -> {
+            if(isNumeric(searchLower)){
+                var searchNumber = Long.parseLong(searchLower);
+                var pCode = product.getProductCode();
+                var pBarCodeOpt = product.getBarCode();
 
+                if(searchNumber == pCode){
+                    return true;
+                }
+
+                return pBarCodeOpt
+                        .filter(barCode -> isNumeric(barCode))
+                        .map(barCode -> Long.parseLong(barCode))
+                        .filter(barCodeLong -> barCodeLong == searchNumber)
+                        .isPresent();
+            }
+
+            return product.getDescription().toLowerCase().contains(searchLower);
+
+        }));
+        productsTable.refresh();
+    }
+
+    private boolean isNumeric(String str) {
+        return str.matches("\\d+"); // Verifica se a string contém apenas dígitos
+    }
+
+    private List<Product> fetchProducts(){
+        productRepository = new ProductRepository();
+        productRepository.init(H2DBProductStrategy.getInstance());
+        var allProducts = new ArrayList<>(productRepository.findAll());
+        return allProducts;
     }
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        allProducts = fetchProducts();
+        productsList = FXCollections.observableArrayList(allProducts);
+        productsTable.setItems(productsList);
+        productsTable.setFocusTraversable(false);
         setUpColumns();
-        stockList.addAll(stockData);
-        stockTable.setItems(stockList);
-        stockTable.setFocusTraversable(false);
     }
 }

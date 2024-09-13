@@ -3,7 +3,9 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
-import com.gabrielosorio.gestor_inteligente.repository.storage.ProductStorage;
+import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
+import com.gabrielosorio.gestor_inteligente.repository.Repository;
+import com.gabrielosorio.gestor_inteligente.repository.storage.H2DBProductStrategy;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -183,7 +185,9 @@ public class CheckoutTabController implements Initializable {
     }
 
     private void fetchProductsData() {
-        ProductStorage.getInstance().getProducts().forEach(product -> {
+        Repository<Product> prodRepository = new ProductRepository();
+        prodRepository.init(H2DBProductStrategy.getInstance());
+        prodRepository.findAll().forEach(product -> {
            String productCode = String.valueOf(product.getProductCode());
            Optional<String> barCode = product.getBarCode();
 

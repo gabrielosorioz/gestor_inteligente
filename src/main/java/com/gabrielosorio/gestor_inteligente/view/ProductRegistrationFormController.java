@@ -46,7 +46,7 @@ public class ProductRegistrationFormController implements Initializable {
     private Button btnSave,btnCancel;
 
 
-    private Stock stock;
+    private Product product;
 
     private ProductRegistrationTableViewController productRegistrationTableViewController;
 
@@ -60,8 +60,8 @@ public class ProductRegistrationFormController implements Initializable {
         this.productManagerController = productManagerController;
     }
 
-    public void setStock(Stock stock){
-        this.stock = stock;
+    public void setProduct(Product product){
+        this.product = product;
         populateFields();
     }
 
@@ -134,19 +134,28 @@ public class ProductRegistrationFormController implements Initializable {
 
     private void populateFields() {
 
-        final Stock productStock = stock;
+        final Product productStock = product;
 
-        final String id = String.valueOf(productStock.getProduct().getProductCode());
-        final String barCode = productStock.getProduct().getBarCode().orElse("");
-        final String description = productStock.getProduct().getDescription();
-        final String costPrice = productStock.getProduct().getCostPrice().toPlainString();
-        final String sellingPrice = productStock.getProduct().getSellingPrice().toPlainString();
-        final String markupPercent = String.valueOf(productStock.getProduct().getMarkupPercent());
+        final String id = String.valueOf(productStock.getProductCode());
+        final String barCode = productStock.getBarCode().orElse("");
+        final String description = productStock.getDescription();
+        final String costPrice = productStock.getCostPrice().toPlainString();
+        final String sellingPrice = productStock.getSellingPrice().toPlainString();
+        final String markupPercent = String.valueOf(productStock.getMarkupPercent());
         final String quantity = String.valueOf(productStock.getQuantity());
-        final String category = String.valueOf(productStock.getProduct().getCategory().get().getDescription());
-        final String supplier = String.valueOf(productStock.getProduct().getSupplier().get().getName());
+        // Obtém a descrição da categoria, retornando "N/A" se a categoria estiver ausente ou a descrição for null
+        final String category = productStock.getCategory()
+            .map(Category::getDescription)   // Mapeia o Optional<Category> para Optional<String>
+            .orElse("N/A");                  // Retorna "N/A" se o Optional<String> estiver vazio ou for null
+
+        // Obtém o nome do fornecedor, retornando "N/A" se o fornecedor estiver ausente ou o nome for null
+        final String supplier = productStock.getSupplier()
+            .map(Supplier::getName)           // Mapeia o Optional<Supplier> para Optional<String>
+            .orElse("N/A");                  // Retorna "N/A" se o Optional<String> estiver vazio ou for null
 
         this.idField.setText(id);
+
+
         this.barCodeField.setText(barCode);
         this.descriptionField.setText(description);
         this.costPriceField.setText(costPrice);
@@ -162,7 +171,7 @@ public class ProductRegistrationFormController implements Initializable {
     }
 
     private void cancel(){
-        this.stock = null;
+        this.product = null;
         productManagerController.toggleStockForm();
     }
 
@@ -171,7 +180,7 @@ public class ProductRegistrationFormController implements Initializable {
         StockDataUtils.updateStock(newStockRegister);
         productRegistrationTableViewController.updateStockUI(newStockRegister);
         productManagerController.toggleStockForm();
-        this.stock = null;
+        this.product = null;
     }
 
     private Product createUpdatedProduct(){
@@ -179,16 +188,16 @@ public class ProductRegistrationFormController implements Initializable {
         Optional<String> optionalBarCode = barCodeText.isEmpty() ? Optional.empty() : Optional.of(barCodeText);
 
         return Product.builder()
-                .id(stock.getProduct().getId())
+                .id(product.getId())
                 .productCode(Integer.parseInt(idField.getText()))
                 .barCode(optionalBarCode)
                 .description(descriptionField.getText())
                 .costPrice(TextFieldUtils.formatCurrency(costPriceField.getText()))
                 .sellingPrice(TextFieldUtils.formatCurrency(sellingPriceField.getText()))
-                .supplier(Optional.of(new Supplier(stock.getProduct().getSupplier().get().getId(), stock.getProduct().getSupplier().get().getName())))
-                .category(Optional.of(new Category(stock.getProduct().getCategory().get().getId(), stock.getProduct().getCategory().get().getDescription())))
-                .status(stock.getProduct().getStatus())
-                .dateCreate(stock.getProduct().getDateCreate())
+                .supplier(Optional.of(new Supplier(product.getSupplier().get().getId(), product.getSupplier().get().getName())))
+                .category(Optional.of(new Category(product.getCategory().get().getId(), product.getCategory().get().getDescription())))
+                .status(product.getStatus())
+                .dateCreate(product.getDateCreate())
                 .dateUpdate(Timestamp.valueOf(LocalDateTime.now()))
                 .dateDelete(null)
                 .build();
@@ -197,7 +206,7 @@ public class ProductRegistrationFormController implements Initializable {
     private Stock createUpdatedStock(){
         Product updatedProduct = createUpdatedProduct();
         Stock updatedStock = new Stock(updatedProduct,  Integer.parseInt(quantityField.getText()));
-        updatedStock.setId(stock.getId());
+        updatedStock.setId(product.getId());
         updatedStock.setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
         return updatedStock;
     }

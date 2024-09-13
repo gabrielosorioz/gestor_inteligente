@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.animation.FadeTransition;
@@ -96,18 +97,18 @@ public class ProductManagerController implements Initializable {
         AnchorPane.setLeftAnchor(tableView,9.0);
     }
 
-    private void configureTableRowFactory(TableView<Stock> stockTableView) {
+    private void configureTableRowFactory(TableView<Product> stockTableView) {
         stockTableView.setRowFactory(new Callback<>() {
             @Override
-            public TableRow<Stock> call(TableView<Stock> tableView) {
-                TableRow<Stock> row = new TableRow<>() {
+            public TableRow<Product> call(TableView<Product> tableView) {
+                TableRow<Product> row = new TableRow<>() {
                     @Override
-                    protected void updateItem(Stock item, boolean empty) {
+                    protected void updateItem(Product item, boolean empty) {
                         super.updateItem(item, empty);
                         setPrefHeight(empty || item == null ? 0 : 68);
                         setOnMouseClicked(event -> {
                             if (item != null) {
-                                showStockData(item);
+                                showProductData(item);
                             }
                         });
                     }
@@ -181,8 +182,8 @@ public class ProductManagerController implements Initializable {
         isStockFormVisible = !isStockFormVisible;
     }
 
-    private void showStockData(Stock stock){
-        productRegistrationFormController.setStock(stock);
+    private void showProductData(Product product){
+        productRegistrationFormController.setProduct(product);
         toggleStockForm();
     }
 }

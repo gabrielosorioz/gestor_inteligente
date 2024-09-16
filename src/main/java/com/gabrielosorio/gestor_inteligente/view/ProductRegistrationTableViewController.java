@@ -7,6 +7,7 @@ import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.storage.H2DBProductStrategy;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
+import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -72,29 +73,8 @@ public class ProductRegistrationTableViewController implements Initializable {
         monetaryLabel(costPriceCol);
         monetaryLabel(sellingPriceCol);
 
-
         // Remove resizable and reorderable properties
-        categoryColumn.setResizable(false);
-        costPriceCol.setResizable(false);
-        descriptionCol.setResizable(false);
-        idCol.setResizable(false);
-        stockColumn.setResizable(false);
-        sellingPriceCol.setResizable(false);
-
-        categoryColumn.setReorderable(false);
-        costPriceCol.setReorderable(false);
-        descriptionCol.setReorderable(false);
-        idCol.setReorderable(false);
-        stockColumn.setReorderable(false);
-        sellingPriceCol.setReorderable(false);
-
-        categoryColumn.setSortable(false);
-        costPriceCol.setSortable(false);
-        descriptionCol.setSortable(false);
-        idCol.setSortable(false);
-        stockColumn.setSortable(false);
-        sellingPriceCol.setSortable(false);
-
+        TableViewUtils.resetColumnProps(idCol,descriptionCol,costPriceCol,sellingPriceCol,stockColumn,categoryColumn);
     }
 
 

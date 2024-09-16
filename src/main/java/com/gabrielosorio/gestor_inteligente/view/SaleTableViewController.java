@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -75,28 +76,8 @@ public class SaleTableViewController implements Initializable {
         monetaryLabel(subTotalCol);
         setUpQtdColumn();
         setUpDiscountColumn();
-
-
-        codeCol.setResizable(false);
-        descriptionCol.setResizable(false);
-        sellingPriceCol.setResizable(false);
-        quantityCol.setResizable(false);
-        discountCol.setResizable(false);
-        subTotalCol.setResizable(false);
-
-        codeCol.setReorderable(false);
-        descriptionCol.setReorderable(false);
-        sellingPriceCol.setReorderable(false);
-        discountCol.setReorderable(false);
-        subTotalCol.setReorderable(false);
-        quantityCol.setReorderable(false);
-
-        codeCol.setSortable(false);
-        descriptionCol.setSortable(false);
-        sellingPriceCol.setSortable(false);
-        subTotalCol.setSortable(false);
-        discountCol.setSortable(false);
-        quantityCol.setSortable(false);
+        TableViewUtils.resetColumnProps(codeCol,descriptionCol,sellingPriceCol,quantityCol,discountCol,subTotalCol);
+        
     }
 
     private void monetaryLabel(TableColumn<SaleProduct, BigDecimal> currencyColumn){

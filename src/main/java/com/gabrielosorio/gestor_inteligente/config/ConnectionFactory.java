@@ -10,20 +10,23 @@ public class ConnectionFactory {
 
     private final HikariDataSource dataSource;
     private static ConnectionFactory instance;
+    private static DBScheme dbScheme = null;
 
-    private ConnectionFactory(){
-        this.dataSource = createH2dataSourceCP();
+    private ConnectionFactory(DBScheme dbScheme){
+        this.dbScheme = dbScheme;
+        this.dataSource = getDataSourceCP(dbScheme);
     }
 
-    private static HikariDataSource createH2dataSourceCP(){
+    private static HikariDataSource getDataSourceCP(DBScheme dbScheme){
         var config = new HikariConfig();
-        config.setJdbcUrl(Scheme.H2_DATABASE.getUrl());
-        config.setUsername(Scheme.H2_DATABASE.getUsername());
-        config.setDriverClassName(Scheme.H2_DATABASE.getDriver());
-        config.setPassword(Scheme.H2_DATABASE.getPassword());
+        config.setJdbcUrl(dbScheme.getUrl());
+        config.setUsername(dbScheme.getUsername());
+        config.setDriverClassName(dbScheme.getDriver());
+        config.setPassword(dbScheme.getPassword());
         config.setMinimumIdle(10);
         config.setMaximumPoolSize(50);
         return new HikariDataSource(config);
+
     }
 
     public Connection getConnection(){
@@ -34,15 +37,20 @@ public class ConnectionFactory {
         }
     }
 
+    public static DBScheme getDBScheme() {
+        return dbScheme;
+    }
+
     public static ConnectionFactory getInstance(){
         synchronized (ConnectionFactory.class){
             if(Objects.isNull(instance)){
-                instance = new ConnectionFactory();
+                instance = new ConnectionFactory(DBScheme.POSTGRESQL);
             } else {
                 System.out.println("Carregada conenctions");
             }
             return instance;
         }
     }
+
 
 }

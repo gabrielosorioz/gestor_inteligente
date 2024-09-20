@@ -14,7 +14,7 @@ public class QueryLoader {
 
     public QueryLoader(DBScheme database) {
         this.dbPrefix = database.getPrefix() + ".";
-        try(InputStream input = getClass().getClassLoader().getResourceAsStream("db/queries.properties")) {
+        try(InputStream input = getClass().getClassLoader().getResourceAsStream("queries.properties")) {
             if(input == null){
                 throw new FileNotFoundException("Queries file not found!.");
             }
@@ -26,6 +26,7 @@ public class QueryLoader {
     }
 
     public String getQuery(String queryKey){
+        log.info(dbPrefix + queryKey);
         return queries.getProperty(dbPrefix + queryKey);
     }
 }

@@ -6,6 +6,7 @@ import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.storage.H2DBProductStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
@@ -163,8 +164,9 @@ public class ProductRegistrationTableViewController implements Initializable {
     }
 
     private List<Product> fetchProducts(){
-        productRepository = new ProductRepository();
-        productRepository.init(H2DBProductStrategy.getInstance());
+        var productStrategy = PSQLProductStrategy.getInstance();
+        productRepository = new ProductRepository(productStrategy);
+        productRepository.init(PSQLProductStrategy.getInstance());
         var allProducts = new ArrayList<>(productRepository.findAll());
         return allProducts;
     }

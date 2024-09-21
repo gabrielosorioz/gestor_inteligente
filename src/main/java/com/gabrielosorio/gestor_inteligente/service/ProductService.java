@@ -2,9 +2,6 @@ package com.gabrielosorio.gestor_inteligente.service;
 
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
-import com.gabrielosorio.gestor_inteligente.repository.RepositoryStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
-
 import java.sql.SQLException;
 
 public class ProductService {

@@ -12,12 +12,14 @@ import com.gabrielosorio.gestor_inteligente.repository.specification.Specificati
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PSQLProductStrategy implements ProductRepositoryStrategy {
 
+    private static PSQLProductStrategy instance;
     private final QueryLoader qLoader;
     private ConnectionFactory connFactory;
     private Logger log = Logger.getLogger(getClass().getName());
@@ -292,6 +294,15 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Error checking product code existence. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Error checking product code existence\"",e);
+        }
+    }
+
+    public static PSQLProductStrategy getInstance(){
+        synchronized (PSQLProductStrategy.class){
+            if(Objects.isNull(instance)){
+             instance = new PSQLProductStrategy();
+            }
+            return instance;
         }
     }
 

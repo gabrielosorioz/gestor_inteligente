@@ -47,8 +47,8 @@ public class ProductManagerController implements Initializable {
     private HBox btnHBoxNewProduct;
 
     private AnchorPane stockForm;
-    private ProductRegistrationFormController productRegistrationFormController;
-    private ProductRegistrationTableViewController productRegistrationTableViewController;
+    private ProductFormController productFormController;
+    private ProductTbViewController productTbViewController;
 
     private boolean isStockFormVisible;
 
@@ -69,9 +69,9 @@ public class ProductManagerController implements Initializable {
 
     private void loadTableView() {
         try {
-            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductRegistrationTableView.fxml"));
-            this.productRegistrationTableViewController = new ProductRegistrationTableViewController();
-            loader.setController(this.productRegistrationTableViewController);
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductTbView.fxml"));
+            this.productTbViewController = new ProductTbViewController();
+            loader.setController(this.productTbViewController);
             TableView tableView = loader.load();
             configureTableViewLayout(tableView);
             configureTableRowFactory(tableView);
@@ -86,7 +86,7 @@ public class ProductManagerController implements Initializable {
     private void setUpSearchField(TextField searchField){
         TextFieldUtils.setUpperCaseTextFormatter(searchField);
         searchField.textProperty().addListener((obsValue, OldValue, newValue) -> {
-            productRegistrationTableViewController.searchFilteredStock(newValue);
+            productTbViewController.searchFilteredStock(newValue);
         });
     }
 
@@ -121,11 +121,11 @@ public class ProductManagerController implements Initializable {
     private void loadStockForm(){
         try {
 
-            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductRegistrationForm.fxml"));
-            loader.setController(new ProductRegistrationFormController(this));
+            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductForm.fxml"));
+            loader.setController(new ProductFormController(this));
             stockForm = loader.load();
-            productRegistrationFormController = loader.getController();
-            productRegistrationFormController.setProductTableViewController(this.productRegistrationTableViewController);
+            productFormController = loader.getController();
+            productFormController.setProductTableViewController(this.productTbViewController);
             configureStockFormLayout();
         } catch (IOException e){
             log.severe("Error loading the product form: " + e.getMessage());
@@ -183,7 +183,7 @@ public class ProductManagerController implements Initializable {
     }
 
     private void showProductData(Product product){
-        productRegistrationFormController.setProduct(product);
+        productFormController.setProduct(product);
         toggleStockForm();
     }
 }

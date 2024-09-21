@@ -5,9 +5,7 @@ import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
-import com.gabrielosorio.gestor_inteligente.repository.storage.H2DBProductStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
-import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,7 +26,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-public class ProductRegistrationTableViewController implements Initializable {
+public class ProductTbViewController implements Initializable {
 
     @FXML
     private TableColumn<Product, String> categoryColumn;

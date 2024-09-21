@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class ProductRegistrationFormController implements Initializable {
+public class ProductFormController implements Initializable {
 
     private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -48,7 +48,7 @@ public class ProductRegistrationFormController implements Initializable {
 
     private Product product;
 
-    private ProductRegistrationTableViewController productRegistrationTableViewController;
+    private ProductTbViewController productTbViewController;
 
     private final ProductManagerController productManagerController;
 
@@ -56,7 +56,7 @@ public class ProductRegistrationFormController implements Initializable {
 
     ArrayList<String> suppliers = new ArrayList<>();
 
-    public ProductRegistrationFormController(ProductManagerController productManagerController){
+    public ProductFormController(ProductManagerController productManagerController){
         this.productManagerController = productManagerController;
     }
 
@@ -65,8 +65,8 @@ public class ProductRegistrationFormController implements Initializable {
         populateFields();
     }
 
-    public void setProductTableViewController(ProductRegistrationTableViewController productRegistrationTableViewController){
-        this.productRegistrationTableViewController = productRegistrationTableViewController;
+    public void setProductTableViewController(ProductTbViewController productTbViewController){
+        this.productTbViewController = productTbViewController;
     }
 
     private void fetchCategoryData(){
@@ -178,7 +178,7 @@ public class ProductRegistrationFormController implements Initializable {
     private void saveProduct(){
         Stock newStockRegister = createUpdatedStock();
         StockDataUtils.updateStock(newStockRegister);
-        productRegistrationTableViewController.updateStockUI(newStockRegister);
+        productTbViewController.updateStockUI(newStockRegister);
         productManagerController.toggleStockForm();
         this.product = null;
     }

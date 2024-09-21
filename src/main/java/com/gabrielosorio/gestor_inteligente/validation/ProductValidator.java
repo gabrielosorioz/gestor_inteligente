@@ -24,6 +24,7 @@ public class ProductValidator {
             validateProfitMargin(product);
             validateMarkupPercentage(product);
             validateUniqueCodeAndBarCode(product);
+            validateUniqueIdAndBarCode(product);
 
         } catch (InvalidProductException e){
             throw new InvalidProductException("Validation failed for product: " + product + ". " + e.getMessage());
@@ -86,6 +87,13 @@ public class ProductValidator {
         Optional<String> barCode = product.getBarCode();
         if (product.getProductCode() >= 0 && barCode.isPresent() && barCode.get().equals(String.valueOf(product.getProductCode()))) {
             throw new InvalidProductException("Product code and barcode cannot be the same.");
+        }
+    }
+
+    private static void validateUniqueIdAndBarCode(Product product) {
+        Optional<String> barCode = product.getBarCode();
+        if (product.getId() >= 0 && barCode.isPresent() && barCode.get().equals(String.valueOf(product.getId()))) {
+            throw new InvalidProductException("Product code and ID cannot be the same.");
         }
     }
 

@@ -16,6 +16,7 @@ public enum DBScheme {
         this.username = username;
         this.password = password;
         this.driver = driver;
+        this.prefix = prefix;
     }
 
     public String getUrl() {

@@ -8,6 +8,11 @@ import java.util.Optional;
 
 public class ProductRepository extends Repository<Product> {
 
+    private final ProductRepositoryStrategy pStrategy;
+
+    public ProductRepository(ProductRepositoryStrategy pStrategy) {
+        this.pStrategy = pStrategy;
+    }
 
     @Override
     public void init(RepositoryStrategy<Product> strategy) {
@@ -42,6 +47,14 @@ public class ProductRepository extends Repository<Product> {
     @Override
     public boolean remove(long id) {
         return super.remove(id);
+    }
+
+    public boolean existPCode(long pCode){
+        return pStrategy.existsPCode(pCode);
+    }
+
+    public long genPCode(){
+        return pStrategy.genPCode();
     }
 
 }

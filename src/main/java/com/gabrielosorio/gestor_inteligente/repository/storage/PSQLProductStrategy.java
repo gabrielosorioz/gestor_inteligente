@@ -5,8 +5,9 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
+import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
-import com.gabrielosorio.gestor_inteligente.repository.RepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.ProductRepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLProductStrategy implements RepositoryStrategy<Product> {
+public class PSQLProductStrategy implements ProductRepositoryStrategy {
 
     private final QueryLoader qLoader;
     private ConnectionFactory connFactory;
@@ -32,24 +33,28 @@ public class PSQLProductStrategy implements RepositoryStrategy<Product> {
     @Override
     public Product add(Product product) {
         var query = qLoader.getQuery("insertProduct");
+        log.info(query);
         try(var connection = connFactory.getConnection();
-            var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS))
-        {
+            var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setLong(1,product.getProductCode());
-            ps.setString(2,product.getBarCode().orElse(null));
-            ps.setString(3, product.getDescription());
-            ps.setBigDecimal(4,product.getCostPrice());
-            ps.setBigDecimal(5,product.getSellingPrice());
-            ps.setDouble(6,product.getProfitPercent());
-            ps.setDouble(7,product.getMarkupPercent());
-            ps.setLong(8,product.getQuantity());
-            ps.setString(9,product.getStatus().name());
-            ps.setTimestamp(10,product.getDateCreate());
-            ps.setTimestamp(11,product.getDateUpdate());
-            ps.setTimestamp(12,product.getDateDelete());
-            ps.setObject(13, product.getSupplier().isPresent() ? product.getSupplier().get().getId() : null, Types.BIGINT);
-            ps.setObject(14, product.getCategory().isPresent() ? product.getCategory().get().getId() : null, Types.BIGINT);
+            long id = generateId();
+
+
+            ps.setLong(1,id);
+            ps.setLong(2,product.getProductCode());
+            ps.setString(3,product.getBarCode().orElse(null));
+            ps.setString(4, product.getDescription());
+            ps.setBigDecimal(5,product.getCostPrice());
+            ps.setBigDecimal(6,product.getSellingPrice());
+            ps.setDouble(7,product.getProfitPercent());
+            ps.setDouble(8,product.getMarkupPercent());
+            ps.setLong(9,product.getQuantity());
+            ps.setString(10,product.getStatus().name());
+            ps.setTimestamp(11,product.getDateCreate());
+            ps.setTimestamp(12,product.getDateUpdate());
+            ps.setTimestamp(13,product.getDateDelete());
+            ps.setObject(14, product.getCategory().map(Category::getId).orElse(null),Types.BIGINT);
+            ps.setObject(15, product.getSupplier().map(Supplier::getId).orElse(null),Types.BIGINT);
 
             ps.executeUpdate();
 
@@ -149,7 +154,7 @@ public class PSQLProductStrategy implements RepositoryStrategy<Product> {
         try(var connection = connFactory.getConnection();
             var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)
         ){
-
+            ps.setLong(1,product.getId());
             ps.setLong(1,product.getProductCode());
             ps.setString(2,product.getBarCode().orElse(null));
             ps.setString(3,product.getDescription());
@@ -164,7 +169,6 @@ public class PSQLProductStrategy implements RepositoryStrategy<Product> {
             ps.setTimestamp(12,product.getDateDelete());
             ps.setObject(13, product.getSupplier().isPresent() ? product.getSupplier().get().getId() : null, Types.BIGINT);
             ps.setObject(14, product.getCategory().isPresent() ? product.getCategory().get().getId() : null, Types.BIGINT);
-            ps.setLong(15,product.getId());
 
             int affectedRows = ps.executeUpdate();
 
@@ -203,7 +207,6 @@ public class PSQLProductStrategy implements RepositoryStrategy<Product> {
             log.log(Level.SEVERE, "Failed to delete product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException(e);
         }
-
     }
 
     private Product mapResultSet (ResultSet rs) throws SQLException {
@@ -229,5 +232,67 @@ public class PSQLProductStrategy implements RepositoryStrategy<Product> {
         return categoryStrategy.find(id);
     }
 
+    private long generateId(){
+        String query = qLoader.getQuery("productMaxId");
+        long newId = 1;
+
+        try(var connection = connFactory.getConnection();
+            var ps = connection.prepareStatement(query);
+            var rs = ps.executeQuery()){
+
+            if(rs.next()){
+                long maxId = rs.getLong("max_id");
+                newId = maxId + 1;
+            }
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error getting product ID. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            throw new RuntimeException("Error getting product ID.\"",e);
+        }
+        return newId;
+    }
+
+    @Override
+    public long genPCode() {
+        long generatedPCode = 0;
+        String query = qLoader.getQuery("maxProductCode");
+
+        try (var connection = connFactory.getConnection();
+             var ps = connection.prepareStatement(query);
+             var rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                generatedPCode = rs.getLong("max_pcode") + 1;
+            }
+
+            while (existsPCode(generatedPCode)) {
+                generatedPCode++;
+            }
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error generating product code.", e);
+            throw new RuntimeException("Error generating product code.", e);
+        }
+
+        return generatedPCode;
+    }
+
+    @Override
+    public boolean existsPCode(long pCode){
+        var query = qLoader.getQuery("existsProductCode");
+
+        try(var connection = connFactory.getConnection();
+            var ps = connection.prepareStatement(query)){
+
+            ps.setLong(1,pCode);
+
+            try(var rs = ps.executeQuery()){
+                return rs.next() && rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Error checking product code existence. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            throw new RuntimeException("Error checking product code existence\"",e);
+        }
+    }
 
 }

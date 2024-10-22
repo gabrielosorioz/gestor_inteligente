@@ -23,8 +23,33 @@
                </children>
             </VBox>
          </children></AnchorPane>
-      <VBox fx:id="slider2" layoutX="-275.0" prefHeight="696.0" prefWidth="265.0" spacing="5.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
+      <VBox fx:id="slider2" prefHeight="696.0" prefWidth="265.0" spacing="5.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="45.0">
          <children>
+            <HBox fx:id="btnHBoxHome" layoutX="15.0" layoutY="21.0" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
+                     <children>
+                        <ImageView fx:id="iconHomeViewer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-casa-48.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="203.0">
+                     <children>
+                        <Label fx:id="btnHBoxHomeLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Inicio">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
             <HBox fx:id="btnHBoxSale" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
                <children>
                   <VBox alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
@@ -100,6 +125,31 @@
                   </HBox>
                </children>
             </HBox>
+            <HBox fx:id="btnHBoxStockManager1" layoutX="15.0" layoutY="171.0" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
+                     <children>
+                        <ImageView fx:id="iconStockViewer1" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-lista-da-área-de-transferência-48.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="203.0">
+                     <children>
+                        <Label fx:id="btnHBoxStockManagerLbl1" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Relatorio Vendas">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets left="5.0" right="5.0" top="10.0" />
@@ -107,6 +157,15 @@
       </VBox>
       <VBox fx:id="shortCutSideBar" fillWidth="false" prefHeight="200.0" prefWidth="55.0" spacing="5.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
          <children>
+            <VBox fx:id="shortCutBtnHome" alignment="CENTER" layoutX="15.0" layoutY="21.0" prefHeight="45.0" prefWidth="45.0" styleClass="shortcut-sidebar-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <ImageView fx:id="iconHomeShortcut" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/icons8-casa-48.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
             <VBox fx:id="shortCutBtnSale" alignment="CENTER" prefHeight="45.0" prefWidth="45.0" styleClass="shortcut-sidebar-btn" stylesheets="@../css/mainNavigation.css">
                <children>
                   <ImageView fx:id="iconSaleShortcut" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">

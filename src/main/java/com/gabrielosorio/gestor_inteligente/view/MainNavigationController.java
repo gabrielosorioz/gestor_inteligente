@@ -25,10 +25,10 @@ import java.util.ResourceBundle;
 public class MainNavigationController implements Initializable {
 
     @FXML
-    private HBox btnHBoxSale,btnHBoxProductManager,btnHBoxStockManager;
+    private HBox btnHBoxHome,btnHBoxSale,btnHBoxProductManager,btnHBoxStockManager;
 
     @FXML
-    private Label btnHBoxSaleLbl,btnHBoxProductManagerLbl,btnHBoxStockManagerLbl;
+    private Label btnHBoxHomeLbl,btnHBoxSaleLbl,btnHBoxProductManagerLbl,btnHBoxStockManagerLbl;
 
     @FXML
     private VBox menuBtn;
@@ -37,13 +37,13 @@ public class MainNavigationController implements Initializable {
     private AnchorPane content,header;
 
     @FXML
-    private ImageView iconSaleViewer,iconProductViewer,iconStockViewer,iconProductShortcut,iconSaleShortcut,iconStockShortcut,menuIcon;
+    private ImageView iconHomeViewer,iconSaleViewer,iconProductViewer,iconStockViewer,iconHomeShortcut,iconProductShortcut,iconSaleShortcut,iconStockShortcut,menuIcon;
 
     @FXML
     private VBox slider2;
 
     @FXML
-    private VBox shortCutSideBar, shortCutBtnSale, shortCutBtnProductManager, shortCutBtnStockManager;
+    private VBox shortCutSideBar, shortCutBtnHome,shortCutBtnSale, shortCutBtnProductManager, shortCutBtnStockManager;
 
     private final String LBL_DEFAULT_COLOR = "#707070";
     private final String LBL_COLOR_HOVER = "#fff";
@@ -61,6 +61,9 @@ public class MainNavigationController implements Initializable {
 
     private final Image ICON_MENU_DEFAULT = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64.png");
     private final Image ICON_MENU_ACTIVE = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64-active.png");
+
+    private Image ICON_HOME_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48.png");
+    private Image ICON_HOME_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48-white.png");
 
     private String activeScreen = "";
 
@@ -88,36 +91,6 @@ public class MainNavigationController implements Initializable {
             } else {
                 btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
                 btnLabel.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-                iconViewer.setImage(defaultImage);
-                fadeTransitionBackground.play();
-            }
-
-
-        });
-
-    }
-
-    private void setUpBtnHoverEffect(String currentBtn,Node btn, ImageView iconViewer, Image defaultImage, Image imageHover,FadeTransition fadeTransitionBackground){
-        fadeTransitionBackground.setNode(btn);
-        fadeTransitionBackground.setFromValue(0.0);
-        fadeTransitionBackground.setToValue(1.0);
-
-        btn.setOnMouseEntered(mouseEvent -> {
-            btn.setStyle("-fx-background-color: " + BACKGROUND_COLOR_HOVER + ";");
-            iconViewer.setImage(imageHover);
-            fadeTransitionBackground.play();
-        });
-
-        btn.setOnMouseExited(mouseEvent -> {
-            if(activeScreen.isEmpty() || activeScreen.isBlank()){
-                btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-                iconViewer.setImage(defaultImage);
-                fadeTransitionBackground.play();
-            }
-            else if (currentBtn.equals(activeScreen)){
-
-            } else {
-                btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
                 iconViewer.setImage(defaultImage);
                 fadeTransitionBackground.play();
             }
@@ -243,6 +216,27 @@ public class MainNavigationController implements Initializable {
         }
     }
 
+    private void loadHomeView() {
+        Node homeView;
+        try {
+            content.getChildren().clear();
+            homeView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/Home.fxml"));
+            content.getChildren().add(0,homeView);
+            activeScreen = "home";
+
+            resetAllBtnStyles();
+            resetAllShortcutStyles();
+            updateBtnActiveStyle(btnHBoxHome,btnHBoxHomeLbl,iconHomeViewer,ICON_HOME_COLOR_HOVER);
+            updateBtnActiveStyle(shortCutBtnHome,iconHomeShortcut,ICON_HOME_COLOR_HOVER);
+
+            toggleSideBar();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void resetAllBtnStyles(){
 
         btnHBoxSale.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
@@ -257,6 +251,11 @@ public class MainNavigationController implements Initializable {
         btnHBoxStockManagerLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
         iconStockViewer.setImage(ICON_STOCK_DEFAULT_COLOR);
 
+        btnHBoxHome.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+        btnHBoxHomeLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
+        iconHomeViewer.setImage(ICON_HOME_DEFAULT_COLOR);
+
+
     }
 
     private void resetAllShortcutStyles(){
@@ -268,6 +267,9 @@ public class MainNavigationController implements Initializable {
 
         shortCutBtnProductManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
         iconProductShortcut.setImage(ICON_PRODUCT_DEFAULT_COLOR);
+
+        shortCutBtnHome.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
+        iconHomeShortcut.setImage(ICON_HOME_DEFAULT_COLOR);
     }
 
     private void updateBtnActiveStyle(Node btn, Node btnLabel, ImageView imageView,Image imageHover){
@@ -310,11 +312,15 @@ public class MainNavigationController implements Initializable {
 
 
         setUpBtnHoverEffect("sale",btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect("product",btnHBoxProductManager,btnHBoxProductManagerLbl,iconProductViewer,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect("stock",btnHBoxStockManager,btnHBoxStockManagerLbl,iconStockViewer,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
         setUpBtnHoverEffect("sale",shortCutBtnSale, new Label(),iconSaleShortcut,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("product",btnHBoxProductManager,btnHBoxProductManagerLbl,iconProductViewer,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
         setUpBtnHoverEffect("product",shortCutBtnProductManager, new Label(),iconProductShortcut,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("stock",btnHBoxStockManager,btnHBoxStockManagerLbl,iconStockViewer,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
         setUpBtnHoverEffect("stock",shortCutBtnStockManager, new Label(),iconStockShortcut,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+
+        setUpBtnHoverEffect("home",btnHBoxHome,btnHBoxHomeLbl,iconHomeViewer,ICON_HOME_DEFAULT_COLOR,ICON_HOME_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+        setUpBtnHoverEffect("home",shortCutBtnHome, new Label(),iconHomeShortcut,ICON_HOME_DEFAULT_COLOR,ICON_HOME_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
+
 
         btnHBoxSale.setOnMouseClicked(mouseEvent -> {
             loadCheckoutTabPane();
@@ -328,13 +334,17 @@ public class MainNavigationController implements Initializable {
             loadStockManager();
         });
 
+        btnHBoxHome.setOnMouseClicked(mouseEvent -> {
+            loadHomeView();
+        });
+
         menuBtn.setOnMouseClicked(mouseEvent -> {
             if(mouseEvent.getClickCount() == 1){
                 toggleSideBar();
             }
         });
 
-
+        loadHomeView();
 
     }
 

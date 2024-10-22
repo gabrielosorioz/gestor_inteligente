@@ -2,28 +2,38 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
+import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
+import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
+import com.gabrielosorio.gestor_inteligente.service.ProductService;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 public class ProductManagerController implements Initializable {
 
     private final Duration FORM_ANIMATION_DURATION = Duration.seconds(0.4);
+    private ProductFormController pFormControl;
     private final Duration FADE_DURATION = Duration.seconds(0.2);
     private final double FORM_HIDDEN_POSITION = 750;
     private final double FORM_VISIBLE_POSITION = 0;
@@ -42,15 +52,14 @@ public class ProductManagerController implements Initializable {
     @FXML
     private TextField searchField;
 
-
     @FXML
-    private HBox btnHBoxNewProduct;
+    private HBox btnAdd;
 
     private AnchorPane stockForm;
     private ProductFormController productFormController;
     private ProductTbViewController productTbViewController;
 
-    private boolean isStockFormVisible;
+    private boolean isProductFormVisible;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -61,9 +70,11 @@ public class ProductManagerController implements Initializable {
         shadow.setOffsetY(0);
         tableBody.setEffect(shadow);
         loadTableView();
-        loadStockForm();
+        loadProductForm();
         configureShadowClick();
         setUpSearchField(searchField);
+
+        btnAdd.setOnMouseClicked(mouseEvent -> addNewProduct());
 
     }
 
@@ -118,41 +129,45 @@ public class ProductManagerController implements Initializable {
         });
     }
 
-    private void loadStockForm(){
+    private void loadProductForm(){
         try {
 
             FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductForm.fxml"));
-            loader.setController(new ProductFormController(this));
+            ProductRepository productRepository = new ProductRepository(PSQLProductStrategy.getInstance());
+            productRepository.init(PSQLProductStrategy.getInstance());
+            ProductService productService = new ProductService(productRepository);
+            loader.setController(new ProductFormController(productTbViewController,this,productService));
             stockForm = loader.load();
             productFormController = loader.getController();
-            productFormController.setProductTableViewController(this.productTbViewController);
-            configureStockFormLayout();
+            configureProductFormLayout();
         } catch (IOException e){
             log.severe("Error loading the product form: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void configureStockFormLayout(){
+    private void configureProductFormLayout(){
         mainContent.getChildren().add(stockForm);
         AnchorPane.setLeftAnchor(stockForm, 550.0);
         AnchorPane.setRightAnchor(stockForm,0.0);
-        AnchorPane.setTopAnchor(stockForm,60.0);
+        AnchorPane.setTopAnchor(stockForm,39.0);
         stockForm.setTranslateX(FORM_HIDDEN_POSITION);
     }
 
     private void configureShadowClick(){
-        shadow.setOnMouseClicked(mouseEvent -> toggleStockForm());
+        shadow.setOnMouseClicked(mouseEvent -> toggleProductForm());
     }
 
-    private void showStockForm(){
+    private void showProductForm(){
         animateForm(FORM_VISIBLE_POSITION,0.2);
         shadow.setVisible(true);
     }
 
-    private void hideStockForm(){
+    private void hideProductForm(){
         animateForm(FORM_HIDDEN_POSITION,0.0);
         shadow.setVisible(false);
+//        pFormControl.lockIDField();
+
     }
 
     private void animateForm(double translateX, double fadeToValue){
@@ -173,17 +188,27 @@ public class ProductManagerController implements Initializable {
         translateTransition.play();
     }
 
-    public void toggleStockForm(){
-        if(isStockFormVisible){
-            hideStockForm();
+    public void toggleProductForm(){
+        if(isProductFormVisible){
+            hideProductForm();
         } else {
-            showStockForm();
+            showProductForm();
         }
-        isStockFormVisible = !isStockFormVisible;
+        isProductFormVisible = !isProductFormVisible;
     }
 
     private void showProductData(Product product){
-        productFormController.setProduct(product);
-        toggleStockForm();
+        productFormController.setProduct(Optional.ofNullable(product));
+        toggleProductForm();
     }
+
+    private void addNewProduct(){
+        productFormController.setProduct(Optional.empty());
+        toggleProductForm();
+    }
+
+    public void addContent(Node node){
+        this.mainContent.getChildren().add(node);
+    }
+
 }

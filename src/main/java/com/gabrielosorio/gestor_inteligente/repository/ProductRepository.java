@@ -53,6 +53,10 @@ public class ProductRepository extends Repository<Product> {
         return pStrategy.existsPCode(pCode);
     }
 
+    public boolean existsBarCode(String barCode){
+        return pStrategy.existsBarCode(barCode);
+    }
+
     public long genPCode(){
         return pStrategy.genPCode();
     }

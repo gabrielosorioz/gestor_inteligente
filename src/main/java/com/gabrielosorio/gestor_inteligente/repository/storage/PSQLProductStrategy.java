@@ -156,7 +156,6 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
         try(var connection = connFactory.getConnection();
             var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)
         ){
-            ps.setLong(1,product.getId());
             ps.setLong(1,product.getProductCode());
             ps.setString(2,product.getBarCode().orElse(null));
             ps.setString(3,product.getDescription());
@@ -171,6 +170,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
             ps.setTimestamp(12,product.getDateDelete());
             ps.setObject(13, product.getSupplier().isPresent() ? product.getSupplier().get().getId() : null, Types.BIGINT);
             ps.setObject(14, product.getCategory().isPresent() ? product.getCategory().get().getId() : null, Types.BIGINT);
+            ps.setLong(15,product.getId());
 
             int affectedRows = ps.executeUpdate();
 
@@ -294,6 +294,23 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Error checking product code existence. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Error checking product code existence\"",e);
+        }
+    }
+
+    @Override
+    public boolean existsBarCode(String barCode) {
+        var query = qLoader.getQuery("productByBarCode");
+        try(var connection = connFactory.getConnection();
+            var ps = connection.prepareStatement(query)){
+
+            ps.setString(1,barCode.trim());
+
+            try(var rs = ps.executeQuery()){
+                return rs.next() && rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking barcode existence.",e);
         }
     }
 

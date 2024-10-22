@@ -131,7 +131,7 @@ public class PSQLCategoryStrategy implements RepositoryStrategy<Category> {
 
     @Override
     public Category update(Category category) {
-        var query = qLoader.getQuery("udpateCategory");
+        var query = qLoader.getQuery("updateCategory");
         try(var connection = connFactory.getConnection();
             var ps = connection.prepareStatement(query)){
 

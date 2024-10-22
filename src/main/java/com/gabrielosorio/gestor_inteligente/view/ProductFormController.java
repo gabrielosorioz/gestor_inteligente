@@ -1,14 +1,19 @@
 package com.gabrielosorio.gestor_inteligente.view;
+import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
+import com.gabrielosorio.gestor_inteligente.service.ProductService;
 import com.gabrielosorio.gestor_inteligente.utils.AutoCompleteField;
 import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -20,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,6 +34,7 @@ import java.util.logging.Logger;
 public class ProductFormController implements Initializable {
 
     private final Logger log = Logger.getLogger(getClass().getName());
+   private Map<String,TextField> fieldMap;
 
     @FXML
     private TextField idField,barCodeField,descriptionField,costPriceField,sellingPriceField,
@@ -46,27 +53,25 @@ public class ProductFormController implements Initializable {
     private Button btnSave,btnCancel;
 
 
-    private Product product;
+    private Optional<Product> product;
 
-    private ProductTbViewController productTbViewController;
-
-    private final ProductManagerController productManagerController;
+    private final ProductTbViewController pTbViewController;
+    private final ProductManagerController pManagerController;
+    private final ProductService pService;
 
     ArrayList<String> categories = new ArrayList<>();
 
     ArrayList<String> suppliers = new ArrayList<>();
 
-    public ProductFormController(ProductManagerController productManagerController){
-        this.productManagerController = productManagerController;
+    public ProductFormController(ProductTbViewController pTbViewController, ProductManagerController pManagerController, ProductService pService){
+        this.pTbViewController = pTbViewController;
+        this.pManagerController = pManagerController;
+        this.pService = pService;
     }
 
-    public void setProduct(Product product){
+    public void setProduct(Optional<Product> product){
         this.product = product;
         populateFields();
-    }
-
-    public void setProductTableViewController(ProductTbViewController productTbViewController){
-        this.productTbViewController = productTbViewController;
     }
 
     private void fetchCategoryData(){
@@ -133,82 +138,61 @@ public class ProductFormController implements Initializable {
     }
 
     private void populateFields() {
-
-        final Product productStock = product;
-
-        final String id = String.valueOf(productStock.getProductCode());
-        final String barCode = productStock.getBarCode().orElse("");
-        final String description = productStock.getDescription();
-        final String costPrice = productStock.getCostPrice().toPlainString();
-        final String sellingPrice = productStock.getSellingPrice().toPlainString();
-        final String markupPercent = String.valueOf(productStock.getMarkupPercent());
-        final String quantity = String.valueOf(productStock.getQuantity());
-        // Obtém a descrição da categoria, retornando "N/A" se a categoria estiver ausente ou a descrição for null
-        final String category = productStock.getCategory()
-            .map(Category::getDescription)   // Mapeia o Optional<Category> para Optional<String>
-            .orElse("N/A");                  // Retorna "N/A" se o Optional<String> estiver vazio ou for null
-
-        // Obtém o nome do fornecedor, retornando "N/A" se o fornecedor estiver ausente ou o nome for null
-        final String supplier = productStock.getSupplier()
-            .map(Supplier::getName)           // Mapeia o Optional<Supplier> para Optional<String>
-            .orElse("N/A");                  // Retorna "N/A" se o Optional<String> estiver vazio ou for null
-
-        this.idField.setText(id);
-
-
-        this.barCodeField.setText(barCode);
-        this.descriptionField.setText(description);
-        this.costPriceField.setText(costPrice);
-        this.sellingPriceField.setText(sellingPrice);
-        this.markupField.setText(markupPercent);
-        this.quantityField.setText(quantity);
-        this.categoryField.setText(category);
-        this.supplierField.setText(supplier);
-
+        ProductFormUtils.populateProductFields(product,fieldMap);
         priceListener(costPriceField);
         priceListener(sellingPriceField);
 
     }
 
+    private void mapFields(){
+        this.fieldMap = new HashMap<>();
+        fieldMap.put("idField",idField);
+        fieldMap.put("barCodeField",barCodeField);
+        fieldMap.put("descriptionField",descriptionField);
+        fieldMap.put("costPriceField",costPriceField);
+        fieldMap.put("sellingPriceField",sellingPriceField);
+        fieldMap.put("markupField",markupField);
+        fieldMap.put("quantityField",quantityField);
+        fieldMap.put("categoryField",categoryField);
+        fieldMap.put("supplierField",supplierField);
+    }
+
+    private void setUpAutoCompleteFields(){
+        new AutoCompleteField(categoryField,categoryList);
+        new AutoCompleteField(supplierField,supplierList);
+    }
+
     private void cancel(){
-        this.product = null;
-        productManagerController.toggleStockForm();
+        this.product = Optional.empty();
+        pManagerController.toggleProductForm();
     }
 
-    private void saveProduct(){
-        Stock newStockRegister = createUpdatedStock();
-        StockDataUtils.updateStock(newStockRegister);
-        productTbViewController.updateStockUI(newStockRegister);
-        productManagerController.toggleStockForm();
-        this.product = null;
+    private void save() {
+        product.ifPresent(product -> {
+            var pToUpdate = ProductFormUtils.updateProduct(product,fieldMap);
+            pService.update(pToUpdate);
+        });
+
+        if(product.isEmpty()){
+            var newP = ProductFormUtils.createProduct(fieldMap);
+            pService.save(newP);
+        }
+
     }
 
-    private Product createUpdatedProduct(){
-        String barCodeText = barCodeField.getText().trim();
-        Optional<String> optionalBarCode = barCodeText.isEmpty() ? Optional.empty() : Optional.of(barCodeText);
+    private void loadCategoryAndSupplierData(){
+        fetchSupplierData();
+        fetchCategoryData();
+        categoryList.getItems().addAll(categories);
+        supplierList.getItems().addAll(suppliers);
+        setUpAutoCompleteFields();
 
-        return Product.builder()
-                .id(product.getId())
-                .productCode(Integer.parseInt(idField.getText()))
-                .barCode(optionalBarCode)
-                .description(descriptionField.getText())
-                .costPrice(TextFieldUtils.formatCurrency(costPriceField.getText()))
-                .sellingPrice(TextFieldUtils.formatCurrency(sellingPriceField.getText()))
-                .supplier(Optional.of(new Supplier(product.getSupplier().get().getId(), product.getSupplier().get().getName())))
-                .category(Optional.of(new Category(product.getCategory().get().getId(), product.getCategory().get().getDescription())))
-                .status(product.getStatus())
-                .dateCreate(product.getDateCreate())
-                .dateUpdate(Timestamp.valueOf(LocalDateTime.now()))
-                .dateDelete(null)
-                .build();
     }
 
-    private Stock createUpdatedStock(){
-        Product updatedProduct = createUpdatedProduct();
-        Stock updatedStock = new Stock(updatedProduct,  Integer.parseInt(quantityField.getText()));
-        updatedStock.setId(product.getId());
-        updatedStock.setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
-        return updatedStock;
+    private void initializeFields(){
+        mapFields();
+        setUpperCaseTextFormatter();
+        lockField(idField);
     }
 
     private void priceListener(TextField priceField){
@@ -242,37 +226,89 @@ public class ProductFormController implements Initializable {
         });
     }
 
-    private void setUpperCaseField(List<TextField> fields){
+    private void setUpperCaseTextFormatter(){
+        List<TextField> fields = new ArrayList<>(Arrays.asList(idField,barCodeField,descriptionField,costPriceField,sellingPriceField,
+                markupField,quantityField,categoryField,supplierField));
         fields.forEach(field -> {
             TextFieldUtils.setUpperCaseTextFormatter(field);
         });
     }
 
+    private void setupButtonActions() {
+        btnSave.setOnMouseClicked(mouseEvent -> {
+            save();
+            pManagerController.toggleProductForm();
+        });
+        btnCancel.setOnMouseClicked(mouseEvent -> cancel());
+    }
+
+    private void setLockFieldStyle(TextField field) {
+        field.setStyle(
+                "-fx-border-color: #e0e0e0;" +
+                        "-fx-text-fill: #7f7f7f;"
+        );
+        field.setOnMouseEntered(mouseEvent -> {
+            if (!field.isEditable()) {
+                field.setStyle(
+                        "-fx-cursor: hand;" +
+                                "-fx-border-color: #e0e0e0;"
+                );
+            }
+        });
+    }
+
+    private void lockField(TextField field) {
+        field.setEditable(false);
+        setLockFieldStyle(field);
+        setupActionField(field);
+    }
+
+    private static void unlockField(TextField field) {
+        field.setEditable(true);
+        field.setStyle("");
+        field.requestFocus();
+    }
+
+    private void setupActionField(TextField field) {
+        field.setOnMouseClicked(click -> {
+            if(!field.isEditable()){
+
+                showCodeAlert();
+            }
+        });
+    }
+
+    public void showCodeAlert() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/AlertMessage.fxml"));
+            fxmlLoader.setController(new AlertMessageController());
+            Node codeAlert = fxmlLoader.load();
+            AlertMessageController alertController = fxmlLoader.getController();
+
+            alertController.setOnYesAction(v -> {
+                unlockField(idField);
+            });
+
+            pManagerController.addContent(codeAlert);
+            codeAlert.setLayoutX(450);
+            codeAlert.setLayoutY(250);
+
+        } catch (Exception e) {
+            log.severe("ERROR at load code alert message: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void lockIDField(){
+
+    }
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        fetchSupplierData();
-        fetchCategoryData();
-        List<TextField> fields = new ArrayList<>(Arrays.asList(
-                idField,
-                barCodeField,descriptionField,
-                costPriceField,sellingPriceField,
-                markupField,quantityField)
-        );
-
-        setUpperCaseField(fields);
-        categoryList.getItems().addAll(categories);
-        supplierList.getItems().addAll(suppliers);
-        AutoCompleteField auto = new AutoCompleteField(categoryField,categoryList);
-        AutoCompleteField auto2 = new AutoCompleteField(supplierField,supplierList);
-
-        btnSave.setOnMouseClicked(mouseEvent -> {
-            saveProduct();
-        });
-
-        btnCancel.setOnMouseClicked(mouseEvent -> {
-            cancel();
-        });
-
+        initializeFields();
+        loadCategoryAndSupplierData();
+        setupButtonActions();
     }
 
 

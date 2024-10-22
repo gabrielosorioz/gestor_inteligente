@@ -130,6 +130,12 @@
     -fx-font-size: 16px;
 }
 
+.btn-add {
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-background-color: #695CFE;
+}
+
 .scroll-bar {
     -fx-background-color: transparent;
 }

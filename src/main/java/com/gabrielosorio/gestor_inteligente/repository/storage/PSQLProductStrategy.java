@@ -1,5 +1,4 @@
 package com.gabrielosorio.gestor_inteligente.repository.storage;
-
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
@@ -24,10 +23,12 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
     private ConnectionFactory connFactory;
     private Logger log = Logger.getLogger(getClass().getName());
     private final PSQLCategoryStrategy categoryStrategy;
+    private final PSQLSupplierStrategy supplierStrategy;
 
 
     public PSQLProductStrategy() {
         categoryStrategy = new PSQLCategoryStrategy(ConnectionFactory.getInstance());
+        supplierStrategy = new PSQLSupplierStrategy(ConnectionFactory.getInstance());
         qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         connFactory = ConnectionFactory.getInstance();
     }
@@ -224,14 +225,18 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
                 .dateCreate(rs.getTimestamp("date_create"))
                 .dateUpdate(rs.getTimestamp("date_update"))
                 .dateDelete(rs.getTimestamp("date_delete"))
-              .category(findCategoryById(rs.getLong("category_id")))
-//              .supplier(findSupplierById(rs.getLong("supplier_id")))
+                .category(findCategoryById(rs.getLong("category_id")))
+                .supplier(findSupplierById(rs.getLong("supplier_id")))
                 .build();
         return p;
     }
 
     private Optional<Category> findCategoryById(long id){
         return categoryStrategy.find(id);
+    }
+
+    private Optional<Supplier> findSupplierById(long id){
+        return supplierStrategy.find(id);
     }
 
     private long generateId(){

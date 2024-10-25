@@ -42,7 +42,7 @@ public class PSQLCategoryStrategy implements RepositoryStrategy<Category> {
                     category.setId(gKeys.getLong("id"));
                     log.info("Category successfully inserted.");
                 } else {
-                    throw new SQLException("Failed to insert product, no key generated.");
+                    throw new SQLException("Failed to insert category, no key generated.");
                 }
 
             }
@@ -164,18 +164,18 @@ public class PSQLCategoryStrategy implements RepositoryStrategy<Category> {
             int affectedRows = ps.executeUpdate();
 
             if(affectedRows == 0){
-                log.warning("No category found with id " + id);
+                log.warning("No supplier found with id " + id);
                 return false;
+            } else {
+                log.info("Category with id " + id + " successfully deleted.");
+                return true;
             }
 
-            log.info("Category with id " + id + " successfully deleted.");
-
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to delete category. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
-            throw new RuntimeException("Failed to delete category.",e);
+            log.log(Level.SEVERE, "Failed to delete supplier. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            throw new RuntimeException("Failed to delete supplier.",e);
         }
 
-        return false;
     }
 
     private Category mapResultSet(ResultSet rs)  throws SQLException {

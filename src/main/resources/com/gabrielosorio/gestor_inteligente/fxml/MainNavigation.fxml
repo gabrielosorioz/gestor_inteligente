@@ -125,13 +125,13 @@
                   </HBox>
                </children>
             </HBox>
-            <HBox fx:id="btnHBoxStockManager1" layoutX="15.0" layoutY="171.0" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
+            <HBox fx:id="btnHBoxSalesReport" layoutX="15.0" layoutY="171.0" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">
                <children>
                   <VBox alignment="CENTER" prefHeight="45.0" prefWidth="45.0">
                      <children>
-                        <ImageView fx:id="iconStockViewer1" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="iconSalesReportViewer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../image/icons8-lista-da-área-de-transferência-48.png" />
+                              <Image url="@../image/icons8-relatório-gráfico-48.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -141,7 +141,7 @@
                   </VBox>
                   <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="203.0">
                      <children>
-                        <Label fx:id="btnHBoxStockManagerLbl1" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Relatorio Vendas">
+                        <Label fx:id="btnHBoxSalesReportLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Relatorio Vendas">
                            <HBox.margin>
                               <Insets left="20.0" />
                            </HBox.margin>
@@ -189,6 +189,15 @@
                   <ImageView fx:id="iconStockShortcut" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/icons8-lista-da-área-de-transferência-48.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </VBox>
+            <VBox fx:id="shortCutBtnSalesReport" alignment="CENTER" layoutX="15.0" layoutY="171.0" prefHeight="45.0" prefWidth="45.0" styleClass="shortcut-sidebar-btn" stylesheets="@../css/mainNavigation.css">
+               <children>
+                  <ImageView fx:id="iconSalesReportShortcut" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/icons8-relatório-gráfico-48.png" />
                      </image>
                   </ImageView>
                </children>

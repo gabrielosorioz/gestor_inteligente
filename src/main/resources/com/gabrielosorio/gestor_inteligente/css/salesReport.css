@@ -1,0 +1,257 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Regular.ttf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Bold.ttf');
+    font-weight: bold;
+}
+
+.body {
+    -fx-background-color: #eee;
+}
+
+.subtitle {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #7f7f7f;
+}
+
+.chart-card {
+    -fx-background-radius: 20px;
+    -fx-background-color: #fff;
+}
+
+.chart-card-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.chart-card-subtxt {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+
+.chart{
+    -fx-background-color: transparent;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 20;
+    -fx-text-fill: white;
+    -fx-legend-visible: false;
+}
+
+.header-card-icn-bck {
+    -fx-background-radius: 50%;
+}
+
+.header-card-h1 {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 17px;
+    -fx-text-fill: black;
+}
+
+.mini-card {
+    -fx-background-color: #fff;
+    -fx-background-radius: 15px;
+}
+
+.mini-card-2{
+    -fx-background-color: #e5e5e5;
+    -fx-background-radius: 15px;
+}
+
+.mini-card-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 17px;
+    -fx-text-fill: black;
+}
+
+.axis-label {
+    -fx-text-fill: #ffffff;
+}
+
+.chart-plot-background {
+    -fx-background-color:transparent;
+}
+
+.chart-series-line{
+    -fx-stroke-width: 2.5px;
+}
+
+.default-color0.chart-series-line{-fx-stroke: #3232ff;}
+
+.default-color0.chart-line-symbol{-fx-background-color: #3232ff, #3232ff;}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #cccccc;
+}
+
+.table-row-cell {
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 0 0 1.5px 0;
+    -fx-pref-height: 55px;
+    -fx-background-color: #fff;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #cccccc;
+}
+
+/* Estilo das células da tabela */
+.table-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #000000;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-size: 18px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: normal;
+    -fx-border-color: transparent;
+    -fx-padding: 5px;
+    -fx-cursor: hand;
+}
+
+
+
+/* Estilo do cabeçalho da tabela */
+.table-view .column-header-background {
+    -fx-background-color: #fff;
+    -fx-border-width: 0 0 2.0 0px;
+    -fx-border-color: #CCC;
+    -fx-background-radius: 15 15 0 0px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-size: 30px;
+    -fx-border-width: 0; /* Remove borda do cabeçalho */
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #191919;
+}
+
+.table-view {
+    -fx-border-color: transparent; /* Remove borda ao redor da tabela */
+    -fx-background-color: transparent; /* Remove fundo ao redor da tabela */
+}
+
+/* ListCell Vertical Scroll Bar */
+.table-view .scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: #f0f0f0;
+}
+
+.table-view .scroll-bar:vertical .increment-arrow,
+.table-view .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: #c0c0c0;
+}
+
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #c5c5c5;
+    -fx-background-insets: 2;
+    -fx-background-radius: 5;
+}
+
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #a2a2a2;
+}
+
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: #e0e0e0;
+    -fx-background-insets: 0;
+}
+
+.table-row-cell:empty .table-cell {
+    -fx-pref-height: 0px;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.table-row-cell:empty {
+    -fx-pref-height: 0px;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+/* Estilo geral do DatePicker */
+.date-picker {
+    -fx-background-color: white;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+    -fx-border-width: 2px;
+    -fx-border-color: #d6d6d6;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+/* Campo de texto do DatePicker */
+.date-picker .text-field {
+    -fx-background-color: white;
+    -fx-text-fill: #2c3e50;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+    -fx-padding: 5px;
+
+}
+
+
+/* Botão de abrir o calendário */
+.date-picker > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+    -fx-background-radius: 5px;
+}
+
+
+.date-picker > .arrow-button:hover {
+    -fx-background-color: #d6d6d6;
+}
+
+.date-picker > .arrow-button > * {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-opacity: 0; /* Set the node in the button to be visible */
+}
+
+.date-picker > .arrow-button {
+    -fx-background-image: url("../image/icons8-calendário-48.png"); /* Url of the icon */
+    -fx-background-size: 100% 100%; /* Can be `cover` or `100% 100%` ect. */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center; /* Put the icon in the center */
+}
+
+
+/* Pop-up do calendário */
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #eaf4fc;
+    -fx-text-fill: #2c3e50;
+}
+
+.date-picker-popup .day-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #2c3e50;
+    -fx-border-color: transparent;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #d0e7fa;
+    -fx-border-radius: 5px;
+}
+
+.date-picker-popup .day-cell:selected {
+    -fx-background-color: #87cefa;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+}

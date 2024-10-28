@@ -8,6 +8,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="productForm" layoutY="59.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="740.0" prefWidth="750.0" style="-fx-background-color: #fff;" styleClass="form" stylesheets="@../../css/productForm.css" translateX="0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
@@ -65,5 +66,23 @@
             <Image url="@../../image/icons8-selecionado-24.png" />
          </image>
       </ImageView>
+      <HBox alignment="CENTER" layoutX="123.0" layoutY="339.0" prefHeight="25.0" prefWidth="25.0" styleClass="btn-add" stylesheets="@../../css/productManager.css">
+         <children>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../image/icons8-soma-30.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" layoutX="491.0" layoutY="339.0" prefHeight="25.0" prefWidth="25.0" styleClass="btn-add" stylesheets="@../../css/productManager.css">
+         <children>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../image/icons8-soma-30.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

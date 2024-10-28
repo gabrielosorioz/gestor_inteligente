@@ -1,19 +1,14 @@
 package com.gabrielosorio.gestor_inteligente.model;
-
-import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class Sale {
 
     private long id;
-    private long saleId;
     private Timestamp dateSale;
     private Timestamp dataCancel;
     private List<SaleProduct> items;
@@ -51,14 +46,6 @@ public class Sale {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public long getSaleId() {
-        return saleId;
-    }
-
-    public void setSaleId(long saleId) {
-        this.saleId = saleId;
     }
 
     public Timestamp getDateSale() {

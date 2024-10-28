@@ -79,6 +79,7 @@ public class SaleProduct {
 
     public void setSale(Sale sale) {
         this.sale = sale;
+        this.saleId = sale.getId();
     }
 
     public long getQuantity() {

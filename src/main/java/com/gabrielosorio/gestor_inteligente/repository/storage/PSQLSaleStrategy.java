@@ -3,6 +3,7 @@ import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
+import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.repository.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import java.sql.ResultSet;
@@ -38,7 +39,7 @@ public class PSQLSaleStrategy implements RepositoryStrategy<Sale> {
             ps.setBigDecimal(5, sale.getOriginalTotalPrice());
             ps.setBigDecimal(6, sale.getTotalPrice());
             ps.setBigDecimal(7, sale.getTotalDiscount());
-            ps.setString(8, sale.getStatus());
+            ps.setString(8, sale.getStatus().name());
 
             ps.executeUpdate();
 
@@ -130,7 +131,6 @@ public class PSQLSaleStrategy implements RepositoryStrategy<Sale> {
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to find sale by specification. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Sale find by specification error. ",e);
-
         }
         return sales;
     }
@@ -148,7 +148,7 @@ public class PSQLSaleStrategy implements RepositoryStrategy<Sale> {
             ps.setBigDecimal(5,sale.getOriginalTotalPrice());
             ps.setBigDecimal(6,sale.getTotalPrice());
             ps.setBigDecimal(7,sale.getTotalDiscount());
-            ps.setString(8,sale.getStatus());
+            ps.setString(8,sale.getStatus().name());
             ps.setLong(9,sale.getId());
 
             int affectedRows = ps.executeUpdate();
@@ -200,7 +200,7 @@ public class PSQLSaleStrategy implements RepositoryStrategy<Sale> {
         s.setOriginalTotalPrice(rs.getBigDecimal("originalTotalPrice"));
         s.setTotalPrice(rs.getBigDecimal("totalPrice"));
         s.setTotalDiscount(rs.getBigDecimal("totaldiscount"));
-        s.setStatus(rs.getString("status"));
+        s.setStatus(SaleStatus.valueOf(rs.getString("status")));
         return s;
     }
 }

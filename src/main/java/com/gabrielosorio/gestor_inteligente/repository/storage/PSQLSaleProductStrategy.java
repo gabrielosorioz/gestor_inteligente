@@ -9,6 +9,7 @@ import com.gabrielosorio.gestor_inteligente.repository.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,8 +34,9 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct> 
     @Override
     public SaleProduct add(SaleProduct saleProduct) {
         var query = qLoader.getQuery("insertSaleProduct");
+
         try(var connection = connFactory.getConnection();
-            var ps = connection.prepareStatement(query)){
+            var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
 
             ps.setLong(1,saleProduct.getSale().getId());
             ps.setLong(2,saleProduct.getProduct().getId());
@@ -43,6 +45,17 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct> 
             ps.setBigDecimal(5,saleProduct.getOriginalSubtotal());
             ps.setBigDecimal(6,saleProduct.getSubTotal());
             ps.setBigDecimal(7,saleProduct.getDiscount());
+
+            ps.executeUpdate();
+
+            try(var gKeys = ps.getGeneratedKeys()){
+                if(gKeys.next()){
+                    saleProduct.setId(gKeys.getLong("id"));
+                    log.info("Sale Product successfully inserted.");
+                } else {
+                    throw new SQLException("Failed to insert sale product, no key generated.");
+                }
+            }
 
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to insert Sale Product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});

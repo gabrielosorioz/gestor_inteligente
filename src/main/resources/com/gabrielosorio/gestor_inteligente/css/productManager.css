@@ -189,4 +189,12 @@
     -fx-background-radius: 16px;
 }
 
+.btn-add {
+    -fx-background-color: green;
+    -fx-background-radius: 50%;
+    -fx-cursor: hand;
+}
 
+.btn-add:hover {
+    -fx-background-color: #006600;
+}

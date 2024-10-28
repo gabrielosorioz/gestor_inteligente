@@ -2,6 +2,12 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.repository.SaleProductRepository;
+import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
+import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleProductStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleStrategy;
+import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
+import com.gabrielosorio.gestor_inteligente.service.SaleService;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
@@ -20,6 +26,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.math.BigDecimal;
@@ -361,12 +368,29 @@ public class SaleTableViewController implements Initializable {
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/PaymentView.fxml"));
-            Stage paymentRoot = new Stage();
-            PaymentViewController controller = new PaymentViewController(sale);
+
+            // settings controller
+            SaleRepository saleRepository = new SaleRepository();
+            SaleProductRepository saleProductRepository = new SaleProductRepository();
+            saleRepository.init(new PSQLSaleStrategy());
+            saleProductRepository.init(new PSQLSaleProductStrategy());
+            SaleService saleService = new SaleService(saleRepository);
+            SaleProductService saleProductService = new SaleProductService(saleProductRepository);
+
+
+            PaymentViewController controller = new PaymentViewController(sale,saleService,saleProductService);
             fxmlLoader.setController(controller);
+
+            // settings scene
+            Stage paymentRoot = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
             paymentRoot.setScene(scene);
-            paymentRoot.show();
+
+            paymentRoot.initOwner(GestorInteligenteApp.getPrimaryStage());
+            paymentRoot.initModality(Modality.APPLICATION_MODAL);
+
+            paymentRoot.showAndWait();
+
 
         } catch (Exception e) {
             log.severe("ERROR at load payment view: " + e.getMessage());

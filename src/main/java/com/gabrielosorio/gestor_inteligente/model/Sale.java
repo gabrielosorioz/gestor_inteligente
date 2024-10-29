@@ -1,4 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.model;
+import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -18,7 +20,7 @@ public class Sale {
     private BigDecimal totalPrice;
     private BigDecimal totalDiscount;
     private List<Payment> paymentMethods;
-    private String status;
+    private SaleStatus status;
 
     public Sale (List<SaleProduct> items){
 
@@ -113,11 +115,11 @@ public class Sale {
         return paymentMethods;
     }
 
-    public String getStatus() {
+    public SaleStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(SaleStatus status) {
         this.status = status;
     }
 

@@ -5,11 +5,13 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class ConnectionFactory {
 
     private final HikariDataSource dataSource;
     private static ConnectionFactory instance;
+    private static final Logger log = Logger.getLogger(Connection.class.getName());
     private static DBScheme dbScheme = null;
 
     private ConnectionFactory(DBScheme dbScheme){
@@ -46,7 +48,7 @@ public class ConnectionFactory {
             if(Objects.isNull(instance)){
                 instance = new ConnectionFactory(DBScheme.POSTGRESQL);
             } else {
-                System.out.println("Carregada conenctions");
+                log.info("Connection already established.");
             }
             return instance;
         }

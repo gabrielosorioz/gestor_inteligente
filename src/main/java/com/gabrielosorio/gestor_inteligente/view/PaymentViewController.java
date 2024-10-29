@@ -2,6 +2,9 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
+import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
+import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
+import com.gabrielosorio.gestor_inteligente.service.SaleService;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -36,7 +39,8 @@ public class PaymentViewController implements Initializable {
     private Label totalPriceLbl,receiveLbl,paybackLbl,receiveValueLbl,paybackValueLbl,monetaryReceiveLbl,monetaryChangeLbl,
             originalPriceLbl,monetaryOriginalPriceLbl,originalPriceValueLbl;
 
-
+    private final SaleService saleService;
+    private final SaleProductService saleProductService;
     private Map<HBox, PaymentMethod> paymentHboxMap = new HashMap<>();
     private Map<PaymentMethod,Payment> paymentMethods;
     private final Set<TextField> paymentFieldSet = new HashSet<>();
@@ -44,7 +48,7 @@ public class PaymentViewController implements Initializable {
 
     private Sale sale;
 
-    public PaymentViewController(Sale sale){
+    public PaymentViewController(Sale sale, SaleService saleService, SaleProductService saleProductService){
         if (sale == null) {
             throw new IllegalArgumentException("Error at initialize Payment View Controller: Sale is null");
         }
@@ -55,7 +59,8 @@ public class PaymentViewController implements Initializable {
             throw new IllegalArgumentException("Error at initialize Payment View Controller: Total price is <= 0");
         }
         this.sale = sale;
-
+        this.saleService = saleService;
+        this.saleProductService = saleProductService;
     }
 
     @Override
@@ -107,7 +112,7 @@ public class PaymentViewController implements Initializable {
 
             paymentField.setOnKeyPressed(keyPressed -> {
                 if(keyPressed.getCode().equals(KeyCode.F2)) {
-                    processPayment(sale);
+                    registerSale(sale);
                 }
             });
         });
@@ -124,7 +129,7 @@ public class PaymentViewController implements Initializable {
 
                 paymentField.setOnKeyPressed(keyPressed -> {
                     if(keyPressed.getCode().equals(KeyCode.F2)) {
-                        processPayment(sale);
+                        registerSale(sale);
                     }
                 });
             });
@@ -154,33 +159,19 @@ public class PaymentViewController implements Initializable {
         }
     }
 
-    private void processPayment(Sale sale) {
-        BigDecimal totalAmount = BigDecimal.ZERO;
-
-        if (sale == null) {
-            throw new IllegalArgumentException("Error processing payment: Sale is null");
-        }
-        if (sale.getItems() == null || sale.getItems().isEmpty()) {
-            throw new IllegalArgumentException("Error processing payment: Sale items are null or empty");
-        }
-        if (sale.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Error processing payment: Total price is <= 0");
-        }
-
+    private void registerSale(Sale sale) {
         final Set<Payment> uniquePayments = new HashSet<>(paymentMethods.values());
         final List<Payment> listPayment = new ArrayList<>(uniquePayments);
         sale.setPaymentMethods(listPayment);
+        sale.setStatus(SaleStatus.APPROVED);
+        var savedSale = saleService.save(sale);
+        registerSaleProd(savedSale);
+    }
 
-        for (Payment payment : listPayment) {
-            totalAmount = totalAmount.add(payment.getValue());
-        }
-
-        if (totalAmount.compareTo(sale.getTotalPrice()) < 0) {
-            throw new IllegalArgumentException("Error processing payment: Total amount of payments is less than the sale total price. Total Payments: " + totalAmount + ", Sale Total: " + sale.getTotalPrice());
-        }
-
-        listPayment.forEach(payment -> {
-            log.info(payment.getPaymentMethod().getDescription() + " R$: " + payment.getValue());
+    private void registerSaleProd(Sale sale){
+        sale.getItems().forEach(saleProduct -> {
+            saleProduct.setSale(sale);
+            saleProductService.save(saleProduct);
         });
     }
 

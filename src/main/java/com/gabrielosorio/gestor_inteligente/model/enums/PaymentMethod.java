@@ -8,7 +8,7 @@ public enum PaymentMethod {
     CREDITO_PARCELADO(4,"CRÉDITO PARCELADO"),
     DINHEIRO(5,"DINHEIRO");
 
-    private final int id;
+    private final long id;
     private final String description;
 
     PaymentMethod(int id, String description){
@@ -16,7 +16,7 @@ public enum PaymentMethod {
         this.description = description;
     }
 
-    public static PaymentMethod getMethodById(int id){
+    public static PaymentMethod getMethodById(long id){
 
         for(PaymentMethod payMethod : PaymentMethod.values()){
             if(payMethod.getId() == id){
@@ -27,7 +27,7 @@ public enum PaymentMethod {
 
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 

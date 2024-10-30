@@ -11,6 +11,7 @@ public class Payment {
 
     private long id;
     private PaymentMethod paymentMethod;
+    private String description;
     private BigDecimal value;
 
 
@@ -18,12 +19,17 @@ public class Payment {
         this.paymentMethod = paymentMethod;
         this.value = value;
         this.id = paymentMethod.getId();
+        this.description = paymentMethod.getDescription();
     }
 
     public Payment(PaymentMethod paymentMethod){
         this.paymentMethod = paymentMethod;
         this.id = paymentMethod.getId();
         this.value = new BigDecimal(0.00);
+    }
+
+    public Payment(String description){
+        this.description = description;
     }
 
     public void setPaymentMethod(PaymentMethod paymentMethod){
@@ -42,6 +48,11 @@ public class Payment {
         return value;
     }
 
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getId() {
         return id;
     }
@@ -57,5 +68,13 @@ public class Payment {
     @Override
     public int hashCode() {
         return Objects.hash(id, paymentMethod, value);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

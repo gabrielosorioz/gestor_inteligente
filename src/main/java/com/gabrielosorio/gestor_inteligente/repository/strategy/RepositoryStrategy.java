@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.repository;
+package com.gabrielosorio.gestor_inteligente.repository.strategy;
 
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 

@@ -5,7 +5,7 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SalePayment;
-import com.gabrielosorio.gestor_inteligente.repository.RepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 
 import java.sql.ResultSet;

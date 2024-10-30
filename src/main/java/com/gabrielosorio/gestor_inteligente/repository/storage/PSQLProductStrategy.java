@@ -6,7 +6,7 @@ import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
-import com.gabrielosorio.gestor_inteligente.repository.ProductRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.ProductRepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import java.sql.*;
 import java.util.ArrayList;

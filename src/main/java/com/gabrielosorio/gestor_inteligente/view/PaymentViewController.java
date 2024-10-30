@@ -183,10 +183,10 @@ public class PaymentViewController implements Initializable {
     }
 
     private void registerSalePayment(Sale sale){
-        sale.getPaymentMethods().forEach(payment -> {
-            var salePayment = new SalePayment(payment,sale);
-            salePaymService.save(salePayment);
-        });
+       var salePayments = sale.getPaymentMethods().stream()
+               .map(payment -> new SalePayment(payment,sale))
+               .toList();
+       salePaymService.saveAll(salePayments);
     }
 
     private void setPaymentValue(PaymentMethod paymentMethod, String value){

@@ -5,8 +5,10 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,7 +18,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct> {
+public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>, BatchInsertable<SaleProduct> {
 
     private final QueryLoader qLoader;
     private final ConnectionFactory connFactory;
@@ -213,5 +215,64 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct> 
         sP.setOriginalSubtotal(rs.getBigDecimal("originalsubtotal"));
         sP.setUnitPrice(rs.getBigDecimal("unitprice"));
         return sP;
+    }
+
+    @Override
+    public List<SaleProduct> addAll(List<SaleProduct> saleProducts) {
+        var query = qLoader.getQuery("insertSaleProduct");
+        Connection connection = null;
+
+        try {
+            connection = connFactory.getConnection();
+            connection.setAutoCommit(false);
+
+            try(var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)){
+
+                for(SaleProduct saleProduct: saleProducts){
+                    ps.setLong(1,saleProduct.getSale().getId());
+                    ps.setLong(2,saleProduct.getProduct().getId());
+                    ps.setLong(3,saleProduct.getQuantity());
+                    ps.setBigDecimal(4,saleProduct.getUnitPrice());
+                    ps.setBigDecimal(5,saleProduct.getOriginalSubtotal());
+                    ps.setBigDecimal(6,saleProduct.getSubTotal());
+                    ps.setBigDecimal(7,saleProduct.getDiscount());
+                    ps.addBatch();
+                }
+
+                ps.executeBatch();
+                connection.commit();
+
+                try(var gKeys = ps.getGeneratedKeys()){
+                    int index = 0;
+                    while(gKeys.next()){
+                        saleProducts.get(index++).setId(gKeys.getLong("id"));
+                    }
+                }
+
+                log.info("All SaleProducts successfully inserted.");
+            } catch (SQLException e){
+                if(connection != null){
+                    try {
+                        connection.rollback();
+                        log.warning("Transaction rolled back due to an error: " + e.getMessage());
+                    } catch (SQLException rollBackEx) {
+                        log.severe("RollBack failed " + rollBackEx.getMessage());
+                    }
+                }
+                throw new RuntimeException("Failed to batch insert SaleProducts. " + e.getMessage(),e);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get database connection " + e.getMessage(),e);
+        } finally {
+            if(connection != null){
+                try {
+                    connection.close();
+                } catch (SQLException closeEx){
+                    log.severe("Failed to close the connection " + closeEx.getMessage());
+                }
+            }
+        }
+        return saleProducts;
     }
 }

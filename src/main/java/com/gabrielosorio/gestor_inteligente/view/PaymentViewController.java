@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SalePayment;
+import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
@@ -176,10 +177,11 @@ public class PaymentViewController implements Initializable {
     }
 
     private void registerSaleProd(Sale sale){
-        sale.getItems().forEach(saleProduct -> {
+        var saleProducts = sale.getItems();
+        saleProducts.forEach(saleProduct -> {
             saleProduct.setSale(sale);
-            saleProductService.save(saleProduct);
         });
+        saleProductService.saveAll(saleProducts);
     }
 
     private void registerSalePayment(Sale sale){

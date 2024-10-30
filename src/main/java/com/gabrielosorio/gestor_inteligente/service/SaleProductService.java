@@ -4,6 +4,7 @@ import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.SaleProductRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class SaleProductService {
 
@@ -16,6 +17,11 @@ public class SaleProductService {
     public void save(SaleProduct saleProduct){
         validate(saleProduct);
         saleProductRep.add(saleProduct);
+    }
+
+    public List<SaleProduct> saveAll(List<SaleProduct> saleProducts){
+        saleProducts.forEach(this::validate);
+        return saleProductRep.addAll(saleProducts);
     }
 
     private void validate(SaleProduct saleProduct){

@@ -1,8 +1,10 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
+import com.gabrielosorio.gestor_inteligente.model.SalePayment;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
+import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
 import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
 import com.gabrielosorio.gestor_inteligente.service.SaleService;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
@@ -41,6 +43,7 @@ public class PaymentViewController implements Initializable {
 
     private final SaleService saleService;
     private final SaleProductService saleProductService;
+    private final SalePaymentService salePaymService;
     private Map<HBox, PaymentMethod> paymentHboxMap = new HashMap<>();
     private Map<PaymentMethod,Payment> paymentMethods;
     private final Set<TextField> paymentFieldSet = new HashSet<>();
@@ -48,7 +51,8 @@ public class PaymentViewController implements Initializable {
 
     private Sale sale;
 
-    public PaymentViewController(Sale sale, SaleService saleService, SaleProductService saleProductService){
+    public PaymentViewController(Sale sale, SaleService saleService, SaleProductService saleProductService, SalePaymentService salePaymService){
+
         if (sale == null) {
             throw new IllegalArgumentException("Error at initialize Payment View Controller: Sale is null");
         }
@@ -61,6 +65,8 @@ public class PaymentViewController implements Initializable {
         this.sale = sale;
         this.saleService = saleService;
         this.saleProductService = saleProductService;
+        this.salePaymService = salePaymService;
+
     }
 
     @Override
@@ -166,12 +172,20 @@ public class PaymentViewController implements Initializable {
         sale.setStatus(SaleStatus.APPROVED);
         var savedSale = saleService.save(sale);
         registerSaleProd(savedSale);
+        registerSalePayment(savedSale);
     }
 
     private void registerSaleProd(Sale sale){
         sale.getItems().forEach(saleProduct -> {
             saleProduct.setSale(sale);
             saleProductService.save(saleProduct);
+        });
+    }
+
+    private void registerSalePayment(Sale sale){
+        sale.getPaymentMethods().forEach(payment -> {
+            var salePayment = new SalePayment(payment,sale);
+            salePaymService.save(salePayment);
         });
     }
 

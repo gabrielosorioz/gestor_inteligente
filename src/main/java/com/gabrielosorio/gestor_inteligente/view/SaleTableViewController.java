@@ -2,10 +2,13 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.repository.SalePaymentRepository;
 import com.gabrielosorio.gestor_inteligente.repository.SaleProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
+import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSalePaymentStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleProductStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleStrategy;
+import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
 import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
 import com.gabrielosorio.gestor_inteligente.service.SaleService;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
@@ -372,13 +375,17 @@ public class SaleTableViewController implements Initializable {
             // settings controller
             SaleRepository saleRepository = new SaleRepository();
             SaleProductRepository saleProductRepository = new SaleProductRepository();
+            SalePaymentRepository salePaymentRepository = new SalePaymentRepository();
+
             saleRepository.init(new PSQLSaleStrategy());
             saleProductRepository.init(new PSQLSaleProductStrategy());
+            salePaymentRepository.init(new PSQLSalePaymentStrategy());
+
             SaleService saleService = new SaleService(saleRepository);
             SaleProductService saleProductService = new SaleProductService(saleProductRepository);
+            SalePaymentService salePaymentService = new SalePaymentService(salePaymentRepository);
 
-
-            PaymentViewController controller = new PaymentViewController(sale,saleService,saleProductService);
+            PaymentViewController controller = new PaymentViewController(sale,saleService,saleProductService,salePaymentService);
             fxmlLoader.setController(controller);
 
             // settings scene

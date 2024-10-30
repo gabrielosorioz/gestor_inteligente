@@ -5,9 +5,11 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SalePayment;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,7 +19,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment> {
+public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>, BatchInsertable<SalePayment> {
 
     private final QueryLoader qLoader;
     private final ConnectionFactory connFactory;
@@ -206,4 +208,59 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment> 
     private Optional<Payment> findPaymentById(long id){
         return paymentStrategy.find(id);
     }
+
+    @Override
+    public List<SalePayment> addAll(List<SalePayment> salePayments) {
+        var query = qLoader.getQuery("insertSalePayment");
+        Connection connection = null;
+
+        try {
+            connection = connFactory.getConnection();
+            connection.setAutoCommit(false);
+
+            try(var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+                for(SalePayment salePayment: salePayments){
+                    ps.setLong(1,salePayment.getSaleId());
+                    ps.setLong(2,salePayment.getPaymentId());
+                    ps.setBigDecimal(3,salePayment.getAmount());
+                    ps.addBatch();
+                }
+
+                ps.executeBatch();
+                connection.commit();
+
+                try(var gKeys = ps.getGeneratedKeys()){
+                    int index = 0;
+                    while(gKeys.next()){
+                        salePayments.get(index++).setId(gKeys.getLong("id"));
+                    }
+                }
+
+                log.info("All SalePayments successfully inserted.");
+            } catch (SQLException e) {
+                if(connection != null){
+                    try{
+                        connection.rollback();
+                        log.warning("Transaction rolled back due to an error: " + e.getMessage());
+                    } catch (SQLException rollBackEx){
+                        log.severe("RollBack failed " + rollBackEx.getMessage());
+                    }
+                }
+                throw new RuntimeException("Failed to batch insert SalePayments " + e.getMessage(),e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get database connection " + e.getMessage(),e);
+        } finally {
+            if(connection != null){
+                try{
+                    connection.close();
+                } catch (SQLException closeEx) {
+                    log.severe("Failed to close the connection " + closeEx.getMessage() );
+                }
+            }
+        }
+
+        return salePayments;
+    }
+
 }

@@ -5,7 +5,6 @@ import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
-import com.gabrielosorio.gestor_inteligente.repository.storage.H2DBProductStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
@@ -45,7 +44,7 @@ public class CheckoutTabController implements Initializable {
     @FXML
     private Label totalPriceLbl;
 
-    private SaleTableViewController saleTable;
+    private SaleTableViewController saleTableOp;
 
     private final CheckoutTabPaneController checkoutTabPaneController;
 
@@ -117,7 +116,7 @@ public class CheckoutTabController implements Initializable {
             boolean isCodeFieldEmpty = search.isEmpty() || search.isBlank();
 
             if (pressedKey.equals(KeyCode.F3)) {
-                createSale();
+                finalizeSale();
             }
 
             if (pressedKey.equals(KeyCode.ENTER)) {
@@ -160,7 +159,7 @@ public class CheckoutTabController implements Initializable {
             KeyCode pressedKey = event.getCode();
 
             if (KeyCode.F3 == event.getCode()) {
-                createSale();
+                finalizeSale();
             }
 
             if (pressedKey.equals(KeyCode.ENTER)) {
@@ -199,7 +198,7 @@ public class CheckoutTabController implements Initializable {
     }
 
     private void showTotalPrice(){
-        saleTable.totalPricePropProperty().addListener((obsVal, oldVal, newVal) -> {
+        saleTableOp.getTotalPriceProperty().addListener((obsVal, oldVal, newVal) -> {
             if(newVal != null){
                 totalPriceLbl.setText(TextFieldUtils.formatText(newVal.setScale(2,RoundingMode.HALF_UP).toPlainString()));
                 log.info("Total Price Label Updated: " + newVal);
@@ -219,14 +218,14 @@ public class CheckoutTabController implements Initializable {
     private void loadTableView() {
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/SaleTableView.fxml"));
-            SaleTableViewController saleTableViewController = new SaleTableViewController();
-            loader.setController(saleTableViewController);
+            SaleTableViewControllerImpl saleTableViewControllerImpl = new SaleTableViewControllerImpl();
+            loader.setController(saleTableViewControllerImpl);
             TableView tableView = loader.load();
             configureTableViewLayout(tableView);
             content.getChildren().add(0, tableView);
-            this.saleTable = loader.getController();
+            this.saleTableOp = loader.getController();
         } catch (IOException e) {
-            log.severe("Error loading StockTableView :" + e.getMessage());
+            log.severe("Error loading SaleTableView :" + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -249,14 +248,14 @@ public class CheckoutTabController implements Initializable {
 
         var product = productOptional.get();
         final var newItem = new SaleProduct(product,quantity);
-        saleTable.add(newItem);
+        saleTableOp.add(newItem);
         searchField.clear();
         qtdField.setText("1");
 
     }
 
-    private void createSale(){
-        saleTable.createSale();
+    private void finalizeSale(){
+        saleTableOp.showPaymentScreen();
     }
 
 }

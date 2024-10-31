@@ -2,7 +2,6 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SalePayment;
-import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
@@ -17,6 +16,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -45,6 +46,7 @@ public class PaymentViewController implements Initializable {
     private final SaleService saleService;
     private final SaleProductService saleProductService;
     private final SalePaymentService salePaymService;
+    private final SaleTableViewController saleTableViewOp;
     private Map<HBox, PaymentMethod> paymentHboxMap = new HashMap<>();
     private Map<PaymentMethod,Payment> paymentMethods;
     private final Set<TextField> paymentFieldSet = new HashSet<>();
@@ -52,22 +54,13 @@ public class PaymentViewController implements Initializable {
 
     private Sale sale;
 
-    public PaymentViewController(Sale sale, SaleService saleService, SaleProductService saleProductService, SalePaymentService salePaymService){
-
-        if (sale == null) {
-            throw new IllegalArgumentException("Error at initialize Payment View Controller: Sale is null");
-        }
-        if (sale.getItems() == null || sale.getItems().isEmpty()) {
-            throw new IllegalArgumentException("Error at initialize Payment View Controller: Sale items are null or empty");
-        }
-        if (sale.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Error at initialize Payment View Controller: Total price is <= 0");
-        }
+    public PaymentViewController(Sale sale, SaleService saleService, SaleProductService saleProductService, SalePaymentService salePaymService, SaleTableViewController saleTableViewOp){
+        validateSale(sale);
         this.sale = sale;
         this.saleService = saleService;
         this.saleProductService = saleProductService;
         this.salePaymService = salePaymService;
-
+        this.saleTableViewOp = saleTableViewOp;
     }
 
     @Override
@@ -174,6 +167,8 @@ public class PaymentViewController implements Initializable {
         var savedSale = saleService.save(sale);
         registerSaleProd(savedSale);
         registerSalePayment(savedSale);
+        closeWindow();
+        clearItems();
     }
 
     private void registerSaleProd(Sale sale){
@@ -303,6 +298,31 @@ public class PaymentViewController implements Initializable {
             }
         });
 
+    }
+
+    private void validateSale(Sale sale){
+        if (sale == null) {
+            throw new IllegalArgumentException("Error at initialize Payment View Controller: Sale is null");
+        }
+        if (sale.getItems() == null || sale.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Error at initialize Payment View Controller: Sale items are null or empty");
+        }
+        if (sale.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Error at initialize Payment View Controller: Total price is <= 0");
+        }
+    }
+
+    private void closeWindow(){
+        getStage().close();
+    }
+
+    private void clearItems(){
+        saleTableViewOp.clearItems();
+    }
+
+    private Stage getStage(){
+        var stage = (Stage) totalPriceLbl.getScene().getWindow();
+        return stage;
     }
 
 }

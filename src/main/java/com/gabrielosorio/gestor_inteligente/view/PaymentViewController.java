@@ -4,9 +4,7 @@ import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SalePayment;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
-import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
-import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
-import com.gabrielosorio.gestor_inteligente.service.SaleService;
+import com.gabrielosorio.gestor_inteligente.service.*;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -44,8 +42,6 @@ public class PaymentViewController implements Initializable {
             originalPriceLbl,monetaryOriginalPriceLbl,originalPriceValueLbl;
 
     private final SaleService saleService;
-    private final SaleProductService saleProductService;
-    private final SalePaymentService salePaymService;
     private final SaleTableViewController saleTableViewOp;
     private Map<HBox, PaymentMethod> paymentHboxMap = new HashMap<>();
     private Map<PaymentMethod,Payment> paymentMethods;
@@ -54,12 +50,10 @@ public class PaymentViewController implements Initializable {
 
     private Sale sale;
 
-    public PaymentViewController(Sale sale, SaleService saleService, SaleProductService saleProductService, SalePaymentService salePaymService, SaleTableViewController saleTableViewOp){
+    public PaymentViewController(Sale sale, SaleService saleService, SaleTableViewController saleTableViewOp){
         validateSale(sale);
         this.sale = sale;
         this.saleService = saleService;
-        this.saleProductService = saleProductService;
-        this.salePaymService = salePaymService;
         this.saleTableViewOp = saleTableViewOp;
     }
 
@@ -112,7 +106,7 @@ public class PaymentViewController implements Initializable {
 
             paymentField.setOnKeyPressed(keyPressed -> {
                 if(keyPressed.getCode().equals(KeyCode.F2)) {
-                    registerSale(sale);
+                    finalizeSale(sale);
                 }
             });
         });
@@ -129,7 +123,7 @@ public class PaymentViewController implements Initializable {
 
                 paymentField.setOnKeyPressed(keyPressed -> {
                     if(keyPressed.getCode().equals(KeyCode.F2)) {
-                        registerSale(sale);
+                        finalizeSale(sale);
                     }
                 });
             });
@@ -159,31 +153,17 @@ public class PaymentViewController implements Initializable {
         }
     }
 
-    private void registerSale(Sale sale) {
+    private void confirmPayment(Sale sale) {
         final Set<Payment> uniquePayments = new HashSet<>(paymentMethods.values());
         final List<Payment> listPayment = new ArrayList<>(uniquePayments);
         sale.setPaymentMethods(listPayment);
-        sale.setStatus(SaleStatus.APPROVED);
-        var savedSale = saleService.save(sale);
-        registerSaleProd(savedSale);
-        registerSalePayment(savedSale);
+    }
+
+    private void finalizeSale(Sale sale){
+        confirmPayment(sale);
+        saleService.processSale(sale);
         closeWindow();
         clearItems();
-    }
-
-    private void registerSaleProd(Sale sale){
-        var saleProducts = sale.getItems();
-        saleProducts.forEach(saleProduct -> {
-            saleProduct.setSale(sale);
-        });
-        saleProductService.saveAll(saleProducts);
-    }
-
-    private void registerSalePayment(Sale sale){
-       var salePayments = sale.getPaymentMethods().stream()
-               .map(payment -> new SalePayment(payment,sale))
-               .toList();
-       salePaymService.saveAll(salePayments);
     }
 
     private void setPaymentValue(PaymentMethod paymentMethod, String value){

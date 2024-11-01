@@ -1,13 +1,10 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.service.ProductService;
 import com.gabrielosorio.gestor_inteligente.utils.AutoCompleteField;
-import com.gabrielosorio.gestor_inteligente.utils.StockDataUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -25,9 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 

@@ -8,13 +8,13 @@ import java.math.BigDecimal;
 
 public class SaleValidator {
 
-    public void validate(Sale sale){
+    public static void validate(Sale sale){
         validateDiscounts(sale);
         validateProducts(sale);
         validateSaleAmounts(sale);
     }
 
-    private void validateSaleAmounts(Sale sale){
+    private static void validateSaleAmounts(Sale sale){
         if(sale.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0){
             throw new SaleValidationException("The total sale sale should be positive.");
         }
@@ -24,7 +24,7 @@ public class SaleValidator {
         }
     }
 
-    private void validateProducts(Sale sale){
+    private static void validateProducts(Sale sale){
         if(sale.getItems().isEmpty()){
             throw new SaleValidationException("The sale must have at least one product.");
         }
@@ -40,7 +40,7 @@ public class SaleValidator {
 
     }
 
-    private void validateDiscounts(Sale sale){
+    private static void validateDiscounts(Sale sale){
         if(sale.getTotalDiscount().compareTo(BigDecimal.ZERO) < 0){
             throw new SaleValidationException("The total discount cannot be negative.");
         }

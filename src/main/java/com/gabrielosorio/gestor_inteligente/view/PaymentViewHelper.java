@@ -11,6 +11,9 @@ import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleStrategy;
 import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
 import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
 import com.gabrielosorio.gestor_inteligente.service.SaleService;
+import com.gabrielosorio.gestor_inteligente.service.impl.SalePaymentServiceImpl;
+import com.gabrielosorio.gestor_inteligente.service.impl.SaleProductServiceImpl;
+import com.gabrielosorio.gestor_inteligente.service.impl.SaleServiceImpl;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -46,27 +49,27 @@ public class PaymentViewHelper {
 
     private static PaymentViewController initializeController(Sale sale, SaleTableViewController saleTableViewOp){
         var saleService = createSaleService();
-        var saleProductService = createSaleProductService();
-        var salePaymentService = createSalePaymentService();
-        return new PaymentViewController(sale,saleService,saleProductService,salePaymentService,saleTableViewOp);
+        return new PaymentViewController(sale,saleService,saleTableViewOp);
     }
 
     private static SaleService createSaleService() {
         SaleRepository saleRepository = new SaleRepository();
+        var saleProductService = createSaleProductService();
+        var salePaymentService = createSalePaymentService();
         saleRepository.init(new PSQLSaleStrategy());
-        return new SaleService(saleRepository);
+        return new SaleServiceImpl(saleRepository,saleProductService,salePaymentService);
     }
 
     private static SaleProductService createSaleProductService(){
         var saleProductRepo = new SaleProductRepository();
         saleProductRepo.init(new PSQLSaleProductStrategy());
-        return new SaleProductService(saleProductRepo);
+        return new SaleProductServiceImpl(saleProductRepo);
     }
 
     private static SalePaymentService createSalePaymentService(){
         var salePaymentRepo = new SalePaymentRepository();
         salePaymentRepo.init(new PSQLSalePaymentStrategy());
-        return new SalePaymentService(salePaymentRepo);
+        return new SalePaymentServiceImpl(salePaymentRepo);
     }
 
     private static Stage createPaymentStage(PaymentViewController controller) throws IOException {

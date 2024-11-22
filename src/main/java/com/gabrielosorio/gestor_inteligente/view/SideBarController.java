@@ -5,11 +5,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,6 +32,8 @@ public class SideBarController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        addShadow(sideBar);
+        addShadow(shortCutSideBar);
     }
 
 
@@ -218,6 +223,16 @@ public class SideBarController implements Initializable {
 
     public VBox getShortCutSideBar(){
         return shortCutSideBar;
+    }
+
+    private void addShadow(Node node){
+        DropShadow shadow = new DropShadow();
+        shadow.setOffsetX(2); // Deslocamento horizontal da sombra
+        shadow.setOffsetY(2); // Deslocamento vertical da sombra
+        shadow.setRadius(10); // Raio da sombra (mais alto = mais difusa)
+        shadow.setColor(Color.color(0.8, 0.8, 0.8, 0.5)); //
+        node.setEffect(shadow);
+        node.setEffect(shadow);
     }
 
 }

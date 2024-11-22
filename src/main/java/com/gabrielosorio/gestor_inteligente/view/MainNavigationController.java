@@ -1,117 +1,232 @@
 package com.gabrielosorio.gestor_inteligente.view;
-
-import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import javafx.animation.FadeTransition;
+import com.gabrielosorio.gestor_inteligente.view.util.SidebarButton;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import java.io.IOException;
+
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainNavigationController implements Initializable {
 
     @FXML
-    private HBox btnHBoxHome,btnHBoxSale,btnHBoxProductManager,btnHBoxStockManager,
-            btnHBoxSalesReport;
-
-    @FXML
-    private Label btnHBoxHomeLbl,btnHBoxSaleLbl,btnHBoxProductManagerLbl,btnHBoxStockManagerLbl,
-            btnHBoxSalesReportLbl;
-
-    @FXML
     private VBox menuBtn;
 
     @FXML
-    private AnchorPane content,header;
+    private AnchorPane mainContent,header;
 
     @FXML
-    private ImageView iconHomeViewer,iconSaleViewer,iconProductViewer,iconStockViewer,iconSalesReportViewer,
-            iconSalesReportShortcut,iconHomeShortcut,iconProductShortcut,iconSaleShortcut,iconStockShortcut,menuIcon;
+    private ImageView menuIcon;
 
     @FXML
-    private VBox slider2;
+    private VBox slider2,shortCutSideBar;
 
-    @FXML
-    private VBox shortCutSideBar, shortCutBtnHome,shortCutBtnSale, shortCutBtnProductManager, shortCutBtnStockManager,shortCutBtnSalesReport;
-    ;
+    private boolean isSidebarOpen = true;
 
-    private final String LBL_DEFAULT_COLOR = "#707070";
-    private final String LBL_COLOR_HOVER = "#fff";
-    private final String BACKGROUND_DEFAULT_COLOR = "#fff";
-    private final String BACKGROUND_COLOR_HOVER = "#695CFE";
-
-    private final Image ICON_SALE_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png");
-    private final Image ICON_SALE_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png");
-
-    private final Image ICON_PRODUCT_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png");
-    private final Image ICON_PRODUCT_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png");
-
-    private final Image ICON_STOCK_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lista-da-área-de-transferência-48-white.png");
-    private final Image ICON_STOCK_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lista-da-área-de-transferência-48.png");
-
-    private final Image ICON_MENU_DEFAULT = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64.png");
-    private final Image ICON_MENU_ACTIVE = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64-active.png");
-
-    private Image ICON_HOME_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48.png");
-    private Image ICON_HOME_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48-white.png");
-
-    private Image ICON_SLREPORT_DEFAULT_COLOR = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48.png");
-    private Image ICON_SLREPORT_COLOR_HOVER = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48-white.png");
-
-    private String activeScreen = "";
-
-    private void setUpBtnHoverEffect(String currentBtn,Node btn, Node btnLabel, ImageView iconViewer, Image defaultImage, Image imageHover,FadeTransition fadeTransitionBackground){
-        fadeTransitionBackground.setNode(btn);
-        fadeTransitionBackground.setFromValue(0.0);
-        fadeTransitionBackground.setToValue(1.0);
-
-        btn.setOnMouseEntered(mouseEvent -> {
-            btn.setStyle("-fx-background-color: " + BACKGROUND_COLOR_HOVER + ";");
-            btnLabel.setStyle("-fx-text-fill: " + LBL_COLOR_HOVER + ";");
-            iconViewer.setImage(imageHover);
-            fadeTransitionBackground.play();
-        });
-
-        btn.setOnMouseExited(mouseEvent -> {
-            if(activeScreen.isEmpty() || activeScreen.isBlank()){
-                btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-                btnLabel.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-                iconViewer.setImage(defaultImage);
-                fadeTransitionBackground.play();
-            }
-            else if (currentBtn.equals(activeScreen)){
-
-            } else {
-                btn.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-                btnLabel.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-                iconViewer.setImage(defaultImage);
-                fadeTransitionBackground.play();
-            }
+    private List<HBox> sidebarButtons = new ArrayList<>();
+    private List<VBox> sidebarShortcuts = new ArrayList<>();
 
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setupMenuToggle();
+        addSidebarButtons();
+    }
+
+    public void addSidebarButtons() {
+        addButton(new SidebarButton("Início", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48-white.png",() -> System.out.println("Ir para Inicio")));
+        addButton(new SidebarButton("Vender", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png", this::handleSaleAction));
+        addButton(new SidebarButton("Produtos", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png", this::handleProductManager));
+        addButton(new SidebarButton("Estoque", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lista-da-área-de-transferência-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lista-da-área-de-transferência-48-white.png", this::handleStockManager));
+        addButton(new SidebarButton("Relatório Vendas", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48-white.png", this::handleSalesReport));
+    }
+
+    private void addButton(SidebarButton sidebarButton){
+        HBox buttonContainer = createSidebarButton(sidebarButton);
+        VBox shortcutContainer = createShortCutButton(sidebarButton);
+        buttonContainer.setUserData(sidebarButton);
+        shortcutContainer.setUserData(sidebarButton);
+
+        slider2.getChildren().add(buttonContainer);
+        shortCutSideBar.getChildren().add(shortcutContainer);
+
+        sidebarButtons.add(buttonContainer);
+        sidebarShortcuts.add(shortcutContainer);
+
+        setUpButtonHover(buttonContainer);
+
+        buttonContainer.setOnMouseClicked(e -> {
+            selectButton(buttonContainer,shortcutContainer);
+            sidebarButton.getAction().run();
         });
 
     }
 
+    private HBox createSidebarButton(SidebarButton sidebarButton){
+        HBox buttonBox = new HBox();
+        buttonBox.setLayoutX(15.0);
+        buttonBox.setLayoutY(21.0);
+        buttonBox.setPrefHeight(45.0);
+        buttonBox.setPrefWidth(257.0);
+        buttonBox.getStyleClass().add("sidebar-hbox-btn");
+        buttonBox.setId("background");
 
-    private boolean isOpen = true;
+        VBox iconBox = new VBox();
+        iconBox.setAlignment(Pos.CENTER);
+        iconBox.setPrefHeight(45.0);
+        iconBox.setPrefWidth(45.0);
+        ImageView icon = new ImageView(new Image(sidebarButton.getIconPath()));
+        icon.setId("icon");
+        icon.setFitWidth(30);
+        icon.setFitHeight(30);
+        iconBox.getChildren().add(icon);
+
+        Label label = new Label(sidebarButton.getLabel());
+        label.getStyleClass().add("sidebar-btn-lbl");
+        HBox.setMargin(label, new Insets(0,0,0,20));
+        label.setUserData(false);
+        label.setId("label");
+
+        HBox labelBox = new HBox(label);
+        labelBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        labelBox.setPrefWidth(203);
+        labelBox.setPrefHeight(55);
+
+        buttonBox.getChildren().addAll(iconBox, labelBox);
+        buttonBox.setOnMouseClicked(e -> sidebarButton.getAction().run());
+
+        return buttonBox;
+
+    }
+
+    private VBox createShortCutButton(SidebarButton sidebarButton){
+        VBox vBox = new VBox();
+        vBox.getStyleClass().add("shortcut-sidebar-btn");
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setLayoutX(15.0);
+        vBox.setLayoutY(21.0);
+        vBox.setPrefHeight(45.0);
+        vBox.setPrefWidth(45.0);
+        vBox.setId("background");
+
+        ImageView icon = new ImageView(new Image(sidebarButton.getIconPath()));
+        icon.setFitHeight(30);
+        icon.setFitWidth(30);
+        icon.setPickOnBounds(true);
+        icon.setPreserveRatio(true);
+        icon.setId("icon");
+
+        vBox.getChildren().add(icon);
+
+        if (sidebarButton.getAction() != null) {
+            vBox.setOnMouseClicked(event -> sidebarButton.getAction().run());
+        }
+
+        return vBox;
+    }
+
+    private void selectButton(HBox buttonBox, VBox shortcutBox){
+        resetButtonStyle();
+        resetShortCutStyle();
+
+        HBox hbox = (HBox) buttonBox.lookup("#background");
+        Label lbl = (Label) buttonBox.lookup("#label");
+        ImageView img = (ImageView) buttonBox.lookup("#icon");
+        SidebarButton sidebarButton = (SidebarButton) buttonBox.getUserData();
+        hbox.setStyle("-fx-background-color: #695CFE;");
+        lbl.setStyle("-fx-text-fill: #fff;");
+        lbl.setUserData(true);
+        img.setImage(new Image(sidebarButton.getHoverIconPath()));
+
+        if(shortcutBox.getUserData().equals(buttonBox.getUserData())){
+            shortcutBox.lookup("#background").setStyle("-fx-background-color: #695CFE;");
+            ImageView shIcon = (ImageView) shortcutBox.lookup("#icon");
+            shIcon.setImage(new Image(sidebarButton.getHoverIconPath()));
+            toggleSideBar();
+        }
+
+
+    }
+
+    private void resetButtonStyle(){
+        sidebarButtons.forEach(hBox -> {
+            HBox background = (HBox) hBox.lookup("#background");
+            Label lbl = (Label) hBox.lookup("#label");
+            lbl.setUserData(false);
+            ImageView img = (ImageView) hBox.lookup("#icon");
+            SidebarButton sidebarButton = (SidebarButton) hBox.getUserData();
+            background.setStyle("-fx-background-color: transparent;");
+            lbl.setStyle("-fx-text-fill: #747474;");
+            img.setImage(new Image(sidebarButton.getIconPath()));
+        });
+
+    }
+
+    private void resetShortCutStyle(){
+        sidebarShortcuts.forEach(vBox -> {
+            vBox.lookup("#background").setStyle("-fx-background-color: transparent;");
+            ImageView imgView = (ImageView) vBox.lookup("#icon");
+            SidebarButton sideBtn = (SidebarButton) vBox.getUserData();
+            imgView.setImage(new Image(sideBtn.getIconPath()));
+        });
+    }
+
+    private void setUpButtonHover(HBox buttonBox){
+        buttonBox.setOnMouseEntered(event -> {
+            HBox hbox = (HBox) buttonBox.lookup("#background");
+            Label lbl = (Label) buttonBox.lookup("#label");
+            ImageView img = (ImageView) buttonBox.lookup("#icon");
+            SidebarButton sidebarButton = (SidebarButton) buttonBox.getUserData();
+            hbox.setStyle("-fx-background-color: #695CFE;");
+            lbl.setStyle("-fx-text-fill: #fff;");
+            img.setImage(new Image(sidebarButton.getHoverIconPath()));
+
+        });
+
+        buttonBox.setOnMouseExited(event -> {
+
+            HBox hbox = (HBox) buttonBox.lookup("#background");
+            Label lbl = (Label) buttonBox.lookup("#label");
+            ImageView img = (ImageView) buttonBox.lookup("#icon");
+
+            if(lbl.getUserData().equals(Boolean.TRUE)){
+                return;
+            }
+            SidebarButton sidebarButton = (SidebarButton) buttonBox.getUserData();
+            hbox.setStyle("-fx-background-color: transparent;");
+            lbl.setStyle("-fx-text-fill: #747474;");
+            img.setImage(new Image(sidebarButton.getIconPath()));
+        });
+    }
+
+    private void setupMenuToggle(){
+        menuBtn.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                if(mouseEvent.getClickCount() == 1){
+                    toggleSideBar();
+                }
+            }
+        });
+    }
 
     private void toggleSideBar(){
+        Image menuIconDef = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64.png");
+        Image menuIconActive = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64-active.png");
 
         Platform.runLater(() -> {
             TranslateTransition slide = new TranslateTransition();
@@ -121,21 +236,23 @@ public class MainNavigationController implements Initializable {
             RotateTransition rotateTransition = new RotateTransition(Duration.millis(150));
             rotateTransition.setNode(menuBtn);
 
-            if(isOpen) {
+            if(isSidebarOpen) {
                 rotateTransition.setByAngle(-180);
                 slide.setToX(-265);
                 shortCutSideBar.setVisible(true);
-                menuIcon.setImage(ICON_MENU_DEFAULT);
-                isOpen = false;
+                shortCutSideBar.setStyle("-fx-background-color: #fff;");
+                menuIcon.setImage(menuIconDef);
+                isSidebarOpen = false;
             } else {
                 rotateTransition.setByAngle(180);
                 slide.setToX(0);
-                menuIcon.setImage(ICON_MENU_ACTIVE);
+                menuIcon.setImage(menuIconActive);
                 slide.setOnFinished(actionEvent -> {
                     shortCutSideBar.setVisible(false);
+                    shortCutSideBar.setStyle("-fx-background-color: transparent;");
                 });
 
-                isOpen = true;
+                isSidebarOpen = true;
             }
 
             slide.play();
@@ -143,256 +260,19 @@ public class MainNavigationController implements Initializable {
         });
     }
 
-
-    private void loadCheckoutTabPane(){
-        Node frontCheckout = null;
-
-        try {
-            content.getChildren().clear();
-            frontCheckout = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/sale/CheckoutTabPane.fxml"));
-            content.getChildren().add(0,frontCheckout);
-            AnchorPane.setTopAnchor(frontCheckout,45.0);
-            AnchorPane.setLeftAnchor(frontCheckout,55.0);
-
-            activeScreen = "sale";
-
-            resetAllBtnStyles();
-            resetAllShortcutStyles();
-            updateBtnActiveStyle(btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_COLOR_HOVER);
-            updateBtnActiveStyle(shortCutBtnSale,iconSaleShortcut,ICON_SALE_COLOR_HOVER);
-
-
-            Platform.runLater(() -> {
-                toggleSideBar();
-            });
-
-
-        } catch (IOException e){
-            System.out.println("ERROR: Error at load FXML Front of checkout : " + e.getCause());
-            e.printStackTrace();
-        }
-
-
+    private void handleSaleAction() {
+        System.out.println("Abrindo tela de vendas...");
     }
 
-    private void loadFindProductView(){
-        AnchorPane findProductView;
-
-        try {
-            content.getChildren().clear();
-            findProductView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductManager.fxml"));
-            content.getChildren().add(0,findProductView);
-            activeScreen = "product";
-
-            resetAllBtnStyles();
-            resetAllShortcutStyles();
-            updateBtnActiveStyle(btnHBoxProductManager,btnHBoxProductManagerLbl,iconProductViewer,ICON_PRODUCT_COLOR_HOVER);
-            updateBtnActiveStyle(shortCutBtnProductManager,iconProductShortcut,ICON_PRODUCT_COLOR_HOVER);
-
-
-
-            Platform.runLater(() -> {
-                toggleSideBar();
-            });
-
-
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+    private void handleProductManager() {
+        System.out.println("Abrindo gerenciador de produtos...");
     }
 
-    private void loadStockManager(){
-        AnchorPane stockManagerView;
-
-        try {
-            content.getChildren().clear();
-            stockManagerView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/stock/StockManager.fxml"));
-            content.getChildren().add(0,stockManagerView);
-            activeScreen = "stock";
-
-            resetAllBtnStyles();
-            resetAllShortcutStyles();
-            updateBtnActiveStyle(btnHBoxStockManager,btnHBoxStockManagerLbl,iconStockViewer,ICON_STOCK_COLOR_HOVER);
-            updateBtnActiveStyle(shortCutBtnStockManager,iconStockShortcut,ICON_STOCK_COLOR_HOVER);
-
-            Platform.runLater(() -> {
-                toggleSideBar();
-            });
-
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+    private void handleStockManager() {
+        System.out.println("Abrindo gerenciador de estoque...");
     }
 
-    private void loadHomeView() {
-        Node homeView;
-        try {
-            content.getChildren().clear();
-            homeView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/Home.fxml"));
-            content.getChildren().add(0,homeView);
-            activeScreen = "home";
-
-            resetAllBtnStyles();
-            resetAllShortcutStyles();
-            updateBtnActiveStyle(btnHBoxHome,btnHBoxHomeLbl,iconHomeViewer,ICON_HOME_COLOR_HOVER);
-            updateBtnActiveStyle(shortCutBtnHome,iconHomeShortcut,ICON_HOME_COLOR_HOVER);
-
-            toggleSideBar();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    private void handleSalesReport() {
+        System.out.println("Abrindo relatório de vendas...");
     }
-
-    private void loadSalesReport(){
-        Node homeView;
-        try {
-            content.getChildren().clear();
-            homeView = FXMLLoader.load(GestorInteligenteApp.class.getResource("fxml/reports/SalesReport.fxml"));
-            content.getChildren().add(0,homeView);
-            activeScreen = "salesReport";
-
-            resetAllBtnStyles();
-            resetAllShortcutStyles();
-            updateBtnActiveStyle(btnHBoxSalesReport,btnHBoxSalesReportLbl,iconSalesReportViewer,ICON_SLREPORT_COLOR_HOVER);
-            updateBtnActiveStyle(shortCutBtnSalesReport,iconSalesReportShortcut,ICON_SLREPORT_COLOR_HOVER);
-
-            toggleSideBar();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void resetAllBtnStyles(){
-
-        btnHBoxSale.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        btnHBoxSaleLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-        iconSaleViewer.setImage(ICON_SALE_DEFAULT_COLOR);
-
-        btnHBoxProductManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        btnHBoxProductManagerLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-        iconProductViewer.setImage(ICON_PRODUCT_DEFAULT_COLOR);
-
-        btnHBoxStockManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        btnHBoxStockManagerLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-        iconStockViewer.setImage(ICON_STOCK_DEFAULT_COLOR);
-
-        btnHBoxHome.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        btnHBoxHomeLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-        iconHomeViewer.setImage(ICON_HOME_DEFAULT_COLOR);
-
-        btnHBoxSalesReport.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        btnHBoxSalesReportLbl.setStyle("-fx-text-fill: " + LBL_DEFAULT_COLOR + ";");
-        iconSalesReportViewer.setImage(ICON_SLREPORT_DEFAULT_COLOR);
-
-
-    }
-
-    private void resetAllShortcutStyles(){
-        shortCutBtnSale.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        iconSaleShortcut.setImage(ICON_SALE_DEFAULT_COLOR);
-
-        shortCutBtnStockManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        iconStockShortcut.setImage(ICON_STOCK_DEFAULT_COLOR);
-
-        shortCutBtnProductManager.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        iconProductShortcut.setImage(ICON_PRODUCT_DEFAULT_COLOR);
-
-        shortCutBtnHome.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        iconHomeShortcut.setImage(ICON_HOME_DEFAULT_COLOR);
-
-        shortCutBtnSalesReport.setStyle("-fx-background-color: " + BACKGROUND_DEFAULT_COLOR + ";");
-        iconSalesReportShortcut.setImage(ICON_SLREPORT_DEFAULT_COLOR);
-    }
-
-    private void updateBtnActiveStyle(Node btn, Node btnLabel, ImageView imageView,Image imageHover){
-        btn.setStyle("-fx-background-color: " + BACKGROUND_COLOR_HOVER + ";");
-        btnLabel.setStyle("-fx-text-fill: " + LBL_COLOR_HOVER + ";");
-        imageView.setImage(imageHover);
-    }
-
-    private void updateBtnActiveStyle(Node btn,ImageView imageView,Image imageHover){
-        btn.setStyle("-fx-background-color: " + BACKGROUND_COLOR_HOVER + ";");
-        imageView.setImage(imageHover);
-    }
-
-
-
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        DropShadow shadow = new DropShadow();
-        shadow.setColor(Color.web("#999999")); // Cor da sombra
-        shadow.setRadius(15); // O quão difusa é a sombra
-        shadow.setOffsetX(-3); // Deslocamento horizontal da sombra
-        shadow.setOffsetY(10); //
-        slider2.setEffect(shadow);
-
-        DropShadow shadowHeader = new DropShadow();
-        shadowHeader.setColor(Color.web("#999999")); // Cor da sombra
-        shadowHeader.setRadius(15); // O quão difusa é a sombra
-        shadowHeader.setOffsetX(0); // Deslocamento horizontal da sombra
-        shadowHeader.setOffsetY(-5);
-        header.setEffect(shadowHeader);
-
-        DropShadow shadowShortCut = new DropShadow();
-        shadowShortCut.setColor(Color.web("#999999")); // Cor da sombra
-        shadowShortCut.setRadius(15); // O quão difusa é a sombra
-        shadowShortCut.setOffsetX(-3); // Deslocamento horizontal da sombra
-        shadowShortCut.setOffsetY(10);
-
-        shortCutSideBar.setEffect(shadowShortCut);
-
-
-        setUpBtnHoverEffect("sale",btnHBoxSale,btnHBoxSaleLbl,iconSaleViewer,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect("sale",shortCutBtnSale, new Label(),iconSaleShortcut,ICON_SALE_DEFAULT_COLOR,ICON_SALE_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-
-        setUpBtnHoverEffect("product",btnHBoxProductManager,btnHBoxProductManagerLbl,iconProductViewer,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect("product",shortCutBtnProductManager, new Label(),iconProductShortcut,ICON_PRODUCT_DEFAULT_COLOR,ICON_PRODUCT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-
-        setUpBtnHoverEffect("stock",btnHBoxStockManager,btnHBoxStockManagerLbl,iconStockViewer,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect("stock",shortCutBtnStockManager, new Label(),iconStockShortcut,ICON_STOCK_DEFAULT_COLOR,ICON_STOCK_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-
-        setUpBtnHoverEffect("home",btnHBoxHome,btnHBoxHomeLbl,iconHomeViewer,ICON_HOME_DEFAULT_COLOR,ICON_HOME_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect("home",shortCutBtnHome, new Label(),iconHomeShortcut,ICON_HOME_DEFAULT_COLOR,ICON_HOME_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-
-        setUpBtnHoverEffect("salesReport",btnHBoxSalesReport,btnHBoxSalesReportLbl,iconSalesReportViewer,ICON_SLREPORT_DEFAULT_COLOR,ICON_SLREPORT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-        setUpBtnHoverEffect("salesReport",shortCutBtnSalesReport, new Label(),iconSalesReportShortcut,ICON_SLREPORT_DEFAULT_COLOR,ICON_SLREPORT_COLOR_HOVER,new FadeTransition(Duration.millis(150)));
-
-
-        btnHBoxSale.setOnMouseClicked(mouseEvent -> {
-            loadCheckoutTabPane();
-        });
-
-        btnHBoxProductManager.setOnMouseClicked(mouseEvent -> {
-            loadFindProductView();
-        });
-
-        btnHBoxStockManager.setOnMouseClicked(mouseEvent -> {
-            loadStockManager();
-        });
-
-        btnHBoxHome.setOnMouseClicked(mouseEvent -> {
-            loadHomeView();
-        });
-
-        btnHBoxSalesReport.setOnMouseClicked(mouseEvent -> {
-            loadSalesReport();
-        });
-
-        menuBtn.setOnMouseClicked(mouseEvent -> {
-            if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-                if(mouseEvent.getClickCount() == 1){
-                    toggleSideBar();
-                }
-            }
-        });
-
-        loadHomeView();
-
-    }
-
-
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.TabPane?>
 
-<TabPane fx:id="checkoutTabPanel" focusTraversable="false" stylesheets="@../../css/checkoutTabPane.css" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="40.0" tabMinWidth="160.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.view.CheckoutTabPaneController"  />
+<TabPane fx:id="checkoutTabPanel" focusTraversable="false" stylesheets="@../../css/checkoutTabPane.css" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="40.0" tabMinWidth="160.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.view.CheckoutTabPaneController" AnchorPane.topAnchor="45.0" AnchorPane.leftAnchor="55.0"/>

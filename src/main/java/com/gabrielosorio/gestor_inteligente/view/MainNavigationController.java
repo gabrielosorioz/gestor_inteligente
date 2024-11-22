@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -24,7 +25,7 @@ public class MainNavigationController implements Initializable {
     private VBox menuBtn;
 
     @FXML
-    private AnchorPane mainContent,header;
+    private AnchorPane mainContent,header,root;
 
     @FXML
     private ImageView menuIcon;
@@ -45,13 +46,12 @@ public class MainNavigationController implements Initializable {
             sideBarController = loader.getController();
             AnchorPane.setBottomAnchor(sidebar,0.0);
             AnchorPane.setTopAnchor(sidebar,0.0);
-            mainContent.getChildren().add(sidebar);
+            root.getChildren().add(1,sidebar);
 
-            sideBarController.addButton(new SidebarButton("Início", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48-white.png",this::toggleSideBar));
-            sideBarController.addButton(new SidebarButton("Vender", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png",this::toggleSideBar));
-            sideBarController.addButton(new SidebarButton("Produtos", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png", this::toggleSideBar));
-            sideBarController.addButton(new SidebarButton("Estoque", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lista-da-área-de-transferência-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lista-da-área-de-transferência-48-white.png", this::toggleSideBar));
-            sideBarController.addButton(new SidebarButton("Relatório Vendas", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48-white.png",this::toggleSideBar));
+            sideBarController.addButton(new SidebarButton("Início", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48-white.png",this::openHome));
+            sideBarController.addButton(new SidebarButton("Vender", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png",this::openPDV));
+            sideBarController.addButton(new SidebarButton("Produtos", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png", this::openProductManager));
+            sideBarController.addButton(new SidebarButton("Relatório Vendas", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48-white.png",this::openSalesReport));
 
             menuBtn.setOnMouseClicked(mouseEvent -> {
                 toggleSideBar();
@@ -61,6 +61,47 @@ public class MainNavigationController implements Initializable {
             e.printStackTrace();
         }
     }
+
+
+    private void loadScreen(String fxmlPath) {
+        mainContent.getChildren().clear();
+        try {
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource(fxmlPath));
+            Parent newScreen = loader.load();
+            mainContent.getChildren().add(newScreen);
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading screen: " + fxmlPath, e);
+        }
+    }
+
+    private void openHome(){
+        loadScreen("fxml/Home.fxml");
+        Platform.runLater(() -> {
+            toggleSideBar();
+        });
+    }
+
+    private void openPDV(){
+        loadScreen("fxml/sale/CheckoutTabPane.fxml");
+        Platform.runLater(() -> {
+            toggleSideBar();
+        });
+    }
+
+    private void openProductManager(){
+        loadScreen("fxml/product-manager/ProductManager.fxml");
+        Platform.runLater(() -> {
+            toggleSideBar();
+        });
+    }
+
+    private void openSalesReport(){
+        loadScreen("fxml/reports/SalesReport.fxml");
+        Platform.runLater(() -> {
+            toggleSideBar();
+        });
+    }
+
 
 
     private void toggleSideBar(){

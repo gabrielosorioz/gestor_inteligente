@@ -18,9 +18,12 @@ public class CheckoutTabPaneController implements Initializable {
     private TabPane checkoutTabPanel;
     private final Logger log = Logger.getLogger(getClass().getName());
     private int tabCounter;
+    private static int initializeCounter = 0;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        log.info("CheckoutTabPaneController initialized " + (++initializeCounter) + " time(s).");
         addNewCheckoutTab();
     }
 

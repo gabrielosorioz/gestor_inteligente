@@ -9,14 +9,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MainNavigationController implements Initializable {
@@ -30,13 +34,17 @@ public class MainNavigationController implements Initializable {
     @FXML
     private ImageView menuIcon;
 
+    private final Map<String,Parent> viewCache = new HashMap<>();
+
     private SideBarController sideBarController;
 
     private boolean isSidebarOpen = true;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        addHeaderShadow(header);
         loadSidebar();
+        openHome();
     }
 
     private void loadSidebar() {
@@ -62,16 +70,22 @@ public class MainNavigationController implements Initializable {
         }
     }
 
-
     private void loadScreen(String fxmlPath) {
-        mainContent.getChildren().clear();
-        try {
-            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource(fxmlPath));
-            Parent newScreen = loader.load();
-            mainContent.getChildren().add(newScreen);
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading screen: " + fxmlPath, e);
+        Parent newScreen = viewCache.get(fxmlPath);
+
+        if(newScreen == null){
+            try {
+                FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource(fxmlPath));
+                newScreen = loader.load();
+                viewCache.put(fxmlPath, newScreen);
+            } catch (IOException e) {
+                throw new RuntimeException("Error loading screen: " + fxmlPath, e);
+            }
+
         }
+        mainContent.getChildren().clear();
+        mainContent.getChildren().add(newScreen);
+
     }
 
     private void openHome(){
@@ -101,8 +115,6 @@ public class MainNavigationController implements Initializable {
             toggleSideBar();
         });
     }
-
-
 
     private void toggleSideBar(){
         Image menuIconDef = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64.png");
@@ -140,6 +152,16 @@ public class MainNavigationController implements Initializable {
             slide.play();
             rotateTransition.play();
         });
+    }
+
+    private void addHeaderShadow(Node node){
+        DropShadow shadow = new DropShadow();
+        shadow.setOffsetX(2); // Deslocamento horizontal da sombra
+        shadow.setOffsetY(2); // Deslocamento vertical da sombra
+        shadow.setRadius(10); // Raio da sombra (mais alto = mais difusa)
+        shadow.setColor(Color.color(0.8, 0.8, 0.8, 0.5)); //
+        node.setEffect(shadow);
+        node.setEffect(shadow);
     }
 
 }

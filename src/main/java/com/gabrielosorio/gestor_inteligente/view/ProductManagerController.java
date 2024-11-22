@@ -55,11 +55,13 @@ public class ProductManagerController implements Initializable {
     private AnchorPane stockForm;
     private ProductFormController productFormController;
     private ProductTbViewController productTbViewController;
-
+    private static int initializeCounter = 0;
     private boolean isProductFormVisible;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        log.info("ProductManagerController initialized " + (++initializeCounter) + " time(s).");
+
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.web("#999999"));
         shadow.setRadius(15);

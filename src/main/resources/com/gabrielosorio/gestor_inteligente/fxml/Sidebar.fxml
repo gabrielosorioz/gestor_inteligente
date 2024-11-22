@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gabrielosorio.gestor_inteligente.view.SideBarController">
+
+    <VBox fx:id="sideBar" prefHeight="696.0" prefWidth="265.0" spacing="5.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="45.0">
+        <children>
+<!--            <HBox fx:id="btnHBoxHome" layoutX="15.0" layoutY="21.0" prefHeight="45.0" prefWidth="257.0" styleClass="sidebar-hbox-btn" stylesheets="@../css/mainNavigation.css">-->
+<!--                <children>-->
+<!--                    <VBox alignment="CENTER" prefHeight="45.0" prefWidth="45.0">-->
+<!--                        <children>-->
+<!--                            <ImageView fx:id="iconHomeViewer" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">-->
+<!--                                <image>-->
+<!--                                    <Image url="@../image/icons8-casa-48.png" />-->
+<!--                                </image>-->
+<!--                            </ImageView>-->
+<!--                        </children>-->
+<!--                        <HBox.margin>-->
+<!--                            <Insets />-->
+<!--                        </HBox.margin>-->
+<!--                    </VBox>-->
+<!--                    <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="203.0">-->
+<!--                        <children>-->
+<!--                            <Label fx:id="btnHBoxHomeLbl" styleClass="sidebar-btn-lbl" stylesheets="@../css/mainNavigation.css" text="Inicio">-->
+<!--                                <HBox.margin>-->
+<!--                                    <Insets left="20.0" />-->
+<!--                                </HBox.margin>-->
+<!--                            </Label>-->
+<!--                        </children>-->
+<!--                    </HBox>-->
+<!--                </children>-->
+<!--            </HBox>-->
+        </children>
+        <padding>
+            <Insets left="5.0" right="5.0" top="10.0" />
+        </padding>
+    </VBox>
+    <VBox fx:id="shortCutSideBar" fillWidth="false" prefHeight="200.0" prefWidth="55.0" spacing="5.0" styleClass="sideMenu" stylesheets="@../css/mainNavigation.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="45.0">
+        <children>
+<!--            <VBox fx:id="shortCutBtnHome" alignment="CENTER" layoutX="15.0" layoutY="21.0" prefHeight="45.0" prefWidth="45.0" styleClass="shortcut-sidebar-btn" stylesheets="@../css/mainNavigation.css">-->
+<!--                <children>-->
+<!--                    <ImageView fx:id="iconHomeShortcut" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">-->
+<!--                        <image>-->
+<!--                            <Image url="@../image/icons8-casa-48.png" />-->
+<!--                        </image>-->
+<!--                    </ImageView>-->
+<!--                </children>-->
+<!--            </VBox>-->
+        </children>
+        <padding>
+            <Insets left="5.0" right="5.0" top="10.0" />
+        </padding>
+    </VBox>
+
+</AnchorPane>

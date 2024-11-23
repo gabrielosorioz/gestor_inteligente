@@ -40,7 +40,7 @@
                   <TextField fx:id="cashField" alignment="CENTER_RIGHT" minWidth="231.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="59.0" prefWidth="240.0" styleClass="payment-box-textfield" stylesheets="@../../css/paymentView.css" />
                </children>
             </HBox>
-            <HBox fx:id="pixHbox" alignment="CENTER_RIGHT" layoutX="30.0" layoutY="164.0" prefHeight="62.0" prefWidth="642.0" styleClass="payment-box" stylesheets="@../../css/paymentView.css">
+            <HBox fx:id="pixHbox" alignment="CENTER_RIGHT" layoutX="30.0" layoutY="164.0" prefHeight="62.0" prefWidth="618.0" styleClass="payment-box" stylesheets="@../../css/paymentView.css">
                <children>
                   <ImageView fitHeight="45.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                      <image>

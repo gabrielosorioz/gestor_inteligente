@@ -48,6 +48,11 @@
     -fx-text-fill: #fff;
 }
 
+.btn-payment:hover {
+    -fx-cursor: hand;
+    -fx-background-color: #14385D;
+}
+
 .price-lbl {
     -fx-font-family: 'Poppins';
     -fx-font-weight: bold;

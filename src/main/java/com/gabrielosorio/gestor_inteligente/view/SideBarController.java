@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -53,12 +54,18 @@ public class SideBarController implements Initializable {
 
         buttonContainer.setOnMouseClicked(e -> {
             selectButton(buttonContainer,shortcutContainer);
-            sidebarButton.getAction().run();
+
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1) {
+                sidebarButton.getAction().run();
+            }
+
         });
 
         shortcutContainer.setOnMouseClicked(e -> {
             selectButton(buttonContainer,shortcutContainer);
-            sidebarButton.getAction().run();
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1) {
+                sidebarButton.getAction().run();
+            }
         });
 
     }

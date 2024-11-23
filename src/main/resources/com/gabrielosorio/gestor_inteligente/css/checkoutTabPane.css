@@ -10,7 +10,6 @@
     font-weight: bold;
 }
 
-
 .tab-pane .tab {
     -fx-effect: none;
     -fx-font-family: 'Poppins';
@@ -20,6 +19,7 @@
     -fx-font-size: 14px;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    -fx-cursor: hand;
 }
 
 .tab-pane .tab:selected {
@@ -107,9 +107,25 @@
     -fx-cursor: hand;
 }
 
+.btn-HBox-add-new-checkout:hover{
+    -fx-background-color: #2d892d;
+}
+
 .btn-add-new-checkout-lbl {
     -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
     -fx-font-size: 14px;
     -fx-text-fill: #fff;
+}
+
+.shortcut-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-text-fill: #6b6b6b;
+    -fx-font-size: 16px;
+}
+
+.shortcut-background {
+    -fx-background-color: #eaeaea;
+    -fx-background-radius: 5px;
 }

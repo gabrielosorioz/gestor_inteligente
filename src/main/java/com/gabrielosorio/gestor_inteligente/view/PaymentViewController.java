@@ -7,12 +7,15 @@ import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.service.*;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -64,6 +67,8 @@ public class PaymentViewController implements Initializable {
         refreshDiscountPrice();
         setUpDiscountField();
         showOriginalPrice();
+        setUpHoverPaymentField();
+        setUpBtnCheckoutEvent();
 
         paymentMethods = new HashMap<>();
 
@@ -90,23 +95,115 @@ public class PaymentViewController implements Initializable {
         paybackValueLbl.setVisible(false);
         monetaryChangeLbl.setVisible(false);
 
+        // simulating an click to request cash payment
         Platform.runLater(() -> {
-            creditHbox.requestFocus();
+            EventHandler<MouseEvent> mouseClickEvent = (EventHandler<MouseEvent>) cashField.getOnMouseClicked();
+            if (mouseClickEvent != null) {
+                mouseClickEvent.handle(new MouseEvent(
+                        MouseEvent.MOUSE_CLICKED,
+                        0, 0, 0, 0,
+                        MouseButton.PRIMARY, 1,
+                        true, true, true, true, true, true, true,
+                        true, true, true, null
+                ));
+            }
         });
+
 
     }
 
-    private void loadPaymentFieldEvents(Map<PaymentMethod,TextField> paymentFieldMap){
+    private void setUpBtnCheckoutEvent(){
+        btnCheckout.setOnMouseClicked(mouseEvent -> {
+            finalizeSale(sale);
+        });
+    }
+
+    private void setUpHoverPaymentField() {
+        cashField.focusedProperty().addListener((observableValue, oldValue, isFocused) -> {
+            if (isFocused) {
+                cashHbox.setStyle("-fx-background-color: #E2EFDD;");
+            } else {
+                cashHbox.setStyle("-fx-background-color: #fff;");
+            }
+        });
+
+        pixField.focusedProperty().addListener((observableValue, oldValue, isFocused) -> {
+            if (isFocused) {
+                pixHbox.setStyle("-fx-background-color: #E2EFDD;");
+            } else {
+                pixHbox.setStyle("-fx-background-color: transparent;");
+            }
+        });
+
+        creditField.focusedProperty().addListener((observableValue, oldValue, isFocused) -> {
+            if (isFocused) {
+                creditHbox.setStyle("-fx-background-color: #E2EFDD;");
+            } else {
+                creditHbox.setStyle("-fx-background-color: transparent;");
+            }
+        });
+
+        debitField.focusedProperty().addListener((observableValue, oldValue, isFocused) -> {
+            if (isFocused) {
+                debitHbox.setStyle("-fx-background-color: #E2EFDD;");
+            } else {
+                debitHbox.setStyle("-fx-background-color: transparent;");
+            }
+        });
+
+
+    }
+
+    private void loadPaymentFieldEvents(Map<PaymentMethod, TextField> paymentFieldMap) {
+        List<TextField> paymentFields = Arrays.asList(cashField, pixField, debitField, creditField);
+
         paymentFieldMap.forEach((paymentMethod, paymentField) -> {
+            // Click event on field
             paymentField.setOnMouseClicked(mouseEvent -> {
                 requestPayment(paymentField, paymentMethod);
                 paymentField.requestFocus();
                 paymentField.positionCaret(paymentField.getText().length());
             });
 
+            // Key event pressed setup
+
             paymentField.setOnKeyPressed(keyPressed -> {
-                if(keyPressed.getCode().equals(KeyCode.F2)) {
+                if (keyPressed.getCode().equals(KeyCode.F2)) {
                     finalizeSale(sale);
+                } else if (keyPressed.getCode().equals(KeyCode.DOWN)) {
+                    //
+                    int currentIndex = paymentFields.indexOf(paymentField);
+                    int nextIndex = (currentIndex + 1) % paymentFields.size();
+                    TextField nextField = paymentFields.get(nextIndex);
+                    nextField.requestFocus();
+
+                    // Call the request payment method on next field
+                    PaymentMethod nextPaymentMethod = paymentFieldMap.entrySet().stream()
+                            .filter(entry -> entry.getValue().equals(nextField))
+                            .map(Map.Entry::getKey)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (nextPaymentMethod != null) {
+                        requestPayment(nextField, nextPaymentMethod);
+                    }
+                } else if (keyPressed.getCode().equals(KeyCode.UP)) {
+                    // Navegar para o campo anterior
+                    int currentIndex = paymentFields.indexOf(paymentField);
+                    int previousIndex = (currentIndex - 1 + paymentFields.size()) % paymentFields.size();
+                    TextField previousField = paymentFields.get(previousIndex);
+                    previousField.requestFocus();
+
+                    // Call the request payment method on previous field
+                    PaymentMethod previousPaymentMethod = paymentFieldMap.entrySet().stream()
+                            .filter(entry -> entry.getValue().equals(previousField))
+                            .map(Map.Entry::getKey)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (previousPaymentMethod != null) {
+                        requestPayment(previousField, previousPaymentMethod);
+                    }
                 }
             });
         });
@@ -125,6 +222,7 @@ public class PaymentViewController implements Initializable {
                     if(keyPressed.getCode().equals(KeyCode.F2)) {
                         finalizeSale(sale);
                     }
+
                 });
             });
         });
@@ -242,7 +340,6 @@ public class PaymentViewController implements Initializable {
             originalPriceValueLbl.setVisible(false);
         }
     }
-
 
     private void setUpDiscountField(){
         if (discountField.getText().isBlank() || discountField.getText().isEmpty()) {

@@ -13,6 +13,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -50,7 +52,16 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
     @FXML
     private TableColumn<SaleProduct, BigDecimal> subTotalCol;
 
+    @FXML
+    private TableColumn<SaleProduct, Void> actionCol;
+
+    private final CheckoutTabController checkoutTabController;
+
     private ObjectProperty<BigDecimal> totalPriceProp = new SimpleObjectProperty<>(BigDecimal.ZERO);
+
+    public SaleTableViewControllerImpl(CheckoutTabController checkoutTabController){
+        this.checkoutTabController = checkoutTabController;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -72,8 +83,9 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
         monetaryLabel(subTotalCol);
         setUpQtdColumn();
         setUpDiscountColumn();
+        setUpActionColumn();
         TableViewUtils.resetColumnProps(codeCol,descriptionCol,sellingPriceCol,quantityCol,discountCol,subTotalCol);
-        
+
     }
 
     private void monetaryLabel(TableColumn<SaleProduct, BigDecimal> currencyColumn){
@@ -151,9 +163,15 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
                     }
                 });
 
-                textField.setOnKeyPressed(mouseEvent -> {
-                    if(mouseEvent.getCode().equals(KeyCode.F3)){
+                textField.setOnKeyPressed(keyEvent -> {
+                    if(keyEvent.getCode().equals(KeyCode.F3)){
                         showPaymentScreen();
+                    }
+                });
+
+                textField.setOnKeyPressed(keyEvent -> {
+                    if(keyEvent.getCode().equals(KeyCode.F4)){
+                        checkoutTabController.showRemoveItemsAlert();
                     }
                 });
 
@@ -168,6 +186,65 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
                 } else {
                     textField.setText(item);
                     setGraphic(textField);
+                }
+            }
+        });
+    }
+
+    private void setUpActionColumn() {
+        actionCol.setCellFactory(column -> new TableCell<SaleProduct, Void>() {
+            private final HBox actionBox = new HBox();
+            private final ImageView deleteIcon = new ImageView();
+
+            {
+                // Configurando o HBox
+                actionBox.setAlignment(Pos.CENTER);
+                actionBox.setAlignment(Pos.CENTER);
+                actionBox.setStyle("-fx-background-color: #ff3232;"
+                                    +"-fx-background-radius: 50%;");
+
+                actionBox.setOnMouseEntered(e -> {
+                    actionBox.setStyle("-fx-background-color: #ff1919;"
+                            +"-fx-background-radius: 50%;");
+                });
+
+                actionBox.setOnMouseExited(e -> {
+                    actionBox.setStyle("-fx-background-color: #FF3232;"
+                            +"-fx-background-radius: 50%;");
+                });
+
+
+                // Configurando o ImageView
+                deleteIcon.setFitWidth(20);
+                deleteIcon.setFitHeight(20);
+                deleteIcon.setPreserveRatio(true);
+
+                // Adicionando o ícone (substitua "trash_icon.png" pelo caminho correto do recurso)
+                deleteIcon.setImage(new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-lixo-30.png"));
+
+                // Adicionando evento de clique ao ícone
+                actionBox.setOnMouseClicked(event -> {
+                    SaleProduct item = getTableRow().getItem();
+                    System.out.println("V de vilão");
+
+                    if (item != null) {
+                        saleItems.remove(item); // Remove o item da lista
+                        refreshTotalPrice(); // Atualiza o preço total
+                        saleTable.refresh(); // Atualiza a tabela
+                    }
+                });
+
+                // Adicionando o ImageView ao HBox
+                actionBox.getChildren().add(deleteIcon);
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow().getItem() == null) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(actionBox);
                 }
             }
         });
@@ -223,9 +300,15 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
                     }
                 });
 
-                discountField.setOnKeyPressed(mouseEvent -> {
-                    if(mouseEvent.getCode().equals(KeyCode.F3)){
+                discountField.setOnKeyPressed(keyEvent -> {
+                    if(keyEvent.getCode().equals(KeyCode.F3)){
                         showPaymentScreen();
+                    }
+                });
+
+                discountField.setOnKeyPressed(keyEvent -> {
+                    if(keyEvent.getCode().equals(KeyCode.F4)){
+                        checkoutTabController.showRemoveItemsAlert();
                     }
                 });
 
@@ -373,6 +456,5 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
     public ObservableList<SaleProduct> getItems(){
         return saleItems;
     }
-
 
 }

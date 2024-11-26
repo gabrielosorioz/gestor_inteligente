@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="alertContent" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane fx:id="shadow" opacity="0.24" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: black;" />
+      <AnchorPane fx:id="alertCodeBox" layoutX="475.0" layoutY="237.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="350.0" styleClass="body" stylesheets="@../css/alertMessage.css">
+         <children>
+            <ImageView fx:id="icon" fitHeight="55.0" fitWidth="50.0" layoutX="148.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/icons8-informações-48.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="title" layoutX="119.0" layoutY="46.0" styleClass="title" stylesheets="@../css/alertMessage.css" text="Informação" />
+            <Text fx:id="text" layoutX="39.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txt" text="Deseja inserir o código manualmente ?" textAlignment="CENTER" wrappingWidth="267.9419860839844" />
+            <Button fx:id="btnOk" layoutX="137.0" layoutY="149.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" styleClass="btn-yes" stylesheets="@../css/alertMessage.css" text="OK" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
@@ -39,14 +40,20 @@ public class CheckoutTabController implements Initializable {
     private TextField searchField, qtdField;
 
     @FXML
-    private AnchorPane content;
+    private AnchorPane mainContent,content;
 
     @FXML
     private Label totalPriceLbl;
 
     private SaleTableViewController saleTableOp;
 
+    private Node removeItemsAlert;
+    private Node productNotFoundAlert;
     private final CheckoutTabPaneController checkoutTabPaneController;
+    private InfoMessageController infoController;
+    private AlertMessageController alertController;
+
+
 
     public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController) {
         this.checkoutTabPaneController = checkoutTabPaneController;
@@ -61,6 +68,9 @@ public class CheckoutTabController implements Initializable {
         showTotalPrice();
     }
 
+    private void removeItems(){
+        saleTableOp.clearItems();
+    }
 
     private void setUpEvents() {
         setFocusOnSearchField();
@@ -119,6 +129,10 @@ public class CheckoutTabController implements Initializable {
                 finalizeSale();
             }
 
+            if(keyEvent.getCode().equals(KeyCode.F4)){
+                showRemoveItemsAlert();
+            }
+
             if (pressedKey.equals(KeyCode.ENTER)) {
                 if (isCodeFieldEmpty) {
                     qtdField.requestFocus();
@@ -160,6 +174,10 @@ public class CheckoutTabController implements Initializable {
 
             if (KeyCode.F3 == event.getCode()) {
                 finalizeSale();
+            }
+
+            if(event.getCode().equals(KeyCode.F4)){
+                showRemoveItemsAlert();
             }
 
             if (pressedKey.equals(KeyCode.ENTER)) {
@@ -206,19 +224,80 @@ public class CheckoutTabController implements Initializable {
         });
     }
 
-    private void showProductNotFoundMessage(){
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(null);
-            alert.setContentText("Produto não encontrado");
-            alert.showAndWait();
-        });
+    protected void showRemoveItemsAlert() {
+        try {
+            if (removeItemsAlert == null) {
+                FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/AlertMessage.fxml"));
+                alertController = new AlertMessageController();
+                fxmlLoader.setController(alertController);
+                removeItemsAlert = fxmlLoader.load();
+
+                AlertMessageController alertController = fxmlLoader.getController();
+                alertController.setText("Deseja limpar o caixa ?");
+
+                alertController.setOnYesAction(v -> {
+                    removeItems();
+                    removeItemsAlert = null;
+                });
+
+                removeItemsAlert.setLayoutX(450);
+                removeItemsAlert.setLayoutY(250);
+            }
+
+            if (!mainContent.getChildren().contains(removeItemsAlert)) {
+                mainContent.getChildren().add(removeItemsAlert);
+                alertController.getAlertCodeBox().setOnKeyPressed(e ->{
+                    if(e.getCode().equals(KeyCode.S)){
+                        removeItems();
+                        removeItemsAlert = null;
+                        alertController.close();
+                    }
+                });
+                alertController.getAlertCodeBox().requestFocus();
+
+            }
+
+        } catch (Exception e) {
+            log.severe("ERROR at load code alert message: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void showProductNotFoundAlert() {
+        try {
+            if (productNotFoundAlert == null) {
+                FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/InfoMessage.fxml"));
+                infoController = new InfoMessageController(); // Create the controller only once
+                fxmlLoader.setController(infoController);
+                productNotFoundAlert = fxmlLoader.load();
+
+                infoController.setText("Produto não encontrado!");
+
+                productNotFoundAlert.setLayoutX(450);
+                productNotFoundAlert.setLayoutY(250);
+            }
+
+            if (!mainContent.getChildren().contains(productNotFoundAlert)) {
+                mainContent.getChildren().add(productNotFoundAlert);
+
+                // Focus and button event, even on subsequent displays
+                infoController.getBtnOk().requestFocus();
+                infoController.getBtnOk().setOnKeyPressed(e -> {
+                    if (e.getCode().equals(KeyCode.ENTER)) {
+                        infoController.close();
+                    }
+                });
+            }
+        } catch (Exception e) {
+            log.severe("ERROR at load code alert message: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void loadTableView() {
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/SaleTableView.fxml"));
-            SaleTableViewControllerImpl saleTableViewControllerImpl = new SaleTableViewControllerImpl();
+            SaleTableViewControllerImpl saleTableViewControllerImpl = new SaleTableViewControllerImpl(this);
             loader.setController(saleTableViewControllerImpl);
             TableView tableView = loader.load();
             configureTableViewLayout(tableView);
@@ -240,7 +319,7 @@ public class CheckoutTabController implements Initializable {
         Optional<Product> productOptional = getProductData(search);
 
         if(productOptional.isEmpty()){
-            showProductNotFoundMessage();
+            showProductNotFoundAlert();
             searchField.clear();
             qtdField.setText("1");
             return;

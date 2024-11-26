@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.Pane?>
 <Tab fx:id="checkoutTab" text="Untitled Pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <content>
-        <AnchorPane minHeight="800.0" minWidth="1300.0" styleClass="body" stylesheets="@../../css/checkoutTabPane.css">
+        <AnchorPane fx:id="mainContent" minHeight="800.0" minWidth="1300.0" styleClass="body" stylesheets="@../../css/checkoutTabPane.css">
             <children>
                 <AnchorPane fx:id="content" layoutX="65.0" layoutY="22.0" prefHeight="642.0" prefWidth="1105.0" styleClass="container" stylesheets="@../../css/checkoutTabPane.css">
                     <children>

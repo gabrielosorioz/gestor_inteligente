@@ -3,7 +3,10 @@ package com.gabrielosorio.gestor_inteligente.view;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -12,16 +15,20 @@ import java.util.function.Consumer;
 public class AlertMessageController implements Initializable {
 
     @FXML
-    private AnchorPane alertCodeBox;
+    private AnchorPane alertCodeBox,alertContent
+            ,shadow;
 
     @FXML
-    private AnchorPane alertContent;
+    private Button btnNo,btnYes;
 
     @FXML
-    private Button btnNo;
+    private ImageView icon;
 
     @FXML
-    private Button btnYes;
+    private Text text;
+
+    @FXML
+    private Label title;
 
     private Consumer<Void> onYesAction;
 
@@ -39,14 +46,34 @@ public class AlertMessageController implements Initializable {
         });
 
         btnNo.setOnMouseClicked(mouseEvent -> {
-            AnchorPane parent = (AnchorPane) alertContent.getParent();
-            parent.getChildren().remove(alertContent);
+            close();
+        });
+
+        shadow.setOnMouseClicked(mouseEvent -> {
+            btnYes.requestFocus();
+        });
+
+        btnYes.getParent().setOnMouseClicked(mouseEvent -> {
+            btnYes.requestFocus();
         });
     }
 
 
     public void setOnYesAction(Consumer<Void> action){
         this.onYesAction = action;
+    }
+
+    public void setText(String string){
+        text.setText(string);
+    }
+
+    public AnchorPane getAlertCodeBox(){
+        return alertCodeBox;
+    }
+
+    public void close(){
+        AnchorPane parent = (AnchorPane) alertContent.getParent();
+        parent.getChildren().remove(alertContent);
     }
 
 }

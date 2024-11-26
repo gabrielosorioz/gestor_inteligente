@@ -7,18 +7,18 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="alertContent" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="39.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="alertContent" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane opacity="0.24" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: black;" />
+      <AnchorPane fx:id="shadow" opacity="0.24" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: black;" />
       <AnchorPane fx:id="alertCodeBox" layoutX="475.0" layoutY="237.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="350.0" styleClass="body" stylesheets="@../css/alertMessage.css">
          <children>
-            <ImageView fitHeight="60.0" fitWidth="56.0" layoutX="142.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="icon" fitHeight="60.0" fitWidth="56.0" layoutX="142.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../image/icons8-alta-prioridade-64.png" />
                </image>
             </ImageView>
-            <Label layoutX="131.0" layoutY="44.0" styleClass="title" stylesheets="@../css/alertMessage.css" text="Atenção" />
-            <Text layoutX="39.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txt" text="Deseja inserir o código manualmente ?" textAlignment="CENTER" wrappingWidth="267.9419860839844" />
+            <Label fx:id="title" layoutX="131.0" layoutY="44.0" styleClass="title" stylesheets="@../css/alertMessage.css" text="Atenção" />
+            <Text fx:id="text" layoutX="39.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="txt" text="Deseja inserir o código manualmente ?" textAlignment="CENTER" wrappingWidth="267.9419860839844" />
             <Button fx:id="btnYes" layoutX="82.0" layoutY="144.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" styleClass="btn-yes" stylesheets="@../css/alertMessage.css" text="Sim" />
             <Button fx:id="btnNo" layoutX="182.0" layoutY="144.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="70.0" styleClass="btn-no" stylesheets="@../css/alertMessage.css" text="Não" />
          </children>

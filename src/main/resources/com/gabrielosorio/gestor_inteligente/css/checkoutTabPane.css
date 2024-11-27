@@ -102,13 +102,13 @@
 
 .btn-HBox-add-new-checkout {
     -fx-border-color: transparent;
-    -fx-background-radius: 25px;
-    -fx-background-color: #329932;
+    -fx-background-radius: 6px;
+    -fx-background-color: #6666ff;
     -fx-cursor: hand;
 }
 
 .btn-HBox-add-new-checkout:hover{
-    -fx-background-color: #2d892d;
+    -fx-background-color: #4c4cff;
 }
 
 .btn-add-new-checkout-lbl {
@@ -128,4 +128,19 @@
 .shortcut-background {
     -fx-background-color: #eaeaea;
     -fx-background-radius: 5px;
+}
+
+.btn-arrow-checkout {
+    -fx-background-color:#eaeaea;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+.btn-arrow-checkout:hover {
+    -fx-background-color: #d2d2d2;
+}
+
+.counter-checkout {
+  -fx-background-color:#eeeeee;
+  -fx-background-radius: 6px;
 }

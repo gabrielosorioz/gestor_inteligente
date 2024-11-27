@@ -197,8 +197,9 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
             private final ImageView deleteIcon = new ImageView();
 
             {
+                actionBox.setPrefWidth(40.0);
+                actionBox.setPrefWidth(40.0);
                 // Configurando o HBox
-                actionBox.setAlignment(Pos.CENTER);
                 actionBox.setAlignment(Pos.CENTER);
                 actionBox.setStyle("-fx-background-color: #ff3232;"
                                     +"-fx-background-radius: 50%;");
@@ -215,8 +216,8 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
 
 
                 // Configurando o ImageView
-                deleteIcon.setFitWidth(20);
-                deleteIcon.setFitHeight(20);
+                deleteIcon.setFitWidth(22);
+                deleteIcon.setFitHeight(22);
                 deleteIcon.setPreserveRatio(true);
 
                 // Adicionando o ícone (substitua "trash_icon.png" pelo caminho correto do recurso)

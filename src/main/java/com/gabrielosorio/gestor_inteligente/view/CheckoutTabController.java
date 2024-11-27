@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class CheckoutTabController implements Initializable {
+public class CheckoutTabController implements Initializable, ShortcutHandler{
 
     private HashMap<String, Product> productData = new HashMap<>();
 
@@ -34,7 +34,7 @@ public class CheckoutTabController implements Initializable {
     private Tab checkoutTab;
 
     @FXML
-    private HBox btnAddNewCheckoutTab;
+    private HBox btnAddNewCheckoutTab,btnNext,btnPrevious;
 
     @FXML
     private TextField searchField, qtdField;
@@ -61,11 +61,40 @@ public class CheckoutTabController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loadTableView();
-        fetchProductsData();
-        setUpEvents();
-        setDropShadowToBody();
-        showTotalPrice();
+        Platform.runLater(() -> {
+            loadTableView();
+            fetchProductsData();
+            setUpEvents();
+            setDropShadowToBody();
+            showTotalPrice();
+        });
+    }
+
+    @Override
+    public void handleShortcut(KeyCode keyCode) {
+        if (keyCode == KeyCode.F4) {
+            showRemoveItemsAlert();
+        }
+    }
+
+    private void setUpSwitchTabEvent(){
+
+        var tabPane = checkoutTabPaneController.getTabPane();
+
+        btnPrevious.setOnMouseClicked(mouseEvent -> {
+            int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
+            if(currentIndex > 0){
+                tabPane.getSelectionModel().select(currentIndex - 1);
+            }
+        });
+
+        btnNext.setOnMouseClicked(mouseEvent -> {
+            int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
+            if(currentIndex < tabPane.getTabs().size() - 1){
+                tabPane.getSelectionModel().select(currentIndex + 1);
+            }
+        });
+
     }
 
     private void removeItems(){
@@ -73,6 +102,7 @@ public class CheckoutTabController implements Initializable {
     }
 
     private void setUpEvents() {
+        setUpSwitchTabEvent();
         setFocusOnSearchField();
         setUpTabActions();
         setUpEventSearchField();
@@ -83,6 +113,18 @@ public class CheckoutTabController implements Initializable {
     private void setFocusOnSearchField() {
         Platform.runLater(() -> {
             if (checkoutTab.isSelected()) {
+                searchField.requestFocus();
+            }
+        });
+
+        mainContent.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                searchField.requestFocus();
+            }
+        });
+
+        checkoutTab.getTabPane().focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
                 searchField.requestFocus();
             }
         });
@@ -246,14 +288,16 @@ public class CheckoutTabController implements Initializable {
 
             if (!mainContent.getChildren().contains(removeItemsAlert)) {
                 mainContent.getChildren().add(removeItemsAlert);
-                alertController.getAlertCodeBox().setOnKeyPressed(e ->{
+                alertController.getYesButton().setOnKeyPressed(e ->{
                     if(e.getCode().equals(KeyCode.S)){
                         removeItems();
                         removeItemsAlert = null;
                         alertController.close();
+                    } else if (e.getCode().equals(KeyCode.N)){
+                        alertController.close();
                     }
                 });
-                alertController.getAlertCodeBox().requestFocus();
+                alertController.getYesButton().requestFocus();
 
             }
 

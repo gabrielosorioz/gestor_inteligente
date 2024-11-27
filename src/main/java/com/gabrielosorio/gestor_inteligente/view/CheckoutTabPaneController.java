@@ -1,20 +1,18 @@
 package com.gabrielosorio.gestor_inteligente.view;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-
+import javafx.scene.input.KeyCode;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-public class CheckoutTabPaneController implements Initializable {
+public class CheckoutTabPaneController implements Initializable, ShortcutHandler {
 
     @FXML
     private TabPane checkoutTabPanel;
@@ -28,6 +26,19 @@ public class CheckoutTabPaneController implements Initializable {
         log.info("CheckoutTabPaneController initialized " + (++initializeCounter) + " time(s).");
         openFirstTab();
 
+    }
+
+    @Override
+    public void handleShortcut(KeyCode keyCode) {
+        Tab activeTab = checkoutTabPanel.getSelectionModel().getSelectedItem();
+        if(activeTab != null){
+            Object controller = activeTab.getUserData();
+            if(controller instanceof CheckoutTabController){
+                ((CheckoutTabController) controller).handleShortcut(keyCode);
+            } else {
+                log.warning("Active tab does not have a valid controller. ");
+            }
+        }
     }
 
     private void openFirstTab(){
@@ -51,7 +62,13 @@ public class CheckoutTabPaneController implements Initializable {
             CheckoutTabController checkoutTabController = new CheckoutTabController(this);
             loader.setController(checkoutTabController);
             Tab newCheckoutTab = loader.load();
-            newCheckoutTab.setText("Caixa " + (++tabCounter));
+
+            // increments the counter and sets the tab name
+            newCheckoutTab.setText("Caixa " +(++tabCounter));
+
+            // Associates the controller with user data from Tab
+            newCheckoutTab.setUserData(checkoutTabController);
+
             return newCheckoutTab;
         } catch (IOException e) {
             log.severe("Error creating a new checkout tab" + e.getMessage() + e.getCause());
@@ -63,5 +80,8 @@ public class CheckoutTabPaneController implements Initializable {
         return checkoutTabPanel.getTabs().size();
     }
 
+    public TabPane getTabPane(){
+        return checkoutTabPanel;
+    }
 
 }

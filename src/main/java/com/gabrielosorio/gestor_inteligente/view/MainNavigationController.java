@@ -9,9 +9,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -36,17 +39,41 @@ public class MainNavigationController implements Initializable {
     private ImageView menuIcon;
 
     private final Map<String,Parent> viewCache = new HashMap<>();
+    private final Map<Parent,Object> viewController = new HashMap<>();
 
     private SideBarController sideBarController;
 
     private boolean isSidebarOpen = true;
 
+    private ShortcutHandler activeShortcutHandler;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        Platform.runLater(() -> {
+            addGlobalKeyFilter();
+
+        });
         addHeaderShadow(header);
         setUpMenuButtonToggle();
         loadSidebar();
         openHome();
+    }
+
+    private void addGlobalKeyFilter(){
+        GestorInteligenteApp.getPrimaryStage().getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (GestorInteligenteApp.getPrimaryStage().getScene().getFocusOwner() instanceof TextInputControl) {
+                return;
+            }
+
+            if (GestorInteligenteApp.getPrimaryStage().getScene().getFocusOwner() instanceof Button) {
+                return;
+            }
+
+            if (activeShortcutHandler != null) {
+                activeShortcutHandler.handleShortcut(event.getCode());
+                event.consume();
+            }
+        });
     }
 
     private void loadSidebar() {
@@ -75,12 +102,25 @@ public class MainNavigationController implements Initializable {
             try {
                 FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource(fxmlPath));
                 newScreen = loader.load();
+                Object controller = loader.getController();
+                // Armazena a view e o controlador
                 viewCache.put(fxmlPath, newScreen);
+                viewController.put(newScreen,controller);
+
             } catch (IOException e) {
                 throw new RuntimeException("Error loading screen: " + fxmlPath, e);
             }
 
         }
+
+        Object controller = viewController.get(newScreen);
+
+        if(controller instanceof ShortcutHandler){
+            activeShortcutHandler = (ShortcutHandler) controller;
+        } else {
+            activeShortcutHandler = null;
+        }
+
         mainContent.getChildren().clear();
         mainContent.getChildren().add(newScreen);
 

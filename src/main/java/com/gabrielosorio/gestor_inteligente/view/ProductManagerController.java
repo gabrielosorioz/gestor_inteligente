@@ -52,7 +52,7 @@ public class ProductManagerController implements Initializable {
     @FXML
     private HBox btnAdd;
 
-    private AnchorPane stockForm;
+    private AnchorPane productForm;
     private ProductFormController productFormController;
     private ProductTbViewController productTbViewController;
     private static int initializeCounter = 0;
@@ -136,7 +136,7 @@ public class ProductManagerController implements Initializable {
             productRepository.init(PSQLProductStrategy.getInstance());
             ProductService productService = new ProductServiceImpl(productRepository);
             loader.setController(new ProductFormController(productTbViewController,this,productService));
-            stockForm = loader.load();
+            productForm = loader.load();
             productFormController = loader.getController();
             configureProductFormLayout();
         } catch (IOException e){
@@ -146,11 +146,11 @@ public class ProductManagerController implements Initializable {
     }
 
     private void configureProductFormLayout(){
-        mainContent.getChildren().add(stockForm);
-        AnchorPane.setLeftAnchor(stockForm, 550.0);
-        AnchorPane.setRightAnchor(stockForm,0.0);
-        AnchorPane.setTopAnchor(stockForm,39.0);
-        stockForm.setTranslateX(FORM_HIDDEN_POSITION);
+        mainContent.getChildren().add(productForm);
+        AnchorPane.setLeftAnchor(productForm, 550.0);
+        AnchorPane.setRightAnchor(productForm,0.0);
+        AnchorPane.setTopAnchor(productForm,39.0);
+        productForm.setTranslateX(FORM_HIDDEN_POSITION);
     }
 
     private void configureShadowClick(){
@@ -165,12 +165,10 @@ public class ProductManagerController implements Initializable {
     private void hideProductForm(){
         animateForm(FORM_HIDDEN_POSITION,0.0);
         shadow.setVisible(false);
-//        pFormControl.lockIDField();
-
     }
 
     private void animateForm(double translateX, double fadeToValue){
-        TranslateTransition translateTransition = new TranslateTransition(FORM_ANIMATION_DURATION,stockForm);
+        TranslateTransition translateTransition = new TranslateTransition(FORM_ANIMATION_DURATION,productForm);
         translateTransition.setToX(translateX);
 
         FadeTransition fadeTransition = new FadeTransition(FADE_DURATION, shadow);

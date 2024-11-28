@@ -75,6 +75,10 @@ public class CheckoutTabController implements Initializable, ShortcutHandler{
         if (keyCode == KeyCode.F4) {
             showRemoveItemsAlert();
         }
+
+        if (keyCode == KeyCode.F3) {
+            finalizeSale();
+        }
     }
 
     private void setUpSwitchTabEvent(){
@@ -307,7 +311,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler{
         }
     }
 
-    private void showProductNotFoundAlert() {
+    private void showInfoMessageAlert(String message) {
         try {
             if (productNotFoundAlert == null) {
                 FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/InfoMessage.fxml"));
@@ -315,7 +319,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler{
                 fxmlLoader.setController(infoController);
                 productNotFoundAlert = fxmlLoader.load();
 
-                infoController.setText("Produto não encontrado!");
+                infoController.setText(message);
 
                 productNotFoundAlert.setLayoutX(450);
                 productNotFoundAlert.setLayoutY(250);
@@ -323,6 +327,8 @@ public class CheckoutTabController implements Initializable, ShortcutHandler{
 
             if (!mainContent.getChildren().contains(productNotFoundAlert)) {
                 mainContent.getChildren().add(productNotFoundAlert);
+                infoController.setText(message);
+
 
                 // Focus and button event, even on subsequent displays
                 infoController.getBtnOk().requestFocus();
@@ -363,7 +369,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler{
         Optional<Product> productOptional = getProductData(search);
 
         if(productOptional.isEmpty()){
-            showProductNotFoundAlert();
+            showInfoMessageAlert("Produto não encontrado.");
             searchField.clear();
             qtdField.setText("1");
             return;
@@ -378,6 +384,10 @@ public class CheckoutTabController implements Initializable, ShortcutHandler{
     }
 
     private void finalizeSale(){
+        if(saleTableOp.getItems().isEmpty()){
+            showInfoMessageAlert("Não foi possível finalizar a venda. Caixa vazio");
+            return;
+        }
         saleTableOp.showPaymentScreen();
     }
 

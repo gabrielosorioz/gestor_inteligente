@@ -11,7 +11,7 @@
 }
 
 .table-view .table-row-cell:hover {
-    -fx-background-color: #cccccc;
+    -fx-background-color: #e0e0e0;
 }
 
 .table-row-cell {
@@ -20,7 +20,7 @@
 }
 
 .table-row-cell:selected {
-    -fx-background-color: #a3a3a3;
+    -fx-background-color: #d6d6d6;
 }
 
 /* Estilo das células da tabela */
@@ -50,7 +50,7 @@
 }
 
 .table-view .column-header, .table-view .filler {
-    -fx-size: 66px;
+    -fx-size: 60px;
     -fx-border-width: 0; /* Remove borda do cabeçalho */
     -fx-background-color: transparent;
 }

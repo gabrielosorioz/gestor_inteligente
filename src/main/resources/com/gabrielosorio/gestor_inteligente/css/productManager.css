@@ -15,30 +15,21 @@
 }
 
 .search-field {
-    -fx-background-color: #eeeeee;
-    -fx-background-radius: 15px;
-    -fx-border-radius: 15px;
-    -fx-border-width: 1.5px;
-}
-
-.field {
-    -fx-background-color: #eee;
-    -fx-border-radius: 20px;
-    -fx-background-radius: 20px;
     -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
     -fx-font-size: 16px;
-    -fx-text-fill: black;
-    -fx-border-color: #ccc;
-    -fx-border-width: 1.2px;
+    -fx-background-color: #eee;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-border-width: 2px;
 }
 
-.field:hover {
-    -fx-background-color: #a3a3a3;
+.search-field:hover {
+    -fx-background-color: #d6d6d6;
 }
 
-.field:focused {
-    -fx-border-color: #7f7f7f;
+.search-field:focused {
+    -fx-border-color: #999999;
 }
 
 .title {
@@ -50,36 +41,6 @@
 .line {
     -fx-background-color: linear-gradient(to bottom right, #00d4ff, #9700ff);
     -fx-background-radius: 3px;
-}
-
-.btn-add {
-    -fx-border-color: transparent;
-    -fx-background-radius: 25px;
-    -fx-border-radius: 25px;
-    -fx-background-color: #9700ff;
-}
-
-.btn-add:hover {
-    -fx-cursor: hand;
-}
-
-.btn-search {
-     /**-fx-border-width: 1.5px;
-    -fx-border-color: #cccccc ; **/
-    -fx-background-radius: 50%;
-    -fx-border-radius: 50%;
-    -fx-background-color: #651FFF;
-}
-
-.label-btn-add {
-    -fx-font-size: 14px;
-    -fx-font-family: 'Poppins';
-    -fx-font-weight: bold;
-    -fx-text-fill: #fff;
-}
-
-.label-btn-add:hover {
-    -fx-cursor: hand;
 }
 
 .header {
@@ -128,12 +89,6 @@
     -fx-font-family: 'Poppins';
     -fx-font-weight: bold;
     -fx-font-size: 16px;
-}
-
-.btn-add {
-    -fx-background-radius: 50%;
-    -fx-border-radius: 50%;
-    -fx-background-color: #695CFE;
 }
 
 .scroll-bar {
@@ -190,11 +145,11 @@
 }
 
 .btn-add {
-    -fx-background-color: green;
+    -fx-background-color: #0093cb;
     -fx-background-radius: 50%;
     -fx-cursor: hand;
 }
 
 .btn-add:hover {
-    -fx-background-color: #006600;
+    -fx-background-color: #005acd;
 }

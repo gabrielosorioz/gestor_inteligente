@@ -32,16 +32,10 @@ public class ProductFormController implements Initializable {
 
     @FXML
     private TextField idField,barCodeField,descriptionField,costPriceField,sellingPriceField,
-    markupField,quantityField;
+    markupField,quantityField,categoryField,supplierField;
 
     @FXML
-    private TextField categoryField,supplierField;
-
-    @FXML
-    private ListView<String> categoryList;
-
-    @FXML
-    private ListView<String> supplierList;
+    private ListView<String> categoryList,supplierList;
 
     @FXML
     private Button btnSave,btnCancel;
@@ -63,9 +57,36 @@ public class ProductFormController implements Initializable {
         this.pService = pService;
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        initializeFields();
+        loadCategoryAndSupplierData();
+        setupButtonActions();
+    }
+
     public void setProduct(Optional<Product> product){
         this.product = product;
         populateFields();
+    }
+
+    private void setUpFieldNavigation(){
+        var fields = Arrays.asList(barCodeField,descriptionField,quantityField,costPriceField,
+                sellingPriceField, markupField,categoryField,supplierField);
+
+        for(int i=0; i < fields.size(); i++){
+            int nextIndex = (i+1) % fields.size();
+            var currentField = fields.get(i);
+            var nextField = fields.get(nextIndex);
+
+            currentField.setOnKeyPressed(event ->{
+                if(event.getCode() == KeyCode.ENTER){
+                    event.consume();
+                    nextField.requestFocus();
+                }
+            });
+        }
+
+
     }
 
     private void fetchCategoryData(){
@@ -133,9 +154,10 @@ public class ProductFormController implements Initializable {
 
     private void populateFields() {
         ProductFormUtils.populateProductFields(product,fieldMap);
-        priceListener(costPriceField);
-        priceListener(sellingPriceField);
-
+        priceListener(costPriceField,sellingPriceField);
+        priceListener(sellingPriceField,markupField);
+        barCodeField.requestFocus();
+        barCodeField.positionCaret(barCodeField.getText().length());
     }
 
     private void mapFields(){
@@ -187,10 +209,11 @@ public class ProductFormController implements Initializable {
         mapFields();
         setUpperCaseTextFormatter();
         lockField(idField);
+        setUpFieldNavigation();
     }
 
-    private void priceListener(TextField priceField){
-        if(priceField.getText().isBlank() || priceField.getText().isEmpty()){
+    private void priceListener(TextField priceField, TextField nextField) {
+        if (priceField.getText().isBlank() || priceField.getText().isEmpty()) {
             priceField.setText("0,00");
         } else {
             String formattedValue = TextFieldUtils.formatText(priceField.getText());
@@ -198,8 +221,12 @@ public class ProductFormController implements Initializable {
         }
 
         priceField.setOnKeyPressed(keyEvent -> {
-            KeyCode keyCodePressed = keyEvent.getCode();
-            if(keyCodePressed.isArrowKey()){
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                keyEvent.consume();
+                nextField.requestFocus(); // Foca no próximo campo explicitamente
+                return;
+            }
+            if (keyEvent.getCode().isArrowKey()) {
                 priceField.positionCaret(priceField.getText().length());
             }
         });
@@ -209,9 +236,9 @@ public class ProductFormController implements Initializable {
         });
 
         priceField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            String formattedText  = TextFieldUtils.formatText(newValue);
+            String formattedText = TextFieldUtils.formatText(newValue);
 
-            if(!newValue.equals(formattedText)) {
+            if (!newValue.equals(formattedText)) {
                 Platform.runLater(() -> {
                     priceField.setText(formattedText);
                     priceField.positionCaret(priceField.getText().length());
@@ -297,13 +324,6 @@ public class ProductFormController implements Initializable {
 
     }
 
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeFields();
-        loadCategoryAndSupplierData();
-        setupButtonActions();
-    }
 
 
 }

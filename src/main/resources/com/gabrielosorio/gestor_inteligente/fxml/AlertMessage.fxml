@@ -9,7 +9,7 @@
 
 <AnchorPane fx:id="alertContent" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane fx:id="shadow" opacity="0.24" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: black;" />
+      <AnchorPane fx:id="shadow" opacity="0.24" prefHeight="746.0" prefWidth="1300.0" style="-fx-background-color: black;" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"/>
       <AnchorPane fx:id="alertCodeBox" layoutX="475.0" layoutY="237.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="350.0" styleClass="body" stylesheets="@../css/alertMessage.css">
          <children>
             <ImageView fx:id="icon" fitHeight="60.0" fitWidth="56.0" layoutX="142.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">

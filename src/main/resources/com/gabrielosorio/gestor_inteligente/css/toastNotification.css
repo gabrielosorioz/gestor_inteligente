@@ -1,0 +1,37 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Regular.ttf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Bold.ttf');
+    font-weight: bold;
+}
+
+.toast {
+    -fx-background-color: rgba(255, 255, 255, 0.9); /* Fundo branco com transparência */
+    -fx-background-radius: 10px; /* Bordas arredondadas */
+    -fx-border-radius: 10px;    /* Bordas arredondadas */
+}
+
+
+.toast-left-border {
+    -fx-background-color: #4070f4;
+    -fx-background-radius: 10 0 0 10px;
+}
+
+.title {
+    -fx-text-fill: black;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.label-txt {
+  -fx-text-fill: black;
+  -fx-font-family: 'Poppins';
+  -fx-font-size: 16px;
+  -fx-font-weight: normal;
+}

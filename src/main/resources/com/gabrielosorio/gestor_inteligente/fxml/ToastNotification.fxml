@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<HBox fillHeight="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="320.0" styleClass="toast" stylesheets="@../css/toastNotification.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane fx:id="color" prefHeight="100.0" prefWidth="12.0" styleClass="toast-left-border" stylesheets="@../css/toastNotification.css" />
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="75.0">
+         <children>
+            <ImageView fx:id="icon" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/icons8-ok-60.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+      <VBox prefHeight="106.0" prefWidth="233.0" spacing="5.0">
+         <children>
+            <Label fx:id="title" styleClass="title" stylesheets="@../css/toastNotification.css" text="Title" />
+            <Text fx:id="text" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="label-txt" text="Text" wrappingWidth="238.83203125" />
+         </children>
+         <HBox.margin>
+            <Insets top="15.0" />
+         </HBox.margin>
+      </VBox>
+   </children>
+</HBox>

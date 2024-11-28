@@ -116,38 +116,4 @@ public class ToastNotification {
 
         fadeIn.play();
     }
-
-
-    public void showAndWait2(){
-        /**
-         * FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/PaymentView.fxml"));
-         *         fxmlLoader.setController(controller);
-         *
-         *         Stage stage = new Stage();
-         *         Scene scene = new Scene(fxmlLoader.load());
-         *         stage.setScene(scene);
-         *
-         *         stage.initOwner(GestorInteligenteApp.getPrimaryStage());
-         *         stage.initModality(Modality.APPLICATION_MODAL);
-         *
-         *         return stage;*/
-
-        // Create the scene and configure transparency
-        VBox vbox = new VBox();
-        vbox.setPrefHeight(500);
-        vbox.setPrefWidth(400);
-
-        Stage toastStage = new Stage();
-        Scene scene = new Scene(vbox);
-        toastStage.setScene(scene);
-
-        // show the Stage
-        toastStage.show();
-
-    }
-
-
-
-
-
 }

@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.exception.ProductFormException;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
@@ -14,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -79,6 +81,7 @@ public class ProductFormController implements Initializable {
             var nextField = fields.get(nextIndex);
 
             currentField.setOnKeyPressed(event ->{
+                pManagerController.handleShortcut(event.getCode());
                 if(event.getCode() == KeyCode.ENTER){
                     event.consume();
                     nextField.requestFocus();
@@ -178,22 +181,51 @@ public class ProductFormController implements Initializable {
         new AutoCompleteField(supplierField,supplierList);
     }
 
-    private void cancel(){
+    public void cancel(){
         this.product = Optional.empty();
         pManagerController.toggleProductForm();
     }
 
-    private void save() {
-        product.ifPresent(product -> {
-            var pToUpdate = ProductFormUtils.updateProduct(product,fieldMap);
-            pService.update(pToUpdate);
-        });
-
-        if(product.isEmpty()){
-            var newP = ProductFormUtils.createProduct(fieldMap);
-            pService.save(newP);
+    public void save() {
+        try {
+            if (product.isPresent()) {
+                Product pToUpdate = ProductFormUtils.updateProduct(product.get(), fieldMap);
+                pService.update(pToUpdate);
+                showUpdatedNotification();
+            } else {
+                Product newProduct = ProductFormUtils.createProduct(fieldMap);
+                pService.save(newProduct);
+                showSavedNotification();
+            }
+        } catch (ProductFormException e) {
+            showErrorNotification(e.getMessage());
+        } catch (RuntimeException e) {
+            showErrorNotification("Erro inesperado: " + e.getMessage());
         }
+    }
 
+
+    private void showErrorNotification(String message){
+        var notification = new ToastNotification();
+        notification.setTitle("Erro!");
+        notification.setColor("#F44336");
+        notification.setIcon(new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cancelar-96.png"));
+        notification.setText(message);
+        notification.showAndWait();
+    }
+
+    private void showSavedNotification(){
+       var notification = new ToastNotification();
+       notification.setTitle("Sucesso!");
+       notification.setText("Produto salvo com sucesso.");
+       notification.showAndWait();
+    }
+
+    private void showUpdatedNotification(){
+        var notification = new ToastNotification();
+        notification.setTitle("Sucesso!");
+        notification.setText("Produto atualizado com sucesso.");
+        notification.showAndWait();
     }
 
     private void loadCategoryAndSupplierData(){
@@ -258,7 +290,6 @@ public class ProductFormController implements Initializable {
     private void setupButtonActions() {
         btnSave.setOnMouseClicked(mouseEvent -> {
             save();
-            pManagerController.toggleProductForm();
         });
         btnCancel.setOnMouseClicked(mouseEvent -> cancel());
     }
@@ -319,11 +350,5 @@ public class ProductFormController implements Initializable {
             e.printStackTrace();
         }
     }
-
-    public void lockIDField(){
-
-    }
-
-
 
 }

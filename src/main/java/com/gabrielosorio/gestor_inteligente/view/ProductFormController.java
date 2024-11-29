@@ -18,7 +18,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -203,6 +202,9 @@ public class ProductFormController implements Initializable {
                 pService.save(newProduct);
                 showSuccess("Produto salvo com sucesso.");
             }
+
+            pManagerController.toggleProductForm();
+
         } catch (DuplicateProductException e) {
             showError("Código do produto já existe: " + fieldMap.get("idField").getText());
             product.get().setProductCode(oldProductCode);
@@ -237,6 +239,9 @@ public class ProductFormController implements Initializable {
         setUpperCaseTextFormatter();
         lockField(idField);
         setUpFieldNavigation();
+        idField.setOnKeyPressed(keyEvent -> {
+            pManagerController.handleShortcut(keyEvent.getCode());
+        });
     }
 
     private void priceListener(TextField priceField, TextField nextField) {
@@ -310,6 +315,10 @@ public class ProductFormController implements Initializable {
         setupActionField(field);
     }
 
+    public void lockIDField(){
+        lockField(idField);
+    }
+
     private static void unlockField(TextField field) {
         field.setEditable(true);
         field.setStyle("");
@@ -319,7 +328,6 @@ public class ProductFormController implements Initializable {
     private void setupActionField(TextField field) {
         field.setOnMouseClicked(click -> {
             if(!field.isEditable()){
-
                 showCodeAlert();
             }
         });

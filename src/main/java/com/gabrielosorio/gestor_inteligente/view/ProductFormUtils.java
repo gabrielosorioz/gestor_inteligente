@@ -1,8 +1,4 @@
 package com.gabrielosorio.gestor_inteligente.view;
-
-import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import com.gabrielosorio.gestor_inteligente.exception.InvalidProductException;
-import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.exception.ProductFormException;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
@@ -10,14 +6,7 @@ import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -61,7 +50,7 @@ public class ProductFormUtils {
         validateProductFields(fieldMap);
         var id = fieldMap.get("idField").getText().trim();
         var pCode = id.isEmpty() ? 0 : Integer.parseInt(id);
-        String description = fieldMap.get("descriptionField").getText();
+        String description = fieldMap.get("descriptionField").getText().trim();
         Optional<String> barCode = getBarCodeFromField(fieldMap.get("barCodeField"));
         BigDecimal costPrice = TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText());
         BigDecimal sellingPrice = TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText());
@@ -92,7 +81,7 @@ public class ProductFormUtils {
     public static Product updateProduct(Product product, Map<String, TextField> fieldMap) throws ProductFormException {
         validateProductFields(product,fieldMap);
         Optional<String> barCode = getBarCodeFromField(fieldMap.get("barCodeField"));
-        String description = fieldMap.get("descriptionField").getText();
+        String description = fieldMap.get("descriptionField").getText().trim();
         BigDecimal costPrice = TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText());
         BigDecimal sellingPrice = TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText());
         String quantityText = fieldMap.get("quantityField").getText();
@@ -126,11 +115,13 @@ public class ProductFormUtils {
     }
 
     private static void validateProductFields(Map<String, TextField> fieldMap) throws ProductFormException {
-        String description = fieldMap.get("descriptionField").getText();
+        String description = fieldMap.get("descriptionField").getText().trim();
         BigDecimal costPrice = TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText());
         BigDecimal sellingPrice = TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText());
 
         if(description.isEmpty()){
+            fieldMap.get("descriptionField").clear();
+            fieldMap.get("descriptionField").requestFocus();
             throw new ProductFormException("O campo de descrição do produto está vazio.");
         }
 
@@ -158,63 +149,5 @@ public class ProductFormUtils {
         String barCodeText = barCodeField.getText().trim();
         return barCodeText.isEmpty() ? Optional.empty() : Optional.of(barCodeText);
     }
-
-    private static void setLockFieldStyle(TextField field) {
-        field.setStyle(
-                "-fx-border-color: #e0e0e0;" +
-                        "-fx-text-fill: #7f7f7f;"
-//                "-fx-cursor: pointer;"
-        );
-        field.setOnMouseEntered(mouseEvent -> {
-            if (!field.isEditable()) {
-                field.setStyle(
-                        "-fx-cursor: hand;" +
-                                "-fx-border-color: #e0e0e0;"
-                );
-            }
-        });
-    }
-
-    private static void lockField(TextField field) {
-        field.setEditable(false);
-        setLockFieldStyle(field);
-        setupActionField(field);
-    }
-
-    private static void unlockField(TextField field) {
-        field.setEditable(true);
-        field.setStyle("");
-    }
-
-    private static void setupActionField(TextField field) {
-        field.setOnMouseClicked(click -> {
-            if(!field.isEditable()){
-                unlockField(field);
-                showLockFieldMessage();
-            }
-        });
-    }
-
-    private static void showLockFieldMessage() {
-
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/AlertMessage.fxml"));
-            Stage popUpStage = new Stage();
-            Scene scene = new Scene(fxmlLoader.load());
-            scene.setFill(Color.TRANSPARENT);
-            popUpStage.initModality(Modality.APPLICATION_MODAL);
-            popUpStage.initStyle(StageStyle.TRANSPARENT);
-            popUpStage.setScene(scene);
-            popUpStage.showAndWait();
-
-
-        } catch (Exception e) {
-//            log.severe("ERROR at load payment view: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-
-
 
 }

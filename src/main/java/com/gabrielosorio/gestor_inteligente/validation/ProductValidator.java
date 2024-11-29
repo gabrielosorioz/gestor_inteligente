@@ -2,7 +2,6 @@ package com.gabrielosorio.gestor_inteligente.validation;
 
 import com.gabrielosorio.gestor_inteligente.exception.InvalidProductException;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-
 import java.math.BigDecimal;
 import java.util.Optional;
 
@@ -97,6 +96,18 @@ public class ProductValidator {
         }
     }
 
+    public static boolean pricesGreaterThanZero(BigDecimal costPrice, BigDecimal sellingPrice){
+        if (sellingPrice == null || costPrice == null || sellingPrice.compareTo(BigDecimal.ZERO) <= 0 || costPrice.compareTo(BigDecimal.ZERO) <= 0) {
+            return false;
+        }
+        return true;
+    }
 
+    public static boolean costPriceLowerThanSellingPrice(BigDecimal costPrice, BigDecimal sellingPrice){
+        if(costPrice.compareTo(sellingPrice) > 0){
+            return false;
+        }
+        return true;
+    }
 
 }

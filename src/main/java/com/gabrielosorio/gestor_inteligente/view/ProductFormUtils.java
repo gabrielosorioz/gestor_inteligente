@@ -23,8 +23,11 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class ProductFormUtils {
+
+    private static final Logger log = Logger.getLogger(ProductFormUtils.class.getName());
 
     public static void populateProductFields(Optional<Product> product, Map<String, TextField> fieldMap) {
         var codeField = fieldMap.get("idField");
@@ -93,6 +96,7 @@ public class ProductFormUtils {
         BigDecimal costPrice = TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText());
         BigDecimal sellingPrice = TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText());
         String quantityText = fieldMap.get("quantityField").getText();
+        String productCodeTxt = fieldMap.get("idField").getText();
 
 
         int quantity;
@@ -105,7 +109,7 @@ public class ProductFormUtils {
         }
 
         try {
-            productCode = Integer.parseInt(quantityText);
+            productCode = Integer.parseInt(productCodeTxt);
         } catch (NumberFormatException e) {
             throw new ProductFormException("O ID deve ser um número válido.");
         }

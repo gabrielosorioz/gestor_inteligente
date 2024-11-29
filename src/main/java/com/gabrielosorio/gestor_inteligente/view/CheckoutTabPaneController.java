@@ -12,7 +12,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-public class CheckoutTabPaneController implements Initializable, ShortcutHandler {
+public class CheckoutTabPaneController implements Initializable, ShortcutHandler, RequestFocus {
 
     @FXML
     private TabPane checkoutTabPanel;
@@ -26,6 +26,17 @@ public class CheckoutTabPaneController implements Initializable, ShortcutHandler
         log.info("CheckoutTabPaneController initialized " + (++initializeCounter) + " time(s).");
         openFirstTab();
 
+    }
+
+    @Override
+    public void requestFocusOnField() {
+        Tab activeTab = checkoutTabPanel.getSelectionModel().getSelectedItem();
+        if(activeTab != null){
+            Object controller = activeTab.getUserData();
+            if(controller instanceof RequestFocus){
+                ((CheckoutTabController) controller).requestFocusOnField();
+            }
+        }
     }
 
     @Override
@@ -83,5 +94,4 @@ public class CheckoutTabPaneController implements Initializable, ShortcutHandler
     public TabPane getTabPane(){
         return checkoutTabPanel;
     }
-
 }

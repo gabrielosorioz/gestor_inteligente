@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class CheckoutTabController implements Initializable, ShortcutHandler{
+public class CheckoutTabController implements Initializable, ShortcutHandler, RequestFocus{
 
     private HashMap<String, Product> productData = new HashMap<>();
 
@@ -391,4 +391,10 @@ public class CheckoutTabController implements Initializable, ShortcutHandler{
         saleTableOp.showPaymentScreen();
     }
 
+    @Override
+    public void requestFocusOnField() {
+        Platform.runLater(() -> {
+            searchField.requestFocus();
+        });
+    }
 }

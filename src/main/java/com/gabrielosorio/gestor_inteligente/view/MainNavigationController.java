@@ -121,6 +121,10 @@ public class MainNavigationController implements Initializable {
             activeShortcutHandler = null;
         }
 
+        if(controller instanceof RequestFocus){
+            ((RequestFocus) controller).requestFocusOnField();
+        }
+
         mainContent.getChildren().clear();
         mainContent.getChildren().add(newScreen);
 
@@ -129,28 +133,36 @@ public class MainNavigationController implements Initializable {
     private void openHome(){
         loadScreen("fxml/Home.fxml");
         Platform.runLater(() -> {
-            toggleSideBar();
+            if(isSidebarOpen){
+                toggleSideBar();
+            }
         });
     }
 
     private void openPDV(){
         loadScreen("fxml/sale/CheckoutTabPane.fxml");
         Platform.runLater(() -> {
-            toggleSideBar();
+            if(isSidebarOpen){
+                toggleSideBar();
+            }
         });
     }
 
     private void openProductManager(){
         loadScreen("fxml/product-manager/ProductManager.fxml");
         Platform.runLater(() -> {
-            toggleSideBar();
+            if(isSidebarOpen){
+                toggleSideBar();
+            }
         });
     }
 
     private void openSalesReport(){
         loadScreen("fxml/reports/SalesReport.fxml");
         Platform.runLater(() -> {
-            toggleSideBar();
+            if(isSidebarOpen){
+                toggleSideBar();
+            }
         });
     }
 

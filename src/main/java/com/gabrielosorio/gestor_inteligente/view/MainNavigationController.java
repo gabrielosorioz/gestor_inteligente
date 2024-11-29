@@ -84,7 +84,6 @@ public class MainNavigationController implements Initializable {
             AnchorPane.setBottomAnchor(sidebar,0.0);
             AnchorPane.setTopAnchor(sidebar,0.0);
             root.getChildren().add(1,sidebar);
-
             sideBarController.addButton(new SidebarButton("Início", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48-white.png",this::openHome));
             sideBarController.addButton(new SidebarButton("Vender", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png",this::openPDV));
             sideBarController.addButton(new SidebarButton("Produtos", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png", this::openProductManager));
@@ -183,12 +182,16 @@ public class MainNavigationController implements Initializable {
             if(isSidebarOpen) {
                 rotateTransition.setByAngle(-180);
                 slide.setToX(-265);
+                slide.setOnFinished(actionEvent -> {
+                    sidebar.setPrefWidth(0);
+                });
                 shortcutSidebar.setVisible(true);
                 shortcutSidebar.setStyle("-fx-background-color: #fff;");
                 menuIcon.setImage(menuIconDef);
                 isSidebarOpen = false;
             } else {
                 rotateTransition.setByAngle(180);
+                sidebar.setPrefWidth(265);
                 slide.setToX(0);
                 menuIcon.setImage(menuIconActive);
                 slide.setOnFinished(actionEvent -> {

@@ -21,13 +21,13 @@
             </ImageView>
          </children>
       </HBox>
-      <VBox prefHeight="106.0" prefWidth="233.0" spacing="5.0">
+      <VBox prefHeight="107.0" prefWidth="239.0" spacing="2.0">
          <children>
             <Label fx:id="title" styleClass="title" stylesheets="@../css/toastNotification.css" text="Title" />
             <Text fx:id="text" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="label-txt" text="Text" wrappingWidth="238.83203125" />
          </children>
          <HBox.margin>
-            <Insets top="15.0" />
+            <Insets top="6.0" />
          </HBox.margin>
       </VBox>
    </children>

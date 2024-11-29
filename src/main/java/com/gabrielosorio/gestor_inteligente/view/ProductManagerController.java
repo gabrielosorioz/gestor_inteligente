@@ -9,12 +9,14 @@ import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -27,15 +29,10 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-public class ProductManagerController implements Initializable {
+public class ProductManagerController implements Initializable, ShortcutHandler {
 
-    private final Duration FORM_ANIMATION_DURATION = Duration.seconds(0.4);
-    private ProductFormController pFormControl;
-    private final Duration FADE_DURATION = Duration.seconds(0.2);
-    private final double FORM_HIDDEN_POSITION = 750;
-    private final double FORM_VISIBLE_POSITION = 0;
 
-    private final Logger log = Logger.getLogger(getClass().getName());
+
 
     @FXML
     private AnchorPane mainContent,tableBody;
@@ -57,6 +54,11 @@ public class ProductManagerController implements Initializable {
     private ProductTbViewController productTbViewController;
     private static int initializeCounter = 0;
     private boolean isProductFormVisible;
+    private final Duration FORM_ANIMATION_DURATION = Duration.seconds(0.4);
+    private final Duration FADE_DURATION = Duration.seconds(0.2);
+    private final double FORM_HIDDEN_POSITION = 750;
+    private final double FORM_VISIBLE_POSITION = 0;
+    private final Logger log = Logger.getLogger(getClass().getName());
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -77,6 +79,24 @@ public class ProductManagerController implements Initializable {
 
     }
 
+    @Override
+    public void handleShortcut(KeyCode keyCode) {
+        if(keyCode.equals(KeyCode.F5)){
+            if(isProductFormVisible){
+                hideProductForm();
+            }
+            Platform.runLater(() -> searchField.requestFocus());
+        }
+
+        if(keyCode.equals(KeyCode.F4)){
+            productFormController.save();
+        }
+
+        if(keyCode.equals(KeyCode.ESCAPE)){
+            productFormController.cancel();
+        }
+    }
+
     private void loadTableView() {
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductTbView.fxml"));
@@ -91,6 +111,23 @@ public class ProductManagerController implements Initializable {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private void loadProductForm(){
+        try {
+
+            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductForm.fxml"));
+            ProductRepository productRepository = new ProductRepository(PSQLProductStrategy.getInstance());
+            productRepository.init(PSQLProductStrategy.getInstance());
+            ProductService productService = new ProductServiceImpl(productRepository);
+            loader.setController(new ProductFormController(productTbViewController,this,productService));
+            productForm = loader.load();
+            productFormController = loader.getController();
+            configureProductFormLayout();
+        } catch (IOException e){
+            log.severe("Error loading the product form: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void setUpSearchField(TextField searchField){
@@ -126,23 +163,6 @@ public class ProductManagerController implements Initializable {
                 return row;
             }
         });
-    }
-
-    private void loadProductForm(){
-        try {
-
-            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductForm.fxml"));
-            ProductRepository productRepository = new ProductRepository(PSQLProductStrategy.getInstance());
-            productRepository.init(PSQLProductStrategy.getInstance());
-            ProductService productService = new ProductServiceImpl(productRepository);
-            loader.setController(new ProductFormController(productTbViewController,this,productService));
-            productForm = loader.load();
-            productFormController = loader.getController();
-            configureProductFormLayout();
-        } catch (IOException e){
-            log.severe("Error loading the product form: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
     private void configureProductFormLayout(){

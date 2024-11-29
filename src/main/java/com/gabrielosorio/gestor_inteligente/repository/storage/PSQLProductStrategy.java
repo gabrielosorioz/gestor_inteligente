@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.repository.storage;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
+import com.gabrielosorio.gestor_inteligente.exception.DuplicateProductException;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
@@ -182,6 +183,9 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
             log.info("Product successfully updated.");
 
         } catch (SQLException e) {
+            if ("23505".equals(e.getSQLState())) {
+                throw new DuplicateProductException("Product code already exists: " + product.getProductCode(), e);
+            }
             log.log(Level.SEVERE, "Failed to update product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to update product", e);
         }

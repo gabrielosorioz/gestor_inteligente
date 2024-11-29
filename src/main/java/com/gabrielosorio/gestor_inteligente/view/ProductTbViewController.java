@@ -110,21 +110,6 @@ public class ProductTbViewController implements Initializable {
         });
     }
 
-    public void updateStockUI(Stock updatedStock) {
-//        if (products != null && !products.isEmpty()) {
-//            for (int i = 0; i < products.size(); i++) {
-//                Product  = products.get(i);
-//                if (stock.getId() == updatedStock.getId()) {
-//                    products.set(i, updatedStock);
-//                    stockTable.refresh();
-//                    break;
-//                }
-//            }
-//        } else {
-//            log.warning("Stock list is empty or null.");
-//        }
-    }
-
     public void searchFilteredStock(String search){
         if(search == null || search.trim().isEmpty()){
             productsTable.setItems(productsList);

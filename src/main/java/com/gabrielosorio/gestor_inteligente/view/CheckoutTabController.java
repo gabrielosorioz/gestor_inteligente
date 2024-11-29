@@ -339,6 +339,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
                 infoController.getBtnOk().setOnKeyPressed(e -> {
                     if (e.getCode().equals(KeyCode.ENTER)) {
                         infoController.close();
+                        requestFocusOnField();
                     }
                 });
             }

@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 public class NotificationServiceImpl implements NotificationService {
 
     @Override
-    public void showSuccess(String message) {
+    public void showError(String message) {
         var notification = new ToastNotification();
         notification.setTitle("Erro!");
         notification.setColor("#F44336");
@@ -17,10 +17,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void showError(String message) {
+    public void showSuccess(String message) {
         var notification = new ToastNotification();
         notification.setTitle("Sucesso!");
-        notification.setText("Produto salvo com sucesso.");
+        notification.setText(message);
         notification.showAndWait();
     }
 

@@ -95,6 +95,10 @@ public class ProductManagerController implements Initializable, ShortcutHandler 
         if(keyCode.equals(KeyCode.ESCAPE)){
             productFormController.cancel();
         }
+
+        if(keyCode.equals(KeyCode.F1)){
+            addNewProduct();
+        }
     }
 
     private void loadTableView() {
@@ -134,6 +138,9 @@ public class ProductManagerController implements Initializable, ShortcutHandler 
         TextFieldUtils.setUpperCaseTextFormatter(searchField);
         searchField.textProperty().addListener((obsValue, OldValue, newValue) -> {
             productTbViewController.searchFilteredStock(newValue);
+        });
+        searchField.setOnKeyPressed(keyEvent -> {
+            handleShortcut(keyEvent.getCode());
         });
     }
 
@@ -208,6 +215,7 @@ public class ProductManagerController implements Initializable, ShortcutHandler 
     public void toggleProductForm(){
         if(isProductFormVisible){
             hideProductForm();
+            productFormController.lockIDField();
         } else {
             showProductForm();
         }
@@ -221,7 +229,10 @@ public class ProductManagerController implements Initializable, ShortcutHandler 
 
     private void addNewProduct(){
         productFormController.setProduct(Optional.empty());
-        toggleProductForm();
+        productFormController.lockIDField();
+        if(!isProductFormVisible){
+            toggleProductForm();
+        }
     }
 
     public void addContent(Node node){

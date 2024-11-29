@@ -1,22 +1,24 @@
 package com.gabrielosorio.gestor_inteligente.view;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.exception.InvalidProductException;
 import com.gabrielosorio.gestor_inteligente.exception.ProductException;
+import com.gabrielosorio.gestor_inteligente.exception.ProductFormException;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Map;
@@ -52,39 +54,100 @@ public class ProductFormUtils {
         fieldMap.values().forEach(field -> field.setText(""));
     }
 
-    public static Product createProduct(Map<String, TextField> fieldMap) {
+    public static Product createProduct(Map<String, TextField> fieldMap) throws ProductFormException {
+        validateProductFields(fieldMap);
         var id = fieldMap.get("idField").getText().trim();
         var pCode = id.isEmpty() ? 0 : Integer.parseInt(id);
+        String description = fieldMap.get("descriptionField").getText();
+        Optional<String> barCode = getBarCodeFromField(fieldMap.get("barCodeField"));
+        BigDecimal costPrice = TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText());
+        BigDecimal sellingPrice = TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText());
+        var quantityText =  fieldMap.get("quantityField").getText().trim();
+        int quantity;
 
-        return Product.builder()
-                .productCode(pCode)
-                .barCode(getBarCodeFromField(fieldMap.get("barCodeField")))
-                .description(fieldMap.get("descriptionField").getText())
-                .costPrice(TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText()))
-                .sellingPrice(TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText()))
-                .dateCreate(Timestamp.from(Instant.now()))
-                .status(Status.ACTIVE)
-                .supplier(Optional.empty())
-                .category(Optional.empty())
-                .quantity(Integer.parseInt(fieldMap.get("quantityField").getText()))
-                .build();
-    }
-
-    public static Product updateProduct(Product product, Map<String, TextField> fieldMap) {
-        if (fieldMap.get("idField").getText().trim().isEmpty()) {
-            fieldMap.get("idField").setText(String.valueOf(product.getProductCode()));
-            throw new ProductException("Product Code field is Empty.");
+        try {
+            quantity = Integer.parseInt(quantityText);
+        } catch (NumberFormatException e) {
+            throw new ProductFormException("A quantidade deve ser um número válido.");
         }
 
-        product.setBarCode(getBarCodeFromField(fieldMap.get("barCodeField")));
-        product.setDescription(fieldMap.get("descriptionField").getText());
-        product.setCostPrice(TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText()));
-        product.setSellingPrice(TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText()));
-        product.setQuantity(Integer.parseInt(fieldMap.get("quantityField").getText()));
-        product.setProductCode(Integer.parseInt(fieldMap.get("idField").getText()));
+            return Product.builder()
+                    .productCode(pCode)
+                    .barCode(barCode)
+                    .description(description)
+                    .costPrice(costPrice)
+                    .sellingPrice(sellingPrice)
+                    .dateCreate(Timestamp.from(Instant.now()))
+                    .status(Status.ACTIVE)
+                    .supplier(Optional.empty())
+                    .category(Optional.empty())
+                    .quantity(quantity)
+                    .build();
+
+    }
+
+    public static Product updateProduct(Product product, Map<String, TextField> fieldMap) throws ProductFormException {
+        validateProductFields(product,fieldMap);
+        Optional<String> barCode = getBarCodeFromField(fieldMap.get("barCodeField"));
+        String description = fieldMap.get("descriptionField").getText();
+        BigDecimal costPrice = TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText());
+        BigDecimal sellingPrice = TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText());
+        String quantityText = fieldMap.get("quantityField").getText();
+
+
+        int quantity;
+        long productCode;
+
+        try {
+            quantity = Integer.parseInt(quantityText);
+        } catch (NumberFormatException e) {
+            throw new ProductFormException("A quantidade deve ser um número válido.");
+        }
+
+        try {
+            productCode = Integer.parseInt(quantityText);
+        } catch (NumberFormatException e) {
+            throw new ProductFormException("O ID deve ser um número válido.");
+        }
+
+        product.setBarCode(barCode);
+        product.setDescription(description);
+        product.setCostPrice(costPrice);
+        product.setSellingPrice(sellingPrice);
+        product.setQuantity(quantity);
+        product.setProductCode(productCode);
         product.setSupplier(Optional.empty());
         product.setCategory(Optional.empty());
         return product;
+    }
+
+    private static void validateProductFields(Map<String, TextField> fieldMap) throws ProductFormException {
+        String description = fieldMap.get("descriptionField").getText();
+        BigDecimal costPrice = TextFieldUtils.formatCurrency(fieldMap.get("costPriceField").getText());
+        BigDecimal sellingPrice = TextFieldUtils.formatCurrency(fieldMap.get("sellingPriceField").getText());
+
+        if(description.isEmpty()){
+            throw new ProductFormException("O campo de descrição do produto está vazio.");
+        }
+
+        if (!ProductValidator.costPriceLowerThanSellingPrice(costPrice,sellingPrice)) {
+            throw new ProductFormException("O preço de custo deve ser menor do que o preço de venda.");
+        }
+
+        if(!ProductValidator.pricesGreaterThanZero(costPrice,sellingPrice)){
+            throw new ProductFormException("Preço de custo e preço de venda devem ser maiores que zero.");
+        }
+    }
+
+    private static void validateProductFields(Product product,Map<String, TextField> fieldMap) throws ProductFormException {
+        validateProductFields(fieldMap);
+        String pCode = fieldMap.get("idField").getText().trim();
+
+        if (pCode.isEmpty()) {
+            fieldMap.get("idField").setText(String.valueOf(product.getProductCode()));
+            throw new ProductFormException("O campo ID do produto está vazio.");
+        }
+
     }
 
     private static Optional<String> getBarCodeFromField(TextField barCodeField) {
@@ -123,12 +186,12 @@ public class ProductFormUtils {
         field.setOnMouseClicked(click -> {
             if(!field.isEditable()){
                 unlockField(field);
-                showPopUpMessage();
+                showLockFieldMessage();
             }
         });
     }
 
-    private static void showPopUpMessage() {
+    private static void showLockFieldMessage() {
 
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/AlertMessage.fxml"));
@@ -146,6 +209,8 @@ public class ProductFormUtils {
             e.printStackTrace();
         }
     }
+
+
 
 
 }

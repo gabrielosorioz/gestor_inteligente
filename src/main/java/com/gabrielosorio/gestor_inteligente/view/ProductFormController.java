@@ -197,11 +197,11 @@ public class ProductFormController implements Initializable {
             if (product.isPresent()) {
                 Product pToUpdate = ProductFormUtils.updateProduct(product.get(), fieldMap);
                 pService.update(pToUpdate);
-                showSuccess("Produto salvo com sucesso.");
+                showSuccess("Produto atualizado com sucesso.");
             } else {
                 Product newProduct = ProductFormUtils.createProduct(fieldMap);
                 pService.save(newProduct);
-                showSuccess("Produto atualizado com sucesso.");
+                showSuccess("Produto salvo com sucesso.");
             }
         } catch (DuplicateProductException e) {
             showError("Código do produto já existe: " + fieldMap.get("idField").getText());

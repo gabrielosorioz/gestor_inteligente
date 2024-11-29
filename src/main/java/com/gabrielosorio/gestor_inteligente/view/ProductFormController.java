@@ -1,10 +1,13 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.exception.DuplicateProductException;
 import com.gabrielosorio.gestor_inteligente.exception.ProductFormException;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
+import com.gabrielosorio.gestor_inteligente.service.NotificationService;
 import com.gabrielosorio.gestor_inteligente.service.ProductService;
+import com.gabrielosorio.gestor_inteligente.service.impl.NotificationServiceImpl;
 import com.gabrielosorio.gestor_inteligente.utils.AutoCompleteField;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
@@ -47,6 +50,7 @@ public class ProductFormController implements Initializable {
 
     private final ProductTbViewController pTbViewController;
     private final ProductManagerController pManagerController;
+    private final NotificationService notificationService = new NotificationServiceImpl();
     private final ProductService pService;
 
     ArrayList<String> categories = new ArrayList<>();
@@ -187,45 +191,36 @@ public class ProductFormController implements Initializable {
     }
 
     public void save() {
+        var oldProductCode = product.get().getProductCode();
+
         try {
             if (product.isPresent()) {
                 Product pToUpdate = ProductFormUtils.updateProduct(product.get(), fieldMap);
                 pService.update(pToUpdate);
-                showUpdatedNotification();
+                showSuccess("Produto salvo com sucesso.");
             } else {
                 Product newProduct = ProductFormUtils.createProduct(fieldMap);
                 pService.save(newProduct);
-                showSavedNotification();
+                showSuccess("Produto atualizado com sucesso.");
             }
+        } catch (DuplicateProductException e) {
+            showError("Código do produto já existe: " + fieldMap.get("idField").getText());
+            product.get().setProductCode(oldProductCode);
+            idField.setText(String.valueOf(oldProductCode));
+
         } catch (ProductFormException e) {
-            showErrorNotification(e.getMessage());
+            showError(e.getMessage());
         } catch (RuntimeException e) {
-            showErrorNotification("Erro inesperado: " + e.getMessage());
+            showError("Erro inesperado: " + e.getMessage());
         }
     }
 
-
-    private void showErrorNotification(String message){
-        var notification = new ToastNotification();
-        notification.setTitle("Erro!");
-        notification.setColor("#F44336");
-        notification.setIcon(new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cancelar-96.png"));
-        notification.setText(message);
-        notification.showAndWait();
+    private void showSuccess(String message){
+        notificationService.showSuccess(message);
     }
 
-    private void showSavedNotification(){
-       var notification = new ToastNotification();
-       notification.setTitle("Sucesso!");
-       notification.setText("Produto salvo com sucesso.");
-       notification.showAndWait();
-    }
-
-    private void showUpdatedNotification(){
-        var notification = new ToastNotification();
-        notification.setTitle("Sucesso!");
-        notification.setText("Produto atualizado com sucesso.");
-        notification.showAndWait();
+    private void showError(String message){
+        notificationService.showError(message);
     }
 
     private void loadCategoryAndSupplierData(){

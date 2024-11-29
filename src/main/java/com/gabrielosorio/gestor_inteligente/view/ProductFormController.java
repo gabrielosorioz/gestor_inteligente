@@ -74,6 +74,13 @@ public class ProductFormController implements Initializable {
         populateFields();
     }
 
+    private void setUpNumericField(TextField field){
+        field.textProperty().addListener(((observableValue, s, t1) -> {
+            String plainText = t1.replaceAll("[^0-9]", "");
+            field.setText(plainText);
+        }));
+    }
+
     private void setUpFieldNavigation(){
         var fields = Arrays.asList(barCodeField,descriptionField,quantityField,costPriceField,
                 sellingPriceField, markupField,categoryField,supplierField);
@@ -242,6 +249,9 @@ public class ProductFormController implements Initializable {
         idField.setOnKeyPressed(keyEvent -> {
             pManagerController.handleShortcut(keyEvent.getCode());
         });
+        setUpNumericField(quantityField);
+        setUpNumericField(idField);
+        setUpNumericField(barCodeField);
     }
 
     private void priceListener(TextField priceField, TextField nextField) {

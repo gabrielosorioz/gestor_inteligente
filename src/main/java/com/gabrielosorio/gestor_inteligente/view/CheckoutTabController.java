@@ -189,6 +189,10 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
                 }
             }
         });
+        searchField.textProperty().addListener(((observableValue, s, t1) -> {
+            String plainText = t1.replaceAll("[^0-9]", "");
+            searchField.setText(plainText);
+        }));
     }
 
     private void setDropShadowToBody() {

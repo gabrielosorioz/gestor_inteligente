@@ -3,7 +3,7 @@ package com.gabrielosorio.gestor_inteligente.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class CashFlow {
+public class CheckoutMovement {
 
     private long id;
     private Sale sale;
@@ -13,7 +13,7 @@ public class CashFlow {
     private String movementType;
     private LocalDateTime dateTime;
 
-    public CashFlow(long id, Sale sale, BigDecimal pettyCash, BigDecimal exitCash, BigDecimal entryCash, String movementType, LocalDateTime dateTime) {
+    public CheckoutMovement(long id, Sale sale, BigDecimal pettyCash, BigDecimal exitCash, BigDecimal entryCash, String movementType, LocalDateTime dateTime) {
         this.id = id;
         this.sale = sale;
         this.pettyCash = pettyCash;

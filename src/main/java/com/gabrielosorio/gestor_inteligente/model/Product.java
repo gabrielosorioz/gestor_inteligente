@@ -3,6 +3,8 @@ package com.gabrielosorio.gestor_inteligente.model;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.utils.ProductCalculationUtils;
 import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
+import javafx.beans.property.*;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Optional;
@@ -25,6 +27,25 @@ public class Product {
     private Timestamp dateUpdate;
     private Timestamp dateDelete;
 
+    /** observable properties */
+    private final LongProperty idProp = new SimpleLongProperty();
+    private final LongProperty productCodeProp = new SimpleLongProperty();
+    private final StringProperty barCodeProp = new SimpleStringProperty();
+    private final StringProperty descriptionProp = new SimpleStringProperty();
+    private final ObjectProperty<BigDecimal> costPriceProp = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> sellingPriceProp = new SimpleObjectProperty<>();
+    private final ObjectProperty<Optional<Supplier>> supplierProp = new SimpleObjectProperty<>();
+    private final ObjectProperty<Optional<Category>> categoryProp = new SimpleObjectProperty<>();
+    private final DoubleProperty profitMarginProp = new SimpleDoubleProperty();
+    private final DoubleProperty markupPercentProp = new SimpleDoubleProperty();
+    private final LongProperty quantityProp = new SimpleLongProperty();
+    private final ObjectProperty<Status> statusProp = new SimpleObjectProperty<>();
+    private final ObjectProperty<Timestamp> dateCreateProp = new SimpleObjectProperty<>();
+    private final ObjectProperty<Timestamp> dateUpdateProp = new SimpleObjectProperty<>();
+    private final ObjectProperty<Timestamp> dateDeleteProp = new SimpleObjectProperty<>();
+
+
+
     public Product(ProductBuilder productBuilder) {
         this.id = productBuilder.id;
         this.productCode = productBuilder.productCode;
@@ -41,6 +62,27 @@ public class Product {
         this.category = productBuilder.category;
         this.markupPercent = productBuilder.markupPercent;
         this.quantity = productBuilder.quantity;
+
+        /** set observable properties */
+        idProp.set(productBuilder.id);
+        productCodeProp.set(productBuilder.productCode);
+        barCodeProp.set(productBuilder.barCode.orElse(null));
+        descriptionProp.set(productBuilder.description);
+        costPriceProp.set(productBuilder.costPrice);
+        sellingPriceProp.set(productBuilder.sellingPrice);
+        profitMarginProp.set(productBuilder.profitMargin);
+        statusProp.set(productBuilder.status);
+        dateCreateProp.set(productBuilder.dateCreate);
+        dateUpdateProp.set(productBuilder.dateUpdate);
+        dateDeleteProp.set(productBuilder.dateDelete);
+        supplierProp.set(productBuilder.supplier);
+        categoryProp.set(productBuilder.category);
+        markupPercentProp.set(productBuilder.markupPercent);
+        quantityProp.set(productBuilder.quantity);
+
+        costPriceProp.addListener((observable, oldValue, newValue) -> updateCalculationsProps());
+        sellingPriceProp.addListener((observable, oldValue, newValue) -> updateCalculationsProps());
+
     }
 
     public static ProductBuilder builder() {
@@ -147,6 +189,25 @@ public class Product {
         this.profitMargin = ProductCalculationUtils.calculateProfitMargin(this.costPrice, this.sellingPrice);
     }
 
+    private void updateCalculationsProps() {
+        if (costPriceProp.get() != null && sellingPriceProp.get() != null) {
+            BigDecimal costPrice = costPriceProp.get();
+            BigDecimal sellingPrice = sellingPriceProp.get();
+
+            if (costPrice.compareTo(BigDecimal.ZERO) > 0) {
+                double markup = ProductCalculationUtils.calculateMarkup(costPrice, sellingPrice);
+                double profit = ProductCalculationUtils.calculateProfitMargin(costPrice, sellingPrice);
+
+                if (markup >= 0 && profit >= 0) {
+                    markupPercentProp.set(markup);
+                    profitMarginProp.set(profit);
+                }
+            }
+        }
+    }
+
+
+
     public long getId() {
         return id;
     }
@@ -205,23 +266,28 @@ public class Product {
 
     public void setId(long id) {
         this.id = id;
+        idProp.set(id);
     }
 
     public void setProductCode(long productCode) {
         this.productCode = productCode;
+        productCodeProp.set(productCode);
     }
 
     public void setBarCode(Optional<String> barCode) {
         this.barCode = barCode;
+        barCodeProp.set(barCode.orElse(null));
     }
 
     public void setDescription(String description) {
         this.description = description;
+        descriptionProp.set(description);
     }
 
     public void setCostPrice(BigDecimal costPrice) {
-        ProductValidator.validatePrices(costPrice, this.sellingPrice);
+        ProductValidator.validatePrices(this.costPrice, this.sellingPrice);
         this.costPrice = costPrice;
+        costPriceProp.set(costPrice);
         validate();
         updateCalculations();
     }
@@ -229,16 +295,19 @@ public class Product {
     public void setSellingPrice(BigDecimal sellingPrice) {
         ProductValidator.validatePrices(this.costPrice, sellingPrice);
         this.sellingPrice = sellingPrice;
+        sellingPriceProp.set(sellingPrice);
         updateCalculations();
         validate();
     }
 
     public void setSupplier(Optional<Supplier> supplier) {
         this.supplier = supplier;
+        supplierProp.set(supplier);
     }
 
     public void setCategory(Optional<Category> category) {
         this.category = category;
+        categoryProp.set(category);
     }
 
     public void setProfitPercent(double profitMargin) {
@@ -251,6 +320,7 @@ public class Product {
 
     public void setStatus(Status status) {
         this.status = status;
+        this.statusProp.set(status);
     }
 
     public void setDateCreate(Timestamp dateCreate) {
@@ -259,6 +329,7 @@ public class Product {
 
     public void setDateUpdate(Timestamp dateUpdate) {
         this.dateUpdate = dateUpdate;
+        this.dateUpdateProp.set(dateUpdate);
     }
 
     public void setDateDelete(Timestamp dateDelete) {
@@ -271,7 +342,72 @@ public class Product {
 
     public void setQuantity(long quantity) {
         this.quantity = quantity;
+        quantityProp.set(quantity);
     }
+
+    /** Getters for observable properties */
+    public LongProperty idProperty() {
+        return idProp;
+    }
+
+    public LongProperty productCodeProperty() {
+        return productCodeProp;
+    }
+
+    public StringProperty barCodeProperty() {
+        return barCodeProp;
+    }
+
+    public StringProperty descriptionProperty() {
+        return descriptionProp;
+    }
+
+    public ObjectProperty<BigDecimal> costPriceProperty() {
+        return costPriceProp;
+    }
+
+    public ObjectProperty<BigDecimal> sellingPriceProperty() {
+        return sellingPriceProp;
+    }
+
+    public ObjectProperty<Optional<Supplier>> supplierProperty() {
+        return supplierProp;
+    }
+
+    public ObjectProperty<Optional<Category>> categoryProperty() {
+        return categoryProp;
+    }
+
+    public DoubleProperty profitMarginProperty() {
+        return profitMarginProp;
+    }
+
+    public DoubleProperty markupPercentProperty() {
+        return markupPercentProp;
+    }
+
+    public LongProperty quantityProperty() {
+        return quantityProp;
+    }
+
+    public ObjectProperty<Status> statusProperty() {
+        return statusProp;
+    }
+
+    public ObjectProperty<Timestamp> dateCreateProperty() {
+        return dateCreateProp;
+    }
+
+    public ObjectProperty<Timestamp> dateUpdateProperty() {
+        return dateUpdateProp;
+    }
+
+    public ObjectProperty<Timestamp> dateDeleteProperty() {
+        return dateDeleteProp;
+    }
+
+
+
 
     @Override
     public String toString() {

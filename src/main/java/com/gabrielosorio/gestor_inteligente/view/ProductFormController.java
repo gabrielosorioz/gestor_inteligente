@@ -221,6 +221,7 @@ public class ProductFormController implements Initializable {
             showError(e.getMessage());
         } catch (RuntimeException e) {
             showError("Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

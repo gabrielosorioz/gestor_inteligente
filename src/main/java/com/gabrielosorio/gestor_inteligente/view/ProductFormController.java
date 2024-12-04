@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -25,6 +26,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
@@ -79,6 +82,29 @@ public class ProductFormController implements Initializable {
             String plainText = t1.replaceAll("[^0-9]", "");
             field.setText(plainText);
         }));
+    }
+
+
+    private void calculateAndSetMarkup() {
+        try {
+            // Gets the values from the cost price and sales price fields
+            BigDecimal costPrice = TextFieldUtils.formatCurrency(costPriceField.getText());
+            BigDecimal sellingPrice = TextFieldUtils.formatCurrency(sellingPriceField.getText());
+
+            // Checks that the cost price is greater than 0 to avoid division by zero
+            if (costPrice.compareTo(BigDecimal.ZERO) > 0 && costPrice.compareTo(sellingPrice) < 0) {
+                BigDecimal difference = sellingPrice.subtract(costPrice);
+                BigDecimal markup = difference.divide(costPrice,4, RoundingMode.HALF_UP);
+                markupField.setText(TextFieldUtils.formatText(markup.toPlainString()));
+            } else {
+                markupField.setText("0.00");
+            }
+        } catch (NumberFormatException e) {
+            markupField.setText("0.00");
+        } catch (ArithmeticException e) {
+            markupField.setText("0.00");
+        }
+
     }
 
     private void setUpFieldNavigation(){
@@ -176,7 +202,7 @@ public class ProductFormController implements Initializable {
 
     private void populateFields() {
         ProductFormUtils.populateProductFields(product,fieldMap);
-        priceListener(costPriceField,sellingPriceField,sellingPriceField);
+        priceListener(costPriceField,sellingPriceField,quantityField);
         priceListener(sellingPriceField,markupField,costPriceField);
         barCodeField.requestFocus();
         barCodeField.positionCaret(barCodeField.getText().length());
@@ -259,6 +285,8 @@ public class ProductFormController implements Initializable {
         idField.setOnKeyPressed(keyEvent -> {
             pManagerController.handleShortcut(keyEvent.getCode());
         });
+        markupField.setEditable(false);
+        markupField.setCursor(Cursor.DEFAULT);
         setUpNumericField(quantityField);
         setUpNumericField(idField);
         setUpNumericField(barCodeField);
@@ -300,6 +328,7 @@ public class ProductFormController implements Initializable {
 
         priceField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             String formattedText = TextFieldUtils.formatText(newValue);
+            calculateAndSetMarkup();
 
             if (!newValue.equals(formattedText)) {
                 Platform.runLater(() -> {

@@ -8,6 +8,7 @@ import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,10 +39,10 @@ public class ProductTbViewController implements Initializable {
     private TableColumn<Product, String> descriptionCol;
 
     @FXML
-    private TableColumn<Product, String> idCol;
+    private TableColumn<Product, Long> idCol;
 
     @FXML
-    private TableColumn<Product, String> stockColumn;
+    private TableColumn<Product, Long> stockColumn;
 
     @FXML
     private TableColumn<Product, String> sellingPriceCol;
@@ -60,13 +61,36 @@ public class ProductTbViewController implements Initializable {
     private final Logger log = Logger.getLogger(getClass().getName());
 
     private void setUpColumns() {
+        categoryColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().categoryProperty().get().map(Category::getDescription).orElse("N/A"))
+        );
 
-        categoryColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategory().map(Category::getDescription).orElse("N/A")));
-        costPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getCostPrice().toPlainString())));
-        descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
-        idCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProductCode())));
-        stockColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
-        sellingPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(TextFieldUtils.formatText(cellData.getValue().getSellingPrice().toPlainString())));
+        costPriceCol.setCellValueFactory(cellData ->
+                Bindings.createStringBinding(
+                        () -> TextFieldUtils.formatText(cellData.getValue().costPriceProperty().get().toPlainString()),
+                        cellData.getValue().costPriceProperty()
+                )
+        );
+
+        sellingPriceCol.setCellValueFactory(cellData ->
+                Bindings.createStringBinding(
+                        () -> TextFieldUtils.formatText(cellData.getValue().sellingPriceProperty().get().toPlainString()),
+                        cellData.getValue().sellingPriceProperty()
+                )
+        );
+
+        descriptionCol.setCellValueFactory(cellData ->
+                cellData.getValue().descriptionProperty()
+        );
+
+        idCol.setCellValueFactory(cellData ->
+                cellData.getValue().productCodeProperty().asObject()
+        );
+
+        stockColumn.setCellValueFactory(cellData ->
+                cellData.getValue().quantityProperty().asObject()
+        );
+
 
         // set monetary label
         monetaryLabel(costPriceCol);
@@ -153,7 +177,6 @@ public class ProductTbViewController implements Initializable {
         var allProducts = new ArrayList<>(productRepository.findAll());
         return allProducts;
     }
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

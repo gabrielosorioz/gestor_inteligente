@@ -87,14 +87,23 @@ public class ProductFormController implements Initializable {
 
         for(int i=0; i < fields.size(); i++){
             int nextIndex = (i+1) % fields.size();
+            int prevIndex = (i - 1 + fields.size()) % fields.size(); // Index for the previous field
             var currentField = fields.get(i);
             var nextField = fields.get(nextIndex);
+            var prevField = fields.get(prevIndex);
 
-            currentField.setOnKeyPressed(event ->{
+
+            currentField.setOnKeyPressed(event -> {
                 pManagerController.handleShortcut(event.getCode());
-                if(event.getCode() == KeyCode.ENTER){
+                if (event.getCode() == KeyCode.ENTER) {
                     event.consume();
-                    nextField.requestFocus();
+                    nextField.requestFocus(); // Move focus to the next field
+                } else if (event.getCode() == KeyCode.UP) {
+                    event.consume();
+                    prevField.requestFocus(); // Move focus to the previous field
+                } else if (event.getCode() == KeyCode.DOWN) {
+                    event.consume();
+                    nextField.requestFocus(); // Move focus to the next field
                 }
             });
         }
@@ -167,8 +176,8 @@ public class ProductFormController implements Initializable {
 
     private void populateFields() {
         ProductFormUtils.populateProductFields(product,fieldMap);
-        priceListener(costPriceField,sellingPriceField);
-        priceListener(sellingPriceField,markupField);
+        priceListener(costPriceField,sellingPriceField,sellingPriceField);
+        priceListener(sellingPriceField,markupField,costPriceField);
         barCodeField.requestFocus();
         barCodeField.positionCaret(barCodeField.getText().length());
     }
@@ -255,7 +264,7 @@ public class ProductFormController implements Initializable {
         setUpNumericField(barCodeField);
     }
 
-    private void priceListener(TextField priceField, TextField nextField) {
+    private void priceListener(TextField priceField, TextField nextField, TextField previousField) {
         if (priceField.getText().isBlank() || priceField.getText().isEmpty()) {
             priceField.setText("0,00");
         } else {
@@ -266,12 +275,23 @@ public class ProductFormController implements Initializable {
         priceField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 keyEvent.consume();
-                nextField.requestFocus(); // Foca no próximo campo explicitamente
+                nextField.requestFocus();
                 return;
             }
-            if (keyEvent.getCode().isArrowKey()) {
+            if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.RIGHT) {
                 priceField.positionCaret(priceField.getText().length());
+            } else if (keyEvent.getCode() == KeyCode.UP) {
+                keyEvent.consume();
+                previousField.requestFocus();
+                return;
+            } else if(keyEvent.getCode() == KeyCode.DOWN){
+                keyEvent.consume();
+                nextField.requestFocus();
+                return;
             }
+
+            pManagerController.handleShortcut(keyEvent.getCode());
+
         });
 
         priceField.setOnMouseClicked(mouseEvent -> {

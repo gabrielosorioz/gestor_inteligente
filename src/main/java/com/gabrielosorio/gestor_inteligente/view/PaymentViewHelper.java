@@ -1,16 +1,21 @@
 package com.gabrielosorio.gestor_inteligente.view;
-
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.Inject;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
+import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.SalePaymentRepository;
 import com.gabrielosorio.gestor_inteligente.repository.SaleProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
+import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSalePaymentStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleProductStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleStrategy;
+import com.gabrielosorio.gestor_inteligente.service.ProductService;
 import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
 import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
 import com.gabrielosorio.gestor_inteligente.service.SaleService;
+import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
 import com.gabrielosorio.gestor_inteligente.service.impl.SalePaymentServiceImpl;
 import com.gabrielosorio.gestor_inteligente.service.impl.SaleProductServiceImpl;
 import com.gabrielosorio.gestor_inteligente.service.impl.SaleServiceImpl;
@@ -18,7 +23,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -56,14 +60,21 @@ public class PaymentViewHelper {
         SaleRepository saleRepository = new SaleRepository();
         var saleProductService = createSaleProductService();
         var salePaymentService = createSalePaymentService();
+        var productService = createProductService();
         saleRepository.init(new PSQLSaleStrategy());
-        return new SaleServiceImpl(saleRepository,saleProductService,salePaymentService);
+        return new SaleServiceImpl(saleRepository,saleProductService,salePaymentService,productService);
     }
 
     private static SaleProductService createSaleProductService(){
         var saleProductRepo = new SaleProductRepository();
         saleProductRepo.init(new PSQLSaleProductStrategy());
         return new SaleProductServiceImpl(saleProductRepo);
+    }
+
+    private static ProductService createProductService(){
+        var productStrategy = PSQLProductStrategy.getInstance();
+        var productRepository = new ProductRepository(productStrategy);
+        return new ProductServiceImpl(productRepository);
     }
 
     private static SalePaymentService createSalePaymentService(){

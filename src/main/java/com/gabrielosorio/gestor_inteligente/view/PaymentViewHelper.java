@@ -1,8 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import com.gabrielosorio.gestor_inteligente.Inject;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
-import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.SalePaymentRepository;
 import com.gabrielosorio.gestor_inteligente.repository.SaleProductRepository;

@@ -96,7 +96,7 @@ public class MainNavigationController implements Initializable {
     }
 
     private void loadScreen(String fxmlPath) {
-        Parent new0Screen = viewCache.get(fxmlPath);
+        Parent newScreen = viewCache.get(fxmlPath);
 
         if(newScreen == null){
             try {

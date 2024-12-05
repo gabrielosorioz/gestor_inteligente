@@ -6,6 +6,8 @@ import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
+import com.gabrielosorio.gestor_inteligente.service.ProductService;
+import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.beans.binding.Bindings;
@@ -50,7 +52,7 @@ public class ProductTbViewController implements Initializable {
     @FXML
     private TableView<Product> productsTable;
 
-    private Repository<Product> productRepository;
+    private ProductService productService;
 
     private List<Product> allProducts;
 
@@ -171,15 +173,13 @@ public class ProductTbViewController implements Initializable {
     }
 
     private List<Product> fetchProducts(){
-        var productStrategy = PSQLProductStrategy.getInstance();
-        productRepository = new ProductRepository(productStrategy);
-        productRepository.init(PSQLProductStrategy.getInstance());
-        var allProducts = new ArrayList<>(productRepository.findAll());
-        return allProducts;
+        return new ArrayList<>(productService.findAllProducts());
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        ProductRepository productRepository = new ProductRepository(PSQLProductStrategy.getInstance());
+        productService = new ProductServiceImpl(productRepository);
         allProducts = fetchProducts();
         productsList = FXCollections.observableArrayList(allProducts);
         productsTable.setItems(productsList);

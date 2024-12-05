@@ -41,7 +41,7 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
     private TableColumn<SaleProduct, String> discountCol;
 
     @FXML
-    private TableColumn<SaleProduct, String> codeCol;
+    private TableColumn<SaleProduct, Long> codeCol;
 
     @FXML
     private TableColumn<SaleProduct, String> quantityCol;
@@ -72,8 +72,9 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
     }
 
     private void setUpColumns() {
-        codeCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getProduct().getProductCode())));
-        descriptionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getDescription()));
+        codeCol.setCellValueFactory(cellData -> cellData.getValue().getProduct().productCodeProperty().asObject());
+        descriptionCol.setCellValueFactory(cellData -> cellData.getValue().getProduct().descriptionProperty());
+
         sellingPriceCol.setCellValueFactory(cellData ->  cellData.getValue().unitPriceProperty());
         quantityCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQuantity())));
         discountCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDiscount().toPlainString()));

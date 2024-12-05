@@ -1,10 +1,12 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
+import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SalePayment;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
+import com.gabrielosorio.gestor_inteligente.service.ProductService;
 import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
 import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
 import com.gabrielosorio.gestor_inteligente.service.SaleService;
@@ -18,11 +20,13 @@ public class SaleServiceImpl implements SaleService {
     private final SaleRepository saleRepository;
     private final SaleProductService saleProductService;
     private final SalePaymentService salePaymentService;
+    private final ProductService productService;
 
-    public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService, SalePaymentService salePaymentService) {
+    public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService, SalePaymentService salePaymentService, ProductService productService) {
         this.saleRepository = saleRepository;
         this.saleProductService = saleProductService;
         this.salePaymentService = salePaymentService;
+        this.productService = productService;
     }
 
     @Override
@@ -64,6 +68,9 @@ public class SaleServiceImpl implements SaleService {
         var saleProducts = sale.getItems();
         saleProducts.forEach(saleProduct -> {
             saleProduct.setSale(sale);
+            var prod = saleProduct.getProduct();
+            var qtd = saleProduct.getQuantity();
+            decreaseStockQtd(prod,qtd);
         });
         saleProductService.saveAll(saleProducts);
     }
@@ -73,6 +80,10 @@ public class SaleServiceImpl implements SaleService {
                 .map(payment -> new SalePayment(payment,sale))
                 .toList();
         salePaymentService.saveAll(salePayments);
+    }
+
+    private void decreaseStockQtd(Product product, long quantity){
+        productService.decreaseQuantity(product.getId(), quantity);
     }
 
 

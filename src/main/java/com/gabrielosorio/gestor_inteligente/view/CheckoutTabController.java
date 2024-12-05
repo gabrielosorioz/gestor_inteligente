@@ -6,6 +6,8 @@ import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
+import com.gabrielosorio.gestor_inteligente.service.ProductService;
+import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,7 +28,6 @@ import java.util.logging.Logger;
 
 public class CheckoutTabController implements Initializable, ShortcutHandler, RequestFocus{
 
-    private HashMap<String, Product> productData = new HashMap<>();
 
     private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -45,8 +46,9 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     @FXML
     private Label totalPriceLbl;
 
+    private HashMap<String, Product> productData = new HashMap<>();
+    private final ProductService productService;
     private SaleTableViewController saleTableOp;
-
     private Node removeItemsAlert;
     private Node productNotFoundAlert;
     private final CheckoutTabPaneController checkoutTabPaneController;
@@ -57,6 +59,8 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
 
     public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController) {
         this.checkoutTabPaneController = checkoutTabPaneController;
+        ProductRepository productRepository = new ProductRepository(PSQLProductStrategy.getInstance());
+        this.productService = new ProductServiceImpl(productRepository);
     }
 
     @Override
@@ -253,9 +257,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     }
 
     private void fetchProductsData() {
-        Repository<Product> prodRepository = new ProductRepository(PSQLProductStrategy.getInstance());
-        prodRepository.init(PSQLProductStrategy.getInstance());
-        prodRepository.findAll().forEach(product -> {
+        productService.findAllProducts().forEach(product -> {
            String productCode = String.valueOf(product.getProductCode());
            Optional<String> barCode = product.getBarCode();
 

@@ -14,41 +14,7 @@ public class ProductRepository extends Repository<Product> {
 
     public ProductRepository(ProductRepositoryStrategy pStrategy) {
         this.pStrategy = pStrategy;
-    }
-
-    @Override
-    public void init(RepositoryStrategy<Product> strategy) {
-        super.init(strategy);
-    }
-
-    @Override
-    public Product add(Product entity) {
-        return super.add(entity);
-    }
-
-    @Override
-    public Optional<Product> find(long id) {
-        return super.find(id);
-    }
-
-    @Override
-    public List<Product> findAll() {
-        return super.findAll();
-    }
-
-    @Override
-    public List<Product> findBySpecification(Specification<Product> specification) {
-        return super.findBySpecification(specification);
-    }
-
-    @Override
-    public Product update(Product newT) {
-        return super.update(newT);
-    }
-
-    @Override
-    public boolean remove(long id) {
-        return super.remove(id);
+        super.init(pStrategy);
     }
 
     public boolean existPCode(long pCode){

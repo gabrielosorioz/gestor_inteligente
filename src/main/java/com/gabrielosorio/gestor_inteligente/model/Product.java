@@ -7,6 +7,7 @@ import javafx.beans.property.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Product {
@@ -284,8 +285,19 @@ public class Product {
         descriptionProp.set(description);
     }
 
+    public void updatePrices(BigDecimal costPrice, BigDecimal sellingPrice) {
+        ProductValidator.validatePrices(costPrice, sellingPrice);
+        this.costPrice = costPrice;
+        costPriceProp.set(costPrice);
+        this.sellingPrice = sellingPrice;
+        sellingPriceProp.set(sellingPrice);
+        validate();
+        updateCalculations();
+    }
+
+
     public void setCostPrice(BigDecimal costPrice) {
-        ProductValidator.validatePrices(this.costPrice, this.sellingPrice);
+        ProductValidator.validatePrices(costPrice, this.sellingPrice);
         this.costPrice = costPrice;
         costPriceProp.set(costPrice);
         validate();
@@ -408,6 +420,18 @@ public class Product {
 
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     @Override
     public String toString() {

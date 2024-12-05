@@ -105,8 +105,7 @@ public class ProductFormUtils {
 
         product.setBarCode(barCode);
         product.setDescription(description);
-        product.setSellingPrice(sellingPrice);
-        product.setCostPrice(costPrice);
+        product.updatePrices(costPrice,sellingPrice);
         product.setQuantity(quantity);
         product.setProductCode(productCode);
         product.setSupplier(Optional.empty());

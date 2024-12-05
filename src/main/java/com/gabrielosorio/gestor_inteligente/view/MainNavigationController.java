@@ -88,6 +88,7 @@ public class MainNavigationController implements Initializable {
             sideBarController.addButton(new SidebarButton("Vender", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png",this::openPDV));
             sideBarController.addButton(new SidebarButton("Produtos", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png", this::openProductManager));
             sideBarController.addButton(new SidebarButton("Relatório Vendas", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48-white.png",this::openSalesReport));
+            sideBarController.addButton(new SidebarButton("Mov. do caixa", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-caixa-registradora-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-caixa-registradora-48-white.png",this::openCheckoutMovement));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,7 +96,7 @@ public class MainNavigationController implements Initializable {
     }
 
     private void loadScreen(String fxmlPath) {
-        Parent newScreen = viewCache.get(fxmlPath);
+        Parent new0Screen = viewCache.get(fxmlPath);
 
         if(newScreen == null){
             try {
@@ -158,6 +159,15 @@ public class MainNavigationController implements Initializable {
 
     private void openSalesReport(){
         loadScreen("fxml/reports/SalesReport.fxml");
+        Platform.runLater(() -> {
+            if(isSidebarOpen){
+                toggleSideBar();
+            }
+        });
+    }
+
+    private void openCheckoutMovement(){
+        loadScreen("fxml/sale/CheckoutMovement.fxml");
         Platform.runLater(() -> {
             if(isSidebarOpen){
                 toggleSideBar();

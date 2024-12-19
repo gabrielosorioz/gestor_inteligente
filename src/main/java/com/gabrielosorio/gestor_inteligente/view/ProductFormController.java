@@ -87,9 +87,15 @@ public class ProductFormController implements Initializable {
 
     private void calculateAndSetMarkup() {
         try {
+            BigDecimal costPrice = BigDecimal.ZERO;
+            BigDecimal sellingPrice = BigDecimal.ZERO;
+
             // Gets the values from the cost price and sales price fields
-            BigDecimal costPrice = TextFieldUtils.formatCurrency(costPriceField.getText());
-            BigDecimal sellingPrice = TextFieldUtils.formatCurrency(sellingPriceField.getText());
+            if(!costPriceField.getText().isEmpty() && !sellingPriceField.getText().isEmpty()) {
+                costPrice = TextFieldUtils.formatCurrency(costPriceField.getText());
+                sellingPrice = TextFieldUtils.formatCurrency(sellingPriceField.getText());
+            }
+
 
             // Checks that the cost price is greater than 0 to avoid division by zero
             if (costPrice.compareTo(BigDecimal.ZERO) > 0 && costPrice.compareTo(sellingPrice) < 0) {
@@ -232,7 +238,11 @@ public class ProductFormController implements Initializable {
     }
 
     public void save() {
-        var oldProductCode = product.get().getProductCode();
+
+        if(product.isEmpty()){
+
+        }
+
 
         try {
             if (product.isPresent()) {
@@ -248,6 +258,7 @@ public class ProductFormController implements Initializable {
             pManagerController.toggleProductForm();
 
         } catch (DuplicateProductException e) {
+            var oldProductCode = product.get().getProductCode();
             showError("Código do produto já existe: " + fieldMap.get("idField").getText());
             product.get().setProductCode(oldProductCode);
             idField.setText(String.valueOf(oldProductCode));

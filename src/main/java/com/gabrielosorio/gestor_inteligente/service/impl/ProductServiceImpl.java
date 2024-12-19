@@ -1,5 +1,4 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
-import com.gabrielosorio.gestor_inteligente.Inject;
 import com.gabrielosorio.gestor_inteligente.datacontext.ProductDataContext;
 import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.model.Product;

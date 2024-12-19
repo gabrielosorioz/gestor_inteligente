@@ -8,7 +8,6 @@ import com.gabrielosorio.gestor_inteligente.service.ProductService;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductServiceImpl implements ProductService {

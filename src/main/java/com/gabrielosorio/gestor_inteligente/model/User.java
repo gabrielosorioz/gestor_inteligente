@@ -1,6 +1,4 @@
 package com.gabrielosorio.gestor_inteligente.model;
-
-import javax.management.relation.Role;
 import java.time.LocalDateTime;
 
 public class User {

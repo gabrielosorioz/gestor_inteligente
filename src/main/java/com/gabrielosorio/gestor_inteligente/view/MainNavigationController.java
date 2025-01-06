@@ -1,5 +1,10 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
+import com.gabrielosorio.gestor_inteligente.config.DBScheme;
+import com.gabrielosorio.gestor_inteligente.repository.CheckoutRepository;
+import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLCheckoutStrategy;
+import com.gabrielosorio.gestor_inteligente.service.impl.CheckoutServiceImpl;
 import com.gabrielosorio.gestor_inteligente.view.util.SidebarButton;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
@@ -130,6 +135,46 @@ public class MainNavigationController implements Initializable {
 
     }
 
+    private void loadScreen(String fxmlPath, Object manualController) {
+        Parent newScreen = viewCache.get(fxmlPath);
+
+        if (newScreen == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource(fxmlPath));
+
+                // Define o controlador manualmente, se fornecido
+                if (manualController != null) {
+                    loader.setController(manualController);
+                }
+
+                newScreen = loader.load();
+                Object controller = (manualController != null) ? manualController : loader.getController();
+
+                // Armazena a view e o controlador
+                viewCache.put(fxmlPath, newScreen);
+                viewController.put(newScreen, controller);
+            } catch (IOException e) {
+                throw new RuntimeException("Error loading screen: " + fxmlPath, e);
+            }
+        }
+
+        Object controller = viewController.get(newScreen);
+
+        if (controller instanceof ShortcutHandler) {
+            activeShortcutHandler = (ShortcutHandler) controller;
+        } else {
+            activeShortcutHandler = null;
+        }
+
+        if (controller instanceof RequestFocus) {
+            ((RequestFocus) controller).requestFocusOnField();
+        }
+
+        mainContent.getChildren().clear();
+        mainContent.getChildren().add(newScreen);
+    }
+
+
     private void openHome(){
         loadScreen("fxml/Home.fxml");
         Platform.runLater(() -> {
@@ -167,7 +212,9 @@ public class MainNavigationController implements Initializable {
     }
 
     private void openCheckoutMovement(){
-        loadScreen("fxml/sale/CheckoutMovement.fxml");
+        var checkoutRepository = new CheckoutRepository();
+        checkoutRepository.init(new PSQLCheckoutStrategy(ConnectionFactory.getInstance()));
+        loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(new CheckoutServiceImpl(checkoutRepository)));
         Platform.runLater(() -> {
             if(isSidebarOpen){
                 toggleSideBar();

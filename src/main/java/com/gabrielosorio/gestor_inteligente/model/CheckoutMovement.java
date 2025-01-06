@@ -1,27 +1,19 @@
 package com.gabrielosorio.gestor_inteligente.model;
-
+import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class CheckoutMovement {
 
     private long id;
-    private Sale sale;
-    private BigDecimal pettyCash;
-    private BigDecimal exitCash;
-    private BigDecimal entryCash;
-    private String movementType;
+    private Optional<Sale> sale = Optional.empty();
+    private Checkout checkout;
+    private TypeCheckoutMovement type;
     private LocalDateTime dateTime;
-
-    public CheckoutMovement(long id, Sale sale, BigDecimal pettyCash, BigDecimal exitCash, BigDecimal entryCash, String movementType, LocalDateTime dateTime) {
-        this.id = id;
-        this.sale = sale;
-        this.pettyCash = pettyCash;
-        this.exitCash = exitCash;
-        this.entryCash = entryCash;
-        this.movementType = movementType;
-        this.dateTime = dateTime;
-    }
+    private Payment payment;
+    private BigDecimal value;
+    private String obs;
 
     public long getId() {
         return id;
@@ -31,44 +23,28 @@ public class CheckoutMovement {
         this.id = id;
     }
 
-    public Sale getSale() {
+    public Optional<Sale> getSale() {
         return sale;
     }
 
-    public void setSale(Sale sale) {
+    public void setSale(Optional<Sale> sale) {
         this.sale = sale;
     }
 
-    public BigDecimal getPettyCash() {
-        return pettyCash;
+    public Checkout getCheckout() {
+        return checkout;
     }
 
-    public void setPettyCash(BigDecimal pettyCash) {
-        this.pettyCash = pettyCash;
+    public void setCheckout(Checkout checkout) {
+        this.checkout = checkout;
     }
 
-    public BigDecimal getExitCash() {
-        return exitCash;
+    public TypeCheckoutMovement getType() {
+        return type;
     }
 
-    public void setExitCash(BigDecimal exitCash) {
-        this.exitCash = exitCash;
-    }
-
-    public BigDecimal getEntryCash() {
-        return entryCash;
-    }
-
-    public void setEntryCash(BigDecimal entryCash) {
-        this.entryCash = entryCash;
-    }
-
-    public String getMovementType() {
-        return movementType;
-    }
-
-    public void setMovementType(String movementType) {
-        this.movementType = movementType;
+    public void setType(TypeCheckoutMovement type) {
+        this.type = type;
     }
 
     public LocalDateTime getDateTime() {
@@ -77,5 +53,29 @@ public class CheckoutMovement {
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
+
+    public String getObs() {
+        return obs;
+    }
+
+    public void setObs(String obs) {
+        this.obs = obs;
     }
 }

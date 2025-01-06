@@ -1,7 +1,9 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Checkout;
+import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.User;
+import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.service.CheckoutService;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.fxml.FXML;
@@ -90,7 +92,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
 
             checkoutMovementDialogController.getBtnOk().setOnMouseClicked(mouseEvent -> {
                 var initialCash = checkoutMovementDialogController.getValue();
-                checkoutService.setInitialCash(checkout.getId(), initialCash);
+                checkoutService.setInitialCash(checkout.getId(), new Payment(PaymentMethod.DINHEIRO,initialCash),"");
                 checkoutMovementDialogController.close();
             });
 

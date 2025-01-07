@@ -3,7 +3,7 @@ import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.*;
-import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
+import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
@@ -21,14 +21,14 @@ public class PSQLCheckoutMovementStrategy implements RepositoryStrategy<Checkout
     private final ConnectionFactory connFactory;
     private final PSQLCheckoutStrategy checkoutStrategy;
     private final PSQLPaymentStrategy paymentStrategy;
-    private final PSQLSaleStrategy saleStrategy;
+    private final PSQLCheckoutMovementTypeStrategy checkoutMovementTypeStrategy;
     private Logger log = Logger.getLogger(getClass().getName());
 
 
     public PSQLCheckoutMovementStrategy(ConnectionFactory connFactory) {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.checkoutStrategy = new PSQLCheckoutStrategy(ConnectionFactory.getInstance());
-        this.saleStrategy = new PSQLSaleStrategy();
+        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy();
         this.paymentStrategy = new PSQLPaymentStrategy();
         this.connFactory = connFactory;
     }
@@ -43,29 +43,13 @@ public class PSQLCheckoutMovementStrategy implements RepositoryStrategy<Checkout
         try (var connection = connFactory.getConnection();
              var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            checkoutMovement.getSale().ifPresentOrElse(
-                    sale -> {
-                        try {
-                            ps.setLong(1, sale.getId());
-                        } catch (SQLException e) {
-                            throw new RuntimeException("Error when setting the sale_id parameter", e);
-                        }
-                    },
-                    () -> {
-                        try {
-                            ps.setNull(1, java.sql.Types.BIGINT);
-                        } catch (SQLException e) {
-                            throw new RuntimeException("Error setting the sale_id parameter to NULL", e);
-                        }
-                    }
-            );
 
-            ps.setLong(2, checkoutMovement.getCheckout().getId());
-            ps.setString(3, checkoutMovement.getType().name());
-            ps.setTimestamp(4, Timestamp.valueOf(checkoutMovement.getDateTime()));
-            ps.setLong(5, checkoutMovement.getPayment().getId());
-            ps.setBigDecimal(6, checkoutMovement.getValue());
-            ps.setString(7, checkoutMovement.getObs());
+            ps.setLong(1, checkoutMovement.getCheckout().getId());
+            ps.setTimestamp(2, Timestamp.valueOf(checkoutMovement.getDateTime()));
+            ps.setBigDecimal(3,checkoutMovement.getPayment().getValue());
+            ps.setString(4,checkoutMovement.getObs());
+            ps.setLong(5,checkoutMovement.getPayment().getId());
+            ps.setLong(6,checkoutMovement.getMovementType().getId());
 
             ps.executeUpdate();
 
@@ -175,19 +159,13 @@ public class PSQLCheckoutMovementStrategy implements RepositoryStrategy<Checkout
         try (var connection = connFactory.getConnection();
              var ps = connection.prepareStatement(query)) {
 
-            if (newCheckoutMovement.getSale().isPresent()) {
-                ps.setLong(1, newCheckoutMovement.getSale().get().getId());
-            } else {
-                ps.setNull(1, java.sql.Types.BIGINT);
-            }
-
-            ps.setLong(2, newCheckoutMovement.getCheckout().getId());
-            ps.setString(3, newCheckoutMovement.getType().name());
-            ps.setTimestamp(4, Timestamp.valueOf(newCheckoutMovement.getDateTime()));
+            ps.setLong(1, newCheckoutMovement.getCheckout().getId());
+            ps.setTimestamp(2, Timestamp.valueOf(newCheckoutMovement.getDateTime()));
+            ps.setBigDecimal(3,newCheckoutMovement.getValue());
+            ps.setString(4, newCheckoutMovement.getObs());
             ps.setLong(5, newCheckoutMovement.getPayment().getId());
-            ps.setBigDecimal(6, newCheckoutMovement.getValue());
-            ps.setString(7, newCheckoutMovement.getObs());
-            ps.setLong(8, newCheckoutMovement.getId());
+            ps.setLong(6, newCheckoutMovement.getMovementType().getId());
+            ps.setLong(7, newCheckoutMovement.getId());
 
             int affectedRows = ps.executeUpdate();
 
@@ -231,25 +209,23 @@ public class PSQLCheckoutMovementStrategy implements RepositoryStrategy<Checkout
         }
     }
 
-
     private Optional<Checkout> findCheckoutById(long id){
         return checkoutStrategy.find(id);
-    }
-
-    private Optional<Sale> findSaleById(long id){
-        return saleStrategy.find(id);
     }
 
     private Optional<Payment> findPaymentById(long id){
         return paymentStrategy.find(id);
     }
 
+    private Optional<CheckoutMovementType> findCheckoutMovementTypeById(long id){
+       return checkoutMovementTypeStrategy.find(id);
+    }
+
     public CheckoutMovement mapResultSet(ResultSet rs) throws SQLException {
         var checkoutMovement = new CheckoutMovement();
         checkoutMovement.setId(rs.getLong("id"));
-        checkoutMovement.setSale(findSaleById(rs.getLong("sale_id")));
         checkoutMovement.setCheckout(findCheckoutById(rs.getLong("checkout_id")).get());
-        checkoutMovement.setType(TypeCheckoutMovement.valueOf(rs.getString("type")));
+        checkoutMovement.setMovementType(findCheckoutMovementTypeById(rs.getLong("checkoutmovement_type_id")).get());
         checkoutMovement.setDateTime(rs.getTimestamp("date_time").toLocalDateTime());
         checkoutMovement.setPayment(findPaymentById(rs.getLong("payment_id")).get());
         checkoutMovement.setValue(rs.getBigDecimal("value"));
@@ -270,29 +246,12 @@ public class PSQLCheckoutMovementStrategy implements RepositoryStrategy<Checkout
 
                 for(CheckoutMovement checkoutMovement: checkoutMovements){
 
-                    checkoutMovement.getSale().ifPresentOrElse(
-                    sale -> {
-                            try {
-                                ps.setLong(1, sale.getId());
-                            } catch (SQLException e) {
-                                throw new RuntimeException("Error when setting the sale_id parameter", e);
-                            }
-                        },
-                        () -> {
-                            try {
-                                ps.setNull(1, java.sql.Types.BIGINT);
-                            } catch (SQLException e) {
-                                throw new RuntimeException("Error setting the sale_id parameter to NULL", e);
-                            }
-                        }
-                    );
-
-                    ps.setLong(2, checkoutMovement.getCheckout().getId());
-                    ps.setString(3, checkoutMovement.getType().name());
-                    ps.setTimestamp(4, Timestamp.valueOf(checkoutMovement.getDateTime()));
-                    ps.setLong(5, checkoutMovement.getPayment().getId());
-                    ps.setBigDecimal(6, checkoutMovement.getValue());
-                    ps.setString(7, checkoutMovement.getObs());
+                    ps.setLong(1, checkoutMovement.getCheckout().getId());
+                    ps.setTimestamp(2, Timestamp.valueOf(checkoutMovement.getDateTime()));
+                    ps.setBigDecimal(3,checkoutMovement.getPayment().getValue());
+                    ps.setString(4,checkoutMovement.getObs());
+                    ps.setLong(5,checkoutMovement.getPayment().getId());
+                    ps.setLong(6,checkoutMovement.getMovementType().getId());
                     ps.addBatch();
                 }
 

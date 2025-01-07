@@ -1,30 +1,37 @@
-ERP Gestor Inteligente
-ERP Gestor Inteligente é um sistema completo de gestão empresarial desenvolvido para atender as necessidades de pequenas e médias empresas. O software oferece uma interface amigável e funcionalidades robustas para gerenciar vendas, estoque, produtos, pagamentos e relatórios financeiros, com foco em eficiência e escalabilidade.
+# ERP Gestor Inteligente
 
-Funcionalidades principais:
-Gestão de Vendas:
-Controle completo de vendas, incluindo registro de produtos, gerenciamento de carrinho e aplicação de descontos personalizados.
+**ERP Gestor Inteligente** é um sistema de gestão empresarial desenvolvido em Java com JavaFX, projetado para pequenas e médias empresas. O software oferece módulos para controle de vendas, gestão de estoque, cadastro de produtos e fornecedores, e geração de relatórios, utilizando uma arquitetura modular e escalável.
 
-Gerenciamento de Estoque:
-Monitore o estoque em tempo real, com alertas para reposição e histórico de movimentações.
+## Módulos do Sistema
 
-Cadastro de Produtos e Fornecedores:
-Adicione, edite e exclua produtos e fornecedores de forma prática, com suporte para categorização e pesquisa avançada.
+- **Gestão de Vendas**  
+  Controle completo de vendas, incluindo busca de produtos, carrinho dinâmico, aplicação de descontos e cálculo automático de totais.
 
-Relatórios Dinâmicos:
-Geração de relatórios de vendas com gráficos interativos para análise de desempenho por período.
+- **Gestão de Estoque**  
+  Gerenciamento em tempo real de entradas e saídas, alertas de reposição e controle de movimentações.
 
-Integração de Pagamentos:
-Tela de pagamento com bloqueio de interação em outras janelas e suporte para múltiplas formas de pagamento.
+- **Cadastro de Produtos e Fornecedores**  
+  Interface intuitiva para adicionar, editar e excluir produtos e fornecedores, com suporte à categorização e pesquisa avançada.
 
-Tecnologias utilizadas:
-Frontend: JavaFX para a construção de uma interface moderna e responsiva.
-Backend: Java, com padrões de projeto como Strategy e Factory para modularidade e extensibilidade.
-Banco de Dados: PostgreSQL, com conexão gerenciada pelo HikariCP.
-Relatórios: ChartFX para gráficos dinâmicos e JasperReports para relatórios detalhados.
-Principais diferenciais:
-Design modular para facilitar a manutenção e adição de novas funcionalidades.
-Controle de transações no banco de dados, garantindo consistência e integridade.
-Estratégias personalizadas para validação de dados e manipulação de exceções.
-Objetivo:
-O Gestor Inteligente foi desenvolvido para ser um sistema ERP flexível e personalizável, atendendo desde empresas em expansão até negócios consolidados, com uma abordagem focada em usabilidade e performance.
+- **Relatórios e Análise**  
+  Geração de relatórios detalhados e gráficos interativos para análise de vendas por períodos.
+
+- **Pagamentos**  
+  Tela dedicada para registro de pagamentos com suporte a múltiplos métodos e bloqueio de interação com outras janelas.
+
+## Arquitetura do Projeto
+
+- **Frontend**: Desenvolvido em **JavaFX**, com FXML para separação de design e lógica.  
+- **Backend**: Java com aplicação de padrões de projeto como Strategy e Factory para modularidade e reuso de código.  
+- **Banco de Dados**: PostgreSQL, com conexão gerenciada por **HikariCP** para alto desempenho.  
+- **Relatórios**: Utiliza **ChartFX** para gráficos dinâmicos e **JasperReports** para relatórios detalhados.  
+- **Camadas**:  
+  - **Controller**: Gerencia a interação entre a interface e os serviços.  
+  - **Service**: Regras de negócio e validações.  
+  - **Repository**: Interação com o banco de dados utilizando o padrão Repository.
+
+## Como Executar
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/usuario/erp-gestor-inteligente.git

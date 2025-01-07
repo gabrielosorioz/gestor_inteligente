@@ -3,7 +3,7 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.CheckoutNotFoundException;
 import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutStatus;
-import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
+import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.CheckoutRepository;
 import com.gabrielosorio.gestor_inteligente.service.CheckoutMovementService;
 import com.gabrielosorio.gestor_inteligente.service.CheckoutService;
@@ -30,10 +30,9 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Override
     public void setInitialCash(long checkoutId, Payment payment, String obs) {
         Checkout checkout = validateCheckoutExists(checkoutId);
-
-        CheckoutMovement checkoutMovement = checkoutMovementService.buildCheckoutMovement(checkout, payment, obs, TypeCheckoutMovement.FUNDO_DE_CAIXA);
+        var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.FUNDO_DE_CAIXA);
+        CheckoutMovement checkoutMovement = checkoutMovementService.buildCheckoutMovement(checkout, payment, obs, checkoutMovementType);
         checkoutMovementService.addMovement(checkoutMovement);
-
         updateInitialCash(checkout, payment.getValue());
     }
 

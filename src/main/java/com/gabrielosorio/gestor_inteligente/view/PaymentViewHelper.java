@@ -1,27 +1,21 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
+import com.gabrielosorio.gestor_inteligente.model.Permission;
+import com.gabrielosorio.gestor_inteligente.model.Role;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
-import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
-import com.gabrielosorio.gestor_inteligente.repository.SalePaymentRepository;
-import com.gabrielosorio.gestor_inteligente.repository.SaleProductRepository;
-import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
-import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSalePaymentStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleProductStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLSaleStrategy;
-import com.gabrielosorio.gestor_inteligente.service.ProductService;
-import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
-import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
-import com.gabrielosorio.gestor_inteligente.service.SaleService;
-import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
-import com.gabrielosorio.gestor_inteligente.service.impl.SalePaymentServiceImpl;
-import com.gabrielosorio.gestor_inteligente.service.impl.SaleProductServiceImpl;
-import com.gabrielosorio.gestor_inteligente.service.impl.SaleServiceImpl;
+import com.gabrielosorio.gestor_inteligente.model.User;
+import com.gabrielosorio.gestor_inteligente.repository.*;
+import com.gabrielosorio.gestor_inteligente.repository.storage.*;
+import com.gabrielosorio.gestor_inteligente.service.*;
+import com.gabrielosorio.gestor_inteligente.service.impl.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class PaymentViewHelper {
@@ -51,7 +45,35 @@ public class PaymentViewHelper {
 
     private static PaymentViewController initializeController(Sale sale, SaleTableViewController saleTableViewOp){
         var saleService = createSaleService();
-        return new PaymentViewController(sale,saleService,saleTableViewOp);
+
+        Permission readPermission = new Permission();
+        readPermission.setId(1L);
+        readPermission.setName("READ");
+
+        Permission writePermission = new Permission();
+        writePermission.setId(2L);
+        writePermission.setName("WRITE");
+
+        Role adminRole = new Role();
+        adminRole.setId(1L);
+        adminRole.setName("ADMIN");
+        adminRole.setPermissions(List.of(readPermission, writePermission));
+
+
+        User user = new User(
+                1L,                           // id
+                "John",                       // firstName
+                "Doe",                        // lastName
+                "1234567890",                 // cellphone
+                "john.doe@example.com",       // email
+                "12345678909",                // cpf
+                "securePassword123",          // password
+                adminRole,                    // role
+                LocalDateTime.now(),          // createdAt
+                LocalDateTime.now()           // updatedAt
+        );
+
+        return new PaymentViewController(user,sale,saleService,saleTableViewOp);
     }
 
     private static SaleService createSaleService() {
@@ -59,8 +81,10 @@ public class PaymentViewHelper {
         var saleProductService = createSaleProductService();
         var salePaymentService = createSalePaymentService();
         var productService = createProductService();
+        var checkoutMovementService = createCheckoutMovementService();
+        var checkoutService = createCheckoutService(checkoutMovementService);
         saleRepository.init(new PSQLSaleStrategy());
-        return new SaleServiceImpl(saleRepository,saleProductService,salePaymentService,productService);
+        return new SaleServiceImpl(saleRepository,saleProductService,salePaymentService,checkoutMovementService,checkoutService,productService);
     }
 
     private static SaleProductService createSaleProductService(){
@@ -79,6 +103,18 @@ public class PaymentViewHelper {
         var salePaymentRepo = new SalePaymentRepository();
         salePaymentRepo.init(new PSQLSalePaymentStrategy());
         return new SalePaymentServiceImpl(salePaymentRepo);
+    }
+
+    private static CheckoutMovementService createCheckoutMovementService(){
+        var checkoutMovementRepo = new CheckoutMovementRepository();
+        checkoutMovementRepo.init(new PSQLCheckoutMovementStrategy(ConnectionFactory.getInstance()));
+        return new CheckoutMovementServiceImpl(checkoutMovementRepo);
+    }
+
+    private static CheckoutService createCheckoutService(CheckoutMovementService checkoutMovementService){
+        var checkoutRepository = new CheckoutRepository();
+        checkoutRepository.init(new PSQLCheckoutStrategy(ConnectionFactory.getInstance()));
+        return new CheckoutServiceImpl(checkoutRepository, checkoutMovementService);
     }
 
     private static Stage createPaymentStage(PaymentViewController controller) throws IOException {

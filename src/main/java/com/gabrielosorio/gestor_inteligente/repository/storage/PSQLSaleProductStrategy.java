@@ -267,7 +267,9 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
         } finally {
             if(connection != null){
                 try {
+                    connection.setAutoCommit(true);
                     connection.close();
+
                 } catch (SQLException closeEx){
                     log.severe("Failed to close the connection " + closeEx.getMessage());
                 }

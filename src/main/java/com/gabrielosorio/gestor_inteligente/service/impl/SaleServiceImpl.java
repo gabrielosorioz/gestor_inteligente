@@ -1,37 +1,45 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
-import com.gabrielosorio.gestor_inteligente.model.Payment;
-import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.model.Sale;
-import com.gabrielosorio.gestor_inteligente.model.SalePayment;
+import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
+import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
-import com.gabrielosorio.gestor_inteligente.service.ProductService;
-import com.gabrielosorio.gestor_inteligente.service.SalePaymentService;
-import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
-import com.gabrielosorio.gestor_inteligente.service.SaleService;
+import com.gabrielosorio.gestor_inteligente.service.*;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SaleServiceImpl implements SaleService {
 
     private final SaleRepository saleRepository;
     private final SaleProductService saleProductService;
     private final SalePaymentService salePaymentService;
+    private final CheckoutMovementService checkoutMovementService;
+    private final CheckoutService checkoutService;
     private final ProductService productService;
 
-    public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService, SalePaymentService salePaymentService, ProductService productService) {
+    public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService, SalePaymentService salePaymentService, CheckoutMovementService checkoutMovementService, CheckoutService checkoutService, ProductService productService) {
         this.saleRepository = saleRepository;
         this.saleProductService = saleProductService;
         this.salePaymentService = salePaymentService;
+        this.checkoutMovementService = checkoutMovementService;
+        this.checkoutService = checkoutService;
         this.productService = productService;
     }
 
     @Override
-    public void processSale(Sale sale) {
+    public void processSale(User user,Sale sale) {
         save(sale);
+
+        var checkout = checkoutService.openCheckout(user);
+
+        List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
+                .map(paymentMethod -> checkoutMovementService.buildCheckoutMovement(checkout, paymentMethod,"Venda", TypeCheckoutMovement.VENDA))
+                .toList();
+        checkoutMovementService.saveAll(checkoutMovements);
+
     }
 
     public Sale save(Sale sale) throws SalePaymentException {

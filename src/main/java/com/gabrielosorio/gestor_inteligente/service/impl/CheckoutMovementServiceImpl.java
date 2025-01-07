@@ -2,9 +2,9 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 
 import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
+import com.gabrielosorio.gestor_inteligente.model.CheckoutMovementType;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
-import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
-import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
+import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.CheckoutMovementRepository;
 import com.gabrielosorio.gestor_inteligente.service.CheckoutMovementService;
 import java.time.LocalDateTime;
@@ -31,13 +31,13 @@ public class CheckoutMovementServiceImpl implements CheckoutMovementService {
 
 
     @Override
-    public CheckoutMovement buildCheckoutMovement(Checkout checkout, Payment payment, String obs, TypeCheckoutMovement type) {
+    public CheckoutMovement buildCheckoutMovement(Checkout checkout, Payment payment, String obs, CheckoutMovementType checkoutMovementType) {
         CheckoutMovement checkoutMovement = new CheckoutMovement();
         checkoutMovement.setCheckout(checkout);
         checkoutMovement.setPayment(payment);
         checkoutMovement.setValue(payment.getValue());
         checkoutMovement.setObs(obs);
-        checkoutMovement.setType(type);
+        checkoutMovement.setMovementType(checkoutMovementType);
         checkoutMovement.setDateTime(LocalDateTime.now());
         return checkoutMovement;
     }

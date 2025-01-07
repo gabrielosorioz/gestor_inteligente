@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SalePayment;
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.service.*;
@@ -46,6 +47,7 @@ public class PaymentViewController implements Initializable {
 
     private final SaleService saleService;
     private final SaleTableViewController saleTableViewOp;
+    private final User user;
     private Map<HBox, PaymentMethod> paymentHboxMap = new HashMap<>();
     private Map<PaymentMethod,Payment> paymentMethods;
     private final Set<TextField> paymentFieldSet = new HashSet<>();
@@ -53,11 +55,12 @@ public class PaymentViewController implements Initializable {
 
     private Sale sale;
 
-    public PaymentViewController(Sale sale, SaleService saleService, SaleTableViewController saleTableViewOp){
+    public PaymentViewController(User user, Sale sale, SaleService saleService, SaleTableViewController saleTableViewOp){
         validateSale(sale);
         this.sale = sale;
         this.saleService = saleService;
         this.saleTableViewOp = saleTableViewOp;
+        this.user = user;
     }
 
     @Override
@@ -114,7 +117,7 @@ public class PaymentViewController implements Initializable {
 
     private void setUpBtnCheckoutEvent(){
         btnCheckout.setOnMouseClicked(mouseEvent -> {
-            finalizeSale(sale);
+            finalizeSale(user,sale);
         });
     }
 
@@ -169,7 +172,7 @@ public class PaymentViewController implements Initializable {
 
             paymentField.setOnKeyPressed(keyPressed -> {
                 if (keyPressed.getCode().equals(KeyCode.F2)) {
-                    finalizeSale(sale);
+                    finalizeSale(user,sale);
                 } else if (keyPressed.getCode().equals(KeyCode.DOWN)) {
                     //
                     int currentIndex = paymentFields.indexOf(paymentField);
@@ -220,7 +223,7 @@ public class PaymentViewController implements Initializable {
 
                 paymentField.setOnKeyPressed(keyPressed -> {
                     if(keyPressed.getCode().equals(KeyCode.F2)) {
-                        finalizeSale(sale);
+                        finalizeSale(user,sale);
                     }
 
                 });
@@ -254,12 +257,16 @@ public class PaymentViewController implements Initializable {
     private void confirmPayment(Sale sale) {
         final Set<Payment> uniquePayments = new HashSet<>(paymentMethods.values());
         final List<Payment> listPayment = new ArrayList<>(uniquePayments);
+
+        // Remove payments with value equal to zero
+        listPayment.removeIf(payment -> payment.getValue().compareTo(BigDecimal.ZERO) == 0);
+
         sale.setPaymentMethods(listPayment);
     }
 
-    private void finalizeSale(Sale sale){
+    private void finalizeSale(User user,Sale sale){
         confirmPayment(sale);
-        saleService.processSale(sale);
+        saleService.processSale(user,sale);
         closeWindow();
         clearItems();
     }

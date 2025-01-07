@@ -1,10 +1,9 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
-import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.repository.CheckoutMovementRepository;
 import com.gabrielosorio.gestor_inteligente.repository.CheckoutRepository;
-import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLCheckoutMovementStrat;
+import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLCheckoutMovementStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLCheckoutStrategy;
 import com.gabrielosorio.gestor_inteligente.service.impl.CheckoutMovementServiceImpl;
 import com.gabrielosorio.gestor_inteligente.service.impl.CheckoutServiceImpl;
@@ -218,7 +217,7 @@ public class MainNavigationController implements Initializable {
         var checkoutRepository = new CheckoutRepository();
         var checkoutMovementRepository = new CheckoutMovementRepository();
         checkoutRepository.init(new PSQLCheckoutStrategy(ConnectionFactory.getInstance()));
-        checkoutMovementRepository.init(new PSQLCheckoutMovementStrat(ConnectionFactory.getInstance()));
+        checkoutMovementRepository.init(new PSQLCheckoutMovementStrategy(ConnectionFactory.getInstance()));
         loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(new CheckoutServiceImpl(checkoutRepository,new CheckoutMovementServiceImpl(checkoutMovementRepository))));
         Platform.runLater(() -> {
             if(isSidebarOpen){

@@ -2,26 +2,20 @@ package com.gabrielosorio.gestor_inteligente.repository.storage;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
-import com.gabrielosorio.gestor_inteligente.model.Checkout;
-import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
-import com.gabrielosorio.gestor_inteligente.model.Payment;
-import com.gabrielosorio.gestor_inteligente.model.Sale;
-import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
+import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutMovementStrat implements RepositoryStrategy<CheckoutMovement> {
+public class PSQLCheckoutMovementStrategy implements RepositoryStrategy<CheckoutMovement>, BatchInsertable<CheckoutMovement> {
 
     private final QueryLoader qLoader;
     private final ConnectionFactory connFactory;
@@ -31,7 +25,7 @@ public class PSQLCheckoutMovementStrat implements RepositoryStrategy<CheckoutMov
     private Logger log = Logger.getLogger(getClass().getName());
 
 
-    public PSQLCheckoutMovementStrat(ConnectionFactory connFactory) {
+    public PSQLCheckoutMovementStrategy(ConnectionFactory connFactory) {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.checkoutStrategy = new PSQLCheckoutStrategy(ConnectionFactory.getInstance());
         this.saleStrategy = new PSQLSaleStrategy();
@@ -261,6 +255,83 @@ public class PSQLCheckoutMovementStrat implements RepositoryStrategy<CheckoutMov
         checkoutMovement.setValue(rs.getBigDecimal("value"));
         checkoutMovement.setObs(rs.getString("obs"));
         return checkoutMovement;
+    }
+
+    @Override
+    public List<CheckoutMovement> addAll(List<CheckoutMovement> checkoutMovements) {
+        var query = qLoader.getQuery("insertCheckoutMovement");
+        Connection connection = null;
+
+        try {
+            connection = connFactory.getConnection();
+            connection.setAutoCommit(false);
+
+            try(var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)){
+
+                for(CheckoutMovement checkoutMovement: checkoutMovements){
+
+                    checkoutMovement.getSale().ifPresentOrElse(
+                    sale -> {
+                            try {
+                                ps.setLong(1, sale.getId());
+                            } catch (SQLException e) {
+                                throw new RuntimeException("Error when setting the sale_id parameter", e);
+                            }
+                        },
+                        () -> {
+                            try {
+                                ps.setNull(1, java.sql.Types.BIGINT);
+                            } catch (SQLException e) {
+                                throw new RuntimeException("Error setting the sale_id parameter to NULL", e);
+                            }
+                        }
+                    );
+
+                    ps.setLong(2, checkoutMovement.getCheckout().getId());
+                    ps.setString(3, checkoutMovement.getType().name());
+                    ps.setTimestamp(4, Timestamp.valueOf(checkoutMovement.getDateTime()));
+                    ps.setLong(5, checkoutMovement.getPayment().getId());
+                    ps.setBigDecimal(6, checkoutMovement.getValue());
+                    ps.setString(7, checkoutMovement.getObs());
+                    ps.addBatch();
+                }
+
+                ps.executeBatch();
+                connection.commit();
+
+                try(var gKeys = ps.getGeneratedKeys()){
+                    int index = 0;
+                    while(gKeys.next()){
+                        checkoutMovements.get(index++).setId(gKeys.getLong("id"));
+                    }
+                }
+
+                log.info("All checkoutMovements successfully inserted.");
+            } catch (SQLException e){
+                if(connection != null){
+                    try {
+                        connection.rollback();
+                        log.warning("Transaction rolled back due to an error: " + e.getMessage());
+                    } catch (SQLException rollBackEx) {
+                        log.severe("RollBack failed " + rollBackEx.getMessage());
+                    }
+                }
+                throw new RuntimeException("Failed to batch insert checkoutMovements. " + e.getMessage(),e);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get database connection " + e.getMessage(),e);
+        } finally {
+            if(connection != null){
+                try {
+                    connection.setAutoCommit(true);
+                    connection.close();
+                } catch (SQLException closeEx){
+                    log.severe("Failed to close the connection " + closeEx.getMessage());
+                }
+            }
+        }
+        return checkoutMovements;
     }
 
 }

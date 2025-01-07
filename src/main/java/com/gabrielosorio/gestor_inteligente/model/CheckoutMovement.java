@@ -1,5 +1,5 @@
 package com.gabrielosorio.gestor_inteligente.model;
-import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
+import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -9,7 +9,7 @@ public class CheckoutMovement {
     private long id;
     private Optional<Sale> sale = Optional.empty();
     private Checkout checkout;
-    private TypeCheckoutMovement type;
+    private CheckoutMovementType checkoutMovementType;
     private LocalDateTime dateTime;
     private Payment payment;
     private BigDecimal value;
@@ -39,12 +39,12 @@ public class CheckoutMovement {
         this.checkout = checkout;
     }
 
-    public TypeCheckoutMovement getType() {
-        return type;
+    public CheckoutMovementType getMovementType() {
+        return checkoutMovementType;
     }
 
-    public void setType(TypeCheckoutMovement type) {
-        this.type = type;
+    public void setMovementType(CheckoutMovementType checkoutMovementType) {
+        this.checkoutMovementType = checkoutMovementType;
     }
 
     public LocalDateTime getDateTime() {

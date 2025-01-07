@@ -1,6 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.model;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutStatus;
-import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
+import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -58,15 +58,6 @@ public class Checkout {
         this.closedBy = closedBy;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-    }
-
-    public void addMovement(CheckoutMovement movement) {
-        this.movements.add(movement);
-        if (movement.getType() == TypeCheckoutMovement.ENTRADA) {
-            this.totalEntry = this.totalEntry.add(movement.getValue());
-        } else if (movement.getType() == TypeCheckoutMovement.SAIDA) {
-            this.totalExit = this.totalExit.add(movement.getValue());
-        }
     }
 
     public List<CheckoutMovement> getMovements() {

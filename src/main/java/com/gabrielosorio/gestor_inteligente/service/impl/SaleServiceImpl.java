@@ -2,7 +2,7 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
 import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
-import com.gabrielosorio.gestor_inteligente.model.enums.TypeCheckoutMovement;
+import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
 import com.gabrielosorio.gestor_inteligente.service.*;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
@@ -34,9 +34,10 @@ public class SaleServiceImpl implements SaleService {
         save(sale);
 
         var checkout = checkoutService.openCheckout(user);
+        var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
 
         List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
-                .map(paymentMethod -> checkoutMovementService.buildCheckoutMovement(checkout, paymentMethod,"Venda", TypeCheckoutMovement.VENDA))
+                .map(paymentMethod -> checkoutMovementService.buildCheckoutMovement(checkout, paymentMethod,"Venda", checkoutMovementType))
                 .toList();
         checkoutMovementService.saveAll(checkoutMovements);
 

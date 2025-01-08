@@ -19,14 +19,16 @@ public class SaleServiceImpl implements SaleService {
     private final CheckoutMovementService checkoutMovementService;
     private final CheckoutService checkoutService;
     private final ProductService productService;
+    private final SaleCheckoutMovementService saleCheckoutMovementService;
 
-    public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService, SalePaymentService salePaymentService, CheckoutMovementService checkoutMovementService, CheckoutService checkoutService, ProductService productService) {
+    public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService, SalePaymentService salePaymentService, CheckoutMovementService checkoutMovementService, CheckoutService checkoutService, ProductService productService, SaleCheckoutMovementService saleCheckoutMovementService) {
         this.saleRepository = saleRepository;
         this.saleProductService = saleProductService;
         this.salePaymentService = salePaymentService;
         this.checkoutMovementService = checkoutMovementService;
         this.checkoutService = checkoutService;
         this.productService = productService;
+        this.saleCheckoutMovementService = saleCheckoutMovementService;
     }
 
     @Override
@@ -37,9 +39,19 @@ public class SaleServiceImpl implements SaleService {
         var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
 
         List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
-                .map(paymentMethod -> checkoutMovementService.buildCheckoutMovement(checkout, paymentMethod,"Venda", checkoutMovementType))
-                .toList();
-        checkoutMovementService.saveAll(checkoutMovements);
+                .map(paymentMethod -> checkoutMovementService
+                        .buildCheckoutMovement(checkout, paymentMethod,"Venda", checkoutMovementType))
+        .toList();
+
+        var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);
+
+        List<SaleCheckoutMovement> saleCheckoutMovements  = checkoutMovementsWithGenKeys.stream()
+            .map(checkoutMovement -> saleCheckoutMovementService
+                    .buildSaleCheckoutMovement(checkoutMovement,sale))
+        .toList();
+
+        saleCheckoutMovementService.saveAll(saleCheckoutMovements);
+
 
     }
 

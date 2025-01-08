@@ -3,19 +3,16 @@ import java.math.BigDecimal;
 
 public class SaleCheckoutMovement {
 
-    private Long id;
+    private long id;
     private CheckoutMovement checkoutMovement;
     private Sale sale;
-    private BigDecimal value;
-    private String obs;
 
-    public SaleCheckoutMovement(Long id, CheckoutMovement checkoutMovement, Sale sale, BigDecimal value, String obs) {
-        this.id = id;
+    public SaleCheckoutMovement(CheckoutMovement checkoutMovement, Sale sale) {
         this.checkoutMovement = checkoutMovement;
         this.sale = sale;
     }
 
-    public SaleCheckoutMovement(CheckoutMovement checkoutMovement, Sale sale) {
+    public SaleCheckoutMovement(long id,CheckoutMovement checkoutMovement, Sale sale) {
         this.checkoutMovement = checkoutMovement;
         this.sale = sale;
     }
@@ -44,30 +41,12 @@ public class SaleCheckoutMovement {
         this.sale = sale;
     }
 
-    public BigDecimal getValue() {
-        return value;
-    }
-
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
-
-    public String getObs() {
-        return obs;
-    }
-
-    public void setObs(String obs) {
-        this.obs = obs;
-    }
-
     @Override
     public String toString() {
         return "SaleCheckoutMovement{" +
                 "id=" + id +
                 ", checkoutMovement=" + checkoutMovement +
                 ", sale=" + sale +
-                ", value=" + value +
-                ", obs='" + obs + '\'' +
                 '}';
     }
 }

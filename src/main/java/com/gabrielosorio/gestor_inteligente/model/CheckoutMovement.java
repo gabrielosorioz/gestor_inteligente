@@ -1,13 +1,11 @@
 package com.gabrielosorio.gestor_inteligente.model;
-import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Optional;
+
 
 public class CheckoutMovement {
 
     private long id;
-    private Optional<Sale> sale = Optional.empty();
     private Checkout checkout;
     private CheckoutMovementType checkoutMovementType;
     private LocalDateTime dateTime;
@@ -21,14 +19,6 @@ public class CheckoutMovement {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Optional<Sale> getSale() {
-        return sale;
-    }
-
-    public void setSale(Optional<Sale> sale) {
-        this.sale = sale;
     }
 
     public Checkout getCheckout() {

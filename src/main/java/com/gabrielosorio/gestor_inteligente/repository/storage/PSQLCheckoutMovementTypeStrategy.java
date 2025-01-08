@@ -22,9 +22,9 @@ public class PSQLCheckoutMovementTypeStrategy implements RepositoryStrategy<Chec
     private final ConnectionFactory connFactory;
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLCheckoutMovementTypeStrategy() {
+    public PSQLCheckoutMovementTypeStrategy(ConnectionFactory connectionFactory) {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = ConnectionFactory.getInstance();
+        this.connFactory = connectionFactory;
     }
 
     @Override

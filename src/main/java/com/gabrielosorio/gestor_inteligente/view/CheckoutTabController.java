@@ -1,6 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.view;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
@@ -59,7 +60,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
 
     public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController) {
         this.checkoutTabPaneController = checkoutTabPaneController;
-        ProductRepository productRepository = new ProductRepository(PSQLProductStrategy.getInstance());
+        ProductRepository productRepository = new ProductRepository(new PSQLProductStrategy(ConnectionFactory.getInstance()));
         this.productService = new ProductServiceImpl(productRepository);
     }
 

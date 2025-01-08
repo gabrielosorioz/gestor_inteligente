@@ -27,11 +27,11 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>,
     private final PSQLPaymentStrategy paymentStrategy;
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLSalePaymentStrategy() {
+    public PSQLSalePaymentStrategy(ConnectionFactory connectionFactory) {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = ConnectionFactory.getInstance();
-        saleStrategy = new PSQLSaleStrategy();
-        paymentStrategy = new PSQLPaymentStrategy();
+        this.connFactory = connectionFactory;
+        saleStrategy = new PSQLSaleStrategy(connectionFactory);
+        paymentStrategy = new PSQLPaymentStrategy(connectionFactory);
     }
 
     @Override

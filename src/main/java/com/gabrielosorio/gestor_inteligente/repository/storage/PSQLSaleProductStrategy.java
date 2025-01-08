@@ -26,11 +26,11 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
     private final PSQLSaleStrategy saleStrategy;
     private Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLSaleProductStrategy(){
+    public PSQLSaleProductStrategy(ConnectionFactory connectionFactory){
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.connFactory = ConnectionFactory.getInstance();
-        this.productStrategy = new PSQLProductStrategy();
-        this.saleStrategy = new PSQLSaleStrategy();
+        this.productStrategy = new PSQLProductStrategy(connectionFactory);
+        this.saleStrategy = new PSQLSaleStrategy(connectionFactory);
     }
 
     @Override

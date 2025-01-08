@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
@@ -121,8 +122,7 @@ public class ProductManagerController implements Initializable, ShortcutHandler 
         try {
 
             FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductForm.fxml"));
-            ProductRepository productRepository = new ProductRepository(PSQLProductStrategy.getInstance());
-            productRepository.init(PSQLProductStrategy.getInstance());
+            ProductRepository productRepository = new ProductRepository(new PSQLProductStrategy(ConnectionFactory.getInstance()));
             ProductService productService = new ProductServiceImpl(productRepository);
             loader.setController(new ProductFormController(productTbViewController,this,productService));
             productForm = loader.load();

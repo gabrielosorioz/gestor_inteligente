@@ -5,7 +5,6 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleCheckoutMovement;
-import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
@@ -28,11 +27,11 @@ public class PSQLSaleCheckoutMovementStrategy implements RepositoryStrategy<Sale
     private final PSQLCheckoutMovementStrategy checkoutMovementStrategy;
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLSaleCheckoutMovementStrategy() {
+    public PSQLSaleCheckoutMovementStrategy(ConnectionFactory connectionFactory) {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = ConnectionFactory.getInstance();
-        this.checkoutMovementStrategy = new PSQLCheckoutMovementStrategy(ConnectionFactory.getInstance());
-        this.saleStrategy = new PSQLSaleStrategy();
+        this.connFactory = connectionFactory;
+        this.checkoutMovementStrategy = new PSQLCheckoutMovementStrategy(connectionFactory);
+        this.saleStrategy = new PSQLSaleStrategy(connectionFactory);
     }
 
     private Optional<CheckoutMovement> findCheckoutMovementById(long id){

@@ -84,31 +84,31 @@ public class PaymentViewHelper {
         var checkoutMovementService = createCheckoutMovementService();
         var checkoutService = createCheckoutService(checkoutMovementService);
         var saleCheckoutMovRepo = createSaleCheckoutMovementService();
-        saleRepository.init(new PSQLSaleStrategy());
+        saleRepository.init(new PSQLSaleStrategy(ConnectionFactory.getInstance()));
         return new SaleServiceImpl(saleRepository,saleProductService,salePaymentService,checkoutMovementService,checkoutService,productService,saleCheckoutMovRepo);
     }
 
     private static SaleCheckoutMovementService createSaleCheckoutMovementService(){
         var saleCheckoutMovementRepository = new SaleCheckoutMovementRepository();
-        saleCheckoutMovementRepository.init(new PSQLSaleCheckoutMovementStrategy());
+        saleCheckoutMovementRepository.init(new PSQLSaleCheckoutMovementStrategy(ConnectionFactory.getInstance()));
         return new SaleCheckoutMovementServiceImpl(saleCheckoutMovementRepository);
     }
 
     private static SaleProductService createSaleProductService(){
         var saleProductRepo = new SaleProductRepository();
-        saleProductRepo.init(new PSQLSaleProductStrategy());
+        saleProductRepo.init(new PSQLSaleProductStrategy(ConnectionFactory.getInstance()));
         return new SaleProductServiceImpl(saleProductRepo);
     }
 
     private static ProductService createProductService(){
-        var productStrategy = PSQLProductStrategy.getInstance();
+        var productStrategy = new PSQLProductStrategy(ConnectionFactory.getInstance());
         var productRepository = new ProductRepository(productStrategy);
         return new ProductServiceImpl(productRepository);
     }
 
     private static SalePaymentService createSalePaymentService(){
         var salePaymentRepo = new SalePaymentRepository();
-        salePaymentRepo.init(new PSQLSalePaymentStrategy());
+        salePaymentRepo.init(new PSQLSalePaymentStrategy(ConnectionFactory.getInstance()));
         return new SalePaymentServiceImpl(salePaymentRepo);
     }
 

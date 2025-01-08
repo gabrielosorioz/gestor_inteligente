@@ -21,9 +21,9 @@ public class PSQLSaleStrategy implements RepositoryStrategy<Sale> {
     private final ConnectionFactory connFactory;
     private Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLSaleStrategy(){
+    public PSQLSaleStrategy(ConnectionFactory connectionFactory){
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = ConnectionFactory.getInstance();
+        this.connFactory = connectionFactory;
     }
 
     @Override

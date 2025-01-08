@@ -25,12 +25,12 @@ public class PSQLCheckoutMovementStrategy implements RepositoryStrategy<Checkout
     private Logger log = Logger.getLogger(getClass().getName());
 
 
-    public PSQLCheckoutMovementStrategy(ConnectionFactory connFactory) {
+    public PSQLCheckoutMovementStrategy(ConnectionFactory connectionFactory) {
+        this.connFactory = connectionFactory;
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.checkoutStrategy = new PSQLCheckoutStrategy(ConnectionFactory.getInstance());
-        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy();
-        this.paymentStrategy = new PSQLPaymentStrategy();
-        this.connFactory = connFactory;
+        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy(connectionFactory);
+        this.paymentStrategy = new PSQLPaymentStrategy(connectionFactory);
     }
 
     @Override

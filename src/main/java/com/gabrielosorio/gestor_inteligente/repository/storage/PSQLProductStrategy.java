@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 
 public class PSQLProductStrategy implements ProductRepositoryStrategy {
 
-    private static PSQLProductStrategy instance;
     private final QueryLoader qLoader;
     private ConnectionFactory connFactory;
     private Logger log = Logger.getLogger(getClass().getName());
@@ -27,11 +26,11 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
     private final PSQLSupplierStrategy supplierStrategy;
 
 
-    public PSQLProductStrategy() {
-        categoryStrategy = new PSQLCategoryStrategy(ConnectionFactory.getInstance());
-        supplierStrategy = new PSQLSupplierStrategy(ConnectionFactory.getInstance());
+    public PSQLProductStrategy(ConnectionFactory connectionFactory) {
+        categoryStrategy = new PSQLCategoryStrategy(connectionFactory);
+        supplierStrategy = new PSQLSupplierStrategy(connectionFactory);
         qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        connFactory = ConnectionFactory.getInstance();
+        connFactory = connectionFactory;
     }
 
     @Override
@@ -320,15 +319,6 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
 
         } catch (SQLException e) {
             throw new RuntimeException("Error checking barcode existence.",e);
-        }
-    }
-
-    public static PSQLProductStrategy getInstance(){
-        synchronized (PSQLProductStrategy.class){
-            if(Objects.isNull(instance)){
-             instance = new PSQLProductStrategy();
-            }
-            return instance;
         }
     }
 

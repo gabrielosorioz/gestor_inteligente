@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.view;
 
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
@@ -178,7 +179,7 @@ public class ProductTbViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ProductRepository productRepository = new ProductRepository(PSQLProductStrategy.getInstance());
+        ProductRepository productRepository = new ProductRepository(new PSQLProductStrategy(ConnectionFactory.getInstance()));
         productService = new ProductServiceImpl(productRepository);
         allProducts = fetchProducts();
         productsList = FXCollections.observableArrayList(allProducts);

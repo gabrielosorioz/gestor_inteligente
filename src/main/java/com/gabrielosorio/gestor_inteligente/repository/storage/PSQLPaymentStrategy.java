@@ -21,9 +21,9 @@ public class PSQLPaymentStrategy implements RepositoryStrategy<Payment> {
     private final ConnectionFactory connFactory;
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLPaymentStrategy() {
+    public PSQLPaymentStrategy(ConnectionFactory connectionFactory) {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = ConnectionFactory.getInstance();
+        this.connFactory = connectionFactory;
     }
 
     @Override

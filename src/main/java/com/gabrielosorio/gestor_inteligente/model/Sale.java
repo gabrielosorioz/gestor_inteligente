@@ -40,7 +40,13 @@ public class Sale {
         calculateTotals();
     }
     
-    public Sale(){}
+    public Sale(){
+        totalChange = BigDecimal.ZERO;
+        totalAmountPaid = BigDecimal.ZERO;
+        originalTotalPrice = BigDecimal.ZERO;
+        totalPrice = BigDecimal.ZERO;
+        totalDiscount = BigDecimal.ZERO;
+    }
 
     public long getId() {
         return id;

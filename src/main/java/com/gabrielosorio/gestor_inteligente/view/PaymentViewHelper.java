@@ -83,8 +83,15 @@ public class PaymentViewHelper {
         var productService = createProductService();
         var checkoutMovementService = createCheckoutMovementService();
         var checkoutService = createCheckoutService(checkoutMovementService);
+        var saleCheckoutMovRepo = createSaleCheckoutMovementService();
         saleRepository.init(new PSQLSaleStrategy());
-        return new SaleServiceImpl(saleRepository,saleProductService,salePaymentService,checkoutMovementService,checkoutService,productService);
+        return new SaleServiceImpl(saleRepository,saleProductService,salePaymentService,checkoutMovementService,checkoutService,productService,saleCheckoutMovRepo);
+    }
+
+    private static SaleCheckoutMovementService createSaleCheckoutMovementService(){
+        var saleCheckoutMovementRepository = new SaleCheckoutMovementRepository();
+        saleCheckoutMovementRepository.init(new PSQLSaleCheckoutMovementStrategy());
+        return new SaleCheckoutMovementServiceImpl(saleCheckoutMovementRepository);
     }
 
     private static SaleProductService createSaleProductService(){

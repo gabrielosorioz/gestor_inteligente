@@ -8,7 +8,7 @@ import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum
 import java.util.List;
 
 
-public interface CheckoutMovementService {
+public interface CheckoutMovementService extends TransactionalService {
 
     CheckoutMovement addMovement(CheckoutMovement movement);
     List<CheckoutMovement> saveAll(List<CheckoutMovement> checkoutMovements);

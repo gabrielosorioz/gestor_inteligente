@@ -5,8 +5,8 @@ import com.gabrielosorio.gestor_inteligente.model.*;
 
 import java.util.List;
 
-public interface SaleCheckoutMovementService {
+public interface SaleCheckoutMovementService extends TransactionalService {
     List<SaleCheckoutMovement> saveAll(List<SaleCheckoutMovement> saleCheckoutMovements);
-    public SaleCheckoutMovement buildSaleCheckoutMovement(CheckoutMovement checkoutMovement, Sale sale);
+    SaleCheckoutMovement buildSaleCheckoutMovement(CheckoutMovement checkoutMovement, Sale sale);
 
 }

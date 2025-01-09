@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 /**
  * Abstract class to manage the shared behavior for Transactional Strategies.
- * Handles the `transactionalConnection` attribute and provides utility methods
+ * Handles the `sharedConnection` attribute and provides utility methods
  * to obtain the appropriate connection.
  *
  * @param <T> the type of entity managed by this strategy.
@@ -19,7 +19,7 @@ public abstract class TransactionalRepositoryStrategy<T> implements Transactiona
 
     private final ConnectionFactory connectionFactory;
     private final Logger log = Logger.getLogger(getClass().getName());
-    private Connection transactionalConnection;
+    private Connection sharedConnection;
     private boolean isSharedConnection;
 
     protected TransactionalRepositoryStrategy(ConnectionFactory connectionFactory) {
@@ -35,9 +35,9 @@ public abstract class TransactionalRepositoryStrategy<T> implements Transactiona
      * @throws SQLException if an error occurs while obtaining a connection.
      */
     protected Connection getConnection() throws SQLException {
-        if (transactionalConnection != null) {
+        if (sharedConnection != null) {
             log.info("Using shared transactional connection.");
-            return transactionalConnection;
+            return sharedConnection;
         } else {
             log.info("Using a new connection from the connection pool.");
             return connectionFactory.getConnection();
@@ -54,29 +54,29 @@ public abstract class TransactionalRepositoryStrategy<T> implements Transactiona
     }
 
     @Override
-    public void openTransactionalConnection(Connection connection) {
-        if (transactionalConnection != null) {
+    public void openSharedConnection(Connection connection) {
+        if (sharedConnection != null) {
             throw new IllegalStateException("Shared transactional connection is already set.");
         }
-        this.transactionalConnection = connection;
+        this.sharedConnection = connection;
         this.isSharedConnection = true;
         log.info("Shared transactional connection was established.");
     }
 
     @Override
-    public void closeTransactionalConnection() {
-        if (this.transactionalConnection != null) {
+    public void closeSharedConnection() {
+        if (this.sharedConnection != null) {
             try {
-                if (!this.transactionalConnection.isClosed()) {
+                if (!this.sharedConnection.isClosed()) {
                     if (!isSharedConnection) {
-                        this.transactionalConnection.close();
+                        this.sharedConnection.close();
                     }
                 }
             } catch (SQLException e) {
                 throw new TransactionException("Failed to close the shared connection.", e);
             } finally {
                 if (isSharedConnection) {
-                    this.transactionalConnection = null;
+                    this.sharedConnection = null;
                     this.isSharedConnection = false;
                 }
             }

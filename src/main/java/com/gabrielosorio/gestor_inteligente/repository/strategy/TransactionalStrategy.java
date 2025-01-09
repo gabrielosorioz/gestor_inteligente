@@ -17,12 +17,12 @@ public interface TransactionalStrategy<T> {
      *
      * @param connection the connection to be used for transactions. Must not be {@code null}.
      */
-    void openTransactionalConnection(Connection connection);
+    void openSharedConnection(Connection connection);
 
     /**
      * Releases the transactional connection currently associated with the strategy.
      * Implementations must ensure that resources are properly released,
      * either by closing or cleaning up references as necessary.
      */
-    void closeTransactionalConnection();
+    void closeSharedConnection();
 }

@@ -1,13 +1,18 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
+import com.gabrielosorio.gestor_inteligente.exception.TransactionException;
 import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionManager;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionManagerImpl;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalStrategy;
 import com.gabrielosorio.gestor_inteligente.service.*;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,28 +37,61 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public void processSale(User user,Sale sale) {
-        save(sale);
-
+    public void processSale(User user, Sale sale) {
+        // Inicializa o checkout
         var checkout = checkoutService.openCheckout(user);
-        var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
 
-        List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
-                .map(paymentMethod -> checkoutMovementService
-                        .buildCheckoutMovement(checkout, paymentMethod,"Venda", checkoutMovementType))
-        .toList();
+        // Cria a lista de estratégias transacionais
+        List<TransactionalStrategy<?>> transactionalStrategies = List.of(
+                saleRepository.getTransactionalStrategy(),
+                saleProductService.getTransactionalStrategy(),
+                salePaymentService.getTransactionalStrategy(),
+                checkoutMovementService.getTransactionalStrategy(),
+                productService.getTransactionalStrategy(),
+                saleCheckoutMovementService.getTransactionalStrategy()
+        );
 
-        var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);
+        // Cria o TransactionManager
+        TransactionManager transactionManager = new TransactionManagerImpl(transactionalStrategies);
 
-        List<SaleCheckoutMovement> saleCheckoutMovements  = checkoutMovementsWithGenKeys.stream()
-            .map(checkoutMovement -> saleCheckoutMovementService
-                    .buildSaleCheckoutMovement(checkoutMovement,sale))
-        .toList();
+        try {
+            // Inicia a transação
+            transactionManager.beginTransaction();
 
-        saleCheckoutMovementService.saveAll(saleCheckoutMovements);
+            // Realiza as operações transacionais
+            save(sale);
 
+            var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
 
+            // Gera os movimentos de checkout
+            List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
+                    .map(paymentMethod -> checkoutMovementService
+                            .buildCheckoutMovement(checkout, paymentMethod, "Venda", checkoutMovementType))
+                    .toList();
+
+            var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);
+
+            // Relaciona os movimentos de checkout com a venda
+            List<SaleCheckoutMovement> saleCheckoutMovements = checkoutMovementsWithGenKeys.stream()
+                    .map(checkoutMovement -> saleCheckoutMovementService
+                            .buildSaleCheckoutMovement(checkoutMovement, sale))
+                    .toList();
+
+            saleCheckoutMovementService.saveAll(saleCheckoutMovements);
+
+            // Confirma a transação
+            transactionManager.commitTransaction();
+        } catch (Exception e) {
+            // Faz o rollback em caso de erro
+            try {
+                transactionManager.rollbackTransaction();
+            } catch (TransactionException rollbackEx) {
+                throw new RuntimeException("Failed to rollback transaction after error.", rollbackEx);
+            }
+            throw new RuntimeException("Failed to process sale.", e);
+        }
     }
+
 
     public Sale save(Sale sale) throws SalePaymentException {
         SaleValidator.validate(sale);

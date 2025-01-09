@@ -35,7 +35,7 @@ public class TransactionManagerImpl implements TransactionManager {
             sharedConnection.setAutoCommit(false);
 
             // Configurar todas as estratégias para usar a conexão compartilhada
-            transactionalStrategies.forEach(strategy -> strategy.openTransactionalConnection(sharedConnection));
+            transactionalStrategies.forEach(strategy -> strategy.openSharedConnection(sharedConnection));
 
             LOGGER.info("Transaction started successfully.");
         } catch (SQLException e) {
@@ -81,7 +81,7 @@ public class TransactionManagerImpl implements TransactionManager {
     private void closeSharedConnection() {
         transactionalStrategies.forEach(strategy -> {
             try {
-                strategy.closeTransactionalConnection();
+                strategy.closeSharedConnection();
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Failed to close connection for strategy: " + strategy.getClass().getName(), e);
             }

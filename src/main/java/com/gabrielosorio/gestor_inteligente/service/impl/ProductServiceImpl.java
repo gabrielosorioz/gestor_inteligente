@@ -3,20 +3,22 @@ import com.gabrielosorio.gestor_inteligente.datacontext.ProductDataContext;
 import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
+import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
 import com.gabrielosorio.gestor_inteligente.service.ProductService;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl extends AbstractTransactionalService<Product> implements ProductService {
 
-    private final ProductRepository pRepository;
+    private final ProductRepository REPOSITORY;
     private final ProductDataContext prodDataContext;
 
-    public ProductServiceImpl(ProductRepository pRepository) {
-        this.pRepository = pRepository;
-        this.prodDataContext = ProductDataContext.getInstance(pRepository);
+    public ProductServiceImpl(ProductRepository productRepository) {
+        super(productRepository);
+        REPOSITORY = productRepository;
+        this.prodDataContext = ProductDataContext.getInstance(getRepository());
     }
 
     @Override
@@ -24,15 +26,15 @@ public class ProductServiceImpl implements ProductService {
         long pCode;
 
         if(product.getProductCode() == 0){
-            pCode = pRepository.genPCode();
+            pCode = REPOSITORY.genPCode();
         } else {
             pCode = product.getProductCode();
 
-            if(pRepository.existPCode(product.getProductCode())){
+            if(REPOSITORY.existPCode(product.getProductCode())){
                 throw new ProductException("The product code already exists. ");
             }
 
-            if(pRepository.existsBarCode(product.getBarCode().orElse(""))){
+            if(REPOSITORY.existsBarCode(product.getBarCode().orElse(""))){
                 throw new ProductException("The product bar code already exists. ");
             }
         }

@@ -3,23 +3,25 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleCheckoutMovement;
-import com.gabrielosorio.gestor_inteligente.repository.SaleCheckoutMovementRepository;
+import com.gabrielosorio.gestor_inteligente.repository.Repository;
+import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
 import com.gabrielosorio.gestor_inteligente.service.SaleCheckoutMovementService;
 
 import java.util.List;
 
-public class SaleCheckoutMovementServiceImpl implements SaleCheckoutMovementService {
+public class SaleCheckoutMovementServiceImpl extends AbstractTransactionalService<SaleCheckoutMovement> implements SaleCheckoutMovementService {
 
-    private final SaleCheckoutMovementRepository slCkMovementRepo;
+    private final Repository<SaleCheckoutMovement> REPOSITORY;
 
-    public SaleCheckoutMovementServiceImpl(SaleCheckoutMovementRepository slCkMovementRepo) {
-        this.slCkMovementRepo = slCkMovementRepo;
+    public SaleCheckoutMovementServiceImpl(Repository<SaleCheckoutMovement> saleCheckoutMovementRepository) {
+        super(saleCheckoutMovementRepository);
+        REPOSITORY = saleCheckoutMovementRepository;
     }
 
 
     @Override
     public List<SaleCheckoutMovement> saveAll(List<SaleCheckoutMovement> saleCheckoutMovements) {
-        return slCkMovementRepo.addAll(saleCheckoutMovements);
+        return REPOSITORY.addAll(saleCheckoutMovements);
     }
 
     @Override

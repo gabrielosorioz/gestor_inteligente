@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.datacontext;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
+import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import java.util.Collections;
 import java.util.List;
@@ -15,14 +16,14 @@ import java.util.stream.Collectors;
 public class ProductDataContext implements DataContext<Product> {
 
     private static ProductDataContext instance;
-    private final ProductRepository productRepository;
+    private final Repository<Product> productRepository;
     private final List<Product> products;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Lock readLock = lock.readLock();
     private final Lock writeLock = lock.writeLock();
     private static final Logger log = Logger.getLogger(ProductDataContext.class.getName());
 
-    private ProductDataContext(ProductRepository productRepository) {
+    private ProductDataContext(Repository<Product> productRepository) {
         this.productRepository = productRepository;
         this.products = Collections.synchronizedList(productRepository.findAll());
     }
@@ -124,7 +125,7 @@ public class ProductDataContext implements DataContext<Product> {
         }
     }
 
-    public static ProductDataContext getInstance(ProductRepository productRepository){
+    public static ProductDataContext getInstance(Repository<Product> productRepository){
         synchronized (ConnectionFactory.class){
             if(Objects.isNull(instance)){
                 instance = new ProductDataContext(productRepository);

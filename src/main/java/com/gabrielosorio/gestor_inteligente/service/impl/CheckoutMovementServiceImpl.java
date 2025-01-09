@@ -4,29 +4,31 @@ import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovementType;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
-import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.CheckoutMovementRepository;
+import com.gabrielosorio.gestor_inteligente.repository.Repository;
+import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
 import com.gabrielosorio.gestor_inteligente.service.CheckoutMovementService;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class CheckoutMovementServiceImpl implements CheckoutMovementService {
+public class CheckoutMovementServiceImpl extends AbstractTransactionalService<CheckoutMovement> implements CheckoutMovementService {
 
-    private final CheckoutMovementRepository checkoutMovementRepository;
+    private final Repository<CheckoutMovement> REPOSITORY;
 
     public CheckoutMovementServiceImpl(CheckoutMovementRepository checkoutMovementRepository) {
-        this.checkoutMovementRepository = checkoutMovementRepository;
+       super(checkoutMovementRepository);
+       REPOSITORY = getRepository();
     }
 
     @Override
     public List<CheckoutMovement> saveAll(List<CheckoutMovement> checkoutMovements) {
-        return checkoutMovementRepository.addAll(checkoutMovements);
+        return REPOSITORY.addAll(checkoutMovements);
     }
 
     @Override
     public CheckoutMovement addMovement(CheckoutMovement movement) {
         movement.setDateTime(LocalDateTime.now());
-        return checkoutMovementRepository.add(movement);
+        return REPOSITORY.add(movement);
     }
 
 

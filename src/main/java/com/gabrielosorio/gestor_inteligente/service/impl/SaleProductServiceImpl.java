@@ -1,28 +1,30 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
-import com.gabrielosorio.gestor_inteligente.repository.SaleProductRepository;
-import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
+import com.gabrielosorio.gestor_inteligente.repository.Repository;
 
+import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
+import com.gabrielosorio.gestor_inteligente.service.SaleProductService;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class SaleProductServiceImpl implements SaleProductService {
+public class SaleProductServiceImpl extends AbstractTransactionalService<SaleProduct> implements SaleProductService {
 
-    private final SaleProductRepository saleProductRep;
+    private final Repository<SaleProduct> REPOSITORY;
 
-    public SaleProductServiceImpl(SaleProductRepository saleRepository) {
-        this.saleProductRep = saleRepository;
+    public SaleProductServiceImpl(Repository<SaleProduct> saleProductRepository) {
+        super(saleProductRepository);
+        REPOSITORY = getRepository();
     }
 
     public SaleProduct save(SaleProduct saleProduct){
         validate(saleProduct);
-        return saleProductRep.add(saleProduct);
+        return REPOSITORY.add(saleProduct);
     }
 
     public List<SaleProduct> saveAll(List<SaleProduct> saleProducts){
         saleProducts.forEach(this::validate);
-        return saleProductRep.addAll(saleProducts);
+        return REPOSITORY.addAll(saleProducts);
     }
 
     private void validate(SaleProduct saleProduct){

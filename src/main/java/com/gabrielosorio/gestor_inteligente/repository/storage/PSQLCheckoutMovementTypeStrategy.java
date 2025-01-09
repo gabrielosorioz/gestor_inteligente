@@ -6,6 +6,7 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovementType;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalRepositoryStrategy;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,21 +17,20 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutMovementTypeStrategy implements RepositoryStrategy<CheckoutMovementType> {
+public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStrategy<CheckoutMovementType> implements RepositoryStrategy<CheckoutMovementType> {
 
     private final QueryLoader qLoader;
-    private final ConnectionFactory connFactory;
     private final Logger log = Logger.getLogger(getClass().getName());
 
     public PSQLCheckoutMovementTypeStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = connectionFactory;
     }
 
     @Override
     public CheckoutMovementType add(CheckoutMovementType checkoutMovementType) {
         var query = qLoader.getQuery("insertCheckoutMovementType");
-        try (var connection = connFactory.getConnection();
+        try (var connection = getConnection();
              var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, checkoutMovementType.getName());
@@ -57,7 +57,7 @@ public class PSQLCheckoutMovementTypeStrategy implements RepositoryStrategy<Chec
     public Optional<CheckoutMovementType> find(long id) {
         var query = qLoader.getQuery("findCheckoutMovementTypeById");
 
-        try (var connection = connFactory.getConnection();
+        try (var connection = getConnection();
              var ps = connection.prepareStatement(query)) {
 
             ps.setLong(1, id);
@@ -82,7 +82,7 @@ public class PSQLCheckoutMovementTypeStrategy implements RepositoryStrategy<Chec
         var checkoutMovementTypes = new ArrayList<CheckoutMovementType>();
         var query = qLoader.getQuery("findAllCheckoutMovementTypes");
 
-        try (var connection = connFactory.getConnection();
+        try (var connection = getConnection();
              var ps = connection.prepareStatement(query);
              var rs = ps.executeQuery()) {
 
@@ -105,7 +105,7 @@ public class PSQLCheckoutMovementTypeStrategy implements RepositoryStrategy<Chec
         var params = specification.getParameters();
         var checkoutMovementTypes = new ArrayList<CheckoutMovementType>();
 
-        try (var connection = connFactory.getConnection();
+        try (var connection = getConnection();
              var ps = connection.prepareStatement(query)) {
 
             if (params.size() != ps.getParameterMetaData().getParameterCount()) {
@@ -135,7 +135,7 @@ public class PSQLCheckoutMovementTypeStrategy implements RepositoryStrategy<Chec
     @Override
     public CheckoutMovementType update(CheckoutMovementType checkoutMovementType) {
         var query = qLoader.getQuery("updateCheckoutMovementType");
-        try (var connection = connFactory.getConnection();
+        try (var connection = getConnection();
              var ps = connection.prepareStatement(query)) {
 
             ps.setString(1, checkoutMovementType.getName());
@@ -161,7 +161,7 @@ public class PSQLCheckoutMovementTypeStrategy implements RepositoryStrategy<Chec
     @Override
     public boolean remove(long id) {
         var query = qLoader.getQuery("deleteCheckoutMovementTypeById");
-        try (var connection = connFactory.getConnection();
+        try (var connection = getConnection();
              var ps = connection.prepareStatement(query)) {
 
             ps.setLong(1, id);

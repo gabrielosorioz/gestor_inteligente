@@ -8,6 +8,8 @@ import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalRepositoryStrategy;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,17 +20,16 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>, BatchInsertable<SaleProduct> {
+public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategy<SaleProduct> implements RepositoryStrategy<SaleProduct>, BatchInsertable<SaleProduct> {
 
     private final QueryLoader qLoader;
-    private final ConnectionFactory connFactory;
     private final PSQLProductStrategy productStrategy;
     private final PSQLSaleStrategy saleStrategy;
     private Logger log = Logger.getLogger(getClass().getName());
 
     public PSQLSaleProductStrategy(ConnectionFactory connectionFactory){
+        super(connectionFactory);
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = ConnectionFactory.getInstance();
         this.productStrategy = new PSQLProductStrategy(connectionFactory);
         this.saleStrategy = new PSQLSaleStrategy(connectionFactory);
     }
@@ -37,7 +38,7 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
     public SaleProduct add(SaleProduct saleProduct) {
         var query = qLoader.getQuery("insertSaleProduct");
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
 
             ps.setLong(1,saleProduct.getSale().getId());
@@ -70,7 +71,7 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
     @Override
     public Optional<SaleProduct> find(long id) {
         var query = qLoader.getQuery("findSaleProductById");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
            var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,id);
@@ -93,7 +94,7 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
         var saleProducts = new ArrayList<SaleProduct>();
         var query = qLoader.getQuery("findAllSaleProduct");
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query);
             var rs = ps.executeQuery()){
 
@@ -116,7 +117,7 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
         var params = specification.getParameters();
         var saleProducts = new ArrayList<SaleProduct>();
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             if(params.size() != ps.getParameterMetaData().getParameterCount()){
@@ -144,7 +145,7 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
     @Override
     public SaleProduct update(SaleProduct saleProduct) {
         var query = qLoader.getQuery("updateSaleProduct");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1, saleProduct.getSaleId());
@@ -175,7 +176,7 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
     @Override
     public boolean remove(long id) {
         var query = qLoader.getQuery("deleteSaleProductById");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,id);
@@ -223,7 +224,7 @@ public class PSQLSaleProductStrategy implements RepositoryStrategy<SaleProduct>,
         Connection connection = null;
 
         try {
-            connection = connFactory.getConnection();
+            connection = getConnection();
             connection.setAutoCommit(false);
 
             try(var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)){

@@ -6,6 +6,10 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalStrategy;
+
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,21 +19,22 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLPaymentStrategy implements RepositoryStrategy<Payment> {
+public class PSQLPaymentStrategy extends TransactionalRepositoryStrategy<Payment> implements RepositoryStrategy<Payment> {
 
     private final QueryLoader qLoader;
-    private final ConnectionFactory connFactory;
     private final Logger log = Logger.getLogger(getClass().getName());
 
+
     public PSQLPaymentStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = connectionFactory;
     }
+
 
     @Override
     public Payment add(Payment payment) {
         var query = qLoader.getQuery("insertPayment");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
 
             ps.setString(1,payment.getDescription());
@@ -56,7 +61,7 @@ public class PSQLPaymentStrategy implements RepositoryStrategy<Payment> {
     public Optional<Payment> find(long id) {
         var query = qLoader.getQuery("findPaymentById");
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,id);
@@ -81,7 +86,7 @@ public class PSQLPaymentStrategy implements RepositoryStrategy<Payment> {
         var payments = new ArrayList<Payment>();
         var query = qLoader.getQuery("findAllPayments");
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query);
             var rs = ps.executeQuery()){
 
@@ -104,7 +109,7 @@ public class PSQLPaymentStrategy implements RepositoryStrategy<Payment> {
         var params = specification.getParameters();
         var payments = new ArrayList<Payment>();
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             if(params.size() != ps.getParameterMetaData().getParameterCount()){
@@ -134,7 +139,7 @@ public class PSQLPaymentStrategy implements RepositoryStrategy<Payment> {
     @Override
     public Payment update(Payment payment) {
         var query = qLoader.getQuery("updatePayment");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setString(1, payment.getDescription());
@@ -159,7 +164,7 @@ public class PSQLPaymentStrategy implements RepositoryStrategy<Payment> {
     @Override
     public boolean remove(long id) {
         var query = qLoader.getQuery("deletePaymentById");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)) {
 
             ps.setLong(1,id);

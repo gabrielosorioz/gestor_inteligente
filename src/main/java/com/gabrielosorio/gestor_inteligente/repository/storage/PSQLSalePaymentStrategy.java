@@ -8,6 +8,7 @@ import com.gabrielosorio.gestor_inteligente.model.SalePayment;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalRepositoryStrategy;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -19,17 +20,16 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>, BatchInsertable<SalePayment> {
+public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategy<SalePayment> implements RepositoryStrategy<SalePayment>, BatchInsertable<SalePayment> {
 
     private final QueryLoader qLoader;
-    private final ConnectionFactory connFactory;
     private final PSQLSaleStrategy saleStrategy;
     private final PSQLPaymentStrategy paymentStrategy;
     private final Logger log = Logger.getLogger(getClass().getName());
 
     public PSQLSalePaymentStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.connFactory = connectionFactory;
         saleStrategy = new PSQLSaleStrategy(connectionFactory);
         paymentStrategy = new PSQLPaymentStrategy(connectionFactory);
     }
@@ -37,7 +37,7 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>,
     @Override
     public SalePayment add(SalePayment salePayment) {
         var query = qLoader.getQuery("insertSalePayment");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
 
             ps.setLong(1,salePayment.getSaleId());
@@ -65,7 +65,7 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>,
     @Override
     public Optional<SalePayment> find(long id) {
         var query = qLoader.getQuery("findSalePaymentById");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,id);
@@ -89,7 +89,7 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>,
         var salePayments = new ArrayList<SalePayment>();
         var query = qLoader.getQuery("findAllSalePayments");
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query);
             var rs = ps.executeQuery()){
 
@@ -111,7 +111,7 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>,
         var params = specification.getParameters();
         var salePayments = new ArrayList<SalePayment>();
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             if(params.size() != ps.getParameterMetaData().getParameterCount()){
@@ -139,7 +139,7 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>,
     @Override
     public SalePayment update(SalePayment salePayment) {
         var query = qLoader.getQuery("updateSalePayment");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,salePayment.getSaleId());
@@ -165,7 +165,7 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>,
     @Override
     public boolean remove(long id) {
         var query = qLoader.getQuery("deleteSalePaymentById");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,id);
@@ -215,7 +215,7 @@ public class PSQLSalePaymentStrategy implements RepositoryStrategy<SalePayment>,
         Connection connection = null;
 
         try {
-            connection = connFactory.getConnection();
+            connection = getConnection();
             connection.setAutoCommit(false);
 
             try(var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){

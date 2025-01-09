@@ -9,6 +9,8 @@ import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.ProductRepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalRepositoryStrategy;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,27 +19,26 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLProductStrategy implements ProductRepositoryStrategy {
+public class PSQLProductStrategy extends TransactionalRepositoryStrategy<Product> implements ProductRepositoryStrategy {
 
     private final QueryLoader qLoader;
-    private ConnectionFactory connFactory;
     private Logger log = Logger.getLogger(getClass().getName());
     private final PSQLCategoryStrategy categoryStrategy;
     private final PSQLSupplierStrategy supplierStrategy;
 
 
     public PSQLProductStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
         categoryStrategy = new PSQLCategoryStrategy(connectionFactory);
         supplierStrategy = new PSQLSupplierStrategy(connectionFactory);
         qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        connFactory = connectionFactory;
     }
 
     @Override
     public Product add(Product product) {
         var query = qLoader.getQuery("insertProduct");
         log.info(query);
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)) {
 
             long id = generateId();
@@ -80,7 +81,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
     @Override
     public Optional<Product> find(long id) {
         var query = qLoader.getQuery("findProductById");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,id);
@@ -103,7 +104,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
         var products = new ArrayList<Product>();
         var query = qLoader.getQuery("findAllProducts");
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query);
             var rs = ps.executeQuery()){
 
@@ -126,7 +127,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
         var params = specification.getParameters();
         var products = new ArrayList<Product>();
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             if(params.size() != ps.getParameterMetaData().getParameterCount()){
@@ -154,7 +155,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
     @Override
     public Product update(Product product) {
         var query = qLoader.getQuery("updateProduct");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)
         ){
             ps.setLong(1,product.getProductCode());
@@ -194,7 +195,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
     @Override
     public boolean remove(long id) {
         var query = qLoader.getQuery("deleteProductById");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,id);
@@ -246,7 +247,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
         String query = qLoader.getQuery("productMaxId");
         long newId = 1;
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query);
             var rs = ps.executeQuery()){
 
@@ -266,7 +267,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
         long generatedPCode = 0;
         String query = qLoader.getQuery("maxProductCode");
 
-        try (var connection = connFactory.getConnection();
+        try (var connection = getConnection();
              var ps = connection.prepareStatement(query);
              var rs = ps.executeQuery()) {
 
@@ -290,7 +291,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
     public boolean existsPCode(long pCode){
         var query = qLoader.getQuery("existsProductCode");
 
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setLong(1,pCode);
@@ -308,7 +309,7 @@ public class PSQLProductStrategy implements ProductRepositoryStrategy {
     @Override
     public boolean existsBarCode(String barCode) {
         var query = qLoader.getQuery("productByBarCode");
-        try(var connection = connFactory.getConnection();
+        try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
 
             ps.setString(1,barCode.trim());

@@ -5,7 +5,7 @@ import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleCheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
-import com.gabrielosorio.gestor_inteligente.service.SaleCheckoutMovementService;
+import com.gabrielosorio.gestor_inteligente.service.base.SaleCheckoutMovementService;
 
 import java.util.List;
 

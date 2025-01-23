@@ -5,8 +5,8 @@ import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutStatus;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.CheckoutRepository;
-import com.gabrielosorio.gestor_inteligente.service.CheckoutMovementService;
-import com.gabrielosorio.gestor_inteligente.service.CheckoutService;
+import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
+import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

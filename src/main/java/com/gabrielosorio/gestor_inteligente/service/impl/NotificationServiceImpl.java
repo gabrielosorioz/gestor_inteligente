@@ -1,6 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 
-import com.gabrielosorio.gestor_inteligente.service.NotificationService;
+import com.gabrielosorio.gestor_inteligente.service.base.NotificationService;
 import com.gabrielosorio.gestor_inteligente.view.ToastNotification;
 import javafx.scene.image.Image;
 

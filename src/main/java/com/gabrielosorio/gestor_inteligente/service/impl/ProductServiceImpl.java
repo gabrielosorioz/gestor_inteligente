@@ -4,7 +4,7 @@ import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
-import com.gabrielosorio.gestor_inteligente.service.ProductService;
+import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 
 import java.sql.Timestamp;
 import java.time.Instant;

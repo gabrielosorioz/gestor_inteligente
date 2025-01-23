@@ -5,7 +5,7 @@ import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Stock;
 import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.storage.PSQLProductStrategy;
-import com.gabrielosorio.gestor_inteligente.service.ProductService;
+import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.animation.FadeTransition;

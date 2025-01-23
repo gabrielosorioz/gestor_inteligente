@@ -5,14 +5,13 @@ import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionManager;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionManagerImpl;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalStrategy;
-import com.gabrielosorio.gestor_inteligente.service.*;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManager;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManagerImpl;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;
+import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

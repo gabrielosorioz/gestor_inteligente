@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.service;
+package com.gabrielosorio.gestor_inteligente.service.base;
 
 import com.gabrielosorio.gestor_inteligente.model.Product;
 

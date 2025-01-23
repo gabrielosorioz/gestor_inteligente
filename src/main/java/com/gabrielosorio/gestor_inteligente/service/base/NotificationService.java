@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.service;
+package com.gabrielosorio.gestor_inteligente.service.base;
 
 public interface NotificationService {
     void showSuccess(String message);

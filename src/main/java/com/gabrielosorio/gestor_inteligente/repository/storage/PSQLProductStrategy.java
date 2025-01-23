@@ -7,14 +7,13 @@ import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.ProductRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.ProductRepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;

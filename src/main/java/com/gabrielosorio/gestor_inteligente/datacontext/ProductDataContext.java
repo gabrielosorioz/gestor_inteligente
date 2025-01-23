@@ -1,7 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.datacontext;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
+import com.gabrielosorio.gestor_inteligente.datacontext.base.DataContext;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import java.util.Collections;
@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ProductDataContext implements DataContext<Product> {
 

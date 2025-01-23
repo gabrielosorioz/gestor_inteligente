@@ -7,7 +7,7 @@ import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.repository.*;
 import com.gabrielosorio.gestor_inteligente.repository.storage.*;
-import com.gabrielosorio.gestor_inteligente.service.*;
+import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.service.impl.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

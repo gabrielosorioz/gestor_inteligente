@@ -1,11 +1,9 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
-import com.gabrielosorio.gestor_inteligente.model.SalePayment;
 import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
-import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
-import com.gabrielosorio.gestor_inteligente.service.*;
+import com.gabrielosorio.gestor_inteligente.service.base.SaleService;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

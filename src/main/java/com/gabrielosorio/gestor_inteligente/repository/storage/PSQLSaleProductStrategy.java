@@ -5,10 +5,10 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

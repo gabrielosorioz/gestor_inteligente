@@ -1,9 +1,8 @@
-package com.gabrielosorio.gestor_inteligente.service;
+package com.gabrielosorio.gestor_inteligente.service.base;
 import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovementType;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
-import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 
 import java.util.List;
 

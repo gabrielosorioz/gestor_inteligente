@@ -1,7 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.service;
 
 import com.gabrielosorio.gestor_inteligente.repository.Repository;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;
 
 /**
  * Abstract base class for transactional services that provides

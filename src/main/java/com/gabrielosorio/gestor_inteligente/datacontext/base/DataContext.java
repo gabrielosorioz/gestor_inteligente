@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.datacontext;
+package com.gabrielosorio.gestor_inteligente.datacontext.base;
 
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 

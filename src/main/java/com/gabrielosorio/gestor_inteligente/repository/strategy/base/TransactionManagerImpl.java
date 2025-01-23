@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.repository.strategy;
+package com.gabrielosorio.gestor_inteligente.repository.strategy.base;
 
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.exception.TransactionException;

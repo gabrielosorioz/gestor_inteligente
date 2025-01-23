@@ -1,8 +1,6 @@
-package com.gabrielosorio.gestor_inteligente.service;
+package com.gabrielosorio.gestor_inteligente.service.base;
 
-import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalStrategy;
 
 import java.util.List;
 

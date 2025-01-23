@@ -1,10 +1,8 @@
-package com.gabrielosorio.gestor_inteligente.service;
+package com.gabrielosorio.gestor_inteligente.service.base;
 
 import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.User;
-
-import java.math.BigDecimal;
 
 public interface CheckoutService {
 

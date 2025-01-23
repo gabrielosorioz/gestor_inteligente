@@ -1,9 +1,9 @@
 package com.gabrielosorio.gestor_inteligente.repository;
 
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.BatchInsertable;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.RepositoryStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.TransactionalStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;
 
 import java.util.List;
 import java.util.Optional;

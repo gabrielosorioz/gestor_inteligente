@@ -4,7 +4,7 @@ import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
-import com.gabrielosorio.gestor_inteligente.service.CheckoutService;
+import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

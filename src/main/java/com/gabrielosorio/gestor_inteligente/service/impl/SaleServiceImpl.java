@@ -37,10 +37,8 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public void processSale(User user, Sale sale) {
-        // Inicializa o checkout
         var checkout = checkoutService.openCheckout(user);
 
-        // Cria a lista de estratégias transacionais
         List<TransactionalStrategy<?>> transactionalStrategies = List.of(
                 saleRepository.getTransactionalStrategy(),
                 saleProductService.getTransactionalStrategy(),
@@ -50,19 +48,15 @@ public class SaleServiceImpl implements SaleService {
                 saleCheckoutMovementService.getTransactionalStrategy()
         );
 
-        // Cria o TransactionManager
         TransactionManager transactionManager = new TransactionManagerImpl(transactionalStrategies);
 
         try {
-            // Inicia a transação
             transactionManager.beginTransaction();
 
-            // Realiza as operações transacionais
             save(sale);
 
             var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
 
-            // Gera os movimentos de checkout
             List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
                     .map(paymentMethod -> checkoutMovementService
                             .buildCheckoutMovement(checkout, paymentMethod, "Venda", checkoutMovementType))
@@ -70,7 +64,6 @@ public class SaleServiceImpl implements SaleService {
 
             var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);
 
-            // Relaciona os movimentos de checkout com a venda
             List<SaleCheckoutMovement> saleCheckoutMovements = checkoutMovementsWithGenKeys.stream()
                     .map(checkoutMovement -> saleCheckoutMovementService
                             .buildSaleCheckoutMovement(checkoutMovement, sale))
@@ -78,10 +71,8 @@ public class SaleServiceImpl implements SaleService {
 
             saleCheckoutMovementService.saveAll(saleCheckoutMovements);
 
-            // Confirma a transação
             transactionManager.commitTransaction();
         } catch (Exception e) {
-            // Faz o rollback em caso de erro
             try {
                 transactionManager.rollbackTransaction();
             } catch (TransactionException rollbackEx) {

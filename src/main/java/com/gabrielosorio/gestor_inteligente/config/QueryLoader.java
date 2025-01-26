@@ -26,7 +26,8 @@ public class QueryLoader {
     }
 
     public String getQuery(String queryKey){
-        log.info(dbPrefix + queryKey);
-        return queries.getProperty(dbPrefix + queryKey);
+        String query = queries.getProperty(dbPrefix + queryKey);
+        log.info(dbPrefix + queryKey + " " + query);
+        return query;
     }
 }

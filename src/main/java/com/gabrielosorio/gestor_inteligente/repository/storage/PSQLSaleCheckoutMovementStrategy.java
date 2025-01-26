@@ -213,7 +213,11 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
 
         try {
             connection = getConnection();
-            connection.setAutoCommit(false);
+
+            // Check and adjust autoCommit only for non-shared connections
+            if (!isSharedConnection()) {
+                connection.setAutoCommit(false);
+            }
 
             try(var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)){
 
@@ -224,7 +228,10 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                 }
 
                 ps.executeBatch();
-                connection.commit();
+
+                if(!isSharedConnection()){
+                    connection.commit();
+                }
 
                 try(var gKeys = ps.getGeneratedKeys()){
                     int index = 0;
@@ -235,7 +242,7 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
 
                 log.info("All SaleCheckoutMovements successfully inserted.");
             } catch (SQLException e){
-                if(connection != null){
+                if(!isSharedConnection()){
                     try {
                         connection.rollback();
                         log.warning("Transaction rolled back due to an error: " + e.getMessage());
@@ -250,12 +257,16 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
             throw new RuntimeException("Failed to get database connection " + e.getMessage(),e);
         } finally {
             if(connection != null){
-                try {
-                    connection.setAutoCommit(true);
-                    connection.close();
+                if(!isSharedConnection()){
+                    try {
+                        connection.setAutoCommit(true);
+                        connection.close();
 
-                } catch (SQLException closeEx){
-                    log.severe("Failed to close the connection " + closeEx.getMessage());
+                    } catch (SQLException closeEx){
+                        log.severe("Failed to close the connection " + closeEx.getMessage());
+                    }
+                } else {
+                    closeConnection(connection);
                 }
             }
         }

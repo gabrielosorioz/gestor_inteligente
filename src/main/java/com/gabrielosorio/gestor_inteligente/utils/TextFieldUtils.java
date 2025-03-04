@@ -138,5 +138,10 @@ public class TextFieldUtils {
         textField.setTextFormatter(textFormatter);
     }
 
+    public static void lastPositionCursor(TextField textField){
+        int lastPosition = textField.getLength();
+        textField.positionCaret(lastPosition);
+    }
+
 
 }

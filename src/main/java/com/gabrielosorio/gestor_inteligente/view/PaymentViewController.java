@@ -177,6 +177,7 @@ public class PaymentViewController implements Initializable {
                     int nextIndex = (currentIndex + 1) % paymentFields.size();
                     TextField nextField = paymentFields.get(nextIndex);
                     nextField.requestFocus();
+                    TextFieldUtils.lastPositionCursor(nextField);
 
                     // Call the request payment method on next field
                     PaymentMethod nextPaymentMethod = paymentFieldMap.entrySet().stream()
@@ -194,6 +195,8 @@ public class PaymentViewController implements Initializable {
                     int previousIndex = (currentIndex - 1 + paymentFields.size()) % paymentFields.size();
                     TextField previousField = paymentFields.get(previousIndex);
                     previousField.requestFocus();
+                    TextFieldUtils.lastPositionCursor(previousField);
+
 
                     // Call the request payment method on previous field
                     PaymentMethod previousPaymentMethod = paymentFieldMap.entrySet().stream()

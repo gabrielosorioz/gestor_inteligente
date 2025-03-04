@@ -9,6 +9,7 @@ import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 public class ProductServiceImpl extends AbstractTransactionalService<Product> implements ProductService {
 
@@ -47,6 +48,11 @@ public class ProductServiceImpl extends AbstractTransactionalService<Product> im
     @Override
     public List<Product> findAllProducts(){
         return prodDataContext.findAll();
+    }
+
+    @Override
+    public Optional<Product> findByBarCodeOrCode(String code){
+        return prodDataContext.findByCode(code);
     }
 
     @Override

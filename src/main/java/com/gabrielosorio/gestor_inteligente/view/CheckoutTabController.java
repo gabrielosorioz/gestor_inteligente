@@ -67,7 +67,6 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Platform.runLater(() -> {
             loadTableView();
-            fetchProductsData();
             setUpEvents();
             setDropShadowToBody();
             showTotalPrice();
@@ -256,17 +255,6 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
         return Optional.ofNullable(product);
     }
 
-    private void fetchProductsData() {
-        productService.findAllProducts().forEach(product -> {
-           String productCode = String.valueOf(product.getProductCode());
-           Optional<String> barCode = product.getBarCode();
-
-           productData.put(productCode,product);
-           barCode.ifPresent(bc -> productData.put(bc,product));
-        });
-
-    }
-
     private void showTotalPrice(){
         saleTableOp.getTotalPriceProperty().addListener((obsVal, oldVal, newVal) -> {
             if(newVal != null){
@@ -372,8 +360,12 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
         AnchorPane.setLeftAnchor(tableView,5.0);
     }
 
+    private Optional<Product> findProduct(String search){
+        return productService.findByBarCodeOrCode(search);
+    }
+
     private void addItem(String search, long quantity){
-        Optional<Product> productOptional = getProductData(search);
+        Optional<Product> productOptional = findProduct(search);
 
         if(productOptional.isEmpty()){
             showInfoMessageAlert("Produto não encontrado.");

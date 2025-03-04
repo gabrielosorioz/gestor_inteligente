@@ -175,6 +175,12 @@ public class ProductTbViewController implements Initializable {
         return new ArrayList<>(productService.findAllProducts());
     }
 
+    public void refreshProducts() {
+        allProducts = fetchProducts();
+        productsList.setAll(allProducts);
+        productsTable.refresh();
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ProductRepository productRepository = new ProductRepository(new PSQLProductStrategy(ConnectionFactory.getInstance()));

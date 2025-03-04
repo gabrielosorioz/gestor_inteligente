@@ -137,6 +137,9 @@ public class ProductFormController implements Initializable {
                     event.consume();
                     nextField.requestFocus(); // Move focus to the next field
                 }
+                else if (event.getCode() == KeyCode.F2){
+                    save();
+                }
             });
         }
 
@@ -239,11 +242,6 @@ public class ProductFormController implements Initializable {
 
     public void save() {
 
-        if(product.isEmpty()){
-
-        }
-
-
         try {
             if (product.isPresent()) {
                 Product pToUpdate = ProductFormUtils.updateProduct(product.get(), fieldMap);
@@ -253,6 +251,7 @@ public class ProductFormController implements Initializable {
                 Product newProduct = ProductFormUtils.createProduct(fieldMap);
                 pService.save(newProduct);
                 showSuccess("Produto salvo com sucesso.");
+                pTbViewController.refreshProducts();
             }
 
             pManagerController.toggleProductForm();
@@ -327,6 +326,9 @@ public class ProductFormController implements Initializable {
                 keyEvent.consume();
                 nextField.requestFocus();
                 return;
+            } else if(keyEvent.getCode() == KeyCode.F2){
+                save();
+                keyEvent.consume();
             }
 
             pManagerController.handleShortcut(keyEvent.getCode());

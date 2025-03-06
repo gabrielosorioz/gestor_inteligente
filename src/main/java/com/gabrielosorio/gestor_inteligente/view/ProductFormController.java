@@ -113,38 +113,63 @@ public class ProductFormController implements Initializable {
 
     }
 
-    private void setUpFieldNavigation(){
-        var fields = Arrays.asList(barCodeField,descriptionField,quantityField,costPriceField,
-                sellingPriceField, markupField,categoryField,supplierField);
+    private void setUpFieldNavigation() {
+        List<TextField> fields = Arrays.asList(
+                barCodeField, descriptionField, quantityField, costPriceField,
+                sellingPriceField, markupField, categoryField, supplierField
+        );
 
-        for(int i=0; i < fields.size(); i++){
-            int nextIndex = (i+1) % fields.size();
-            int prevIndex = (i - 1 + fields.size()) % fields.size(); // Index for the previous field
-            var currentField = fields.get(i);
-            var nextField = fields.get(nextIndex);
-            var prevField = fields.get(prevIndex);
+        fields.forEach(field -> {
+            int currentIndex = fields.indexOf(field);
 
-
-            currentField.setOnKeyPressed(event -> {
-                pManagerController.handleShortcut(event.getCode());
-                if (event.getCode() == KeyCode.ENTER) {
+            field.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.TAB) {
+                    handleTabNavigation(fields, currentIndex, event.isShiftDown());
+                    event.consume(); // Impede o comportamento padrão do Tab
+                } else if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.DOWN) {
+                    focusNextField(fields, currentIndex);
                     event.consume();
-                    nextField.requestFocus(); // Move focus to the next field
                 } else if (event.getCode() == KeyCode.UP) {
+                    focusPreviousField(fields, currentIndex);
                     event.consume();
-                    prevField.requestFocus(); // Move focus to the previous field
-                } else if (event.getCode() == KeyCode.DOWN) {
-                    event.consume();
-                    nextField.requestFocus(); // Move focus to the next field
-                }
-                else if (event.getCode() == KeyCode.F2){
+                } else if (event.getCode() == KeyCode.F2) {
                     save();
+                    event.consume();
                 }
             });
+        });
+    }
+
+    private void handleTabNavigation(List<TextField> fields, int currentIndex, boolean isShiftDown) {
+        int targetIndex;
+        if (isShiftDown) {
+            targetIndex = (currentIndex - 1 + fields.size()) % fields.size();
+        } else {
+            targetIndex = (currentIndex + 1) % fields.size();
         }
 
 
+        TextField targetField = fields.get(targetIndex);
+        targetField.requestFocus();
+        TextFieldUtils.lastPositionCursor(targetField);
     }
+
+    // Move o foco para o próximo campo
+    private void focusNextField(List<TextField> fields, int currentIndex) {
+        int nextIndex = (currentIndex + 1) % fields.size();
+        TextField nextField = fields.get(nextIndex);
+        nextField.requestFocus();
+        TextFieldUtils.lastPositionCursor(nextField);
+    }
+
+    // Move o foco para o campo anterior
+    private void focusPreviousField(List<TextField> fields, int currentIndex) {
+        int previousIndex = (currentIndex - 1 + fields.size()) % fields.size();
+        TextField previousField = fields.get(previousIndex);
+        previousField.requestFocus();
+        TextFieldUtils.lastPositionCursor(previousField);
+    }
+
 
     private void fetchCategoryData(){
         String filePath = "src/main/resources/com/gabrielosorio/gestor_inteligente/data/categories.json";
@@ -303,6 +328,7 @@ public class ProductFormController implements Initializable {
     }
 
     private void priceListener(TextField priceField, TextField nextField, TextField previousField) {
+        // Set default value if the field is empty
         if (priceField.getText().isBlank() || priceField.getText().isEmpty()) {
             priceField.setText("0,00");
         } else {
@@ -310,35 +336,32 @@ public class ProductFormController implements Initializable {
             priceField.setText(formattedValue);
         }
 
+        // Configure keyboard listeners
         priceField.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ENTER) {
+            if (keyEvent.getCode() == KeyCode.ENTER || keyEvent.getCode() == KeyCode.DOWN) {
+                focusNextField(Arrays.asList(priceField, nextField), 0); // Move focus to the next field
                 keyEvent.consume();
-                nextField.requestFocus();
-                return;
-            }
-            if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.RIGHT) {
-                priceField.positionCaret(priceField.getText().length());
             } else if (keyEvent.getCode() == KeyCode.UP) {
+                focusPreviousField(Arrays.asList(previousField, priceField), 1); // Move focus to the previous field
                 keyEvent.consume();
-                previousField.requestFocus();
-                return;
-            } else if(keyEvent.getCode() == KeyCode.DOWN){
+            } else if (keyEvent.getCode() == KeyCode.F2) {
+                save(); // Save the form
                 keyEvent.consume();
-                nextField.requestFocus();
-                return;
-            } else if(keyEvent.getCode() == KeyCode.F2){
-                save();
+            } else if (keyEvent.getCode() == KeyCode.TAB) {
+                handleTabNavigation(Arrays.asList(priceField, nextField, previousField), 0, keyEvent.isShiftDown());
                 keyEvent.consume();
             }
 
+            // Allow other shortcuts to be handled by the main controller
             pManagerController.handleShortcut(keyEvent.getCode());
-
         });
 
+        // Position the cursor at the end when clicking on the field
         priceField.setOnMouseClicked(mouseEvent -> {
             priceField.positionCaret(priceField.getText().length());
         });
 
+        // Format the text and recalculate the markup when the value changes
         priceField.textProperty().addListener((observableValue, oldValue, newValue) -> {
             String formattedText = TextFieldUtils.formatText(newValue);
             calculateAndSetMarkup();

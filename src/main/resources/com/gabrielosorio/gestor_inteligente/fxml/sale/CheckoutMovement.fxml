@@ -12,24 +12,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="mainContent" prefHeight="800.0" prefWidth="1300.0" styleClass="body" stylesheets="@../../css/checkoutMovement.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="mainContent" prefHeight="800.0" prefWidth="1300.0" styleClass="body" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane layoutX="199.0" layoutY="6.0" prefHeight="179.0" prefWidth="1300.0" styleClass="header" stylesheets="@../../css/home.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane layoutX="199.0" layoutY="6.0" prefHeight="179.0" prefWidth="1300.0" styleClass="header" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label layoutX="81.0" layoutY="65.0" styleClass="title" stylesheets="@../../css/home.css" text="Movimento do caixa" />
-            <Label layoutX="81.0" layoutY="93.0" prefHeight="20.0" prefWidth="231.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="Admnistrador: Gabriel Osorio" />
+            <Label layoutX="81.0" layoutY="65.0" styleClass="title" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="Movimento do caixa" />
+            <Label layoutX="81.0" layoutY="93.0" prefHeight="20.0" prefWidth="231.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="Admnistrador: Gabriel Osorio" />
             <DatePicker fx:id="startDate" editable="false" layoutX="329.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="Início" />
-            <DatePicker fx:id="endDate" editable="false" layoutX="495.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="FIm" />
-            <Label layoutX="335.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="De:" />
-            <Label layoutX="500.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="Até:" />
-            <Label layoutX="333.0" layoutY="71.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="Selecionar periodo:" />
-            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="663.0" layoutY="100.0" prefHeight="63.0" prefWidth="221.0" spacing="10.0" styleClass="header-card" stylesheets="@../../css/checkoutMovement.css">
+            <DatePicker fx:id="endDate" editable="false" layoutX="491.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="FIm" />
+            <Label layoutX="335.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="De:" />
+            <Label layoutX="500.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="Até:" />
+            <Label layoutX="333.0" layoutY="71.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="Selecionar periodo:" />
+            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="663.0" layoutY="100.0" prefHeight="63.0" prefWidth="221.0" spacing="10.0" styleClass="header-card" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
-                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #99cc99;" styleClass="header-card-icn-bck" stylesheets="@../../css/checkoutMovement.css">
+                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #99cc99;" styleClass="header-card-icn-bck" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../image/icons8-crescimento-de-estoques-96.png" />
+                              <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-crescimento-de-estoques-96.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -38,11 +38,11 @@
                      <children>
                         <HBox prefHeight="24.0" prefWidth="147.0">
                            <children>
-                              <Label prefHeight="24.0" prefWidth="46.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                              <Label layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="157.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                              <Label prefHeight="24.0" prefWidth="46.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="R$" />
+                              <Label fx:id="totalSale" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="157.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label prefHeight="20.0" prefWidth="154.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="Total de vendas" />
+                        <Label prefHeight="20.0" prefWidth="154.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="Total de vendas" />
                      </children>
                   </VBox>
                </children>
@@ -50,13 +50,13 @@
                   <Insets bottom="3.0" left="6.0" right="3.0" top="3.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="902.0" layoutY="100.0" prefHeight="63.0" prefWidth="237.0" spacing="10.0" styleClass="header-card" stylesheets="@../../css/checkoutMovement.css">
+            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="902.0" layoutY="100.0" prefHeight="63.0" prefWidth="237.0" spacing="10.0" styleClass="header-card" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
-                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #7f7fff;" styleClass="header-card-icn-bck" stylesheets="@../../css/checkoutMovement.css">
+                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #7f7fff;" styleClass="header-card-icn-bck" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../image/icons8-estimativa-48.png" />
+                              <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-estimativa-48.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -67,13 +67,13 @@
                            <children>
                               <HBox>
                                  <children>
-                                    <Label prefHeight="24.0" prefWidth="46.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                                    <Label layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="180.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                                    <Label prefHeight="24.0" prefWidth="46.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="R$" />
+                                    <Label fx:id="SalesAvg" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="180.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                                  </children>
                               </HBox>
                            </children>
                         </HBox>
-                        <Label prefHeight="20.0" prefWidth="182.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="Média de Vendas (Dia)" />
+                        <Label prefHeight="20.0" prefWidth="182.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="Média de Vendas (Dia)" />
                      </children>
                   </VBox>
                </children>
@@ -85,37 +85,37 @@
                <children>
                   <ImageView fx:id="statusView" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../image/icons8-círculo-verde-24.png" />
+                        <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-círculo-verde-24.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="statusLbl" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="Aberto" />
+                  <Label fx:id="statusLbl" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="Aberto" />
                </children>
             </HBox>
-            <HBox alignment="CENTER" fillHeight="false" layoutX="1158.0" layoutY="100.0" prefHeight="63.0" prefWidth="117.0" spacing="10.0" styleClass="header-card" stylesheets="@../../css/checkoutMovement.css">
+            <HBox alignment="CENTER" fillHeight="false" layoutX="1158.0" layoutY="100.0" prefHeight="63.0" prefWidth="117.0" spacing="10.0" styleClass="header-card" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <padding>
                   <Insets bottom="3.0" left="6.0" right="3.0" top="3.0" />
                </padding>
                <children>
-                  <Label alignment="CENTER" prefHeight="16.0" prefWidth="123.0" styleClass="subtitle-black" stylesheets="@../css/salesReport.css" text="0">
+                  <Label fx:id="qtdSales" alignment="CENTER" prefHeight="16.0" prefWidth="123.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/fxml/css/salesReport.css" text="0">
                      <font>
                         <Font size="37.0" />
                      </font>
                   </Label>
                </children>
             </HBox>
-            <Label layoutX="1153.0" layoutY="76.0" prefHeight="20.0" prefWidth="147.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="Quant. de vendas" />
+            <Label layoutX="1153.0" layoutY="76.0" prefHeight="20.0" prefWidth="147.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="Quant. de vendas" />
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="70.0" layoutY="194.0" prefHeight="292.0" prefWidth="237.0" styleClass="chart-card" stylesheets="@../../css/salesReport.css">
+      <AnchorPane layoutX="70.0" layoutY="194.0" prefHeight="292.0" prefWidth="237.0" styleClass="chart-card" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
          <children>
-            <Label layoutX="28.0" layoutY="6.0" styleClass="mini-card-title" stylesheets="@../../css/salesReport.css" text="Meios de pagamento" />
-            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="15.0" layoutY="222.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0" styleClass="mini-card-2" stylesheets="@../../css/salesReport.css">
+            <Label layoutX="28.0" layoutY="6.0" styleClass="mini-card-title" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css" text="Meios de pagamento" />
+            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="15.0" layoutY="222.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0" styleClass="mini-card-2" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
                <children>
-                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="48.0" style="-fx-background-color: BLUE;" styleClass="header-card-icn-bck" stylesheets="@../../css/salesReport.css">
+                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="48.0" style="-fx-background-color: BLUE;" styleClass="header-card-icn-bck" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../image/payment-icons/cash_96px.png" />
+                              <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/payment-icons/cash_96px.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -124,11 +124,11 @@
                      <children>
                         <HBox>
                            <children>
-                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="61.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="R$" />
-                              <Label fx:id="cash" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="0,00" />
+                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="61.0" styleClass="header-card-h1" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="R$" />
+                              <Label fx:id="cashMethod" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/salesReport.css" text="Dinheiro" />
+                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css" text="Dinheiro" />
                      </children>
                   </VBox>
                </children>
@@ -136,13 +136,13 @@
                   <Insets bottom="3.0" left="10.0" right="3.0" top="3.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="15.0" layoutY="162.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0" styleClass="mini-card-2" stylesheets="@../../css/salesReport.css">
+            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="15.0" layoutY="162.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0" styleClass="mini-card-2" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
                <children>
-                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="48.0" style="-fx-background-color: BLUE;" styleClass="header-card-icn-bck" stylesheets="@../../css/salesReport.css">
+                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="48.0" style="-fx-background-color: BLUE;" styleClass="header-card-icn-bck" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../image/payment-icons/credit_card_96px_rec.png" />
+                              <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/payment-icons/credit_card_96px_rec.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -151,11 +151,11 @@
                      <children>
                         <HBox>
                            <children>
-                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="61.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="R$" />
-                              <Label alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="0,00" />
+                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="61.0" styleClass="header-card-h1" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="R$" />
+                              <Label fx:id="creditMethod" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/salesReport.css" text="Crédito" />
+                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css" text="Crédito" />
                      </children>
                   </VBox>
                </children>
@@ -163,13 +163,13 @@
                   <Insets bottom="3.0" left="10.0" right="3.0" top="3.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="15.0" layoutY="101.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0" styleClass="mini-card-2" stylesheets="@../../css/salesReport.css">
+            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="15.0" layoutY="101.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0" styleClass="mini-card-2" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
                <children>
-                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="48.0" style="-fx-background-color: BLUE;" styleClass="header-card-icn-bck" stylesheets="@../../css/salesReport.css">
+                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="48.0" style="-fx-background-color: BLUE;" styleClass="header-card-icn-bck" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../image/payment-icons/debit_card_96px_rec.png" />
+                              <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/payment-icons/debit_card_96px_rec.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -178,11 +178,11 @@
                      <children>
                         <HBox>
                            <children>
-                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="61.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="R$" />
-                              <Label alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="0,00" />
+                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="61.0" styleClass="header-card-h1" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="R$" />
+                              <Label fx:id="debitMethod" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/salesReport.css" text="Débito" />
+                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css" text="Débito" />
                      </children>
                   </VBox>
                </children>
@@ -190,13 +190,13 @@
                   <Insets bottom="3.0" left="10.0" right="3.0" top="3.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="15.0" layoutY="38.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0" styleClass="mini-card-2" stylesheets="@../../css/salesReport.css">
+            <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="15.0" layoutY="38.0" prefHeight="45.0" prefWidth="210.0" spacing="10.0" styleClass="mini-card-2" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
                <children>
-                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="48.0" style="-fx-background-color: BLUE;" styleClass="header-card-icn-bck" stylesheets="@../../css/salesReport.css">
+                  <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="48.0" style="-fx-background-color: BLUE;" styleClass="header-card-icn-bck" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css">
                      <children>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../image/payment-icons/pix.png" />
+                              <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/payment-icons/pix.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -205,11 +205,11 @@
                      <children>
                         <HBox>
                            <children>
-                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="61.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="R$" />
-                              <Label alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="0,00" />
+                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="24.0" prefWidth="61.0" styleClass="header-card-h1" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="R$" />
+                              <Label fx:id="pixMethod" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/salesReport.css" text="Pix" />
+                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/salesReport.css" text="Pix" />
                      </children>
                   </VBox>
                </children>
@@ -219,10 +219,10 @@
             </HBox>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="318.0" layoutY="194.0" prefHeight="584.0" prefWidth="969.0" styleClass="card" stylesheets="@../../css/home.css">
+      <AnchorPane layoutX="318.0" layoutY="194.0" prefHeight="584.0" prefWidth="969.0" styleClass="card" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css">
          <children>
-            <Label layoutX="17.0" layoutY="70.0" styleClass="title" stylesheets="@../../css/home.css" text="Caixa - Movimento" />
-            <TableView layoutX="4.0" layoutY="41.0" prefHeight="478.0" prefWidth="991.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Label layoutX="17.0" layoutY="70.0" styleClass="title" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="Caixa - Movimento" />
+            <TableView fx:id="CMTableView" layoutX="4.0" layoutY="41.0" prefHeight="478.0" prefWidth="991.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <columns>
                   <TableColumn prefWidth="106.0" text="ID Venda" />
                   <TableColumn prefWidth="117.0" text="Hora" />
@@ -235,70 +235,70 @@
             </TableView>
             <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="226.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../../image/icons8-vendas-totais-50.png" />
+                  <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-vendas-totais-50.png" />
                </image>
             </ImageView>
-            <HBox layoutX="287.0" layoutY="66.0" prefHeight="40.0" prefWidth="146.0" styleClass="hbox-info" stylesheets="@../../css/checkoutMovement.css">
+            <HBox layoutX="287.0" layoutY="66.0" prefHeight="40.0" prefWidth="146.0" styleClass="hbox-info" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
-                  <Label prefHeight="36.0" prefWidth="25.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                  <Label fx:id="initialCash" layoutX="12.0" layoutY="12.0" prefHeight="36.0" prefWidth="112.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                  <Label prefHeight="36.0" prefWidth="25.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="R$" />
+                  <Label fx:id="initialCash" layoutX="12.0" layoutY="12.0" prefHeight="36.0" prefWidth="112.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                </children>
                <padding>
                   <Insets left="5.0" />
                </padding>
             </HBox>
-            <Label layoutX="291.0" layoutY="45.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="F. de caixa:" />
-            <Label layoutX="449.0" layoutY="45.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="Entradas:" />
-            <Label layoutX="607.0" layoutY="46.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="Saídas:" />
-            <Label layoutX="763.0" layoutY="45.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="Cancelados:" />
-            <HBox layoutX="447.0" layoutY="66.0" prefHeight="40.0" prefWidth="146.0" styleClass="hbox-info" stylesheets="@../../css/checkoutMovement.css">
+            <Label layoutX="291.0" layoutY="45.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="F. de caixa:" />
+            <Label layoutX="449.0" layoutY="45.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="Entradas:" />
+            <Label layoutX="607.0" layoutY="46.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="Saídas:" />
+            <Label layoutX="763.0" layoutY="45.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="Cancelados:" />
+            <HBox layoutX="447.0" layoutY="66.0" prefHeight="40.0" prefWidth="146.0" styleClass="hbox-info" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
-                  <Label prefHeight="36.0" prefWidth="25.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                  <Label layoutX="12.0" layoutY="12.0" prefHeight="36.0" prefWidth="112.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                  <Label prefHeight="36.0" prefWidth="25.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="R$" />
+                  <Label fx:id="inflow" layoutX="12.0" layoutY="12.0" prefHeight="36.0" prefWidth="112.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                </children>
                <padding>
                   <Insets left="5.0" />
                </padding>
             </HBox>
-            <HBox layoutX="604.0" layoutY="66.0" prefHeight="40.0" prefWidth="146.0" styleClass="hbox-info" stylesheets="@../../css/checkoutMovement.css">
+            <HBox layoutX="604.0" layoutY="66.0" prefHeight="40.0" prefWidth="146.0" styleClass="hbox-info" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
-                  <Label prefHeight="36.0" prefWidth="25.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                  <Label layoutX="12.0" layoutY="12.0" prefHeight="36.0" prefWidth="112.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                  <Label prefHeight="36.0" prefWidth="25.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="R$" />
+                  <Label fx:id="outflow" layoutX="12.0" layoutY="12.0" prefHeight="36.0" prefWidth="112.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                </children>
                <padding>
                   <Insets left="5.0" />
                </padding>
             </HBox>
-            <HBox layoutX="762.0" layoutY="65.0" prefHeight="40.0" prefWidth="146.0" styleClass="hbox-info" stylesheets="@../../css/checkoutMovement.css">
+            <HBox layoutX="762.0" layoutY="65.0" prefHeight="40.0" prefWidth="146.0" styleClass="hbox-info" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
-                  <Label prefHeight="36.0" prefWidth="25.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                  <Label layoutX="12.0" layoutY="12.0" prefHeight="36.0" prefWidth="112.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                  <Label prefHeight="36.0" prefWidth="25.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="R$" />
+                  <Label fx:id="canceled" layoutX="12.0" layoutY="12.0" prefHeight="36.0" prefWidth="112.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                </children>
                <padding>
                   <Insets left="5.0" />
                </padding>
             </HBox>
-            <Label layoutX="22.0" layoutY="13.0" prefHeight="20.0" prefWidth="147.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="(F1) Fundo de caixa" />
+            <Label layoutX="22.0" layoutY="13.0" prefHeight="20.0" prefWidth="147.0" styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/home.css" text="(F1) Fundo de caixa" />
          </children>
       </AnchorPane>
-      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="499.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../css/checkoutMovement.css">
+      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="499.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
          <children>
-            <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="profit-icon" stylesheets="@../../css/checkoutMovement.css">
+            <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="profit-icon" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../image/icons8-crescimento-económico-60.png" />
+                        <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-crescimento-económico-60.png" />
                      </image>
                   </ImageView>
                </children>
             </VBox>
             <VBox prefHeight="47.0" prefWidth="147.0">
                <children>
-                  <Label styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Lucro (Líquido)" />
+                  <Label styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="Lucro (Bruto)" />
                   <HBox spacing="3.0">
                      <children>
-                        <Label prefHeight="20.0" prefWidth="26.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                        <Label prefHeight="20.0" prefWidth="26.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="R$" />
+                        <Label fx:id="grossProfit" layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                      </children>
                   </HBox>
                </children>
@@ -308,24 +308,24 @@
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </padding>
       </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="571.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../css/checkoutMovement.css">
+      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="646.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
          <children>
-            <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="profit-icon" stylesheets="@../../css/checkoutMovement.css">
+            <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="expenditure-icon" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../image/icons8-crescimento-económico-60.png" />
+                        <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-despesa-50.png" />
                      </image>
                   </ImageView>
                </children>
             </VBox>
             <VBox prefHeight="47.0" prefWidth="147.0">
                <children>
-                  <Label styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Lucro (Bruto)" />
+                  <Label styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="Custo (Produtos)" />
                   <HBox spacing="3.0">
                      <children>
-                        <Label prefHeight="20.0" prefWidth="26.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                        <Label prefHeight="20.0" prefWidth="26.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="R$" />
+                        <Label fx:id="cost" layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                      </children>
                   </HBox>
                </children>
@@ -335,51 +335,24 @@
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </padding>
       </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="714.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../css/checkoutMovement.css">
+      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="573.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
          <children>
-            <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="expenditure-icon" stylesheets="@../../css/checkoutMovement.css">
+            <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="profit-icon" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css">
                <children>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../image/icons8-despesa-50.png" />
+                        <Image url="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-percentagem-48.png" />
                      </image>
                   </ImageView>
                </children>
             </VBox>
             <VBox prefHeight="47.0" prefWidth="147.0">
                <children>
-                  <Label styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Despesas" />
+                  <Label styleClass="subtitle" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="M. de lucro (Bruto)" />
                   <HBox spacing="3.0">
                      <children>
-                        <Label prefHeight="20.0" prefWidth="26.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
-                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-         </children>
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="643.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../css/checkoutMovement.css">
-         <children>
-            <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="profit-icon" stylesheets="@../../css/checkoutMovement.css">
-               <children>
-                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../image/icons8-percentagem-48.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </VBox>
-            <VBox prefHeight="47.0" prefWidth="147.0">
-               <children>
-                  <Label styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Margem de lucro" />
-                  <HBox spacing="3.0">
-                     <children>
-                        <Label prefHeight="20.0" prefWidth="34.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="(%)" />
-                        <Label layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
+                        <Label prefHeight="20.0" prefWidth="34.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="(%)" />
+                        <Label fx:id="grossProfitMargin" layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../../../../../../../../../workspace/gestor_inteligente/src/main/resources/com/gabrielosorio/gestor_inteligente/css/checkoutMovement.css" text="0,00" />
                      </children>
                   </HBox>
                </children>

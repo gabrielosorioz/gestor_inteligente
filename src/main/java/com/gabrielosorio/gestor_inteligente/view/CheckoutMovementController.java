@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
@@ -23,16 +24,21 @@ import java.util.logging.Logger;
 
 public class CheckoutMovementController implements Initializable, ShortcutHandler {
 
-    private Logger log = Logger.getLogger(getClass().getName());
+    private final Logger log = Logger.getLogger(getClass().getName());
+
+    @FXML
+    private TableView<?> CMTableView;
+
+    @FXML
+    private Label SalesAvg,canceled,cashMethod,cost,creditMethod,debitMethod,grossProfit,
+            grossProfitMargin,inflow,initialCash,outflow,pixMethod,qtdSales,statusLbl,
+            totalSale;
+
+    @FXML
+    private DatePicker startDate,endDate;
 
     @FXML
     private AnchorPane mainContent;
-
-    @FXML
-    private DatePicker endDate,startDate;
-
-    @FXML
-    private Label statusLbl, initialCash,cash;
 
     @FXML
     private ImageView statusView;
@@ -43,7 +49,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
 
     private final CheckoutService checkoutService;
 
-    private Checkout checkout;
+    private final Checkout checkout;
 
     public CheckoutMovementController(CheckoutService checkoutService){
         this.checkoutService = checkoutService;
@@ -57,10 +63,6 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setTodayDate();
         initialCash.setText(TextFieldUtils.formatText(checkout.getInitialCash().toPlainString()));
-        cash.setText(bigDecimalToMonetaryString(checkout.getInitialCash()));
-
-
-
     }
 
     private void setTodayDate(){
@@ -70,6 +72,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     }
 
     private void open() {
+
         /**
          * 1. Buscar no banco de dados um caixa pela data atual (Somente data, não data e hora)
          * 1.2 Se houver um registro de caixa no qual a data de abertura é igual á data atual,

@@ -219,20 +219,20 @@
             </HBox>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="318.0" layoutY="194.0" prefHeight="584.0" prefWidth="969.0" styleClass="card" stylesheets="@../../css/home.css">
+      <AnchorPane fx:id= "tableContent" layoutX="318.0" layoutY="194.0" prefHeight="584.0" prefWidth="969.0" styleClass="card" stylesheets="@../../css/home.css">
          <children>
             <Label layoutX="17.0" layoutY="70.0" styleClass="title" stylesheets="@../../css/home.css" text="Caixa - Movimento" />
-            <TableView fx:id="CMTableView" layoutX="4.0" layoutY="41.0" prefHeight="478.0" prefWidth="991.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-               <columns>
-                  <TableColumn prefWidth="106.0" text="ID Venda" />
-                  <TableColumn prefWidth="117.0" text="Hora" />
-                  <TableColumn prefWidth="141.0" text="Data" />
-                  <TableColumn prefWidth="164.0" text="F. de Pagamento." />
-                  <TableColumn prefWidth="168.0" text="Valor Total" />
-                  <TableColumn prefWidth="147.0" text="Observação" />
-                  <TableColumn prefWidth="115.0" text="Tipo" />
-               </columns>
-            </TableView>
+<!--            <TableView fx:id="CMTableView" layoutX="4.0" layoutY="41.0" prefHeight="478.0" prefWidth="991.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">-->
+<!--               <columns>-->
+<!--                  <TableColumn prefWidth="106.0" text="ID Venda" />-->
+<!--                  <TableColumn prefWidth="117.0" text="Hora" />-->
+<!--                  <TableColumn prefWidth="141.0" text="Data" />-->
+<!--                  <TableColumn prefWidth="164.0" text="F. de Pagamento." />-->
+<!--                  <TableColumn prefWidth="168.0" text="Valor Total" />-->
+<!--                  <TableColumn prefWidth="147.0" text="Observação" />-->
+<!--                  <TableColumn prefWidth="115.0" text="Tipo" />-->
+<!--               </columns>-->
+<!--            </TableView>-->
             <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="226.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
                <image>
                  <Image url="@../../image/icons8-vendas-totais-50.png" />

@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
+import com.gabrielosorio.gestor_inteligente.exception.SaleProcessingException;
 import com.gabrielosorio.gestor_inteligente.exception.TransactionException;
 import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
@@ -37,8 +38,10 @@ public class SaleServiceImpl implements SaleService {
         this.saleCheckoutMovementService = saleCheckoutMovementService;
     }
 
+
+
     @Override
-    public void processSale(User user, Sale sale) {
+    public Sale processSale(User user, Sale sale) throws SaleProcessingException {
         var checkout = checkoutService.openCheckout(user);
 
         List<TransactionalStrategy<?>> transactionalStrategies = List.of(
@@ -55,13 +58,13 @@ public class SaleServiceImpl implements SaleService {
         try {
             transactionManager.beginTransaction();
 
-            save(sale);
+            Sale savedSale = save(sale);
 
             var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
-            String saleObservationBase = "Venda #" + sale.getId();
-            boolean hasMultiplePayments = sale.getPaymentMethods().size() > 1;
+            String saleObservationBase = "Venda #" + savedSale.getId();
+            boolean hasMultiplePayments = savedSale.getPaymentMethods().size() > 1;
 
-            List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
+            List<CheckoutMovement> checkoutMovements = savedSale.getPaymentMethods().stream()
                     .map(payment -> {
                         String saleObservation = saleObservationBase;
 
@@ -79,26 +82,29 @@ public class SaleServiceImpl implements SaleService {
                     })
                     .toList();
 
-
             var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);
 
             List<SaleCheckoutMovement> saleCheckoutMovements = checkoutMovementsWithGenKeys.stream()
                     .map(checkoutMovement -> saleCheckoutMovementService
-                            .buildSaleCheckoutMovement(checkoutMovement, sale))
+                            .buildSaleCheckoutMovement(checkoutMovement, savedSale))
                     .toList();
 
             saleCheckoutMovementService.saveAll(saleCheckoutMovements);
 
             transactionManager.commitTransaction();
+
+            return savedSale;
+
         } catch (Exception e) {
             try {
                 transactionManager.rollbackTransaction();
             } catch (TransactionException rollbackEx) {
-                throw new RuntimeException("Failed to rollback transaction after error.", rollbackEx);
+                throw new SaleProcessingException("Failed to rollback transaction after error.", rollbackEx);
             }
-            throw new RuntimeException("Failed to process sale.", e);
+            throw new SaleProcessingException("Failed to process sale.", e);
         }
     }
+
 
 
     public Sale save(Sale sale) throws SalePaymentException {

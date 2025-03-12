@@ -4,6 +4,7 @@ import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutStatus;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.CheckoutRepository;
+import com.gabrielosorio.gestor_inteligente.repository.Repository;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
 import java.math.BigDecimal;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class CheckoutServiceImpl implements CheckoutService {
 
-    private final CheckoutRepository checkoutRepository;
+    private final Repository<CheckoutRepository> checkoutRepository;
     private final CheckoutMovementService checkoutMovementService;
 
     public CheckoutServiceImpl(CheckoutRepository checkoutRepository, CheckoutMovementService checkoutMovementService) {

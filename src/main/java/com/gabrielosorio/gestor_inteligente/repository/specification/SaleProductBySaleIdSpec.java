@@ -2,23 +2,22 @@ package com.gabrielosorio.gestor_inteligente.repository.specification;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.AbstractSpecification;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 
 import java.util.List;
 
-public class SaleProductBySaleIdSpec implements Specification<SaleProduct> {
+public class SaleProductBySaleIdSpec extends AbstractSpecification<SaleProduct> {
 
-    private final QueryLoader qLoader;
     private final long saleId;
 
     public SaleProductBySaleIdSpec(long saleId) {
         this.saleId = saleId;
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }
 
     @Override
     public String toSql() {
-        return "findSaleProductBySaleId";
+        return getQuery("findSaleProductBySaleId");
     }
 
     @Override

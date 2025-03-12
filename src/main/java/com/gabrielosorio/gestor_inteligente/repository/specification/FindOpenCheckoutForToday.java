@@ -3,24 +3,23 @@ import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutStatus;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.AbstractSpecification;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public class FindOpenCheckoutForToday implements Specification<Checkout> {
+public class FindOpenCheckoutForToday extends AbstractSpecification<Checkout> {
 
     private final LocalDate today;
-    private final QueryLoader qLoader;
 
     public FindOpenCheckoutForToday() {
         this.today = LocalDate.now();
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }
 
     @Override
     public String toSql() {
-        return qLoader.getQuery("findOpenCheckoutForToday");
+        return getQuery("findOpenCheckoutForToday");
     }
 
     @Override

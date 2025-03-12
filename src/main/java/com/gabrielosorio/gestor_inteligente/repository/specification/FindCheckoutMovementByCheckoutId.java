@@ -2,21 +2,20 @@ package com.gabrielosorio.gestor_inteligente.repository.specification;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.AbstractSpecification;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 
 import java.util.List;
 
-public class FindCheckoutMovementByCheckoutId implements Specification<CheckoutMovement> {
+public class FindCheckoutMovementByCheckoutId extends AbstractSpecification<CheckoutMovement> {
     private final long checkoutId;
-    private final QueryLoader qLoader;
 
     public FindCheckoutMovementByCheckoutId(long checkoutId) {
         this.checkoutId = checkoutId;
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }
     @Override
     public String toSql() {
-        return qLoader.getQuery("findCheckoutMovementByCheckoutId");
+        return getQuery("findCheckoutMovementByCheckoutId");
     }
 
 

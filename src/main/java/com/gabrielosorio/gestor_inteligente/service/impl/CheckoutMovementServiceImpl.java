@@ -7,7 +7,7 @@ import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.repository.impl.CheckoutMovementRepository;
 import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.FindCheckoutMovementByCheckoutId;
-import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
+import com.gabrielosorio.gestor_inteligente.service.base.AbstractTransactionalService;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
 import java.time.LocalDateTime;
 import java.util.List;

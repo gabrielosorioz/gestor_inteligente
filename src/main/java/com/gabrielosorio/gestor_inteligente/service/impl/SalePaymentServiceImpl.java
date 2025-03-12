@@ -2,7 +2,7 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 
 import com.gabrielosorio.gestor_inteligente.model.SalePayment;
 import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
-import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
+import com.gabrielosorio.gestor_inteligente.service.base.AbstractTransactionalService;
 import com.gabrielosorio.gestor_inteligente.service.base.SalePaymentService;
 
 import java.util.List;

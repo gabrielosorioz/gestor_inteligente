@@ -3,7 +3,7 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 
-import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
+import com.gabrielosorio.gestor_inteligente.service.base.AbstractTransactionalService;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleProductService;
 import java.math.BigDecimal;
 import java.util.List;

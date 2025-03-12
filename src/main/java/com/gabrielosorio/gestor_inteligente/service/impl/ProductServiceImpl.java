@@ -3,7 +3,7 @@ import com.gabrielosorio.gestor_inteligente.datacontext.ProductDataContext;
 import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.repository.impl.ProductRepository;
-import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
+import com.gabrielosorio.gestor_inteligente.service.base.AbstractTransactionalService;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 
 import java.sql.Timestamp;

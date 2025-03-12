@@ -19,6 +19,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -95,11 +97,8 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     private void populateTable() {
         List<CheckoutMovement> list = checkoutService.findCheckoutMovementsById(checkout.getId());
         cMTableView.getItems().addAll(list);
-
-        cMTableView.getColumns().forEach(column -> column.widthProperty().addListener((obs, oldWidth, newWidth) ->
-                System.out.println("Coluna: " + column.getId() + " | Largura: " + newWidth)));
-
         configurePaymentColumn();
+        configureObsColumn();
         tableContent.getChildren().add(cMTableView);
     }
 
@@ -115,6 +114,35 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
                     setText(item);
                 }
                 setStyle("-fx-alignment: CENTER-LEFT;");
+            }
+        });
+    }
+
+    private void configureObsColumn(){
+        TableColumn<CheckoutMovement, String> obsColumn =
+                (TableColumn<CheckoutMovement, String>) TableViewUtils.getColumnById(cMTableView, "obsProperty");
+
+        obsColumn.setCellFactory(col -> new TableCell<CheckoutMovement, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    String[] parts = item.split(" - ", 2);
+
+                    Text boldPart = new Text(parts[0]); // "Venda #ID"
+                    boldPart.setStyle("-fx-font-weight: bold;");
+
+                    Text normalPart = parts.length > 1 ? new Text(" - " + parts[1]) : new Text("");
+
+
+                    TextFlow textFlow = new TextFlow(boldPart, normalPart);
+                    setGraphic(textFlow);
+                    setText(null);
+                }
             }
         });
     }

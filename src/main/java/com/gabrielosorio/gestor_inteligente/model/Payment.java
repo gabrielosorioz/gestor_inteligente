@@ -27,6 +27,7 @@ public class Payment {
     public Payment(PaymentMethod paymentMethod){
         this.paymentMethod = paymentMethod;
         this.id = paymentMethod.getId();
+        this.description = paymentMethod.getDescription();
         this.value = new BigDecimal(0.00);
     }
 

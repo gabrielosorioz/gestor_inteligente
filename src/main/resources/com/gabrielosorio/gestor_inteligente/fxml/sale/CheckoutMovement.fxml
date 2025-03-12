@@ -3,8 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -17,12 +15,12 @@
       <AnchorPane layoutX="199.0" layoutY="6.0" prefHeight="179.0" prefWidth="1300.0" styleClass="header" stylesheets="@../../css/home.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label layoutX="81.0" layoutY="65.0" styleClass="title" stylesheets="@../../css/home.css" text="Movimento do caixa" />
-            <Label layoutX="81.0" layoutY="93.0" prefHeight="20.0" prefWidth="231.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="Admnistrador: Gabriel Osorio" />
+            <Label layoutX="81.0" layoutY="93.0" prefHeight="20.0" prefWidth="231.0" styleClass="subtitle" stylesheets="@../css/checkoutMovement.css" text="Admnistrador: Gabriel Osorio" />
             <DatePicker fx:id="startDate" editable="false" layoutX="329.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="Início" />
             <DatePicker fx:id="endDate" editable="false" layoutX="491.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="FIm" />
             <Label layoutX="335.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="De:" />
             <Label layoutX="500.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="Até:" />
-            <Label layoutX="333.0" layoutY="71.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="Selecionar periodo:" />
+            <Label layoutX="333.0" layoutY="71.0" styleClass="subtitle" stylesheets="@../css/checkoutMovement.css" text="Selecionar periodo:" />
             <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="663.0" layoutY="100.0" prefHeight="63.0" prefWidth="221.0" spacing="10.0" styleClass="header-card" stylesheets="@../../css/checkoutMovement.css">
                <children>
                   <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #99cc99;" styleClass="header-card-icn-bck" stylesheets="@../../css/checkoutMovement.css">
@@ -128,7 +126,7 @@
                               <Label fx:id="cashMethod" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/salesReport.css" text="Dinheiro" />
+                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Dinheiro" />
                      </children>
                   </VBox>
                </children>
@@ -155,7 +153,7 @@
                               <Label fx:id="creditMethod" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/salesReport.css" text="Crédito" />
+                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Crédito" />
                      </children>
                   </VBox>
                </children>
@@ -182,7 +180,7 @@
                               <Label fx:id="debitMethod" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/salesReport.css" text="Débito" />
+                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Débito" />
                      </children>
                   </VBox>
                </children>
@@ -209,7 +207,7 @@
                               <Label fx:id="pixMethod" alignment="CENTER" prefHeight="24.0" prefWidth="165.0" styleClass="header-card-h1" stylesheets="@../../css/home.css" text="0,00" />
                            </children>
                         </HBox>
-                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/salesReport.css" text="Pix" />
+                        <Label alignment="CENTER" prefHeight="20.0" prefWidth="162.0" styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Pix" />
                      </children>
                   </VBox>
                </children>
@@ -219,7 +217,7 @@
             </HBox>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id= "tableContent" layoutX="318.0" layoutY="194.0" prefHeight="584.0" prefWidth="969.0" styleClass="card" stylesheets="@../../css/home.css">
+      <AnchorPane fx:id="tableContent" layoutX="318.0" layoutY="194.0" prefHeight="584.0" prefWidth="969.0" styleClass="card" stylesheets="@../../css/home.css">
          <children>
             <Label layoutX="17.0" layoutY="70.0" styleClass="title" stylesheets="@../../css/home.css" text="Caixa - Movimento" />
 <!--            <TableView fx:id="CMTableView" layoutX="4.0" layoutY="41.0" prefHeight="478.0" prefWidth="991.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">-->

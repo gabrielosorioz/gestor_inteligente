@@ -10,6 +10,7 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.Transaction
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManagerImpl;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
+import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
 
 import java.math.BigDecimal;
@@ -57,15 +58,27 @@ public class SaleServiceImpl implements SaleService {
             save(sale);
 
             var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
-
-            String saleObservation = sale.getPaymentMethods().size() > 1
-                    ? "Venda #" + sale.getId() + " - Pagamento dividido"
-                    : "Venda #" + sale.getId();
+            String saleObservationBase = "Venda #" + sale.getId();
+            boolean hasMultiplePayments = sale.getPaymentMethods().size() > 1;
 
             List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
-                    .map(paymentMethod -> checkoutMovementService
-                            .buildCheckoutMovement(checkout, paymentMethod, saleObservation, checkoutMovementType))
+                    .map(payment -> {
+                        String saleObservation = saleObservationBase;
+
+                        if (hasMultiplePayments || payment.getPaymentMethod() == PaymentMethod.CREDIT0) {
+                            if (payment.getPaymentMethod() == PaymentMethod.CREDIT0) {
+                                saleObservation += (payment.getInstallments() > 1)
+                                        ? " - Crédito " + payment.getInstallments() + "x"
+                                        : " - Crédito à vista";
+                            } else {
+                                saleObservation += " - " + TextFieldUtils.toTitleCase(payment.getDescription());
+                            }
+                        }
+
+                        return checkoutMovementService.buildCheckoutMovement(checkout, payment, saleObservation, checkoutMovementType);
+                    })
                     .toList();
+
 
             var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);
 

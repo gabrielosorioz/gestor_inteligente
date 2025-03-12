@@ -9,10 +9,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 public class TextFieldUtils {
 
@@ -142,6 +144,16 @@ public class TextFieldUtils {
         int lastPosition = textField.getLength();
         textField.positionCaret(lastPosition);
     }
+
+    public static String toTitleCase(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        return Arrays.stream(input.split("\\s+")) // Divide por espaços
+                .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase()) // Capitaliza a 1ª letra
+                .collect(Collectors.joining(" ")); // Junta de volta
+    }
+
 
 
 }

@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
 import com.gabrielosorio.gestor_inteligente.exception.TransactionException;
 import com.gabrielosorio.gestor_inteligente.model.*;
+import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
@@ -57,9 +58,13 @@ public class SaleServiceImpl implements SaleService {
 
             var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
 
+            String saleObservation = sale.getPaymentMethods().size() > 1
+                    ? "Venda #" + sale.getId() + " - Pagamento dividido"
+                    : "Venda #" + sale.getId();
+
             List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
                     .map(paymentMethod -> checkoutMovementService
-                            .buildCheckoutMovement(checkout, paymentMethod, "Venda", checkoutMovementType))
+                            .buildCheckoutMovement(checkout, paymentMethod, saleObservation, checkoutMovementType))
                     .toList();
 
             var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);

@@ -4,9 +4,8 @@ public enum PaymentMethod {
 
     PIX(1,"PIX"),
     DEBITO(2,"DÉBITO"),
-    CREDIT0(3,"CRÉDITO Á VISTA"),
-    CREDITO_PARCELADO(4,"CRÉDITO PARCELADO"),
-    DINHEIRO(5,"DINHEIRO");
+    CREDIT0(3,"CRÉDITO"),
+    DINHEIRO(4,"DINHEIRO");
 
     private final long id;
     private final String description;

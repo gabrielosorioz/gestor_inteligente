@@ -13,6 +13,8 @@ public class Payment {
     private PaymentMethod paymentMethod;
     private String description;
     private BigDecimal value;
+    private int installments = 1;
+
 
 
     public Payment(PaymentMethod paymentMethod, BigDecimal value) {
@@ -58,14 +60,6 @@ public class Payment {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Payment payment = (Payment) o;
-        return id == payment.id && paymentMethod == payment.paymentMethod && Objects.equals(value, payment.value);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(id, paymentMethod, value);
     }
@@ -77,4 +71,31 @@ public class Payment {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public int getInstallments() {
+        return installments;
+    }
+
+    public void setInstallments(int installments) {
+        if (installments <= 0) {
+            throw new IllegalArgumentException("The number of installments must be greater than zero.");
+        }
+        if (paymentMethod == null) {
+            throw new IllegalStateException("Payment method must be defined before setting installments.");
+        }
+        if (paymentMethod.equals(PaymentMethod.CREDIT0)) {
+            this.installments = installments;
+        } else {
+            throw new UnsupportedOperationException("Installments are only allowed for credit.");
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Payment payment = (Payment) o;
+        return id == payment.id && paymentMethod == payment.paymentMethod && Objects.equals(value, payment.value);
+    }
+
 }

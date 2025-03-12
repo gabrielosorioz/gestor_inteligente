@@ -37,16 +37,18 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategy<Sal
     @Override
     public SalePayment add(SalePayment salePayment) {
         var query = qLoader.getQuery("insertSalePayment");
-        try(var connection = getConnection();
-            var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+        try (var connection = getConnection();
+             var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setLong(1,salePayment.getSaleId());
-            ps.setLong(2,salePayment.getPaymentId());
-            ps.setBigDecimal(3,salePayment.getPayment().getValue());
+            ps.setLong(1, salePayment.getSaleId());
+            ps.setLong(2, salePayment.getPaymentId());
+            ps.setBigDecimal(3, salePayment.getPayment().getValue());
+            ps.setInt(4, salePayment.getInstallments());
+
             ps.executeUpdate();
 
-            try(var gKeys = ps.getGeneratedKeys()){
-                if(gKeys.next()){
+            try (var gKeys = ps.getGeneratedKeys()) {
+                if (gKeys.next()) {
                     salePayment.setId(gKeys.getLong("id"));
                     log.info("SalePayment successfully inserted.");
                 } else {
@@ -55,12 +57,13 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategy<Sal
             }
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to insert sale payment. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to insert sale payment. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to insert sale payment", e);
-
         }
         return salePayment;
     }
+
 
     @Override
     public Optional<SalePayment> find(long id) {
@@ -145,7 +148,8 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategy<Sal
             ps.setLong(1,salePayment.getSaleId());
             ps.setLong(2,salePayment.getPaymentId());
             ps.setBigDecimal(3,salePayment.getPayment().getValue());
-            ps.setLong(4,salePayment.getId());
+            ps.setInt(4,salePayment.getPayment().getInstallments());
+            ps.setLong(5,salePayment.getId());
 
             int affectedRows = ps.executeUpdate();
 
@@ -187,14 +191,14 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategy<Sal
     }
 
     private SalePayment mapResultSet(ResultSet rs) throws SQLException {
-        var paym = findPaymentById(rs.getLong("payment_id"));
-        var sale = findSaleById(rs.getLong("saleid"));
+        var paymentOpt = findPaymentById(rs.getLong("payment_id"));
+        var saleOpt = findSaleById(rs.getLong("saleid"));
 
-        if(paym.isPresent() && sale.isPresent()){
-            var salePay = new SalePayment(paym.get(),sale.get());
+        if(paymentOpt.isPresent() && saleOpt.isPresent()){
+            var salePay = new SalePayment(paymentOpt.get(), saleOpt.get());
             salePay.setId(rs.getLong("id"));
+            salePay.setInstallments(rs.getInt("installments"));  // Mapeando o novo campo
             return salePay;
-
         } else {
             log.severe("Payment or Sale is null");
             return null;
@@ -227,6 +231,7 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategy<Sal
                     ps.setLong(1,salePayment.getSaleId());
                     ps.setLong(2,salePayment.getPaymentId());
                     ps.setBigDecimal(3,salePayment.getAmount());
+                    ps.setInt(4,salePayment.getInstallments());
                     ps.addBatch();
                 }
 

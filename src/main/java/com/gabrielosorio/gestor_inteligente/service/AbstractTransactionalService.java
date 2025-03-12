@@ -1,6 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.service;
 
-import com.gabrielosorio.gestor_inteligente.repository.Repository;
+import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;
 
 /**

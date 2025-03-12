@@ -3,7 +3,7 @@ package com.gabrielosorio.gestor_inteligente.datacontext;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.datacontext.base.DataContext;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.repository.Repository;
+import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

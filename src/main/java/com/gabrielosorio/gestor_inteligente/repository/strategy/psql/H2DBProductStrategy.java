@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.repository.storage;
+package com.gabrielosorio.gestor_inteligente.repository.strategy.psql;
 
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.model.Product;

@@ -372,7 +372,7 @@ public class PaymentViewController implements Initializable {
     // Finaliza a venda, processa os pagamentos e fecha a janela
     private void finalizeSale(User user, Sale sale) {
         confirmPayment(sale);
-        saleService.processSale(user, sale);
+//        saleService.processSale(user, sale);
         closeWindow();
         clearItems();
     }

@@ -6,7 +6,7 @@ import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
-import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
+import com.gabrielosorio.gestor_inteligente.repository.impl.SaleRepository;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManager;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManagerImpl;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;

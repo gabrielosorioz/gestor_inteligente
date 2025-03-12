@@ -2,7 +2,7 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.datacontext.ProductDataContext;
 import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.repository.ProductRepository;
+import com.gabrielosorio.gestor_inteligente.repository.impl.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 
@@ -88,10 +88,10 @@ public class ProductServiceImpl extends AbstractTransactionalService<Product> im
         product.ifPresentOrElse(
                 prod -> {
                     long currentQuantity = prod.getQuantity();
-                    if (currentQuantity < quantity) {
-                        throw new IllegalArgumentException(
-                                "Insufficient stock for product with ID " + id + ". Current stock: " + currentQuantity);
-                    }
+//                    if (currentQuantity < quantity) {
+//                        throw new IllegalArgumentException(
+//                                "Insufficient stock for product with ID " + id + ". Current stock: " + currentQuantity);
+//                    }
 
                     prod.setQuantity(currentQuantity - quantity);
                     prodDataContext.update(prod);

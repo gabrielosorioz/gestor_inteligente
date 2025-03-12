@@ -1,10 +1,12 @@
-package com.gabrielosorio.gestor_inteligente.repository;
+package com.gabrielosorio.gestor_inteligente.repository.impl;
 import com.gabrielosorio.gestor_inteligente.model.Checkout;
+import com.gabrielosorio.gestor_inteligente.repository.base.CheckoutRepository;
+import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.FindOpenCheckoutForToday;
 
 import java.util.Optional;
 
-public class CheckoutRepository extends Repository<Checkout>{
+public class CheckoutRepositoryImpl extends Repository<Checkout> implements CheckoutRepository {
 
     /**
      * Finds the open checkout for today, if any.

@@ -5,8 +5,8 @@ import com.gabrielosorio.gestor_inteligente.model.Permission;
 import com.gabrielosorio.gestor_inteligente.model.Role;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.User;
-import com.gabrielosorio.gestor_inteligente.repository.*;
-import com.gabrielosorio.gestor_inteligente.repository.storage.*;
+import com.gabrielosorio.gestor_inteligente.repository.impl.*;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.*;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.service.impl.*;
 import javafx.fxml.FXMLLoader;
@@ -119,7 +119,7 @@ public class PaymentViewHelper {
     }
 
     private static CheckoutService createCheckoutService(CheckoutMovementService checkoutMovementService){
-        var checkoutRepository = new CheckoutRepository();
+        var checkoutRepository = new CheckoutRepositoryImpl();
         checkoutRepository.init(new PSQLCheckoutStrategy(ConnectionFactory.getInstance()));
         return new CheckoutServiceImpl(checkoutRepository, checkoutMovementService);
     }

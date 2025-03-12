@@ -3,6 +3,7 @@ package com.gabrielosorio.gestor_inteligente.repository.specification;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Product;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 
 import java.sql.Timestamp;
 import java.util.List;

@@ -5,7 +5,7 @@ import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

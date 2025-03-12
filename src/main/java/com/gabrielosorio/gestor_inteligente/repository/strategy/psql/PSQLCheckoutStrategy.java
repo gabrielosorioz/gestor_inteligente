@@ -5,7 +5,7 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutStatus;
-import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import java.sql.ResultSet;
 import java.sql.SQLException;

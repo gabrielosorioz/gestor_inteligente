@@ -3,6 +3,8 @@ import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutStatus;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
+
 import java.time.LocalDate;
 import java.util.List;
 

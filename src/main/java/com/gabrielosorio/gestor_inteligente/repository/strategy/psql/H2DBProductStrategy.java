@@ -3,7 +3,7 @@ package com.gabrielosorio.gestor_inteligente.repository.strategy.psql;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

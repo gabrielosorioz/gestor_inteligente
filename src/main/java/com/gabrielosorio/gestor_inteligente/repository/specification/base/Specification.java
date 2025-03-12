@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.repository.specification;
+package com.gabrielosorio.gestor_inteligente.repository.specification.base;
 
 import java.util.List;
 

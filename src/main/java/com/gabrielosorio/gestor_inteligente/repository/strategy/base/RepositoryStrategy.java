@@ -1,6 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.repository.strategy.base;
 
-import com.gabrielosorio.gestor_inteligente.repository.specification.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 
 import java.util.List;
 import java.util.Optional;

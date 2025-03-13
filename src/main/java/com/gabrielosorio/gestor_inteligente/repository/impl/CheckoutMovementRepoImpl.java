@@ -1,13 +1,13 @@
 package com.gabrielosorio.gestor_inteligente.repository.impl;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
-import com.gabrielosorio.gestor_inteligente.repository.base.CheckoutMovementRepo;
+import com.gabrielosorio.gestor_inteligente.repository.base.CheckoutMovementRepository;
 import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.FindCheckoutMovementByCheckoutId;
 import com.gabrielosorio.gestor_inteligente.repository.specification.FindCheckoutMovementBySaleId;
 
 import java.util.List;
 
-public class CheckoutMovementRepoImpl extends Repository<CheckoutMovement> implements CheckoutMovementRepo {
+public class CheckoutMovementRepoImpl extends Repository<CheckoutMovement> implements CheckoutMovementRepository {
 
     @Override
     public List<CheckoutMovement> findCheckoutMovementBySaleId(long saleId) {

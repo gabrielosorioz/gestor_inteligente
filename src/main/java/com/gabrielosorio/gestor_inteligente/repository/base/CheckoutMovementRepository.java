@@ -4,7 +4,7 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsert
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import java.util.List;
 
-public interface CheckoutMovementRepo extends RepositoryStrategy<CheckoutMovement>, BatchInsertable<CheckoutMovement> {
+public interface CheckoutMovementRepository extends RepositoryStrategy<CheckoutMovement>, BatchInsertable<CheckoutMovement> {
     List<CheckoutMovement> findCheckoutMovementBySaleId(long saleId);
     public List<CheckoutMovement> findCheckoutMovementByCheckoutId(long checkoutId);
 }

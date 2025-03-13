@@ -113,7 +113,7 @@ public class PaymentViewHelper {
     }
 
     private static CheckoutMovementService createCheckoutMovementService(){
-        var checkoutMovementRepo = new CheckoutMovementRepository();
+        var checkoutMovementRepo = new CheckoutMovementRepoImpl();
         checkoutMovementRepo.init(new PSQLCheckoutMovementStrategy(ConnectionFactory.getInstance()));
         return new CheckoutMovementServiceImpl(checkoutMovementRepo);
     }

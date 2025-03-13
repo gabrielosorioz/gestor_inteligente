@@ -1,7 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
-import com.gabrielosorio.gestor_inteligente.repository.impl.CheckoutMovementRepository;
+import com.gabrielosorio.gestor_inteligente.repository.impl.CheckoutMovementRepoImpl;
 import com.gabrielosorio.gestor_inteligente.repository.impl.CheckoutRepositoryImpl;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLCheckoutMovementStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLCheckoutStrategy;
@@ -215,7 +215,7 @@ public class MainNavigationController implements Initializable {
 
     private void openCheckoutMovement(){
         var checkoutRepository = new CheckoutRepositoryImpl();
-        var checkoutMovementRepository = new CheckoutMovementRepository();
+        var checkoutMovementRepository = new CheckoutMovementRepoImpl();
         checkoutRepository.init(new PSQLCheckoutStrategy(ConnectionFactory.getInstance()));
         checkoutMovementRepository.init(new PSQLCheckoutMovementStrategy(ConnectionFactory.getInstance()));
         loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(new CheckoutServiceImpl(checkoutRepository,new CheckoutMovementServiceImpl(checkoutMovementRepository))));

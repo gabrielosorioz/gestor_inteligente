@@ -47,4 +47,6 @@ public interface CheckoutMovementService extends TransactionalService {
      *         If no movements are found, an empty list is returned.
      */
     List<CheckoutMovement> findByCheckoutId(long checkoutId);
+
+    List<CheckoutMovement> findBySaleId(long id);
 }

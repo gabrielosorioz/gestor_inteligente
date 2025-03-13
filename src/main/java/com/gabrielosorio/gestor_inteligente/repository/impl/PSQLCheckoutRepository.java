@@ -3,11 +3,15 @@ import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.repository.base.CheckoutRepository;
 import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.FindOpenCheckoutForToday;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 
 import java.util.Optional;
 
-public class CheckoutRepositoryImpl extends Repository<Checkout> implements CheckoutRepository {
+public class PSQLCheckoutRepository extends Repository<Checkout> implements CheckoutRepository {
 
+    public PSQLCheckoutRepository(RepositoryStrategy<Checkout> strategy){
+        init(strategy);
+    }
     /**
      * Finds the open checkout for today, if any.
      *

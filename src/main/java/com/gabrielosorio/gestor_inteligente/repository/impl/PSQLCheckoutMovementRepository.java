@@ -4,10 +4,15 @@ import com.gabrielosorio.gestor_inteligente.repository.base.CheckoutMovementRepo
 import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.FindCheckoutMovementByCheckoutId;
 import com.gabrielosorio.gestor_inteligente.repository.specification.FindCheckoutMovementBySaleId;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 
 import java.util.List;
 
-public class CheckoutMovementRepoImpl extends Repository<CheckoutMovement> implements CheckoutMovementRepository {
+public class PSQLCheckoutMovementRepository extends Repository<CheckoutMovement> implements CheckoutMovementRepository {
+
+    public PSQLCheckoutMovementRepository(RepositoryStrategy<CheckoutMovement> strategy) {
+        init(strategy);
+    }
 
     @Override
     public List<CheckoutMovement> findCheckoutMovementBySaleId(long saleId) {

@@ -5,6 +5,8 @@ import com.gabrielosorio.gestor_inteligente.repository.impl.CheckoutMovementRepo
 import com.gabrielosorio.gestor_inteligente.repository.impl.CheckoutRepositoryImpl;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLCheckoutMovementStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLCheckoutStrategy;
+import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
+import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
 import com.gabrielosorio.gestor_inteligente.service.impl.CheckoutMovementServiceImpl;
 import com.gabrielosorio.gestor_inteligente.service.impl.CheckoutServiceImpl;
 import com.gabrielosorio.gestor_inteligente.view.util.SidebarButton;
@@ -218,7 +220,9 @@ public class MainNavigationController implements Initializable {
         var checkoutMovementRepository = new CheckoutMovementRepoImpl();
         checkoutRepository.init(new PSQLCheckoutStrategy(ConnectionFactory.getInstance()));
         checkoutMovementRepository.init(new PSQLCheckoutMovementStrategy(ConnectionFactory.getInstance()));
-        loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(new CheckoutServiceImpl(checkoutRepository,new CheckoutMovementServiceImpl(checkoutMovementRepository))));
+        CheckoutMovementService cmService = new CheckoutMovementServiceImpl(checkoutMovementRepository);
+        CheckoutService cService = new CheckoutServiceImpl(checkoutRepository,cmService);
+        loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(cService,cmService));
         Platform.runLater(() -> {
             if(isSidebarOpen){
                 toggleSideBar();

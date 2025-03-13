@@ -1,5 +1,8 @@
 package com.gabrielosorio.gestor_inteligente.view;
 
+import com.gabrielosorio.gestor_inteligente.events.PaymentEvent;
+import com.gabrielosorio.gestor_inteligente.events.PaymentEventBus;
+import com.gabrielosorio.gestor_inteligente.exception.SaleProcessingException;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.User;
@@ -372,7 +375,13 @@ public class PaymentViewController implements Initializable {
     // Finaliza a venda, processa os pagamentos e fecha a janela
     private void finalizeSale(User user, Sale sale) {
         confirmPayment(sale);
-//        saleService.processSale(user, sale);
+        try {
+            var savedSale = saleService.processSale(user, sale);
+            PaymentEvent paymentEvent = new PaymentEvent(savedSale);
+            PaymentEventBus.getInstance().publish(paymentEvent);
+        } catch (SaleProcessingException e) {
+            throw new RuntimeException(e);
+        }
         closeWindow();
         clearItems();
     }

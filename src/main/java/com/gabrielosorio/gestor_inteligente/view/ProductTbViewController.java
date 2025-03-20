@@ -3,7 +3,8 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.repository.impl.ProductRepository;
+import com.gabrielosorio.gestor_inteligente.repository.base.ProductRepository;
+import com.gabrielosorio.gestor_inteligente.repository.impl.PSQLProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLProductStrategy;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
@@ -29,6 +30,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 public class ProductTbViewController implements Initializable {
+
+    private final ProductRepository PRODUCT_REPOSITORY;
 
     @FXML
     private TableColumn<Product, String> categoryColumn;
@@ -60,6 +63,11 @@ public class ProductTbViewController implements Initializable {
     private ObservableList<Product> productsList;
 
     private final Logger log = Logger.getLogger(getClass().getName());
+
+    public ProductTbViewController(ProductRepository PRODUCT_REPOSITORY) {
+        this.PRODUCT_REPOSITORY = PRODUCT_REPOSITORY;
+    }
+
 
     private void setUpColumns() {
         categoryColumn.setCellValueFactory(cellData ->
@@ -183,8 +191,7 @@ public class ProductTbViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ProductRepository productRepository = new ProductRepository(new PSQLProductStrategy(ConnectionFactory.getInstance()));
-        productService = new ProductServiceImpl(productRepository);
+        productService = new ProductServiceImpl(PRODUCT_REPOSITORY);
         allProducts = fetchProducts();
         productsList = FXCollections.observableArrayList(allProducts);
         productsTable.setItems(productsList);

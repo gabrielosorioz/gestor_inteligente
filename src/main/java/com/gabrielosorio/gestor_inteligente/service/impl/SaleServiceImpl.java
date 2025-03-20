@@ -6,15 +6,14 @@ import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
-import com.gabrielosorio.gestor_inteligente.repository.impl.SaleRepository;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManager;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManagerImpl;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.base.SaleRepository;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManagerV2;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,21 +41,11 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public Sale processSale(User user, Sale sale) throws SaleProcessingException {
+
         var checkout = checkoutService.openCheckout(user);
 
-        List<TransactionalStrategy<?>> transactionalStrategies = List.of(
-                saleRepository.getTransactionalStrategy(),
-                saleProductService.getTransactionalStrategy(),
-                salePaymentService.getTransactionalStrategy(),
-                checkoutMovementService.getTransactionalStrategy(),
-                productService.getTransactionalStrategy(),
-                saleCheckoutMovementService.getTransactionalStrategy()
-        );
-
-        TransactionManager transactionManager = new TransactionManagerImpl(transactionalStrategies);
-
         try {
-            transactionManager.beginTransaction();
+            TransactionManagerV2.beginTransaction();
 
             Sale savedSale = save(sale);
 
@@ -91,20 +80,19 @@ public class SaleServiceImpl implements SaleService {
 
             saleCheckoutMovementService.saveAll(saleCheckoutMovements);
 
-            transactionManager.commitTransaction();
+            TransactionManagerV2.commit();
 
             return savedSale;
 
         } catch (Exception e) {
             try {
-                transactionManager.rollbackTransaction();
-            } catch (TransactionException rollbackEx) {
-                throw new SaleProcessingException("Failed to rollback transaction after error.", rollbackEx);
+                TransactionManagerV2.rollback();
+            } catch (SQLException ex) {
+                throw new SaleProcessingException("Failed to rollback transaction after error.", ex);
             }
             throw new SaleProcessingException("Failed to process sale.", e);
         }
     }
-
 
 
     public Sale save(Sale sale) throws SalePaymentException {

@@ -3,7 +3,7 @@ package com.gabrielosorio.gestor_inteligente.datacontext;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.datacontext.base.DataContext;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
+import com.gabrielosorio.gestor_inteligente.repository.base.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class ProductDataContext implements DataContext<Product> {
 
     private static volatile ProductDataContext instance;
-    private final Repository<Product> productRepository;
+    private final ProductRepository productRepository;
 
     // Estruturas de armazenamento
     private final List<Product> products;
@@ -28,7 +28,7 @@ public class ProductDataContext implements DataContext<Product> {
 
     private static final Logger log = Logger.getLogger(ProductDataContext.class.getName());
 
-    private ProductDataContext(Repository<Product> productRepository) {
+    private ProductDataContext(ProductRepository productRepository) {
         this.productRepository = productRepository;
         this.products = Collections.synchronizedList(new ArrayList<>());
         initializeData();
@@ -194,7 +194,7 @@ public class ProductDataContext implements DataContext<Product> {
         }
     }
 
-    public static ProductDataContext getInstance(Repository<Product> productRepository) {
+    public static ProductDataContext getInstance(ProductRepository productRepository) {
         if (instance == null) {
             synchronized (ConnectionFactory.class) {
                 if (instance == null) {

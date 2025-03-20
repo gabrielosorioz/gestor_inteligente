@@ -1,20 +1,17 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
-import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
-
-import com.gabrielosorio.gestor_inteligente.service.base.AbstractTransactionalService;
+import com.gabrielosorio.gestor_inteligente.repository.base.SaleProductRepository;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleProductService;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class SaleProductServiceImpl extends AbstractTransactionalService<SaleProduct> implements SaleProductService {
+public class SaleProductServiceImpl implements SaleProductService {
 
-    private final Repository<SaleProduct> REPOSITORY;
+    private final SaleProductRepository REPOSITORY;
 
-    public SaleProductServiceImpl(Repository<SaleProduct> saleProductRepository) {
-        super(saleProductRepository);
-        REPOSITORY = getRepository();
+    public SaleProductServiceImpl(SaleProductRepository saleProductRepository) {
+        REPOSITORY = saleProductRepository;
     }
 
     public SaleProduct save(SaleProduct saleProduct){

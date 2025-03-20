@@ -38,12 +38,14 @@ public class PSQLRepositoryFactory implements RepositoryFactory {
 
     @Override
     public ProductRepository getProductRepository() {
-        return null;
+        var strategy = new PSQLProductStrategy(ConnectionFactory.getInstance());
+        return new PSQLProductRepository(strategy);
     }
 
     @Override
     public SaleCheckoutMovementRepository getSaleCheckoutMovementRepository() {
-        return null;
+        var strategy = new PSQLSaleCheckoutMovementStrategy(ConnectionFactory.getInstance());
+        return new PSQLSaleCheckoutMovementRepository(strategy);
     }
 
     @Override

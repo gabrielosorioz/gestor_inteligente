@@ -9,7 +9,7 @@ import com.gabrielosorio.gestor_inteligente.model.Supplier;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.ProductRepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLProductStrategy extends TransactionalRepositoryStrategy<Product> implements ProductRepositoryStrategy {
+public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Product> implements ProductRepositoryStrategy {
 
     private final QueryLoader qLoader;
     private Logger log = Logger.getLogger(getClass().getName());
@@ -27,7 +27,6 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategy<Product
 
 
     public PSQLProductStrategy(ConnectionFactory connectionFactory) {
-        super(connectionFactory);
         categoryStrategy = new PSQLCategoryStrategy(connectionFactory);
         supplierStrategy = new PSQLSupplierStrategy(connectionFactory);
         qLoader = new QueryLoader(DBScheme.POSTGRESQL);

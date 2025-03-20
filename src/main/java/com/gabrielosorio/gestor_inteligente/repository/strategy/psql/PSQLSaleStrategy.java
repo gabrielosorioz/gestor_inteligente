@@ -6,7 +6,7 @@ import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,13 +18,12 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSaleStrategy extends TransactionalRepositoryStrategy<Sale> implements RepositoryStrategy<Sale> {
+public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> implements RepositoryStrategy<Sale> {
 
     private final QueryLoader qLoader;
     private Logger log = Logger.getLogger(getClass().getName());
 
     public PSQLSaleStrategy(ConnectionFactory connectionFactory){
-        super(connectionFactory);
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }
 
@@ -64,7 +63,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategy<Sale> impl
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection(connection);
+            closeConnection();
         }
 
         return sale;
@@ -95,7 +94,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategy<Sale> impl
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection(connection);
+            closeConnection();
         }
 
         return Optional.empty();
@@ -125,7 +124,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategy<Sale> impl
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection(connection);
+            closeConnection();
         }
 
         return sales;
@@ -164,7 +163,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategy<Sale> impl
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection(connection);
+            closeConnection();
         }
 
         return sales;
@@ -205,7 +204,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategy<Sale> impl
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection(connection);
+            closeConnection();
         }
         return sale;
     }
@@ -240,7 +239,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategy<Sale> impl
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection(connection);
+            closeConnection();
         }
     }
 

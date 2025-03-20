@@ -9,6 +9,7 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsert
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategy<SaleProduct> implements RepositoryStrategy<SaleProduct>, BatchInsertable<SaleProduct> {
+public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<SaleProduct> implements RepositoryStrategy<SaleProduct>, BatchInsertable<SaleProduct> {
 
     private final QueryLoader qLoader;
     private final PSQLProductStrategy productStrategy;
@@ -28,7 +29,6 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategy<Sal
     private Logger log = Logger.getLogger(getClass().getName());
 
     public PSQLSaleProductStrategy(ConnectionFactory connectionFactory){
-        super(connectionFactory);
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.productStrategy = new PSQLProductStrategy(connectionFactory);
         this.saleStrategy = new PSQLSaleStrategy(connectionFactory);
@@ -226,11 +226,6 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategy<Sal
         try {
             connection = getConnection();
 
-            // Check and adjust autoCommit only for non-shared connections
-            if (!isSharedConnection()) {
-                connection.setAutoCommit(false);
-            }
-
             try(var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)){
 
                 for(SaleProduct saleProduct: saleProducts){
@@ -246,10 +241,6 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategy<Sal
 
                 ps.executeBatch();
 
-                if(!isSharedConnection()){
-                    connection.commit();
-                }
-
                 try(var gKeys = ps.getGeneratedKeys()){
                     int index = 0;
                     while(gKeys.next()){
@@ -259,34 +250,13 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategy<Sal
 
                 log.info("All SaleProducts successfully inserted.");
             } catch (SQLException e){
-                if(!isSharedConnection()){
-                    try {
-                        connection.rollback();
-                        log.warning("Transaction rolled back due to an error: " + e.getMessage());
-                    } catch (SQLException rollBackEx) {
-                        log.severe("RollBack failed " + rollBackEx.getMessage());
-                    }
-                }
-
                 throw new RuntimeException("Failed to batch insert SaleProducts. " + e.getMessage(),e);
             }
 
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get database connection " + e.getMessage(),e);
         } finally {
-            if(connection != null){
-                if(!isSharedConnection()){
-                    try {
-                        connection.setAutoCommit(true);
-                        connection.close();
-
-                    } catch (SQLException closeEx){
-                        log.severe("Failed to close the connection " + closeEx.getMessage());
-                    }
-                } else {
-                    closeConnection(connection);
-                }
-            }
+            closeConnection();
         }
         return saleProducts;
     }

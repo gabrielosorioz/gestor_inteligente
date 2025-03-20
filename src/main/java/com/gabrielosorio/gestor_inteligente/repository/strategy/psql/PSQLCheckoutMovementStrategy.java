@@ -7,6 +7,7 @@ import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specif
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrategy<CheckoutMovement> implements RepositoryStrategy<CheckoutMovement>, BatchInsertable<CheckoutMovement> {
+public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrategyV2<CheckoutMovement> implements RepositoryStrategy<CheckoutMovement>, BatchInsertable<CheckoutMovement> {
 
     private final QueryLoader qLoader;
     private final PSQLCheckoutStrategy checkoutStrategy;
@@ -25,7 +26,6 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
 
 
     public PSQLCheckoutMovementStrategy(ConnectionFactory connectionFactory) {
-        super(connectionFactory);
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.checkoutStrategy = new PSQLCheckoutStrategy(ConnectionFactory.getInstance());
         this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy(connectionFactory);
@@ -240,12 +240,6 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
         try {
             connection = getConnection();
 
-            // Check and adjust autoCommit only for non-shared connections
-            if (!isSharedConnection()) {
-                connection.setAutoCommit(false);
-            }
-
-
             try(var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)){
 
                 for(CheckoutMovement checkoutMovement: checkoutMovements){
@@ -261,10 +255,6 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
 
                 ps.executeBatch();
 
-                if(!isSharedConnection()){
-                    connection.commit();
-                }
-
                 try(var gKeys = ps.getGeneratedKeys()){
                     int index = 0;
                     while(gKeys.next()){
@@ -274,33 +264,13 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
 
                 log.info("All checkoutMovements successfully inserted.");
             } catch (SQLException e){
-                if(!isSharedConnection()){
-                    try {
-                        connection.rollback();
-                        log.warning("Transaction rolled back due to an error: " + e.getMessage());
-                    } catch (SQLException rollBackEx) {
-                        log.severe("RollBack failed " + rollBackEx.getMessage());
-                    }
-                }
                 throw new RuntimeException("Failed to batch insert checkoutMovements. " + e.getMessage(),e);
             }
 
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get database connection " + e.getMessage(),e);
         } finally {
-            if(connection != null){
-                if(!isSharedConnection()){
-                    try {
-                        connection.setAutoCommit(true);
-                        connection.close();
-
-                    } catch (SQLException closeEx){
-                        log.severe("Failed to close the connection " + closeEx.getMessage());
-                    }
-                } else {
-                    closeConnection(connection);
-                }
-            }
+            closeConnection();
         }
         return checkoutMovements;
     }

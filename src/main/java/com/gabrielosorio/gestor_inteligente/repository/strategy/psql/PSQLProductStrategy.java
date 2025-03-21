@@ -35,64 +35,83 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Produ
     @Override
     public Product add(Product product) {
         var query = qLoader.getQuery("insertProduct");
-        log.info(query);
-        try(var connection = getConnection();
-            var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)) {
+        Connection connection = null;
+        try {
+            connection = getConnection();
 
-            long id = generateId();
+            try(var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)) {
 
+                long id = generateId();
+                ps.setLong(1,id);
+                ps.setLong(2,product.getProductCode());
+                ps.setString(3,product.getBarCode().orElse(null));
+                ps.setString(4, product.getDescription());
+                ps.setBigDecimal(5,product.getCostPrice());
+                ps.setBigDecimal(6,product.getSellingPrice());
+                ps.setDouble(7,product.getProfitPercent());
+                ps.setDouble(8,product.getMarkupPercent());
+                ps.setLong(9,product.getQuantity());
+                ps.setString(10,product.getStatus().name());
+                ps.setTimestamp(11,product.getDateCreate());
+                ps.setTimestamp(12,product.getDateUpdate());
+                ps.setTimestamp(13,product.getDateDelete());
+                ps.setObject(14, product.getCategory().map(Category::getId).orElse(null),Types.BIGINT);
+                ps.setObject(15, product.getSupplier().map(Supplier::getId).orElse(null),Types.BIGINT);
 
-            ps.setLong(1,id);
-            ps.setLong(2,product.getProductCode());
-            ps.setString(3,product.getBarCode().orElse(null));
-            ps.setString(4, product.getDescription());
-            ps.setBigDecimal(5,product.getCostPrice());
-            ps.setBigDecimal(6,product.getSellingPrice());
-            ps.setDouble(7,product.getProfitPercent());
-            ps.setDouble(8,product.getMarkupPercent());
-            ps.setLong(9,product.getQuantity());
-            ps.setString(10,product.getStatus().name());
-            ps.setTimestamp(11,product.getDateCreate());
-            ps.setTimestamp(12,product.getDateUpdate());
-            ps.setTimestamp(13,product.getDateDelete());
-            ps.setObject(14, product.getCategory().map(Category::getId).orElse(null),Types.BIGINT);
-            ps.setObject(15, product.getSupplier().map(Supplier::getId).orElse(null),Types.BIGINT);
+                ps.executeUpdate();
 
-            ps.executeUpdate();
-
-            try (var gKeys = ps.getGeneratedKeys()){
-                if(gKeys.next()){
-                    product.setId(gKeys.getLong(1));
-                    log.info("Product successfully inserted.");
-                } else {
-                    throw new SQLException("Failed to insert product, no key generated. ");
+                try (var gKeys = ps.getGeneratedKeys()){
+                    if(gKeys.next()){
+                        product.setId(gKeys.getLong(1));
+                        log.info("Product successfully inserted.");
+                    } else {
+                        throw new SQLException("Failed to insert product, no key generated. ");
+                    }
                 }
+
+            } catch (SQLException e) {
+                log.log(Level.SEVERE, "Failed to insert product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                throw new RuntimeException("Failed to insert product", e);
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException e){
             log.log(Level.SEVERE, "Failed to insert product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to insert product", e);
+        } finally {
+            closeConnection(connection);
         }
+
         return product;
     }
 
     @Override
     public Optional<Product> find(long id) {
         var query = qLoader.getQuery("findProductById");
-        try(var connection = getConnection();
-            var ps = connection.prepareStatement(query)){
+        Connection connection = null;
 
-            ps.setLong(1,id);
+        try {
+            connection = getConnection();
+            try (var ps = connection.prepareStatement(query)){
 
-            try(var rs = ps.executeQuery()){
-                if(rs.next()){
-                    return Optional.of(mapResultSet(rs));
+                ps.setLong(1,id);
+
+                try(var rs = ps.executeQuery()){
+                    if(rs.next()){
+                        return Optional.of(mapResultSet(rs));
+                    }
                 }
+
+            }
+            catch (SQLException e) {
+                log.log(Level.SEVERE, "Failed to find product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                throw new RuntimeException("Product search error. ",e);
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException e){
             log.log(Level.SEVERE, "Failed to find product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Product search error. ",e);
+        } finally {
+            closeConnection(connection);
         }
         return Optional.empty();
     }
@@ -101,21 +120,29 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Produ
     public List<Product> findAll() {
         var products = new ArrayList<Product>();
         var query = qLoader.getQuery("findAllProducts");
+        Connection connection = null;
 
-        try(var connection = getConnection();
-            var ps = connection.prepareStatement(query);
-            var rs = ps.executeQuery()){
+        try {
+            connection = getConnection();
+            try(var ps = connection.prepareStatement(query);
+                var rs = ps.executeQuery()){
 
-            while(rs.next()){
-                var product = mapResultSet(rs);
-                products.add(product);
+                while(rs.next()){
+                    var product = mapResultSet(rs);
+                    products.add(product);
+                }
+
+            } catch (SQLException e) {
+                log.log(Level.SEVERE, "Failed to find all products. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                throw new RuntimeException("Product find all error. ",e);
             }
-
-        } catch (SQLException e) {
+        } catch (SQLException e){
             log.log(Level.SEVERE, "Failed to find all products. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Product find all error. ",e);
-
+        } finally {
+            closeConnection(connection);
         }
+
         return products;
     }
 
@@ -124,68 +151,81 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Produ
         var query = specification.toSql();
         var params = specification.getParameters();
         var products = new ArrayList<Product>();
+        Connection connection = null;
 
-        try(var connection = getConnection();
-            var ps = connection.prepareStatement(query)){
+        try {
+            connection = getConnection();
+            try(var ps = connection.prepareStatement(query)){
 
-            if(params.size() != ps.getParameterMetaData().getParameterCount()){
-                throw new SQLException("Mismatch between provided parameters and expected query parameters.");
-            }
-
-            for(int i = 0 ; i < params.size(); i++){
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            try(var rs = ps.executeQuery()){
-                while(rs.next()){
-                    var product = mapResultSet(rs);
-                    products.add(product);
+                if(params.size() != ps.getParameterMetaData().getParameterCount()){
+                    throw new SQLException("Mismatch between provided parameters and expected query parameters.");
                 }
+
+                for(int i = 0 ; i < params.size(); i++){
+                    ps.setObject(i + 1, params.get(i));
+                }
+
+                try(var rs = ps.executeQuery()){
+                    while(rs.next()){
+                        var product = mapResultSet(rs);
+                        products.add(product);
+                    }
+                }
+
+            } catch (SQLException e) {
+                log.log(Level.SEVERE, "Failed to find product by specification. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                throw new RuntimeException("Product find by specification error. ",e);
             }
 
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to find product by specification. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Product find by specification error. ",e);
+        } finally {
+            closeConnection(connection);
         }
+
         return products;
     }
 
     @Override
     public Product update(Product product) {
-        var query = qLoader.getQuery("updateProduct");
-        try(var connection = getConnection();
-            var ps = connection.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)
-        ){
-            ps.setLong(1,product.getProductCode());
-            ps.setString(2,product.getBarCode().orElse(null));
-            ps.setString(3,product.getDescription());
-            ps.setBigDecimal(4,product.getCostPrice());
-            ps.setBigDecimal(5,product.getSellingPrice());
-            ps.setDouble(6,product.getProfitPercent());
-            ps.setDouble(7,product.getMarkupPercent());
-            ps.setLong(8,product.getQuantity());
-            ps.setString(9,product.getStatus().name());
-            ps.setTimestamp(10,product.getDateCreate());
-            ps.setTimestamp(11,product.getDateUpdate());
-            ps.setTimestamp(12,product.getDateDelete());
-            ps.setObject(13, product.getSupplier().isPresent() ? product.getSupplier().get().getId() : null, Types.BIGINT);
-            ps.setObject(14, product.getCategory().isPresent() ? product.getCategory().get().getId() : null, Types.BIGINT);
-            ps.setLong(15,product.getId());
+        Connection connection = null;
+        try {
+            connection = getConnection();
+            var query = qLoader.getQuery("updateProduct");
+            try (var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setLong(1, product.getProductCode());
+                ps.setString(2, product.getBarCode().orElse(null));
+                ps.setString(3, product.getDescription());
+                ps.setBigDecimal(4, product.getCostPrice());
+                ps.setBigDecimal(5, product.getSellingPrice());
+                ps.setDouble(6, product.getProfitPercent());
+                ps.setDouble(7, product.getMarkupPercent());
+                ps.setLong(8, product.getQuantity());
+                ps.setString(9, product.getStatus().name());
+                ps.setTimestamp(10, product.getDateCreate());
+                ps.setTimestamp(11, product.getDateUpdate());
+                ps.setTimestamp(12, product.getDateDelete());
+                ps.setObject(13, product.getSupplier().isPresent() ? product.getSupplier().get().getId() : null, Types.BIGINT);
+                ps.setObject(14, product.getCategory().isPresent() ? product.getCategory().get().getId() : null, Types.BIGINT);
+                ps.setLong(15, product.getId());
 
-            int affectedRows = ps.executeUpdate();
+                int affectedRows = ps.executeUpdate();
 
-            if(affectedRows == 0){
-                throw new SQLException("Failed to update product, no rows affected.");
+                if (affectedRows == 0) {
+                    throw new SQLException("Failed to update product, no rows affected.");
+                }
+
+                log.info("Product successfully updated.");
             }
-
-            log.info("Product successfully updated.");
-
         } catch (SQLException e) {
             if ("23505".equals(e.getSQLState())) {
                 throw new DuplicateProductException("Product code already exists: " + product.getProductCode(), e);
             }
             log.log(Level.SEVERE, "Failed to update product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to update product", e);
+        } finally {
+            closeConnection(connection);
         }
         return product;
     }
@@ -193,24 +233,32 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Produ
     @Override
     public boolean remove(long id) {
         var query = qLoader.getQuery("deleteProductById");
-        try(var connection = getConnection();
-            var ps = connection.prepareStatement(query)){
+        Connection connection = null;
+        try {
+            connection = getConnection();
+            try(var ps = connection.prepareStatement(query)){
 
-            ps.setLong(1,id);
+                ps.setLong(1,id);
 
-            int affectedRows = ps.executeUpdate();
+                int affectedRows = ps.executeUpdate();
 
-            if(affectedRows == 0){
-                log.warning("No product found with id: " + id);
-                return false;
+                if(affectedRows == 0){
+                    log.warning("No product found with id: " + id);
+                    return false;
+                }
+
+                log.info("Product with id " + id + " successfully deleted.");
+                return true;
+
+            } catch (SQLException e) {
+                log.log(Level.SEVERE, "Failed to delete product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                throw new RuntimeException(e);
             }
 
-            log.info("Product with id " + id + " successfully deleted.");
-            return true;
-
-        } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to delete product. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+        } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            closeConnection(connection);
         }
     }
 

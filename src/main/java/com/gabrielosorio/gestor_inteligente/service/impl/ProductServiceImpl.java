@@ -2,24 +2,21 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.datacontext.ProductDataContext;
 import com.gabrielosorio.gestor_inteligente.exception.ProductException;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.repository.impl.ProductRepository;
-import com.gabrielosorio.gestor_inteligente.service.base.AbstractTransactionalService;
+import com.gabrielosorio.gestor_inteligente.repository.base.ProductRepository;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-public class ProductServiceImpl extends AbstractTransactionalService<Product> implements ProductService {
+public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository REPOSITORY;
     private final ProductDataContext prodDataContext;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
-        super(productRepository);
-        REPOSITORY = productRepository;
-        this.prodDataContext = ProductDataContext.getInstance(getRepository());
+    public ProductServiceImpl(ProductRepository repository) {
+        REPOSITORY = repository;
+        this.prodDataContext = ProductDataContext.getInstance(repository);
     }
 
     @Override
@@ -31,7 +28,7 @@ public class ProductServiceImpl extends AbstractTransactionalService<Product> im
         } else {
             pCode = product.getProductCode();
 
-            if(REPOSITORY.existPCode(product.getProductCode())){
+            if(REPOSITORY.existsPCode(product.getProductCode())){
                 throw new ProductException("The product code already exists. ");
             }
 

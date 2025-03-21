@@ -270,7 +270,7 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get database connection " + e.getMessage(),e);
         } finally {
-            closeConnection();
+            closeConnection(connection);
         }
         return checkoutMovements;
     }

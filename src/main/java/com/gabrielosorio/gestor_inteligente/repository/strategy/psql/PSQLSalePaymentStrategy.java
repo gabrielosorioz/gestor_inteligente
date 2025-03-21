@@ -245,7 +245,7 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategyV2<S
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get database connection " + e.getMessage(),e);
         } finally {
-            closeConnection();
+            closeConnection(connection);
         }
 
         return salePayments;

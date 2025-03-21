@@ -21,7 +21,22 @@ import java.util.logging.Logger;
 public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> implements RepositoryStrategy<Sale> {
 
     private final QueryLoader qLoader;
-    private Logger log = Logger.getLogger(getClass().getName());
+    private final  Logger log = Logger.getLogger(getClass().getName());
+
+    private void logInfo(String message) {
+        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
+        String methodName = stackTraceElement.getMethodName();
+        String className = this.getClass().getSimpleName(); // Pega apenas o nome da classe
+        log.info(() -> String.format("[%s#%s] %s", className, methodName, message));
+    }
+
+    private void logError(String message, Exception e) {
+        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
+        String methodName = stackTraceElement.getMethodName();
+        String className = this.getClass().getSimpleName(); // Nome da classe sem pacote
+        log.log(Level.SEVERE, String.format("[%s#%s] %s", className, methodName, message), e);
+    }
+
 
     public PSQLSaleStrategy(ConnectionFactory connectionFactory){
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
@@ -48,7 +63,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
                 try (var gKeys = ps.getGeneratedKeys()) {
                     if (gKeys.next()) {
                         sale.setId(gKeys.getLong("id"));
-                        log.info("Sale successfully inserted.");
+                        logInfo("Sale successfully inserted.");
                     } else {
                         throw new SQLException("Failed to insert sale, no key generated.");
                     }
@@ -63,7 +78,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection();
+            closeConnection(connection);
         }
 
         return sale;
@@ -89,12 +104,11 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
                 throw new RuntimeException("Sale Product search error. ",e);
             }
 
-
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection();
+            closeConnection(connection);
         }
 
         return Optional.empty();
@@ -124,7 +138,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection();
+            closeConnection(connection);
         }
 
         return sales;
@@ -163,7 +177,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection();
+            closeConnection(connection);
         }
 
         return sales;
@@ -194,7 +208,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
                     throw new SQLException("Failed to update product, no rows affected.");
                 }
 
-                log.info("Sale successfully updated.");
+                logInfo("Sale successfully updated.");
             } catch (SQLException e) {
                 log.log(Level.SEVERE, "Failed to update sale. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
                 throw new RuntimeException("Failed to update sale", e);
@@ -204,7 +218,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection();
+            closeConnection(connection);
         }
         return sale;
     }
@@ -227,7 +241,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
                     return false;
                 }
 
-                log.info("Sale with id " + id + " successfully deleted.");
+                logInfo("Sale with id " + id + " successfully deleted.");
                 return true;
 
             } catch (SQLException e) {
@@ -239,7 +253,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
             log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
-            closeConnection();
+            closeConnection(connection);
         }
     }
 

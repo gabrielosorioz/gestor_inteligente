@@ -94,7 +94,6 @@ public class SaleServiceImpl implements SaleService {
         }
     }
 
-
     public Sale save(Sale sale) throws SalePaymentException {
         SaleValidator.validate(sale);
 

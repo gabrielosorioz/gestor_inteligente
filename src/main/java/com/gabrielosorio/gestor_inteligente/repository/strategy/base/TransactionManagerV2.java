@@ -1,14 +1,19 @@
 package com.gabrielosorio.gestor_inteligente.repository.strategy.base;
+
 import java.sql.Connection;
-import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import java.sql.SQLException;
 import java.util.logging.Logger;
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 
 public class TransactionManagerV2 {
     private static final ThreadLocal<Connection> CURRENT_CONNECTION = new ThreadLocal<>();
     private static final Logger LOGGER = Logger.getLogger(TransactionManagerV2.class.getName());
 
     public static void beginTransaction() throws SQLException {
+        if (CURRENT_CONNECTION.get() != null) {
+            throw new IllegalStateException("Uma transação já está em andamento nesta thread.");
+        }
+
         Connection connection = ConnectionFactory.getInstance().getConnection();
         connection.setAutoCommit(false);
         CURRENT_CONNECTION.set(connection);
@@ -21,29 +26,36 @@ public class TransactionManagerV2 {
 
     public static void commit() throws SQLException {
         Connection connection = CURRENT_CONNECTION.get();
-        if (connection != null) {
-            connection.commit();
-            LOGGER.info("[COMMIT] - Transação confirmada pela classe: " + getCallerClassName());
-            cleanup();
+        if (connection == null) {
+            throw new IllegalStateException("Nenhuma transação ativa para commit.");
         }
+
+        connection.commit();
+        LOGGER.info("[COMMIT] - Transação confirmada pela classe: " + getCallerClassName());
+        cleanup();
     }
 
     public static void rollback() throws SQLException {
         Connection connection = CURRENT_CONNECTION.get();
-        if (connection != null) {
-            connection.rollback();
-            LOGGER.warning("[ROLLBACK] - Transação revertida pela classe: " + getCallerClassName());
-            cleanup();
+        if (connection == null) {
+            throw new IllegalStateException("Nenhuma transação ativa para rollback.");
         }
+
+        connection.rollback();
+        LOGGER.warning("[ROLLBACK] - Transação revertida pela classe: " + getCallerClassName());
+        cleanup();
     }
 
     private static void cleanup() throws SQLException {
         Connection connection = CURRENT_CONNECTION.get();
         if (connection != null) {
-            connection.setAutoCommit(true);
-            connection.close();
-            CURRENT_CONNECTION.remove();
-            LOGGER.info("[CLEANUP] - Conexão fechada e removida da ThreadLocal.");
+            try {
+                connection.setAutoCommit(true);
+                connection.close();
+                LOGGER.info("[CLEANUP] - Conexão fechada e removida da ThreadLocal.");
+            } finally {
+                CURRENT_CONNECTION.remove();
+            }
         }
     }
 
@@ -58,13 +70,7 @@ public class TransactionManagerV2 {
         return "Unknown";
     }
 
-    /**
-     * Verifica se a conexão fornecida é a conexão transacional compartilhada pelo TransactionManager.
-     *
-     * @param connection A conexão a ser verificada.
-     * @return true se a conexão for a conexão compartilhada; false caso contrário.
-     */
-    public static boolean isSharedConnection(Connection connection) {
-        return connection != null && connection == CURRENT_CONNECTION.get();
+    public static boolean isTransactionActive() {
+        return CURRENT_CONNECTION.get() != null;
     }
 }

@@ -3,6 +3,9 @@ package com.gabrielosorio.gestor_inteligente.model;
 import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.utils.ProductCalculationUtils;
 import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
+import com.gabrielosorio.gestor_inteligente.view.table.ColumnType;
+import com.gabrielosorio.gestor_inteligente.view.table.TableColumnConfig;
+import com.gabrielosorio.gestor_inteligente.view.table.TableViewComponent;
 import javafx.beans.property.*;
 
 import java.math.BigDecimal;
@@ -10,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
 
+@TableViewComponent
 public class Product {
 
     private long id;
@@ -28,18 +32,37 @@ public class Product {
     private Timestamp dateUpdate;
     private Timestamp dateDelete;
 
+
     /** observable properties */
-    private final LongProperty idProp = new SimpleLongProperty();
+
+    @TableColumnConfig(header = "Código", order = 1)
     private final LongProperty productCodeProp = new SimpleLongProperty();
-    private final StringProperty barCodeProp = new SimpleStringProperty();
+
+    @TableColumnConfig(header = "Descrição", order = 2)
     private final StringProperty descriptionProp = new SimpleStringProperty();
+
+    @TableColumnConfig(header = "Preço de Custo", order = 3, columnType = ColumnType.MONETARY, currencySymbol = "R$")
     private final ObjectProperty<BigDecimal> costPriceProp = new SimpleObjectProperty<>();
+
+    @TableColumnConfig(header = "Preço de Venda", order = 4, columnType = ColumnType.MONETARY, currencySymbol = "R$")
     private final ObjectProperty<BigDecimal> sellingPriceProp = new SimpleObjectProperty<>();
+
+    @TableColumnConfig(header = "Estoque", order = 5)
+    private final LongProperty quantityProp = new SimpleLongProperty();
+
+    @TableColumnConfig(header = "Categoria", order = 6)
+    public StringProperty getCategoryDescription() {
+        return new SimpleStringProperty(
+                categoryProperty().get().map(Category::getDescription).orElse("N/A")
+        );
+    }
+
+    private final LongProperty idProp = new SimpleLongProperty();
+    private final StringProperty barCodeProp = new SimpleStringProperty();
     private final ObjectProperty<Optional<Supplier>> supplierProp = new SimpleObjectProperty<>();
     private final ObjectProperty<Optional<Category>> categoryProp = new SimpleObjectProperty<>();
     private final DoubleProperty profitMarginProp = new SimpleDoubleProperty();
     private final DoubleProperty markupPercentProp = new SimpleDoubleProperty();
-    private final LongProperty quantityProp = new SimpleLongProperty();
     private final ObjectProperty<Status> statusProp = new SimpleObjectProperty<>();
     private final ObjectProperty<Timestamp> dateCreateProp = new SimpleObjectProperty<>();
     private final ObjectProperty<Timestamp> dateUpdateProp = new SimpleObjectProperty<>();
@@ -206,8 +229,6 @@ public class Product {
             }
         }
     }
-
-
 
     public long getId() {
         return id;

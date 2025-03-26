@@ -142,13 +142,16 @@ public class ProductManagerController implements Initializable, ShortcutHandler 
         searchField.setOnKeyPressed(keyEvent -> {
             handleShortcut(keyEvent.getCode());
         });
+    @Override
+    public void onProductCodeEditAttempt(ProductCodeEditAttemptEvent attemptEvent) {
+        Node warningDialog = attemptEvent.getWarningDialog();
+        mainContent.getChildren().add(warningDialog);
     }
 
-    private void configureTableViewLayout(TableView<Stock> tableView){
-        AnchorPane.setTopAnchor(tableView, 109.0);
-        AnchorPane.setRightAnchor(tableView,9.0);
-        AnchorPane.setBottomAnchor(tableView,0.0);
-        AnchorPane.setLeftAnchor(tableView,9.0);
+    @Override
+    public void onSave(ProductFormSaveEvent productFormSaveEvent) {
+        productsTable.refresh();
+        productFormManager.toggle();
     }
 
     private void configureTableRowFactory(TableView<Product> stockTableView) {
@@ -168,75 +171,203 @@ public class ProductManagerController implements Initializable, ShortcutHandler 
                     }
                 };
                 return row;
-            }
-        });
+    @Override
+    public void onCancel(ProductFormCancelEvent productFormCancelEvent) {
+        productFormManager.toggle();
     }
 
-    private void configureProductFormLayout(){
-        mainContent.getChildren().add(productForm);
-        AnchorPane.setLeftAnchor(productForm, 550.0);
-        AnchorPane.setRightAnchor(productForm,0.0);
-        AnchorPane.setTopAnchor(productForm,39.0);
-        productForm.setTranslateX(FORM_HIDDEN_POSITION);
+    @Override
+    public void onHandleShortcutEvent(ProductFormShortcutEvent productFormShortcutEvent) {
+        var keyCode = productFormShortcutEvent.getKeyCode();
+        handleShortcut(keyCode);
     }
 
-    private void configureShadowClick(){
-        shadow.setOnMouseClicked(mouseEvent -> toggleProductForm());
-    }
+    /** Inner class to manage the product form functionality */
+    private class ProductFormManager {
 
-    private void showProductForm(){
-        animateForm(FORM_VISIBLE_POSITION,0.2);
-        shadow.setVisible(true);
-    }
+        private static final Duration FORM_ANIMATION_DURATION = Duration.seconds(0.4);
+        private static final Duration FADE_DURATION = Duration.seconds(0.2);
+        private static final double FORM_HIDDEN_POSITION = 750;
+        private static final double FORM_VISIBLE_POSITION = 0;
+        private boolean isFormVisible;
 
-    private void hideProductForm(){
-        animateForm(FORM_HIDDEN_POSITION,0.0);
-        shadow.setVisible(false);
-    }
+        private final AnchorPane mainContent,productForm;
 
-    private void animateForm(double translateX, double fadeToValue){
-        TranslateTransition translateTransition = new TranslateTransition(FORM_ANIMATION_DURATION,productForm);
-        translateTransition.setToX(translateX);
 
-        FadeTransition fadeTransition = new FadeTransition(FADE_DURATION, shadow);
-        fadeTransition.setFromValue(shadow.getOpacity());
-        fadeTransition.setToValue(fadeToValue);
-
-        fadeTransition.setOnFinished(actionEvent -> {
-            if(fadeToValue == 0.0){
-                shadow.setVisible(false);
-            }
-        });
-
-        fadeTransition.play();
-        translateTransition.play();
-    }
-
-    public void toggleProductForm(){
-        if(isProductFormVisible){
-            hideProductForm();
-            productFormController.lockIDField();
-        } else {
-            showProductForm();
+        public ProductFormManager(AnchorPane mainContent, AnchorPane productForm) {
+            this.mainContent = mainContent;
+            this.productForm = productForm;
+            config();
         }
-        isProductFormVisible = !isProductFormVisible;
+
+        private void config(){
+            configureProductFormLayout(mainContent,productForm);
+        }
+
+        protected void toggle() {
+            if (isFormVisible) {
+                hide();
+            } else {
+                show();
+            }
+            eventBus.publish(new ProductFormToggleEvent(isFormVisible));
+            isFormVisible = !isFormVisible;
+        }
+
+        private void configureProductFormLayout(AnchorPane mainContent, AnchorPane productForm) {
+            mainContent.getChildren().add(productForm);
+            AnchorPane.setLeftAnchor(productForm, 550.0);
+            AnchorPane.setRightAnchor(productForm, 0.0);
+            AnchorPane.setTopAnchor(productForm, 39.0);
+            productForm.setTranslateX(FORM_HIDDEN_POSITION);
+        }
+
+        private void show() {
+            animateForm(FORM_VISIBLE_POSITION, 0.2);
+            shadow.setVisible(true);
+        }
+
+        private void hide() {
+            animateForm(FORM_HIDDEN_POSITION, 0.0);
+            shadow.setVisible(false);
+        }
+
+        private void animateForm(double translateX, double fadeToValue) {
+            // Create and configure transition for form
+            TranslateTransition translateTransition = new TranslateTransition(FORM_ANIMATION_DURATION, productForm);
+            translateTransition.setToX(translateX);
+
+            // Create and configure transition for shadow
+            FadeTransition fadeTransition = new FadeTransition(FADE_DURATION, shadow);
+            fadeTransition.setFromValue(shadow.getOpacity());
+            fadeTransition.setToValue(fadeToValue);
+
+            // Handle shadow visibility after fade completes
+            fadeTransition.setOnFinished(actionEvent -> {
+                if (fadeToValue == 0.0) {
+                    shadow.setVisible(false);
+                }
+            });
+
+            // Play animations
+            fadeTransition.play();
+            translateTransition.play();
+        }
+
     }
 
-    private void showProductData(Product product){
-        productFormController.setProduct(Optional.ofNullable(product));
-        toggleProductForm();
+    /**
+     * Inner class to create product table view
+     */
+    private class ProductTableViewFactory {
+        private final TableView<Product> tableView;
+
+        public ProductTableViewFactory() {
+            TableViewFactory<Product> productTableViewFactory = new TableViewFactory<>(Product.class);
+            this.tableView = productTableViewFactory.createTableView("/com/gabrielosorio/gestor_inteligente/css/productTbView.css");
+
+        }
+
+        public TableView<Product> get(ObservableList<Product> observableList){
+            configure();
+            tableView.setItems(observableList);
+            return tableView;
+        }
+
+        private void configure() {
+            configureTableViewLayout(tableView);
+            configureTableRowFactory(tableView);
+        }
+
+        private void configureTableViewLayout(TableView<Product> tableView) {
+            // Configure column widths
+            TableViewUtils.getColumnById(tableView, "productCodeProp").setPrefWidth(120.0);
+            TableViewUtils.getColumnById(tableView, "descriptionProp").setPrefWidth(410.00);
+            TableViewUtils.getColumnById(tableView, "costPriceProp").setPrefWidth(160.00);
+            TableViewUtils.getColumnById(tableView, "sellingPriceProp").setPrefWidth(160.00);
+            TableViewUtils.getColumnById(tableView, "quantityProp").setPrefWidth(130.0);
+            TableViewUtils.getColumnById(tableView, "getCategoryDescription").setPrefWidth(140.0);
+
+            // Set anchors for table
+            AnchorPane.setTopAnchor(tableView, 109.0);
+            AnchorPane.setRightAnchor(tableView, 9.0);
+            AnchorPane.setBottomAnchor(tableView, 0.0);
+            AnchorPane.setLeftAnchor(tableView, 9.0);
+
+            // Apply column styling
+            tableView.getColumns().forEach(c -> {
+                c.setStyle("-fx-alignment: center;");
+                TableViewUtils.resetColumnProps(c);
+            });
+        }
+
+        private void configureTableRowFactory(TableView<Product> tableView) {
+            tableView.setRowFactory(new ProductTableRowFactory());
+        }
+
+        /**
+         * Inner class to handle table row factory implementation
+         */
+        private class ProductTableRowFactory implements Callback<TableView<Product>, TableRow<Product>> {
+            @Override
+            public TableRow<Product> call(TableView<Product> tableView) {
+                return new TableRow<>() {
+                    @Override
+                    protected void updateItem(Product item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setPrefHeight(empty || item == null ? 0 : 68);
+                        setOnMouseClicked(event -> {
+                            if (item != null) {
+                                eventBus.publish(new ProductSelectionEvent(item));
+                                productFormManager.toggle();
+                            }
+                        });
+                    }
+                };
+            }
+        }
+
     }
 
-    private void addNewProduct(){
-        productFormController.setProduct(Optional.empty());
-        productFormController.lockIDField();
-        if(!isProductFormVisible){
-            toggleProductForm();
+    /**
+     * Inner class to handle product search functionality
+     */
+    private class ProductSearcher {
+        private final ObservableList<Product> productList;
+
+        public ProductSearcher(ObservableList<Product> productList) {
+            this.productList = productList;
+        }
+
+        public FilteredList<Product> search(String searchTerm) {
+            if (searchTerm == null || searchTerm.trim().isEmpty()) {
+                return new FilteredList<>(productList, p -> true);
+            }
+
+            final String searchLower = searchTerm.toLowerCase();
+            return new FilteredList<>(productList, product -> matchesProduct(product, searchLower));
+        }
+
+        private boolean matchesProduct(Product product, String searchTerm) {
+            if (isNumeric(searchTerm)) {
+                long searchNumber = Long.parseLong(searchTerm);
+
+                if (searchNumber == product.getProductCode()) {
+                    return true;
+                }
+
+                return product.getBarCode()
+                        .filter(ProductSearcher::isNumeric)
+                        .map(Long::parseLong)
+                        .filter(barCode -> barCode == searchNumber)
+                        .isPresent();
+            }
+
+            return product.getDescription().toLowerCase().contains(searchTerm);
+        }
+
+        private static boolean isNumeric(String str) {
+            return str.matches("\\d+");
         }
     }
-
-    public void addContent(Node node){
-        this.mainContent.getChildren().add(node);
-    }
-
 }

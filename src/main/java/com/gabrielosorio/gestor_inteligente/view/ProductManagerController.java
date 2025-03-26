@@ -1,16 +1,21 @@
 package com.gabrielosorio.gestor_inteligente.view;
+
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
+import com.gabrielosorio.gestor_inteligente.events.*;
+import com.gabrielosorio.gestor_inteligente.events.listeners.ProductFormListener;
+import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerCancelEvent;
+import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerSaveEvent;
 import com.gabrielosorio.gestor_inteligente.model.Product;
-import com.gabrielosorio.gestor_inteligente.model.Stock;
-import com.gabrielosorio.gestor_inteligente.repository.impl.ProductRepository;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLProductStrategy;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
-import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
+import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.view.table.TableViewFactory;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -24,124 +29,142 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Duration;
+
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-public class ProductManagerController implements Initializable, ShortcutHandler {
+public class ProductManagerController implements Initializable, ShortcutHandler, ProductFormListener {
+
+    // FXML Components
+    @FXML private AnchorPane mainContent, tableBody;
+    @FXML private Pane shadow;
+    @FXML private Label productLabel;
+    @FXML private TextField searchField;
+    @FXML private HBox btnAdd;
+
+    // Services
+    private final ProductService productService;
 
 
-
-
-    @FXML
-    private AnchorPane mainContent,tableBody;
-
-    @FXML
-    private Pane shadow;
-
-    @FXML
-    private Label productLabel;
-
-    @FXML
-    private TextField searchField;
-
-    @FXML
-    private HBox btnAdd;
-
+    // UI Components
     private AnchorPane productForm;
-    private ProductFormController productFormController;
-    private ProductTbViewController productTbViewController;
-    private static int initializeCounter = 0;
-    private boolean isProductFormVisible;
-    private final Duration FORM_ANIMATION_DURATION = Duration.seconds(0.4);
-    private final Duration FADE_DURATION = Duration.seconds(0.2);
-    private final double FORM_HIDDEN_POSITION = 750;
-    private final double FORM_VISIBLE_POSITION = 0;
-    private final Logger log = Logger.getLogger(getClass().getName());
+    private TableView<Product> productsTable;
+    private ProductFormManager productFormManager;
+
+    // Data Collections
+    private List<Product> productsList;
+    private ObservableList<Product> productsObservableList;
+    private final ProductManagerEventBus eventBus = ProductManagerEventBus.getInstance();
+
+    private static final Logger log = Logger.getLogger(ProductManagerController.class.getName());
+
+    public ProductManagerController (ProductService productService) {
+        this.productService = productService;
+        ProductFormEventBus formEventBus = ProductFormEventBus.getInstance();
+        formEventBus.register(this);
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        log.info("ProductManagerController initialized " + (++initializeCounter) + " time(s).");
 
-        DropShadow shadow = new DropShadow();
-        shadow.setColor(Color.web("#999999"));
-        shadow.setRadius(15);
-        shadow.setOffsetX(0);
-        shadow.setOffsetY(0);
-        tableBody.setEffect(shadow);
-        loadTableView();
-        loadProductForm();
-        configureShadowClick();
-        setUpSearchField(searchField);
-
-        btnAdd.setOnMouseClicked(mouseEvent -> addNewProduct());
-
+        setupProductForm();
+        setupProductTable();
+        initializeUIEffects();
+        setupEventHandlers();
     }
+
 
     @Override
     public void handleShortcut(KeyCode keyCode) {
-        if(keyCode.equals(KeyCode.F5)){
-            if(isProductFormVisible){
-                hideProductForm();
-            }
-            Platform.runLater(() -> searchField.requestFocus());
-        }
-
-        if(keyCode.equals(KeyCode.F4)){
-            productFormController.save();
-        }
-
-        if(keyCode.equals(KeyCode.ESCAPE)){
-            productFormController.cancel();
-        }
-
-        if(keyCode.equals(KeyCode.F1)){
-            addNewProduct();
+        switch (keyCode) {
+            case F5:
+                productFormManager.hide();
+                Platform.runLater(() -> searchField.requestFocus());
+                break;
+            case F4:
+                eventBus.publish(new ProductManagerSaveEvent());
+                break;
+            case ESCAPE:
+                eventBus.publish(new ProductManagerCancelEvent());
+                break;
+            case F1:
+                if(!productFormManager.isFormVisible){
+                    eventBus.publish(new ProductAddEvent());
+                    productFormManager.toggle();
+                }
+                break;
         }
     }
 
-    private void loadTableView() {
+    /**
+     * Setup the product form and it's manager.
+     */
+    private void setupProductForm() {
+        productForm = getProductForm();
+        productFormManager = new ProductFormManager(mainContent, productForm);
+    }
+
+    /**
+     * Setup products table.
+     */
+
+    private void setupProductTable() {
+        productsList = productService.findAllProducts();
+        productsObservableList = FXCollections.observableArrayList(productsList);
+
+        ProductTableViewFactory tbvFactory = new ProductTableViewFactory();
+        productsTable = tbvFactory.get(productsObservableList);
+
+        tableBody.getChildren().add(0, productsTable);
+    }
+
+    private AnchorPane getProductForm() {
         try {
-            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductTbView.fxml"));
-            this.productTbViewController = new ProductTbViewController();
-            loader.setController(this.productTbViewController);
-            TableView tableView = loader.load();
-            configureTableViewLayout(tableView);
-            configureTableRowFactory(tableView);
-            tableBody.getChildren().add(0, tableView);
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductForm.fxml"));
+            loader.setController(new ProductFormController(productService));
+            AnchorPane productForm = loader.load();
+            return productForm;
         } catch (IOException e) {
-            log.severe("Error loading StockTableView :" + e.getMessage());
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    private void loadProductForm(){
-        try {
-
-            FXMLLoader loader =  new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/product-manager/ProductForm.fxml"));
-            ProductRepository productRepository = new ProductRepository(new PSQLProductStrategy(ConnectionFactory.getInstance()));
-            ProductService productService = new ProductServiceImpl(productRepository);
-            loader.setController(new ProductFormController(productTbViewController,this,productService));
-            productForm = loader.load();
-            productFormController = loader.getController();
-            configureProductFormLayout();
-        } catch (IOException e){
             log.severe("Error loading the product form: " + e.getMessage());
-            e.printStackTrace();
+            return null;
         }
     }
 
-    private void setUpSearchField(TextField searchField){
+    private void initializeUIEffects() {
+        // Apply shadow effect to table
+        DropShadow shadowEffect = new DropShadow();
+        shadowEffect.setColor(Color.web("#999999"));
+        shadowEffect.setRadius(15);
+        shadowEffect.setOffsetX(0);
+        shadowEffect.setOffsetY(0);
+        tableBody.setEffect(shadowEffect);
+        onShadowClick();
+    }
+
+    private void setupEventHandlers() {
+        setUpSearchField(searchField);
+        btnAdd.setOnMouseClicked(mouseEvent -> {/*addNewProduct() EVENT */});
+    }
+
+    private void setUpSearchField(TextField searchField) {
         TextFieldUtils.setUpperCaseTextFormatter(searchField);
-        searchField.textProperty().addListener((obsValue, OldValue, newValue) -> {
-            productTbViewController.searchFilteredStock(newValue);
-        });
-        searchField.setOnKeyPressed(keyEvent -> {
-            handleShortcut(keyEvent.getCode());
-        });
+        searchField.textProperty().addListener((obsValue, oldValue, newValue) -> searchProduct(newValue));
+        searchField.setOnKeyPressed(keyEvent -> handleShortcut(keyEvent.getCode()));
+    }
+
+    private void onShadowClick() {
+        shadow.setOnMouseClicked(mouseEvent -> productFormManager.toggle());
+    }
+
+    private void searchProduct(String search) {
+        ProductSearcher productSearcher = new ProductSearcher(productsObservableList);
+        productsTable.setItems(productSearcher.search(search));
+        productsTable.refresh();
+    }
+
     @Override
     public void onProductCodeEditAttempt(ProductCodeEditAttemptEvent attemptEvent) {
         Node warningDialog = attemptEvent.getWarningDialog();
@@ -154,23 +177,6 @@ public class ProductManagerController implements Initializable, ShortcutHandler 
         productFormManager.toggle();
     }
 
-    private void configureTableRowFactory(TableView<Product> stockTableView) {
-        stockTableView.setRowFactory(new Callback<>() {
-            @Override
-            public TableRow<Product> call(TableView<Product> tableView) {
-                TableRow<Product> row = new TableRow<>() {
-                    @Override
-                    protected void updateItem(Product item, boolean empty) {
-                        super.updateItem(item, empty);
-                        setPrefHeight(empty || item == null ? 0 : 68);
-                        setOnMouseClicked(event -> {
-                            if (item != null) {
-                                showProductData(item);
-                            }
-                        });
-                    }
-                };
-                return row;
     @Override
     public void onCancel(ProductFormCancelEvent productFormCancelEvent) {
         productFormManager.toggle();

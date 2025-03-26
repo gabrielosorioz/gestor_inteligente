@@ -1,6 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.view;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,7 +20,12 @@ public class CheckoutTabPaneController implements Initializable, ShortcutHandler
     private final Logger log = Logger.getLogger(getClass().getName());
     private int tabCounter;
     private static int initializeCounter = 0;
+    private final ProductService PRODUCT_SERVICE;
 
+
+    public CheckoutTabPaneController(ProductService productService) {
+        PRODUCT_SERVICE = productService;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -70,7 +76,7 @@ public class CheckoutTabPaneController implements Initializable, ShortcutHandler
     private Tab getCheckoutTab(){
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/CheckoutTab.fxml"));
-            CheckoutTabController checkoutTabController = new CheckoutTabController(this);
+            CheckoutTabController checkoutTabController = new CheckoutTabController(this,PRODUCT_SERVICE);
             loader.setController(checkoutTabController);
             Tab newCheckoutTab = loader.load();
 

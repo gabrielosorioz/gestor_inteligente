@@ -1,15 +1,21 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.events.*;
+import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerCancelEvent;
+import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerListener;
+import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerSaveEvent;
 import com.gabrielosorio.gestor_inteligente.exception.DuplicateProductException;
 import com.gabrielosorio.gestor_inteligente.exception.ProductFormException;
 import com.gabrielosorio.gestor_inteligente.model.Category;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Supplier;
+import com.gabrielosorio.gestor_inteligente.model.enums.Status;
 import com.gabrielosorio.gestor_inteligente.service.base.NotificationService;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import com.gabrielosorio.gestor_inteligente.service.impl.NotificationServiceImpl;
 import com.gabrielosorio.gestor_inteligente.utils.AutoCompleteField;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.validation.ProductValidator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,13 +36,16 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class ProductFormController implements Initializable {
+public class ProductFormController implements Initializable, ProductManagerListener {
 
     private final Logger log = Logger.getLogger(getClass().getName());
-   private Map<String,TextField> fieldMap;
+
+    private ProductFormEventBus formEventBus;
 
     @FXML
     private TextField idField,barCodeField,descriptionField,costPriceField,sellingPriceField,
@@ -49,9 +59,6 @@ public class ProductFormController implements Initializable {
 
 
     private Optional<Product> product;
-
-    private final ProductTbViewController pTbViewController;
-    private final ProductManagerController pManagerController;
     private final NotificationService notificationService = new NotificationServiceImpl();
     private final ProductService pService;
 
@@ -59,10 +66,10 @@ public class ProductFormController implements Initializable {
 
     ArrayList<String> suppliers = new ArrayList<>();
 
-    public ProductFormController(ProductTbViewController pTbViewController, ProductManagerController pManagerController, ProductService pService){
-        this.pTbViewController = pTbViewController;
-        this.pManagerController = pManagerController;
+    public ProductFormController(ProductService pService){
+        ProductManagerEventBus.getInstance().register(this);
         this.pService = pService;
+        formEventBus = ProductFormEventBus.getInstance();
     }
 
     @Override
@@ -72,18 +79,12 @@ public class ProductFormController implements Initializable {
         setupButtonActions();
     }
 
-    public void setProduct(Optional<Product> product){
-        this.product = product;
-        populateFields();
-    }
-
     private void setUpNumericField(TextField field){
         field.textProperty().addListener(((observableValue, s, t1) -> {
             String plainText = t1.replaceAll("[^0-9]", "");
             field.setText(plainText);
         }));
     }
-
 
     private void calculateAndSetMarkup() {
         try {
@@ -105,9 +106,7 @@ public class ProductFormController implements Initializable {
             } else {
                 markupField.setText("0.00");
             }
-        } catch (NumberFormatException e) {
-            markupField.setText("0.00");
-        } catch (ArithmeticException e) {
+        } catch (NumberFormatException | ArithmeticException e) {
             markupField.setText("0.00");
         }
 
@@ -154,7 +153,6 @@ public class ProductFormController implements Initializable {
         TextFieldUtils.lastPositionCursor(targetField);
     }
 
-    // Move o foco para o próximo campo
     private void focusNextField(List<TextField> fields, int currentIndex) {
         int nextIndex = (currentIndex + 1) % fields.size();
         TextField nextField = fields.get(nextIndex);
@@ -162,14 +160,12 @@ public class ProductFormController implements Initializable {
         TextFieldUtils.lastPositionCursor(nextField);
     }
 
-    // Move o foco para o campo anterior
     private void focusPreviousField(List<TextField> fields, int currentIndex) {
         int previousIndex = (currentIndex - 1 + fields.size()) % fields.size();
         TextField previousField = fields.get(previousIndex);
         previousField.requestFocus();
         TextFieldUtils.lastPositionCursor(previousField);
     }
-
 
     private void fetchCategoryData(){
         String filePath = "src/main/resources/com/gabrielosorio/gestor_inteligente/data/categories.json";
@@ -234,27 +230,6 @@ public class ProductFormController implements Initializable {
 
     }
 
-    private void populateFields() {
-        ProductFormUtils.populateProductFields(product,fieldMap);
-        priceListener(costPriceField,sellingPriceField,quantityField);
-        priceListener(sellingPriceField,markupField,costPriceField);
-        barCodeField.requestFocus();
-        barCodeField.positionCaret(barCodeField.getText().length());
-    }
-
-    private void mapFields(){
-        this.fieldMap = new HashMap<>();
-        fieldMap.put("idField",idField);
-        fieldMap.put("barCodeField",barCodeField);
-        fieldMap.put("descriptionField",descriptionField);
-        fieldMap.put("costPriceField",costPriceField);
-        fieldMap.put("sellingPriceField",sellingPriceField);
-        fieldMap.put("markupField",markupField);
-        fieldMap.put("quantityField",quantityField);
-        fieldMap.put("categoryField",categoryField);
-        fieldMap.put("supplierField",supplierField);
-    }
-
     private void setUpAutoCompleteFields(){
         new AutoCompleteField(categoryField,categoryList);
         new AutoCompleteField(supplierField,supplierList);
@@ -262,28 +237,27 @@ public class ProductFormController implements Initializable {
 
     public void cancel(){
         this.product = Optional.empty();
-        pManagerController.toggleProductForm();
+        formEventBus.publish(new ProductFormCancelEvent());
     }
 
     public void save() {
 
         try {
             if (product.isPresent()) {
-                Product pToUpdate = ProductFormUtils.updateProduct(product.get(), fieldMap);
+                Product pToUpdate = updateProduct();
                 pService.update(pToUpdate);
                 showSuccess("Produto atualizado com sucesso.");
             } else {
-                Product newProduct = ProductFormUtils.createProduct(fieldMap);
+                Product newProduct = createProduct();
                 pService.save(newProduct);
                 showSuccess("Produto salvo com sucesso.");
-                pTbViewController.refreshProducts();
             }
 
-            pManagerController.toggleProductForm();
+            formEventBus.publish(new ProductFormSaveEvent());
 
         } catch (DuplicateProductException e) {
             var oldProductCode = product.get().getProductCode();
-            showError("Código do produto já existe: " + fieldMap.get("idField").getText());
+            showError(e.getMessage());
             product.get().setProductCode(oldProductCode);
             idField.setText(String.valueOf(oldProductCode));
 
@@ -293,6 +267,107 @@ public class ProductFormController implements Initializable {
             showError("Erro inesperado: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private Product updateProduct() throws ProductFormException {
+        if (product.isEmpty()) {
+            throw new ProductFormException(
+                    "[%s][ERROR] The current product is empty".formatted(ProductFormController.class.getSimpleName())
+            );
+        }
+
+        Product original = product.get();
+        validateProductFields();
+
+        Product.ProductBuilder builder = new Product.ProductBuilder()
+                .id(original.getId())
+                .productCode(original.getProductCode())
+                .barCode(original.getBarCode())
+                .description(original.getDescription())
+                .costPrice(original.getCostPrice())
+                .sellingPrice(original.getSellingPrice())
+                .quantity(original.getQuantity())
+                .supplier(original.getSupplier())
+                .category(original.getCategory())
+                .status(original.getStatus())
+                .dateCreate(original.getDateCreate())
+                .dateUpdate(original.getDateUpdate())
+                .dateDelete(original.getDateDelete());
+
+        String barCodeText = barCodeField.getText().trim();
+        builder.barCode(barCodeText.isEmpty() ? Optional.empty() : Optional.of(barCodeText));
+
+        builder.description(descriptionField.getText().trim());
+
+        BigDecimal costPrice = TextFieldUtils.formatCurrency(costPriceField.getText());
+        BigDecimal sellingPrice = TextFieldUtils.formatCurrency(sellingPriceField.getText());
+        builder.costPrice(costPrice).sellingPrice(sellingPrice);
+
+        int quantity = Integer.parseInt(quantityField.getText());
+        builder.quantity(quantity);
+
+        long productCode = Long.parseLong(idField.getText());
+        builder.productCode(productCode);
+
+        // Cria o novo objeto sem alterar o original
+        return builder.build();
+    }
+
+    private Product createProduct() throws ProductFormException {
+        validateProductFields();
+        var id = idField.getText().trim();
+        var pCode = id.isEmpty() ? 0 : Integer.parseInt(id);
+        String description = descriptionField.getText().trim();
+        String barCodeText = barCodeField.getText().trim();
+        Optional<String> barcode = barCodeText.isEmpty() ? Optional.empty() : Optional.of(barCodeText);
+        BigDecimal costPrice = TextFieldUtils.formatCurrency(costPriceField.getText());
+        BigDecimal sellingPrice = TextFieldUtils.formatCurrency(sellingPriceField.getText());
+        var quantityText =  quantityField.getText().trim();
+        int quantity;
+
+        try {
+            quantity = Integer.parseInt(quantityText);
+        } catch (NumberFormatException e) {
+            throw new ProductFormException("A quantidade deve ser um número válido.");
+        }
+
+        return Product.builder()
+                .productCode(pCode)
+                .barCode(barcode)
+                .description(description)
+                .costPrice(costPrice)
+                .sellingPrice(sellingPrice)
+                .dateCreate(Timestamp.from(Instant.now()))
+                .status(Status.ACTIVE)
+                .supplier(Optional.empty())
+                .category(Optional.empty())
+                .quantity(quantity)
+                .build();
+    }
+
+    private void validateProductFields() throws ProductFormException {
+        String description = descriptionField.getText().trim();
+        BigDecimal costPrice = TextFieldUtils.formatCurrency(costPriceField.getText());
+        BigDecimal sellingPrice = TextFieldUtils.formatCurrency(sellingPriceField.getText());
+
+        if(product.isPresent()){
+            validateProductCode(product.get());
+        }
+
+        if(description.isEmpty()){
+            descriptionField.clear();
+            descriptionField.requestFocus();
+            throw new ProductFormException("O campo de descrição do produto está vazio.");
+        }
+
+        if (!ProductValidator.costPriceLowerThanSellingPrice(costPrice,sellingPrice)) {
+            throw new ProductFormException("O preço de custo deve ser menor do que o preço de venda.");
+        }
+
+        if(!ProductValidator.pricesGreaterThanZero(costPrice,sellingPrice)){
+            throw new ProductFormException("Preço de custo e preço de venda devem ser maiores que zero.");
+        }
+
     }
 
     private void showSuccess(String message){
@@ -313,12 +388,11 @@ public class ProductFormController implements Initializable {
     }
 
     private void initializeFields(){
-        mapFields();
         setUpperCaseTextFormatter();
         lockField(idField);
         setUpFieldNavigation();
         idField.setOnKeyPressed(keyEvent -> {
-            pManagerController.handleShortcut(keyEvent.getCode());
+            formEventBus.publish(new ProductFormShortcutEvent(keyEvent.getCode()));
         });
         markupField.setEditable(false);
         markupField.setCursor(Cursor.DEFAULT);
@@ -352,8 +426,7 @@ public class ProductFormController implements Initializable {
                 keyEvent.consume();
             }
 
-            // Allow other shortcuts to be handled by the main controller
-            pManagerController.handleShortcut(keyEvent.getCode());
+            formEventBus.publish(new ProductFormShortcutEvent(keyEvent.getCode()));
         });
 
         // Position the cursor at the end when clicking on the field
@@ -411,10 +484,6 @@ public class ProductFormController implements Initializable {
         setupActionField(field);
     }
 
-    public void lockIDField(){
-        lockField(idField);
-    }
-
     private static void unlockField(TextField field) {
         field.setEditable(true);
         field.setStyle("");
@@ -424,12 +493,15 @@ public class ProductFormController implements Initializable {
     private void setupActionField(TextField field) {
         field.setOnMouseClicked(click -> {
             if(!field.isEditable()){
-                showCodeAlert();
+                Node changeCodeWarningNode = loadChangeCodeWarning();
+                formEventBus.publish(new ProductCodeEditAttemptEvent(changeCodeWarningNode));
             }
         });
     }
 
-    public void showCodeAlert() {
+    /** events **/
+
+    private Node loadChangeCodeWarning() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/AlertMessage.fxml"));
             fxmlLoader.setController(new AlertMessageController());
@@ -440,13 +512,79 @@ public class ProductFormController implements Initializable {
                 unlockField(idField);
             });
 
-            pManagerController.addContent(codeAlert);
             codeAlert.setLayoutX(450);
             codeAlert.setLayoutY(250);
+            return codeAlert;
 
         } catch (Exception e) {
             log.severe("ERROR at load code alert message: " + e.getMessage());
-            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public void onSelectProduct(ProductSelectionEvent productSelectionEvent) {
+        Product product = productSelectionEvent.getProduct();
+        loadProductIntoForm(product);
+    }
+
+    @Override
+    public void onToggleProductForm(ProductFormToggleEvent productFormToggleEvent) {
+        if (!productFormToggleEvent.isFormVisible()) {
+            lockField(idField);
+        }
+    }
+
+    @Override
+    public void onAddNewProduct(ProductAddEvent productAddEvent) {
+        loadCleanForm();
+    }
+
+    @Override
+    public void onSaveProduct(ProductManagerSaveEvent productManagerSaveEvent) {
+        save();
+    }
+
+    @Override
+    public void onCancel(ProductManagerCancelEvent productManagerCancelEvent) {
+        cancel();
+    }
+
+    private void loadProductIntoForm(Product prod) {
+        product = Optional.of(prod);
+        idField.setText(prod != null ? String.valueOf(prod.getProductCode()) : "");
+        barCodeField.setText(prod != null ? prod.getBarCode().orElse("") : "");
+        descriptionField.setText(prod != null ? prod.getDescription() : "");
+        costPriceField.setText(prod != null ? prod.getCostPrice().toPlainString() : "");
+        sellingPriceField.setText(prod != null ? prod.getSellingPrice().toPlainString() : "");
+        quantityField.setText(prod != null ? String.valueOf(prod.getQuantity()) : "");
+        markupField.setText(prod != null ? String.valueOf(prod.getMarkupPercent()) : "");
+        categoryField.setText(prod != null ? prod.getCategory().map(Category::getDescription).orElse("") : "");
+        supplierField.setText(prod != null ? prod.getSupplier().map(Supplier::getName).orElse("") : "");
+
+        priceListener(costPriceField,sellingPriceField,quantityField);
+        priceListener(sellingPriceField,markupField,costPriceField);
+        barCodeField.requestFocus();
+        barCodeField.positionCaret(barCodeField.getText().length());
+    }
+
+    private void loadCleanForm() {
+        List<TextField> fields = Arrays.asList(
+                idField, barCodeField,
+                descriptionField, costPriceField,
+                sellingPriceField, markupField,
+                quantityField, categoryField,
+                supplierField);
+
+        fields.forEach(TextInputControl::clear);
+        idField.setPromptText("Novo Código");
+    }
+
+    private void validateProductCode(Product p) throws ProductFormException {
+        String pCode = idField.getText().trim();
+        if (pCode.isEmpty()) {
+            idField.setText(String.valueOf(p.getProductCode()));
+            throw new ProductFormException("O campo ID do produto está vazio.");
         }
     }
 

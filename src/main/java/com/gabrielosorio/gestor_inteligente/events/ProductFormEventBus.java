@@ -38,5 +38,16 @@ public class ProductFormEventBus {
         }
     }
 
+    public void publish(ProductFormCancelEvent event) {
+        for (ProductFormListener listener : listeners) {
+            listener.onCancel(event);
+        }
+    }
+
+    public void publish(ProductFormShortcutEvent event) {
+        for (ProductFormListener listener : listeners) {
+            listener.onHandleShortcutEvent(event);
+        }
+    }
 
 }

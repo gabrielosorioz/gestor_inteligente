@@ -1,5 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.events;
+import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerCancelEvent;
 import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerListener;
+import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerSaveEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,9 +41,16 @@ public class ProductManagerEventBus {
         }
     }
 
+    public void publish(ProductManagerSaveEvent event){
+        for(ProductManagerListener listener: listeners){
+            listener.onSaveProduct(event);
+        }
+    }
 
-
-
-
+    public void publish(ProductManagerCancelEvent event){
+        for(ProductManagerListener listener: listeners){
+            listener.onCancel(event);
+        }
+    }
 
 }

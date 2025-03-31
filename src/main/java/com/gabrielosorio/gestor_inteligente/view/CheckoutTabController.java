@@ -1,13 +1,9 @@
 package com.gabrielosorio.gestor_inteligente.view;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
-import com.gabrielosorio.gestor_inteligente.repository.impl.ProductRepository;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLProductStrategy;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
-import com.gabrielosorio.gestor_inteligente.service.impl.ProductServiceImpl;
 import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -57,10 +53,9 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
 
 
 
-    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController) {
+    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController, ProductService productService) {
         this.checkoutTabPaneController = checkoutTabPaneController;
-        ProductRepository productRepository = new ProductRepository(new PSQLProductStrategy(ConnectionFactory.getInstance()));
-        this.productService = new ProductServiceImpl(productRepository);
+        this.productService = productService;
     }
 
     @Override

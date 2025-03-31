@@ -79,6 +79,21 @@ public class ProductFormController implements Initializable, ProductManagerListe
         setupButtonActions();
     }
 
+    /** Logica relacionada a UI do formulário */
+    private void initializeFields(){
+        setUpperCaseTextFormatter();
+        lockField(idField);
+        setUpFieldNavigation();
+        idField.setOnKeyPressed(keyEvent -> {
+            formEventBus.publish(new ProductFormShortcutEvent(keyEvent.getCode()));
+        });
+        markupField.setEditable(false);
+        markupField.setCursor(Cursor.DEFAULT);
+        setUpNumericField(quantityField);
+        setUpNumericField(idField);
+        setUpNumericField(barCodeField);
+    }
+
     private void setUpNumericField(TextField field){
         field.textProperty().addListener(((observableValue, s, t1) -> {
             String plainText = t1.replaceAll("[^0-9]", "");
@@ -167,6 +182,119 @@ public class ProductFormController implements Initializable, ProductManagerListe
         TextFieldUtils.lastPositionCursor(previousField);
     }
 
+    private void setUpAutoCompleteFields(){
+        new AutoCompleteField(categoryField,categoryList);
+        new AutoCompleteField(supplierField,supplierList);
+    }
+
+    private void priceListener(TextField priceField, TextField nextField, TextField previousField) {
+        // Set default value if the field is empty
+        if (priceField.getText().isBlank() || priceField.getText().isEmpty()) {
+            priceField.setText("0,00");
+        } else {
+            String formattedValue = TextFieldUtils.formatText(priceField.getText());
+            priceField.setText(formattedValue);
+        }
+
+        // Configure keyboard listeners
+        priceField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER || keyEvent.getCode() == KeyCode.DOWN) {
+                focusNextField(Arrays.asList(priceField, nextField), 0); // Move focus to the next field
+                keyEvent.consume();
+            } else if (keyEvent.getCode() == KeyCode.UP) {
+                focusPreviousField(Arrays.asList(previousField, priceField), 1); // Move focus to the previous field
+                keyEvent.consume();
+            } else if (keyEvent.getCode() == KeyCode.F2) {
+                save(); // Save the form
+                keyEvent.consume();
+            } else if (keyEvent.getCode() == KeyCode.TAB) {
+                handleTabNavigation(Arrays.asList(priceField, nextField, previousField), 0, keyEvent.isShiftDown());
+                keyEvent.consume();
+            }
+
+            formEventBus.publish(new ProductFormShortcutEvent(keyEvent.getCode()));
+        });
+
+        // Position the cursor at the end when clicking on the field
+        priceField.setOnMouseClicked(mouseEvent -> {
+            priceField.positionCaret(priceField.getText().length());
+        });
+
+        // Format the text and recalculate the markup when the value changes
+        priceField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+            String formattedText = TextFieldUtils.formatText(newValue);
+            calculateAndSetMarkup();
+
+            if (!newValue.equals(formattedText)) {
+                Platform.runLater(() -> {
+                    priceField.setText(formattedText);
+                    priceField.positionCaret(priceField.getText().length());
+                });
+            }
+        });
+    }
+
+    private void setUpperCaseTextFormatter(){
+        List<TextField> fields = new ArrayList<>(Arrays.asList(idField,barCodeField,descriptionField,costPriceField,sellingPriceField,
+                markupField,quantityField,categoryField,supplierField));
+        fields.forEach(field -> {
+            TextFieldUtils.setUpperCaseTextFormatter(field);
+        });
+    }
+
+    private void setupButtonActions() {
+        btnSave.setOnMouseClicked(mouseEvent -> {
+            save();
+        });
+        btnCancel.setOnMouseClicked(mouseEvent -> cancel());
+    }
+
+    private void setLockFieldStyle(TextField field) {
+        field.setStyle(
+                "-fx-border-color: #e0e0e0;" +
+                        "-fx-text-fill: #7f7f7f;"
+        );
+        field.setOnMouseEntered(mouseEvent -> {
+            if (!field.isEditable()) {
+                field.setStyle(
+                        "-fx-cursor: hand;" +
+                                "-fx-border-color: #e0e0e0;"
+                );
+            }
+        });
+    }
+
+    private void lockField(TextField field) {
+        field.setEditable(false);
+        setLockFieldStyle(field);
+        setupActionField(field);
+    }
+
+    private static void unlockField(TextField field) {
+        field.setEditable(true);
+        field.setStyle("");
+        field.requestFocus();
+    }
+
+    private void setupActionField(TextField field) {
+        field.setOnMouseClicked(click -> {
+            if(!field.isEditable()){
+                Node changeCodeWarningNode = loadChangeCodeWarning();
+                formEventBus.publish(new ProductCodeEditAttemptEvent(changeCodeWarningNode));
+            }
+        });
+    }
+
+    /** Logica relacionada ao carregamento de dados */
+    private void loadCategoryAndSupplierData(){
+        fetchSupplierData();
+        fetchCategoryData();
+        categoryList.getItems().addAll(categories);
+        supplierList.getItems().addAll(suppliers);
+        setUpAutoCompleteFields();
+
+    }
+
     private void fetchCategoryData(){
         String filePath = "src/main/resources/com/gabrielosorio/gestor_inteligente/data/categories.json";
         try(BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -230,16 +358,7 @@ public class ProductFormController implements Initializable, ProductManagerListe
 
     }
 
-    private void setUpAutoCompleteFields(){
-        new AutoCompleteField(categoryField,categoryList);
-        new AutoCompleteField(supplierField,supplierList);
-    }
-
-    public void cancel(){
-        this.product = Optional.empty();
-        formEventBus.publish(new ProductFormCancelEvent());
-    }
-
+    /** Lógica relacionada a regra de negócios */
     public void save() {
 
         try {
@@ -267,6 +386,11 @@ public class ProductFormController implements Initializable, ProductManagerListe
             showError("Erro inesperado: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void cancel(){
+        this.product = Optional.empty();
+        formEventBus.publish(new ProductFormCancelEvent());
     }
 
     private Product updateProduct() throws ProductFormException {
@@ -370,6 +494,7 @@ public class ProductFormController implements Initializable, ProductManagerListe
 
     }
 
+    /** Lógica relacionada a notificação no sistema */
     private void showSuccess(String message){
         notificationService.showSuccess(message);
     }
@@ -378,128 +503,47 @@ public class ProductFormController implements Initializable, ProductManagerListe
         notificationService.showError(message);
     }
 
-    private void loadCategoryAndSupplierData(){
-        fetchSupplierData();
-        fetchCategoryData();
-        categoryList.getItems().addAll(categories);
-        supplierList.getItems().addAll(suppliers);
-        setUpAutoCompleteFields();
+    /** Logica relacionada ao formulario */
 
+    private void loadProductIntoForm(Product prod) {
+        product = Optional.of(prod);
+        idField.setText(prod != null ? String.valueOf(prod.getProductCode()) : "");
+        barCodeField.setText(prod != null ? prod.getBarCode().orElse("") : "");
+        descriptionField.setText(prod != null ? prod.getDescription() : "");
+        costPriceField.setText(prod != null ? prod.getCostPrice().toPlainString() : "");
+        sellingPriceField.setText(prod != null ? prod.getSellingPrice().toPlainString() : "");
+        quantityField.setText(prod != null ? String.valueOf(prod.getQuantity()) : "");
+        markupField.setText(prod != null ? String.valueOf(prod.getMarkupPercent()) : "");
+        categoryField.setText(prod != null ? prod.getCategory().map(Category::getDescription).orElse("") : "");
+        supplierField.setText(prod != null ? prod.getSupplier().map(Supplier::getName).orElse("") : "");
+
+        priceListener(costPriceField,sellingPriceField,quantityField);
+        priceListener(sellingPriceField,markupField,costPriceField);
+        barCodeField.requestFocus();
+        barCodeField.positionCaret(barCodeField.getText().length());
     }
 
-    private void initializeFields(){
-        setUpperCaseTextFormatter();
-        lockField(idField);
-        setUpFieldNavigation();
-        idField.setOnKeyPressed(keyEvent -> {
-            formEventBus.publish(new ProductFormShortcutEvent(keyEvent.getCode()));
-        });
-        markupField.setEditable(false);
-        markupField.setCursor(Cursor.DEFAULT);
-        setUpNumericField(quantityField);
-        setUpNumericField(idField);
-        setUpNumericField(barCodeField);
+    private void loadCleanForm() {
+        List<TextField> fields = Arrays.asList(
+                idField, barCodeField,
+                descriptionField, costPriceField,
+                sellingPriceField, markupField,
+                quantityField, categoryField,
+                supplierField);
+
+        fields.forEach(TextInputControl::clear);
+        idField.setPromptText("Novo Código");
     }
 
-    private void priceListener(TextField priceField, TextField nextField, TextField previousField) {
-        // Set default value if the field is empty
-        if (priceField.getText().isBlank() || priceField.getText().isEmpty()) {
-            priceField.setText("0,00");
-        } else {
-            String formattedValue = TextFieldUtils.formatText(priceField.getText());
-            priceField.setText(formattedValue);
+    private void validateProductCode(Product p) throws ProductFormException {
+        String pCode = idField.getText().trim();
+        if (pCode.isEmpty()) {
+            idField.setText(String.valueOf(p.getProductCode()));
+            throw new ProductFormException("O campo ID do produto está vazio.");
         }
-
-        // Configure keyboard listeners
-        priceField.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ENTER || keyEvent.getCode() == KeyCode.DOWN) {
-                focusNextField(Arrays.asList(priceField, nextField), 0); // Move focus to the next field
-                keyEvent.consume();
-            } else if (keyEvent.getCode() == KeyCode.UP) {
-                focusPreviousField(Arrays.asList(previousField, priceField), 1); // Move focus to the previous field
-                keyEvent.consume();
-            } else if (keyEvent.getCode() == KeyCode.F2) {
-                save(); // Save the form
-                keyEvent.consume();
-            } else if (keyEvent.getCode() == KeyCode.TAB) {
-                handleTabNavigation(Arrays.asList(priceField, nextField, previousField), 0, keyEvent.isShiftDown());
-                keyEvent.consume();
-            }
-
-            formEventBus.publish(new ProductFormShortcutEvent(keyEvent.getCode()));
-        });
-
-        // Position the cursor at the end when clicking on the field
-        priceField.setOnMouseClicked(mouseEvent -> {
-            priceField.positionCaret(priceField.getText().length());
-        });
-
-        // Format the text and recalculate the markup when the value changes
-        priceField.textProperty().addListener((observableValue, oldValue, newValue) -> {
-            String formattedText = TextFieldUtils.formatText(newValue);
-            calculateAndSetMarkup();
-
-            if (!newValue.equals(formattedText)) {
-                Platform.runLater(() -> {
-                    priceField.setText(formattedText);
-                    priceField.positionCaret(priceField.getText().length());
-                });
-            }
-        });
     }
 
-    private void setUpperCaseTextFormatter(){
-        List<TextField> fields = new ArrayList<>(Arrays.asList(idField,barCodeField,descriptionField,costPriceField,sellingPriceField,
-                markupField,quantityField,categoryField,supplierField));
-        fields.forEach(field -> {
-            TextFieldUtils.setUpperCaseTextFormatter(field);
-        });
-    }
-
-    private void setupButtonActions() {
-        btnSave.setOnMouseClicked(mouseEvent -> {
-            save();
-        });
-        btnCancel.setOnMouseClicked(mouseEvent -> cancel());
-    }
-
-    private void setLockFieldStyle(TextField field) {
-        field.setStyle(
-                "-fx-border-color: #e0e0e0;" +
-                        "-fx-text-fill: #7f7f7f;"
-        );
-        field.setOnMouseEntered(mouseEvent -> {
-            if (!field.isEditable()) {
-                field.setStyle(
-                        "-fx-cursor: hand;" +
-                                "-fx-border-color: #e0e0e0;"
-                );
-            }
-        });
-    }
-
-    private void lockField(TextField field) {
-        field.setEditable(false);
-        setLockFieldStyle(field);
-        setupActionField(field);
-    }
-
-    private static void unlockField(TextField field) {
-        field.setEditable(true);
-        field.setStyle("");
-        field.requestFocus();
-    }
-
-    private void setupActionField(TextField field) {
-        field.setOnMouseClicked(click -> {
-            if(!field.isEditable()){
-                Node changeCodeWarningNode = loadChangeCodeWarning();
-                formEventBus.publish(new ProductCodeEditAttemptEvent(changeCodeWarningNode));
-            }
-        });
-    }
-
-    /** events **/
+    /** Lógica relacionada aos eventos **/
 
     private Node loadChangeCodeWarning() {
         try {
@@ -548,44 +592,6 @@ public class ProductFormController implements Initializable, ProductManagerListe
     @Override
     public void onCancel(ProductManagerCancelEvent productManagerCancelEvent) {
         cancel();
-    }
-
-    private void loadProductIntoForm(Product prod) {
-        product = Optional.of(prod);
-        idField.setText(prod != null ? String.valueOf(prod.getProductCode()) : "");
-        barCodeField.setText(prod != null ? prod.getBarCode().orElse("") : "");
-        descriptionField.setText(prod != null ? prod.getDescription() : "");
-        costPriceField.setText(prod != null ? prod.getCostPrice().toPlainString() : "");
-        sellingPriceField.setText(prod != null ? prod.getSellingPrice().toPlainString() : "");
-        quantityField.setText(prod != null ? String.valueOf(prod.getQuantity()) : "");
-        markupField.setText(prod != null ? String.valueOf(prod.getMarkupPercent()) : "");
-        categoryField.setText(prod != null ? prod.getCategory().map(Category::getDescription).orElse("") : "");
-        supplierField.setText(prod != null ? prod.getSupplier().map(Supplier::getName).orElse("") : "");
-
-        priceListener(costPriceField,sellingPriceField,quantityField);
-        priceListener(sellingPriceField,markupField,costPriceField);
-        barCodeField.requestFocus();
-        barCodeField.positionCaret(barCodeField.getText().length());
-    }
-
-    private void loadCleanForm() {
-        List<TextField> fields = Arrays.asList(
-                idField, barCodeField,
-                descriptionField, costPriceField,
-                sellingPriceField, markupField,
-                quantityField, categoryField,
-                supplierField);
-
-        fields.forEach(TextInputControl::clear);
-        idField.setPromptText("Novo Código");
-    }
-
-    private void validateProductCode(Product p) throws ProductFormException {
-        String pCode = idField.getText().trim();
-        if (pCode.isEmpty()) {
-            idField.setText(String.valueOf(p.getProductCode()));
-            throw new ProductFormException("O campo ID do produto está vazio.");
-        }
     }
 
 }

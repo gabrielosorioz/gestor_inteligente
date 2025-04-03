@@ -4,6 +4,7 @@ import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
+import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
@@ -188,6 +189,7 @@ public class PSQLPaymentStrategy extends TransactionalRepositoryStrategy<Payment
     private Payment mapResultSet(ResultSet rs) throws SQLException {
         var p = new Payment(rs.getString("description"));
         p.setId(rs.getLong("id"));
+        p.setPaymentMethod(PaymentMethod.getMethodById(p.getId()));
         return p;
     }
 

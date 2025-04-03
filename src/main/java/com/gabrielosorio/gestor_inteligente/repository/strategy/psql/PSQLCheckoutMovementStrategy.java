@@ -227,6 +227,7 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
         checkoutMovement.setMovementType(findCheckoutMovementTypeById(rs.getLong("checkoutmovement_type_id")).get());
         checkoutMovement.setDateTime(rs.getTimestamp("date_time").toLocalDateTime());
         checkoutMovement.setPayment(findPaymentById(rs.getLong("payment_id")).get());
+        checkoutMovement.getPayment().setValue(rs.getBigDecimal("value"));
         checkoutMovement.setValue(rs.getBigDecimal("value"));
         checkoutMovement.setObs(rs.getString("obs"));
         return checkoutMovement;

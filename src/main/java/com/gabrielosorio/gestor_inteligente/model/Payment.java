@@ -28,7 +28,7 @@ public class Payment {
         this.paymentMethod = paymentMethod;
         this.id = paymentMethod.getId();
         this.description = paymentMethod.getDescription();
-        this.value = new BigDecimal(0.00);
+        this.value = new BigDecimal("0.00");
     }
 
     public Payment(String description){
@@ -99,4 +99,14 @@ public class Payment {
         return id == payment.id && paymentMethod == payment.paymentMethod && Objects.equals(value, payment.value);
     }
 
+    @Override
+    public String toString() {
+        return "Payment{" +
+                "id=" + id +
+                ", paymentMethod=" + paymentMethod +
+                ", description='" + description + '\'' +
+                ", value=" + value +
+                ", installments=" + installments +
+                '}';
+    }
 }

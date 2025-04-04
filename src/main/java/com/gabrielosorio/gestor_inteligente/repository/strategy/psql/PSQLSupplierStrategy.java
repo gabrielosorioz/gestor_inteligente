@@ -34,7 +34,7 @@ public class PSQLSupplierStrategy implements RepositoryStrategy<Supplier> {
 
             ps.setLong(1,supplier.getId());
             ps.setString(2,supplier.getName());
-            ps.setString(3,supplier.getCNPJ().orElse(null));
+            ps.setString(3,supplier.getCnpj().orElse(null));
             ps.setString(4,supplier.getAddress().orElse(null));
             ps.setString(5,supplier.getCellPhone().orElse(null));
             ps.setString(6,supplier.getEmail().orElse(null));
@@ -136,7 +136,7 @@ public class PSQLSupplierStrategy implements RepositoryStrategy<Supplier> {
             var ps = connection.prepareStatement(query)){
 
             ps.setString(1, supplier.getName());
-            ps.setString(2,supplier.getCNPJ().orElse(null));
+            ps.setString(2,supplier.getCnpj().orElse(null));
             ps.setString(3,supplier.getAddress().orElse(null));
             ps.setString(4,supplier.getCellPhone().orElse(null));
             ps.setString(5,supplier.getEmail().orElse(null));
@@ -185,7 +185,7 @@ public class PSQLSupplierStrategy implements RepositoryStrategy<Supplier> {
     private Supplier mapResultSet(ResultSet rs)  throws SQLException {
         Supplier s = new Supplier(rs.getLong("id"),rs.getString("name"));
         s.setAddress(Optional.ofNullable(rs.getString("address")));
-        s.setCNPJ(Optional.ofNullable(rs.getString("cnpj")));
+        s.setCnpj(Optional.ofNullable(rs.getString("cnpj")));
         s.setCellPhone(Optional.ofNullable(rs.getString("cellphone")));
         s.setEmail(Optional.ofNullable(rs.getString("email")));
         return s;

@@ -13,39 +13,29 @@ public class Sale {
     private long id;
     private Timestamp dateSale;
     private Timestamp dataCancel;
-    private List<SaleProduct> items;
-    private BigDecimal totalChange;
-    private BigDecimal totalAmountPaid;
-    private BigDecimal originalTotalPrice;
-    private BigDecimal totalPrice;
-    private BigDecimal totalDiscount;
+    private List<SaleProduct> saleProducts;
+    private BigDecimal totalChange = BigDecimal.ZERO;
+    private BigDecimal totalAmountPaid = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);;
+    private BigDecimal originalTotalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);;
+    private BigDecimal totalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);;
+    private BigDecimal totalDiscount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);;
     private List<Payment> paymentMethods;
     private SaleStatus status;
 
-    public Sale (List<SaleProduct> items){
+    public Sale (List<SaleProduct> saleProducts){
 
-        if(items.isEmpty() || items == null){
-            throw new IllegalArgumentException("Error at initializing Sale constructor:Product items for sale is null.");
+        if(saleProducts.isEmpty() || saleProducts == null){
+            throw new IllegalArgumentException("Error at initializing Sale constructor:Product saleProducts for sale is null.");
         }
 
-        this.items = new ArrayList<>(items);
+        this.saleProducts = new ArrayList<>(saleProducts);
         this.dateSale = Timestamp.from(Instant.now());
         this.paymentMethods = new ArrayList<>();
-
-        this.totalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        this.originalTotalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        this.totalDiscount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        this.totalAmountPaid = BigDecimal.ZERO.setScale(2,RoundingMode.HALF_UP);
 
         calculateTotals();
     }
     
     public Sale(){
-        totalChange = BigDecimal.ZERO;
-        totalAmountPaid = BigDecimal.ZERO;
-        originalTotalPrice = BigDecimal.ZERO;
-        totalPrice = BigDecimal.ZERO;
-        totalDiscount = BigDecimal.ZERO;
     }
 
     public long getId() {
@@ -72,15 +62,15 @@ public class Sale {
         this.dataCancel = dataCancel;
     }
 
-    public List<SaleProduct> getItems() {
-        return items;
+    public List<SaleProduct> getSaleProducts() {
+        return saleProducts;
     }
 
-    public void setItems(List<SaleProduct> items) {
-        if(items == null || items.isEmpty()){
+    public void setSaleProducts(List<SaleProduct> saleProducts) {
+        if(saleProducts == null || saleProducts.isEmpty()){
             throw new IllegalArgumentException("Items for sale cannot be null or empty.");
         }
-        this.items = items;
+        this.saleProducts = saleProducts;
         calculateTotals();
     }
 
@@ -133,7 +123,7 @@ public class Sale {
         BigDecimal subtotal = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
         BigDecimal discountTotal = BigDecimal.ZERO.setScale(2,RoundingMode.HALF_UP);
 
-        for(SaleProduct item : this.items){
+        for(SaleProduct item : this.saleProducts){
             subtotal = subtotal.add(item.getOriginalSubtotal());
             discountTotal = discountTotal.add(item.getDiscount());
         }

@@ -1,7 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
 import com.gabrielosorio.gestor_inteligente.exception.SaleProcessingException;
-import com.gabrielosorio.gestor_inteligente.exception.TransactionException;
 import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
@@ -125,7 +124,7 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private void saveSaleProduct(Sale sale){
-        var saleProducts = sale.getItems();
+        var saleProducts = sale.getSaleProducts();
         saleProducts.forEach(saleProduct -> {
             saleProduct.setSale(sale);
             var prod = saleProduct.getProduct();

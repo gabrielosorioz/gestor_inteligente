@@ -17,4 +17,6 @@ module com.example.gestor_inteligente {
     opens com.gabrielosorio.gestor_inteligente.view to javafx.fxml;
     exports com.gabrielosorio.gestor_inteligente.utils;
     opens com.gabrielosorio.gestor_inteligente.utils to javafx.fxml;
+    exports com.gabrielosorio.gestor_inteligente.events;
+    opens com.gabrielosorio.gestor_inteligente.events to javafx.fxml;
 }

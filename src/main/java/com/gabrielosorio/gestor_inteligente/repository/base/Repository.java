@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public abstract class Repository <T> {
 
-    private RepositoryStrategy<T> strategy;
+    protected RepositoryStrategy<T> strategy;
 
     public void init(RepositoryStrategy<T> strategy){
         this.strategy = strategy;

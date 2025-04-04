@@ -412,7 +412,7 @@ public class PaymentViewController implements Initializable {
         if (sale == null) {
             throw new IllegalArgumentException("Erro ao iniciar Payment View Controller: Sale é nula");
         }
-        if (sale.getItems() == null || sale.getItems().isEmpty()) {
+        if (sale.getSaleProducts() == null || sale.getSaleProducts().isEmpty()) {
             throw new IllegalArgumentException("Erro ao iniciar Payment View Controller: Itens da venda são nulos ou vazios");
         }
         if (sale.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0) {

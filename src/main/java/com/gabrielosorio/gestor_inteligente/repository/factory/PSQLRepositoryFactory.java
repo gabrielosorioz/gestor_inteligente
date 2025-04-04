@@ -44,7 +44,7 @@ public class PSQLRepositoryFactory implements RepositoryFactory {
 
     @Override
     public SaleCheckoutMovementRepository getSaleCheckoutMovementRepository() {
-        var strategy = new PSQLSaleCheckoutMovementStrategy(ConnectionFactory.getInstance());
+        var strategy = new PSQLSaleCheckoutMovementStrategy();
         return new PSQLSaleCheckoutMovementRepository(strategy);
     }
 

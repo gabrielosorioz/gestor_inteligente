@@ -3,14 +3,13 @@ import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovementType;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
-
 import java.util.List;
 
 /**
  * Service interface for managing {@link CheckoutMovement} entities.
  * Provides methods to add, retrieve, and build checkout movements.
  */
-public interface CheckoutMovementService extends TransactionalService {
+public interface CheckoutMovementService {
 
     /**
      * Adds a new checkout movement to the system.
@@ -48,5 +47,4 @@ public interface CheckoutMovementService extends TransactionalService {
      */
     List<CheckoutMovement> findByCheckoutId(long checkoutId);
 
-    List<CheckoutMovement> findBySaleId(long id);
 }

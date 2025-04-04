@@ -25,4 +25,13 @@ public class SaleCheckoutMovementServiceImpl implements SaleCheckoutMovementServ
     public SaleCheckoutMovement buildSaleCheckoutMovement(CheckoutMovement checkoutMovement, Sale sale) {
         return new SaleCheckoutMovement(checkoutMovement,sale);
     }
+
+    @Override
+    public List<Sale> findSalesInCheckoutMovements(List<CheckoutMovement> checkoutMovements) {
+        var saleCheckoutMovements =  REPOSITORY.findSalesInCheckoutMovements(checkoutMovements);
+
+        return saleCheckoutMovements.stream()
+                .map(SaleCheckoutMovement::getSale)
+                .toList();
+    }
 }

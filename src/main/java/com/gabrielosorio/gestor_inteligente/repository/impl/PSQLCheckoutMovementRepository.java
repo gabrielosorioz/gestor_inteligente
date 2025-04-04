@@ -15,11 +15,6 @@ public class PSQLCheckoutMovementRepository extends Repository<CheckoutMovement>
     }
 
     @Override
-    public List<CheckoutMovement> findCheckoutMovementBySaleId(long saleId) {
-        return findBySpecification(new FindCheckoutMovementBySaleId(saleId));
-    }
-
-    @Override
     public List<CheckoutMovement> findCheckoutMovementByCheckoutId(long checkoutId) {
         return findBySpecification(new FindCheckoutMovementByCheckoutId(checkoutId));
     }

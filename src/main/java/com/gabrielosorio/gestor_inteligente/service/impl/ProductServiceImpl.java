@@ -20,7 +20,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void save(Product product) throws ProductException {
+    public Product save(Product product) throws ProductException {
         long pCode;
 
         if(product.getProductCode() == 0){
@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
 
         product.setProductCode(pCode);
         product.setDateUpdate(Timestamp.from(Instant.now()));
-        prodDataContext.add(product);
+        return prodDataContext.add(product);
     }
 
     @Override

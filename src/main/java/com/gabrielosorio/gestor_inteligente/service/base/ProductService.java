@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    void save(Product product);
+    Product save(Product product);
     void update(Product product);
     List<Product> findAllProducts();
     Optional<Product> findByBarCodeOrCode(String code);

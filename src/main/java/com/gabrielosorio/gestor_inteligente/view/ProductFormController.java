@@ -87,7 +87,7 @@ public class ProductFormController implements Initializable {
     }
 
     private void setupBtnCancel(){
-        btnCancel.setOnMouseClicked(mouseEvent -> new ProductFormServices().save());
+        btnCancel.setOnMouseClicked(mouseEvent -> new ProductFormServices().cancel());
     }
 
 
@@ -126,6 +126,8 @@ public class ProductFormController implements Initializable {
     }
 
     private void loadCleanForm() {
+        product = Optional.empty();
+
         List<TextField> fields = Arrays.asList(
                 idField, barCodeField,
                 descriptionField, costPriceField,
@@ -323,6 +325,8 @@ public class ProductFormController implements Initializable {
                     } else if (event.getCode() == KeyCode.F2) {
                         new ProductFormServices().save();
                         event.consume();
+                    } else {
+                        formEventBus.publish(new ProductFormShortcutEvent(event.getCode()));
                     }
                 });
             });
@@ -477,27 +481,31 @@ public class ProductFormController implements Initializable {
         protected void save() {
 
             try {
+                Optional<Product> saved = Optional.empty();
+
                 if (product.isPresent()) {
                     Product pToUpdate = updateProduct();
                     pService.update(pToUpdate);
                     showSuccess("Produto atualizado com sucesso.");
                 } else {
                     Product newProduct = createProduct();
-                    pService.save(newProduct);
+                    saved = Optional.of(pService.save(newProduct));
                     showSuccess("Produto salvo com sucesso.");
                 }
 
-                formEventBus.publish(new ProductFormSaveEvent());
+                formEventBus.publish(new ProductFormSaveEvent(saved));
 
             } catch (DuplicateProductException e) {
-                var oldProductCode = product.get().getProductCode();
+                if(product.isPresent()) {
+                    var oldProductCode = product.get().getProductCode();
+                    product.get().setProductCode(oldProductCode);
+                    idField.setText(String.valueOf(oldProductCode));
+                }
                 showError(e.getMessage());
-                product.get().setProductCode(oldProductCode);
-                idField.setText(String.valueOf(oldProductCode));
 
             } catch (ProductFormException e) {
                 showError(e.getMessage());
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
                 showError("Erro inesperado: " + e.getMessage());
                 e.printStackTrace();
             }

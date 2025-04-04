@@ -108,13 +108,13 @@ public class ProductDataContext implements DataContext<Product> {
         String pCode = String.valueOf(product.getProductCode());
 
         if (codeIndex.containsKey(pCode)) {
-            log.severe("Product code:[%s] already exists.".formatted(pCode));
-            throw new DuplicateProductException("Product code:[%s] already exists.".formatted(pCode));
+            log.severe(String.format("Product code:[%s] already exists.",pCode));
+            throw new DuplicateProductException("Product code: [%s] already exists.".formatted(pCode));
         }
         product.getBarCode().ifPresent(bc -> {
             if (codeIndex.containsKey(bc)) {
-                log.severe("Barcode:[%d] already exists.".formatted(bc));
-                throw new DuplicateProductException("Barcode:[%d] already exists.".formatted(bc));
+                log.severe(String.format("Barcode:[%s] already exists.",bc));
+                throw new DuplicateProductException("Barcode:[%s] already exists.".formatted(bc));
             }
         });
     }

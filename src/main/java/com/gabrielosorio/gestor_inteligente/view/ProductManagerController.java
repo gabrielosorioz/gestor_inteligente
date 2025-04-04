@@ -89,6 +89,9 @@ public class ProductManagerController implements Initializable, ShortcutHandler,
                 break;
             case ESCAPE:
                 eventBus.publish(new ProductManagerCancelEvent());
+                if(productFormManager.isFormVisible){
+                    productFormManager.hide();
+                }
                 break;
             case F1:
                 if(!productFormManager.isFormVisible){
@@ -146,7 +149,7 @@ public class ProductManagerController implements Initializable, ShortcutHandler,
 
     private void setupEventHandlers() {
         setUpSearchField(searchField);
-        btnAdd.setOnMouseClicked(mouseEvent -> {/*addNewProduct() EVENT */});
+        btnAdd.setOnMouseClicked(mouseEvent -> {eventBus.publish(new ProductAddEvent()); productFormManager.show();});
     }
 
     private void setUpSearchField(TextField searchField) {
@@ -173,6 +176,17 @@ public class ProductManagerController implements Initializable, ShortcutHandler,
 
     @Override
     public void onSave(ProductFormSaveEvent productFormSaveEvent) {
+        if(productsTable == null){
+            productsList = productService.findAllProducts();
+            productsObservableList = FXCollections.observableArrayList(productsList);
+            ProductTableViewFactory tbvFactory = new ProductTableViewFactory();
+            productsTable = tbvFactory.get(productsObservableList);
+        }
+
+        productFormSaveEvent.getProduct().ifPresent(product -> {
+            productsTable.getItems().add(product);
+        });
+
         productsTable.refresh();
         productFormManager.toggle();
     }

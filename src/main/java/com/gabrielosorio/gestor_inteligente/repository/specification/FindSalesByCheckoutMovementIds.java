@@ -16,6 +16,12 @@ public class FindSalesByCheckoutMovementIds extends AbstractSpecification<SaleCh
 
     @Override
     public String toSql() {
+
+        if (checkoutMovementIds.isEmpty()) {
+            return getQuery("findSalesByCheckoutMovementIds")
+                    .replace("{placeholders}", "NULL");
+        }
+
         String placeholders = checkoutMovementIds.stream()
                 .map(id -> "?")
                 .collect(Collectors.joining(", "));

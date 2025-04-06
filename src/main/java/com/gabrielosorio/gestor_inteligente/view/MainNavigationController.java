@@ -1,14 +1,12 @@
 package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
-import com.gabrielosorio.gestor_inteligente.repository.impl.CheckoutMovementRepoImpl;
-import com.gabrielosorio.gestor_inteligente.repository.impl.CheckoutRepositoryImpl;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLCheckoutMovementStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.psql.PSQLCheckoutStrategy;
-import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
+import com.gabrielosorio.gestor_inteligente.repository.base.RepositoryFactory;
+import com.gabrielosorio.gestor_inteligente.repository.factory.PSQLRepositoryFactory;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
-import com.gabrielosorio.gestor_inteligente.service.impl.CheckoutMovementServiceImpl;
-import com.gabrielosorio.gestor_inteligente.service.impl.CheckoutServiceImpl;
+import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
+import com.gabrielosorio.gestor_inteligente.service.base.SaleCheckoutMovementService;
+import com.gabrielosorio.gestor_inteligente.service.base.SaleService;
+import com.gabrielosorio.gestor_inteligente.service.impl.ServiceFactory;
 import com.gabrielosorio.gestor_inteligente.view.util.SidebarButton;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
@@ -56,8 +54,15 @@ public class MainNavigationController implements Initializable {
 
     private ShortcutHandler activeShortcutHandler;
 
+    private ServiceFactory serviceFactory;
+    private RepositoryFactory psqlRepositoryFactory;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        psqlRepositoryFactory = new PSQLRepositoryFactory();
+        serviceFactory = new ServiceFactory(psqlRepositoryFactory);
+
         Platform.runLater(() -> {
             addGlobalKeyFilter();
 
@@ -189,7 +194,9 @@ public class MainNavigationController implements Initializable {
     }
 
     private void openPDV(){
-        loadScreen("fxml/sale/CheckoutTabPane.fxml");
+        ProductService ps = serviceFactory.getProductService();
+        var checkoutTabPaneController = new CheckoutTabPaneController(ps);
+        loadScreen("fxml/sale/CheckoutTabPane.fxml",checkoutTabPaneController);
         Platform.runLater(() -> {
             if(isSidebarOpen){
                 toggleSideBar();
@@ -198,7 +205,9 @@ public class MainNavigationController implements Initializable {
     }
 
     private void openProductManager(){
-        loadScreen("fxml/product-manager/ProductManager.fxml");
+        ProductService ps = serviceFactory.getProductService();
+        var productManagerController = new ProductManagerController(ps);
+        loadScreen("fxml/product-manager/ProductManager.fxml",productManagerController);
         Platform.runLater(() -> {
             if(isSidebarOpen){
                 toggleSideBar();
@@ -216,13 +225,12 @@ public class MainNavigationController implements Initializable {
     }
 
     private void openCheckoutMovement(){
-        var checkoutRepository = new CheckoutRepositoryImpl();
-        var checkoutMovementRepository = new CheckoutMovementRepoImpl();
-        checkoutRepository.init(new PSQLCheckoutStrategy(ConnectionFactory.getInstance()));
-        checkoutMovementRepository.init(new PSQLCheckoutMovementStrategy(ConnectionFactory.getInstance()));
-        CheckoutMovementService cmService = new CheckoutMovementServiceImpl(checkoutMovementRepository);
-        CheckoutService cService = new CheckoutServiceImpl(checkoutRepository,cmService);
-        loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(cService,cmService));
+
+        CheckoutService cService = serviceFactory.getCheckoutService();
+        SaleCheckoutMovementService slcmService = serviceFactory.getSaleCheckoutMovementService();
+        SaleService saleService = serviceFactory.getSaleService();
+
+        loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(cService,slcmService,saleService));
         Platform.runLater(() -> {
             if(isSidebarOpen){
                 toggleSideBar();

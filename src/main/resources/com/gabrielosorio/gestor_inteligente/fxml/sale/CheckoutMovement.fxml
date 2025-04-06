@@ -15,12 +15,12 @@
       <AnchorPane layoutX="199.0" layoutY="6.0" prefHeight="179.0" prefWidth="1300.0" styleClass="header" stylesheets="@../../css/home.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label layoutX="81.0" layoutY="65.0" styleClass="title" stylesheets="@../../css/home.css" text="Movimento do caixa" />
-            <Label layoutX="81.0" layoutY="93.0" prefHeight="20.0" prefWidth="231.0" styleClass="subtitle" stylesheets="@../css/checkoutMovement.css" text="Admnistrador: Gabriel Osorio" />
+            <Label layoutX="81.0" layoutY="93.0" prefHeight="20.0" prefWidth="231.0" styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Admnistrador: Gabriel Osorio" />
             <DatePicker fx:id="startDate" editable="false" layoutX="329.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="Início" />
             <DatePicker fx:id="endDate" editable="false" layoutX="491.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="FIm" />
             <Label layoutX="335.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="De:" />
             <Label layoutX="500.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="Até:" />
-            <Label layoutX="333.0" layoutY="71.0" styleClass="subtitle" stylesheets="@../css/checkoutMovement.css" text="Selecionar periodo:" />
+            <Label layoutX="333.0" layoutY="71.0" styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Selecionar periodo:" />
             <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="663.0" layoutY="100.0" prefHeight="63.0" prefWidth="221.0" spacing="10.0" styleClass="header-card" stylesheets="@../../css/checkoutMovement.css">
                <children>
                   <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #99cc99;" styleClass="header-card-icn-bck" stylesheets="@../../css/checkoutMovement.css">
@@ -306,7 +306,7 @@
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </padding>
       </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="646.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../css/checkoutMovement.css">
+      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="575.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../css/checkoutMovement.css">
          <children>
             <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="expenditure-icon" stylesheets="@../../css/checkoutMovement.css">
                <children>
@@ -324,33 +324,6 @@
                      <children>
                         <Label prefHeight="20.0" prefWidth="26.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="R$" />
                         <Label fx:id="cost" layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-         </children>
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="573.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../css/checkoutMovement.css">
-         <children>
-            <VBox alignment="CENTER" prefHeight="44.0" prefWidth="47.0" styleClass="profit-icon" stylesheets="@../../css/checkoutMovement.css">
-               <children>
-                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                       <Image url="@../../image/icons8-percentagem-48.png" />
-                     </image>
-                  </ImageView>
-               </children>
-            </VBox>
-            <VBox prefHeight="47.0" prefWidth="147.0">
-               <children>
-                  <Label styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="M. de lucro (Bruto)" />
-                  <HBox spacing="3.0">
-                     <children>
-                        <Label prefHeight="20.0" prefWidth="34.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="(%)" />
-                        <Label fx:id="grossProfitMargin" layoutX="10.0" layoutY="10.0" prefHeight="20.0" prefWidth="124.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="0,00" />
                      </children>
                   </HBox>
                </children>

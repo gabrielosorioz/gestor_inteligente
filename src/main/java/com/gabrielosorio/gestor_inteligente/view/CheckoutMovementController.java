@@ -9,6 +9,7 @@ import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
+import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleCheckoutMovementService;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleService;
@@ -31,6 +32,7 @@ import javafx.scene.text.TextFlow;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -48,6 +50,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     private final SaleCheckoutMovementService slCheckoutMovementService;
     private final SaleService saleService;
     private final Checkout checkout;
+    private final CheckoutMovementService checkoutMovementService;
 
     @FXML private Label SalesAvg, canceled, cashMethod, cost, creditMethod, debitMethod, grossProfit,
             grossProfitMargin, inflow, initialCash, outflow, pixMethod, qtdSales, statusLbl, totalSale;
@@ -56,12 +59,13 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     @FXML private AnchorPane mainContent, tableContent;
     @FXML private ImageView statusView;
 
-    public CheckoutMovementController(CheckoutService checkoutService, SaleCheckoutMovementService slCheckoutMovementService, SaleService saleService) {
+    public CheckoutMovementController(CheckoutService checkoutService, SaleCheckoutMovementService slCheckoutMovementService, SaleService saleService, CheckoutMovementService checkoutMovementService) {
         this.checkoutService = checkoutService;
         this.slCheckoutMovementService = slCheckoutMovementService;
         this.saleService = saleService;
         User user = createUser();
         this.checkout = checkoutService.openCheckout(user);
+        this.checkoutMovementService = checkoutMovementService;
     }
 
     @Override
@@ -72,6 +76,14 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         populateTable();
         updateInitial();
         updatePaymentMethods();
+        LocalDateTime startDate = LocalDateTime.of(2025, 4, 1, 0, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2025, 4, 15, 23, 59, 59);
+
+        checkoutMovementService.findByDateRange(startDate,endDate).forEach(
+                checkoutMovement -> {
+                    System.out.println(checkoutMovement);
+                }
+        );
     }
 
     private void updatePaymentMethods() {

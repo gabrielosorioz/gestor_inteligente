@@ -30,7 +30,7 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategyV2<S
     public PSQLSalePaymentStrategy(ConnectionFactory connectionFactory) {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         saleStrategy = new PSQLSaleStrategy(connectionFactory);
-        paymentStrategy = new PSQLPaymentStrategy(connectionFactory);
+        paymentStrategy = new PSQLPaymentStrategy();
     }
 
     @Override

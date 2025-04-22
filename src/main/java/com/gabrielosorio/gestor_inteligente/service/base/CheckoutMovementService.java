@@ -3,6 +3,8 @@ import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovementType;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -46,5 +48,15 @@ public interface CheckoutMovementService {
      *         If no movements are found, an empty list is returned.
      */
     List<CheckoutMovement> findByCheckoutId(long checkoutId);
+
+    /**
+     * Retrieves a list of checkout movements within a specified date range.
+     *
+     * @param startDate the beginning of the date range (inclusive)
+     * @param endDate the end of the date range (inclusive)
+     * @return a list of {@link CheckoutMovement} objects within the specified date range.
+     *         If no movements are found, an empty list is returned.
+     */
+    List<CheckoutMovement> findByDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
 }

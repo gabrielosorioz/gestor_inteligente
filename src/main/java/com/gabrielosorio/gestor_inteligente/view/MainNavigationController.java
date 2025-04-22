@@ -2,10 +2,7 @@ package com.gabrielosorio.gestor_inteligente.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.repository.base.RepositoryFactory;
 import com.gabrielosorio.gestor_inteligente.repository.factory.PSQLRepositoryFactory;
-import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
-import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
-import com.gabrielosorio.gestor_inteligente.service.base.SaleCheckoutMovementService;
-import com.gabrielosorio.gestor_inteligente.service.base.SaleService;
+import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.service.impl.ServiceFactory;
 import com.gabrielosorio.gestor_inteligente.view.util.SidebarButton;
 import javafx.animation.RotateTransition;
@@ -229,8 +226,9 @@ public class MainNavigationController implements Initializable {
         CheckoutService cService = serviceFactory.getCheckoutService();
         SaleCheckoutMovementService slcmService = serviceFactory.getSaleCheckoutMovementService();
         SaleService saleService = serviceFactory.getSaleService();
+        CheckoutMovementService cmService = serviceFactory.getCheckoutMovementService();
 
-        loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(cService,slcmService,saleService));
+        loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(cService,slcmService,saleService,cmService));
         Platform.runLater(() -> {
             if(isSidebarOpen){
                 toggleSideBar();

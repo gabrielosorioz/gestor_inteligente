@@ -155,4 +155,21 @@ public class Sale {
         calculateChange();
         return totalChange.max(BigDecimal.ZERO);
     }
+
+    @Override
+    public String toString() {
+        return "Sale{" +
+                "id=" + id +
+                ", dateSale=" + dateSale +
+                ", dataCancel=" + dataCancel +
+                ", saleProducts=" + saleProducts +
+                ", totalChange=" + totalChange +
+                ", totalAmountPaid=" + totalAmountPaid +
+                ", originalTotalPrice=" + originalTotalPrice +
+                ", totalPrice=" + totalPrice +
+                ", totalDiscount=" + totalDiscount +
+                ", paymentMethods=" + paymentMethods +
+                ", status=" + status +
+                '}';
+    }
 }

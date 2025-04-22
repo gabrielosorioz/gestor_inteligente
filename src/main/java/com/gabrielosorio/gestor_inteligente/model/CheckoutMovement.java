@@ -153,4 +153,20 @@ public class CheckoutMovement {
         return valueProperty;
     }
 
+    @Override
+    public String toString() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        return "CheckoutMovement{" +
+                "id=" + id +
+                ", checkout=" + (checkout != null ? checkout.toString() : "null") +
+                ", checkoutMovementType=" + (checkoutMovementType != null ? checkoutMovementType.getName() : "null") +
+                ", dateTime=" + (dateTime != null ? dateTime.format(dateFormatter) + " " + dateTime.format(timeFormatter) : "null") +
+                ", payment=" + (payment != null ? payment.getDescription() : "null") +
+                ", value=" + value +
+                ", obs='" + obs + '\'' +
+                '}';
+    }
+
 }

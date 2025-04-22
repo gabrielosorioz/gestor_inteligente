@@ -13,10 +13,10 @@ public class Checkout {
     private CheckoutStatus status;
     private LocalDateTime openedAt;
     private LocalDateTime closedAt;
-    private BigDecimal initialCash=BigDecimal.ZERO;;
-    private BigDecimal totalEntry=BigDecimal.ZERO;;
-    private BigDecimal totalExit=BigDecimal.ZERO;;
-    private BigDecimal closingBalance=BigDecimal.ZERO;;
+    private BigDecimal initialCash=BigDecimal.ZERO;
+    private BigDecimal totalEntry=BigDecimal.ZERO;
+    private BigDecimal totalExit=BigDecimal.ZERO;
+    private BigDecimal closingBalance=BigDecimal.ZERO;
     private User openedBy;
     private User closedBy;
     private LocalDateTime createdAt;
@@ -25,7 +25,11 @@ public class Checkout {
     private List<Sale> sales;
     private BigDecimal totalAmountSales = BigDecimal.ZERO;
 
-    public Checkout(long id, CheckoutStatus status, LocalDateTime openedAt, LocalDateTime closedAt, BigDecimal initialCash, BigDecimal totalEntry, BigDecimal totalExit, BigDecimal closingBalance, User openedBy, User closedBy, LocalDateTime createdAt, LocalDateTime updatedAt, List<CheckoutMovement> movements, List<Sale> sales, BigDecimal totalAmountSales) {
+    public Checkout(long id, CheckoutStatus status, LocalDateTime openedAt, LocalDateTime closedAt,
+                    BigDecimal initialCash, BigDecimal totalEntry, BigDecimal totalExit, BigDecimal closingBalance,
+                    User openedBy, User closedBy, LocalDateTime createdAt,
+                    LocalDateTime updatedAt, List<CheckoutMovement> movements,
+                    List<Sale> sales, BigDecimal totalAmountSales) {
         this.id = id;
         this.status = status;
         this.openedAt = openedAt;
@@ -159,5 +163,26 @@ public class Checkout {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Checkout{" +
+                "id=" + id +
+                ", status=" + status +
+                ", openedAt=" + openedAt +
+                ", closedAt=" + closedAt +
+                ", initialCash=" + initialCash +
+                ", totalEntry=" + totalEntry +
+                ", totalExit=" + totalExit +
+                ", closingBalance=" + closingBalance +
+                ", openedBy=" + (openedBy != null ? openedBy.toString() : "null") +
+                ", closedBy=" + (closedBy != null ? closedBy.toString() : "null") +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", movements=" + movements +
+                ", sales=" + sales +
+                ", totalAmountSales=" + totalAmountSales +
+                '}';
     }
 }

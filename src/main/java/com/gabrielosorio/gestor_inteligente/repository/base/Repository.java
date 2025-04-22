@@ -1,9 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.repository.base;
-
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,15 +45,6 @@ public abstract class Repository <T> {
             throw new UnsupportedOperationException("Batch insert not supported for this entity.");
         }
     }
-
-    public TransactionalStrategy<T> getTransactionalStrategy(){
-        if (strategy instanceof TransactionalStrategy<?>) {
-            return ((TransactionalStrategy<T>) strategy);
-        } else {
-            throw new UnsupportedOperationException("Transactional strategy not supported for this entity.");
-        }
-    }
-
 
 
 }

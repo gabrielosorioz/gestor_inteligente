@@ -42,7 +42,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     @FXML
     private Label totalPriceLbl;
 
-    private HashMap<String, Product> productData = new HashMap<>();
+    private final HashMap<String, Product> productData = new HashMap<>();
     private final ProductService productService;
     private SaleTableViewController saleTableOp;
     private Node removeItemsAlert;

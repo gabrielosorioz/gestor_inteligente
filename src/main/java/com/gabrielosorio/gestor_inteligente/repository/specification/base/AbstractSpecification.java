@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class AbstractSpecification<T> implements Specification<T> {
 
-    private final QueryLoader qLoader = new QueryLoader(DBScheme.POSTGRESQL);;
+    private final QueryLoader qLoader = new QueryLoader(DBScheme.POSTGRESQL);
 
     public String getQuery(String queryKey){
         return qLoader.getQuery(queryKey);

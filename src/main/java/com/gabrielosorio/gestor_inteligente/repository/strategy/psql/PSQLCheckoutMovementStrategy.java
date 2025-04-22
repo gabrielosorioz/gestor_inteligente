@@ -6,7 +6,6 @@ import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.*;
@@ -25,11 +24,11 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
     private Logger log = Logger.getLogger(getClass().getName());
 
 
-    public PSQLCheckoutMovementStrategy(ConnectionFactory connectionFactory) {
+    public PSQLCheckoutMovementStrategy() {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.checkoutStrategy = new PSQLCheckoutStrategy(ConnectionFactory.getInstance());
-        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy(connectionFactory);
-        this.paymentStrategy = new PSQLPaymentStrategy(connectionFactory);
+        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy();
+        this.paymentStrategy = new PSQLPaymentStrategy();
     }
 
     @Override

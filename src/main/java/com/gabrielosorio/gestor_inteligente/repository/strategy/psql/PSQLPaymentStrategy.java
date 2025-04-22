@@ -7,7 +7,7 @@ import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,14 +18,13 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLPaymentStrategy extends TransactionalRepositoryStrategy<Payment> implements RepositoryStrategy<Payment> {
+public class PSQLPaymentStrategy extends TransactionalRepositoryStrategyV2<Payment> implements RepositoryStrategy<Payment> {
 
     private final QueryLoader qLoader;
     private final Logger log = Logger.getLogger(getClass().getName());
 
 
-    public PSQLPaymentStrategy(ConnectionFactory connectionFactory) {
-        super(connectionFactory);
+    public PSQLPaymentStrategy() {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }
 

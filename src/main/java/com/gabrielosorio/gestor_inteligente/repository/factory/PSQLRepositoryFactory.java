@@ -14,13 +14,13 @@ public class PSQLRepositoryFactory implements RepositoryFactory {
 
     @Override
     public CheckoutMovementRepository getCheckoutMovementRepository() {
-        var strategy = new PSQLCheckoutMovementStrategy(ConnectionFactory.getInstance());
+        var strategy = new PSQLCheckoutMovementStrategy();
         return new PSQLCheckoutMovementRepository(strategy);
     }
 
     @Override
     public CheckoutMovementTypeRepository getCheckoutMovementTypeRepository() {
-        var strategy = new PSQLCheckoutMovementTypeStrategy(ConnectionFactory.getInstance());
+        var strategy = new PSQLCheckoutMovementTypeStrategy();
         return new PSQLCheckoutMovementTypeRepository(strategy);
     }
 
@@ -32,7 +32,7 @@ public class PSQLRepositoryFactory implements RepositoryFactory {
 
     @Override
     public PaymentRepository getPaymentRepository() {
-        var strategy = new PSQLPaymentStrategy(ConnectionFactory.getInstance());
+        var strategy = new PSQLPaymentStrategy();
         return new PSQLPaymentRepository(strategy);
     }
 

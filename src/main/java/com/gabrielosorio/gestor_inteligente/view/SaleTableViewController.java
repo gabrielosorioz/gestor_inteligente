@@ -11,7 +11,7 @@ public interface SaleTableViewController {
     void add(SaleProduct saleProduct);
     void remove();
     ObjectProperty<BigDecimal> getTotalPriceProperty();
-    public ObservableList<SaleProduct> getItems();
+    ObservableList<SaleProduct> getItems();
     void showPaymentScreen();
     void clearItems();
 

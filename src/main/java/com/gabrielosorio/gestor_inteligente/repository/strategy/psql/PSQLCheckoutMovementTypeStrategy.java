@@ -1,12 +1,11 @@
 package com.gabrielosorio.gestor_inteligente.repository.strategy.psql;
 
-import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovementType;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,13 +16,12 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStrategy<CheckoutMovementType> implements RepositoryStrategy<CheckoutMovementType> {
+public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStrategyV2<CheckoutMovementType> implements RepositoryStrategy<CheckoutMovementType> {
 
     private final QueryLoader qLoader;
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLCheckoutMovementTypeStrategy(ConnectionFactory connectionFactory) {
-        super(connectionFactory);
+    public PSQLCheckoutMovementTypeStrategy() {
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }
 

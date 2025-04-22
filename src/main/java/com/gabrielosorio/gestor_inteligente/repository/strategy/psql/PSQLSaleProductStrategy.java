@@ -8,7 +8,6 @@ import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.Connection;

@@ -13,5 +13,8 @@ public interface SaleService {
     BigDecimal calculateTotalProfit(List<Sale> sales);
     BigDecimal calculateTotalCost(List<Sale> sales);
     BigDecimal calculateTotalSales(List<Sale> sales);
+
+    BigDecimal calculateAverageSale(List<Sale> sales);
+
     long countSales(List<Sale> sales);
 }

@@ -210,6 +210,19 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
+    public BigDecimal calculateAverageSale(List<Sale> sales) {
+        if (sales == null || sales.isEmpty()) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        long count = countSales(sales);
+        if (count == 0) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        BigDecimal total = calculateTotalSales(sales);
+        return total.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+    }
+
+    @Override
     public long countSales(List<Sale> sales) {
         if (sales == null || sales.isEmpty()) {
             return 0;

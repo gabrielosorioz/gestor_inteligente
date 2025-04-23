@@ -48,14 +48,14 @@ public class CheckoutMovementServiceImpl implements CheckoutMovementService {
     @Override
     public List<CheckoutMovement> findByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         if (startDate == null || endDate == null) {
-            throw new IllegalArgumentException("Start date and end date must not be null");
+            throw new IllegalArgumentException("A data de início e a data de fim não podem ser nulas");
         }
 
         if (startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("Start date must not be after end date");
+            throw new IllegalArgumentException("A data de início não pode ser posterior à data de fim");
         }
 
-        return REPOSITORY.findCheckoutMovementByDateRange(startDate,endDate);
+        return REPOSITORY.findCheckoutMovementByDateRange(startDate, endDate);
     }
 
 }

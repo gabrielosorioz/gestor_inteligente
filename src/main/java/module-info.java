@@ -31,4 +31,6 @@ module com.gabrielosorio.gestor_inteligente {
     opens com.gabrielosorio.gestor_inteligente.view.payment to javafx.fxml;
     exports com.gabrielosorio.gestor_inteligente.view.main.helpers;
     opens com.gabrielosorio.gestor_inteligente.view.main.helpers to javafx.fxml;
+    exports com.gabrielosorio.gestor_inteligente.view.checkout.helpers;
+    opens com.gabrielosorio.gestor_inteligente.view.checkout.helpers to javafx.fxml;
 }

@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.view.checkout;
+package com.gabrielosorio.gestor_inteligente.view.checkout.helpers;
 
 import com.gabrielosorio.gestor_inteligente.view.shared.RequestFocus;
 import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;

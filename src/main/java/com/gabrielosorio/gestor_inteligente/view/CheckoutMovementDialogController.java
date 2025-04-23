@@ -4,12 +4,15 @@ import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -33,6 +36,9 @@ public class CheckoutMovementDialogController implements Initializable, RequestF
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        obsField.clear();
+        onEscapeEvent(obsField);
+        onEscapeEvent(valueField);
         priceListener(valueField);
     }
 
@@ -42,6 +48,10 @@ public class CheckoutMovementDialogController implements Initializable, RequestF
 
     public BigDecimal getValue(){
         return TextFieldUtils.formatCurrency(valueField.getText());
+    }
+
+    public String getObs() {
+        return obsField.getText();
     }
 
     private void priceListener(TextField priceField) {
@@ -71,6 +81,19 @@ public class CheckoutMovementDialogController implements Initializable, RequestF
     public void close(){
         AnchorPane parent = (AnchorPane) mainContent.getParent();
         parent.getChildren().remove(mainContent);
+        obsField.clear();
+    }
+
+    private void onEscapeEvent(Node node) {
+        node.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                if (mainContent != null && mainContent.getParent() instanceof AnchorPane parent) {
+                    parent.getChildren().remove(mainContent);
+                    obsField.clear();
+                }
+                event.consume();
+            }
+        });
     }
 
     @Override

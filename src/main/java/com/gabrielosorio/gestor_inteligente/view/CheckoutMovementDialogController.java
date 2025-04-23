@@ -33,7 +33,6 @@ public class CheckoutMovementDialogController implements Initializable, RequestF
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.println("Foi mal por comer a sua prima");
         priceListener(valueField);
     }
 

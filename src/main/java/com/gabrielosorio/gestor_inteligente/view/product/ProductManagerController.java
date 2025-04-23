@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.product;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.events.*;
@@ -8,7 +8,8 @@ import com.gabrielosorio.gestor_inteligente.events.listeners.ProductManagerSaveE
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
-import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.view.shared.ShortcutHandler;
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.view.table.TableViewFactory;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;

@@ -1,6 +1,5 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.main.helpers;
 
-import com.gabrielosorio.gestor_inteligente.view.util.SidebarButton;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;

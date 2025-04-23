@@ -1,10 +1,12 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.checkout;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
-import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.view.sale.SaleTableViewController;
+import com.gabrielosorio.gestor_inteligente.view.sale.SaleTableViewControllerImpl;
+import com.gabrielosorio.gestor_inteligente.view.shared.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,7 +24,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class CheckoutTabController implements Initializable, ShortcutHandler, RequestFocus{
+public class CheckoutTabController implements Initializable, ShortcutHandler, RequestFocus {
 
 
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -259,7 +261,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
         });
     }
 
-    protected void showRemoveItemsAlert() {
+    public void showRemoveItemsAlert() {
         try {
             if (removeItemsAlert == null) {
                 FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/AlertMessage.fxml"));

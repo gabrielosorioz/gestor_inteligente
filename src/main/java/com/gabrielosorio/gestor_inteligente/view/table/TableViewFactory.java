@@ -1,6 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.view.table;
 
-import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;

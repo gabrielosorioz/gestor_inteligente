@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.shared;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

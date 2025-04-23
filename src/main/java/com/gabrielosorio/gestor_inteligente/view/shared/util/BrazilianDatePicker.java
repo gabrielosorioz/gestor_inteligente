@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.view.util;
+package com.gabrielosorio.gestor_inteligente.view.shared.util;
 import javafx.scene.control.DatePicker;
 import javafx.util.StringConverter;
 import java.time.LocalDate;

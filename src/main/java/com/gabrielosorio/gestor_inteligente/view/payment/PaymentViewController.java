@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.payment;
 
 import com.gabrielosorio.gestor_inteligente.events.PaymentEvent;
 import com.gabrielosorio.gestor_inteligente.events.PaymentEventBus;
@@ -8,7 +8,8 @@ import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleService;
-import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.view.sale.SaleTableViewController;
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -30,7 +31,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils.formatText;
+import static com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils.formatText;
 
 public class PaymentViewController implements Initializable {
 

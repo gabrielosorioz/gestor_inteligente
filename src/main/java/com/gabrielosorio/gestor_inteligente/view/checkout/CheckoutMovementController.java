@@ -1,20 +1,20 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.checkout;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.events.PaymentEvent;
 import com.gabrielosorio.gestor_inteligente.events.PaymentEventBus;
 import com.gabrielosorio.gestor_inteligente.events.listeners.PaymentListener;
 import com.gabrielosorio.gestor_inteligente.model.*;
-import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleCheckoutMovementService;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleService;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
-import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.view.shared.ShortcutHandler;
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.view.table.TableViewFactory;
-import com.gabrielosorio.gestor_inteligente.view.util.BrazilianDatePicker;
+import com.gabrielosorio.gestor_inteligente.view.shared.util.BrazilianDatePicker;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

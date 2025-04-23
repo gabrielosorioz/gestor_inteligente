@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.sale;
 
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import javafx.beans.property.ObjectProperty;

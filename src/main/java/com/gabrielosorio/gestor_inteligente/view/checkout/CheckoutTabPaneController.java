@@ -1,7 +1,9 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.checkout;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
+import com.gabrielosorio.gestor_inteligente.view.shared.RequestFocus;
+import com.gabrielosorio.gestor_inteligente.view.shared.ShortcutHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

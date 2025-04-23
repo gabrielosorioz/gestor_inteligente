@@ -8,7 +8,7 @@ import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum
 import com.gabrielosorio.gestor_inteligente.repository.base.SaleRepository;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManagerV2;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
-import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
 
 import java.math.BigDecimal;

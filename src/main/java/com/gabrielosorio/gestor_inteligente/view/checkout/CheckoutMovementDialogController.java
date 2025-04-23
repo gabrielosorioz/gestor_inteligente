@@ -1,6 +1,7 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.checkout;
 
-import com.gabrielosorio.gestor_inteligente.utils.TextFieldUtils;
+import com.gabrielosorio.gestor_inteligente.view.shared.RequestFocus;
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 
-import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ResourceBundle;

@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.view.util;
+package com.gabrielosorio.gestor_inteligente.view.main.helpers;
 
 public class SidebarButton {
 

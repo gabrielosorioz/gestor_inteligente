@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.utils;
 
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;

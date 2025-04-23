@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.utils;
+package com.gabrielosorio.gestor_inteligente.view.shared;
 
 import javafx.application.Platform;
 import javafx.scene.control.TextField;

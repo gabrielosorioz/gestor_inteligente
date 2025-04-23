@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1300.0" styleClass="body" stylesheets="@../../css/salesReport.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.view.SalesReportController">
+<AnchorPane prefHeight="800.0" prefWidth="1300.0" styleClass="body" stylesheets="@../../css/salesReport.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.view.sale.SalesReportController">
    <children>
       <AnchorPane layoutX="199.0" layoutY="6.0" prefHeight="179.0" prefWidth="1300.0" styleClass="header" stylesheets="@../../css/home.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>

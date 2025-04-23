@@ -1,4 +1,4 @@
-package com.gabrielosorio.gestor_inteligente.view;
+package com.gabrielosorio.gestor_inteligente.view.payment;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Permission;
 import com.gabrielosorio.gestor_inteligente.model.Role;
@@ -7,6 +7,7 @@ import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.repository.base.RepositoryFactory;
 import com.gabrielosorio.gestor_inteligente.repository.factory.PSQLRepositoryFactory;
 import com.gabrielosorio.gestor_inteligente.service.impl.*;
+import com.gabrielosorio.gestor_inteligente.view.sale.SaleTableViewController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;

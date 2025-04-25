@@ -3,22 +3,22 @@ package com.gabrielosorio.gestor_inteligente.repository.specification;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Product;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.AbstractSpecification;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 
 import java.util.List;
 
-public class FindProductByProductCode implements Specification<Product> {
+public class FindProductByProductCode extends AbstractSpecification<Product> {
 
     private final long pCode;
-    private final QueryLoader qLoader;
 
     public FindProductByProductCode(long productCode){
         this.pCode = productCode;
-        qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }
 
     @Override
     public String toSql() {
-        return qLoader.getQuery("productByProductCode");
+        return getQuery("productByProductCode");
     }
 
     @Override

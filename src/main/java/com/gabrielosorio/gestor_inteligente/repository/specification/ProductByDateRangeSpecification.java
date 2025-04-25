@@ -3,25 +3,25 @@ package com.gabrielosorio.gestor_inteligente.repository.specification;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Product;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.AbstractSpecification;
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-public class ProductByDateRangeSpecification implements Specification<Product> {
+public class ProductByDateRangeSpecification extends AbstractSpecification<Product> {
 
     private final Timestamp startDate;
     private final Timestamp endDate;
-    private final QueryLoader qLoader;
 
     public ProductByDateRangeSpecification(Timestamp startDate, Timestamp endDate) {
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
     @Override
     public String toSql() {
-        return qLoader.getQuery("productByDateRange");
+        return getQuery("productByDateRange");
     }
 
     @Override

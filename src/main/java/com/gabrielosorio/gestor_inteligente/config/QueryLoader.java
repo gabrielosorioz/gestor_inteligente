@@ -10,24 +10,40 @@ public class QueryLoader {
 
     private Properties queries = new Properties();
     private final String dbPrefix;
-    private Logger log = Logger.getLogger(getClass().getName());
+    private final Logger log;
 
     public QueryLoader(DBScheme database) {
         this.dbPrefix = database.getPrefix() + ".";
-        try(InputStream input = getClass().getClassLoader().getResourceAsStream("queries.properties")) {
-            if(input == null){
-                throw new FileNotFoundException("Queries file not found!.");
+        this.log = Logger.getLogger(getClass().getSimpleName()); // Apenas o nome da classe no log
+
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("queries.properties")) {
+            if (input == null) {
+                throw new FileNotFoundException("Queries file not found!");
             }
             queries.load(input);
+            logInfo("Query file loaded successfully.");
         } catch (IOException e) {
-            log.severe("Error loading query file " + e.getLocalizedMessage() + " " + e.getCause());
+            logError("Error loading query file", e);
             throw new RuntimeException(e);
         }
     }
 
-    public String getQuery(String queryKey){
+    public String getQuery(String queryKey) {
         String query = queries.getProperty(dbPrefix + queryKey);
-        log.info(dbPrefix + queryKey + " " + query);
+        logInfo("Retrieved query: " + dbPrefix + queryKey + " -> " + query);
         return query;
+    }
+
+    /**
+     * Métodos auxiliares para log com nome da classe e método.
+     */
+    private void logInfo(String message) {
+        StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
+        log.info(String.format("[%s#%s] %s", getClass().getSimpleName(), caller.getMethodName(), message));
+    }
+
+    private void logError(String message, Exception e) {
+        StackTraceElement caller = Thread.currentThread().getStackTrace()[2];
+        log.severe(String.format("[%s#%s] %s - %s", getClass().getSimpleName(), caller.getMethodName(), message, e.getMessage()));
     }
 }

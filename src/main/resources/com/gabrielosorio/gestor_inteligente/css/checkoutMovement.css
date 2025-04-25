@@ -16,14 +16,14 @@
 
 .subtitle {
     -fx-font-family: 'Poppins';
-    -fx-font-size: 14px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-text-fill: #7f7f7f;
 }
 
 .subtitle-black {
     -fx-font-family: 'Poppins';
-    -fx-font-size: 14px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 

@@ -1,19 +1,23 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
-import com.gabrielosorio.gestor_inteligente.exception.TransactionException;
+import com.gabrielosorio.gestor_inteligente.exception.SaleProcessingException;
 import com.gabrielosorio.gestor_inteligente.model.*;
+import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
 import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
-import com.gabrielosorio.gestor_inteligente.repository.SaleRepository;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManager;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManagerImpl;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.base.SaleRepository;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionManagerV2;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SaleServiceImpl implements SaleService {
 
@@ -35,53 +39,62 @@ public class SaleServiceImpl implements SaleService {
         this.saleCheckoutMovementService = saleCheckoutMovementService;
     }
 
+
+
     @Override
-    public void processSale(User user, Sale sale) {
+    public Sale processSale(User user, Sale sale) throws SaleProcessingException {
+
         var checkout = checkoutService.openCheckout(user);
 
-        List<TransactionalStrategy<?>> transactionalStrategies = List.of(
-                saleRepository.getTransactionalStrategy(),
-                saleProductService.getTransactionalStrategy(),
-                salePaymentService.getTransactionalStrategy(),
-                checkoutMovementService.getTransactionalStrategy(),
-                productService.getTransactionalStrategy(),
-                saleCheckoutMovementService.getTransactionalStrategy()
-        );
-
-        TransactionManager transactionManager = new TransactionManagerImpl(transactionalStrategies);
-
         try {
-            transactionManager.beginTransaction();
+            TransactionManagerV2.beginTransaction();
 
-            save(sale);
+            Sale savedSale = save(sale);
 
             var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
+            String saleObservationBase = "Venda #" + savedSale.getId();
+            boolean hasMultiplePayments = savedSale.getPaymentMethods().size() > 1;
 
-            List<CheckoutMovement> checkoutMovements = sale.getPaymentMethods().stream()
-                    .map(paymentMethod -> checkoutMovementService
-                            .buildCheckoutMovement(checkout, paymentMethod, "Venda", checkoutMovementType))
+            List<CheckoutMovement> checkoutMovements = savedSale.getPaymentMethods().stream()
+                    .map(payment -> {
+                        String saleObservation = saleObservationBase;
+
+                        if (hasMultiplePayments || payment.getPaymentMethod() == PaymentMethod.CREDIT0) {
+                            if (payment.getPaymentMethod() == PaymentMethod.CREDIT0) {
+                                saleObservation += (payment.getInstallments() > 1)
+                                        ? " - Crédito " + payment.getInstallments() + "x"
+                                        : " - Crédito à vista";
+                            } else {
+                                saleObservation += " - " + TextFieldUtils.toTitleCase(payment.getDescription());
+                            }
+                        }
+
+                        return checkoutMovementService.buildCheckoutMovement(checkout, payment, saleObservation, checkoutMovementType);
+                    })
                     .toList();
 
             var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);
 
             List<SaleCheckoutMovement> saleCheckoutMovements = checkoutMovementsWithGenKeys.stream()
                     .map(checkoutMovement -> saleCheckoutMovementService
-                            .buildSaleCheckoutMovement(checkoutMovement, sale))
+                            .buildSaleCheckoutMovement(checkoutMovement, savedSale))
                     .toList();
 
             saleCheckoutMovementService.saveAll(saleCheckoutMovements);
 
-            transactionManager.commitTransaction();
+            TransactionManagerV2.commit();
+
+            return savedSale;
+
         } catch (Exception e) {
             try {
-                transactionManager.rollbackTransaction();
-            } catch (TransactionException rollbackEx) {
-                throw new RuntimeException("Failed to rollback transaction after error.", rollbackEx);
+                TransactionManagerV2.rollback();
+            } catch (SQLException ex) {
+                throw new SaleProcessingException("Failed to rollback transaction after error.", ex);
             }
-            throw new RuntimeException("Failed to process sale.", e);
+            throw new SaleProcessingException("Failed to process sale.", e);
         }
     }
-
 
     public Sale save(Sale sale) throws SalePaymentException {
         SaleValidator.validate(sale);
@@ -96,6 +109,133 @@ public class SaleServiceImpl implements SaleService {
         saveSaleProduct(savedSale);
         saveSalePayment(savedSale);
         return savedSale;
+    }
+
+    @Override
+    public BigDecimal calculateTotalProfit(List<Sale> sales) {
+        if (sales == null || sales.isEmpty()) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+
+        BigDecimal totalProfit = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        // Add a Set to track processed sale IDs
+        Set<Long> processedSaleIds = new HashSet<>();
+
+        for (Sale sale : sales) {
+            // Skip if sale is canceled, has no products, or has already been processed
+            if (sale.getStatus() == SaleStatus.CANCELED ||
+                    sale.getSaleProducts() == null ||
+                    sale.getSaleProducts().isEmpty() ||
+                    !processedSaleIds.add(sale.getId())) {
+                continue;
+            }
+
+            for (SaleProduct saleProduct : sale.getSaleProducts()) {
+                Product product = saleProduct.getProduct();
+                if (product != null) {
+                    // Calculate profit for this product = (selling price - cost price) * quantity
+                    BigDecimal unitProfit = saleProduct.getUnitPrice().subtract(product.getCostPrice());
+                    BigDecimal productProfit = unitProfit.multiply(BigDecimal.valueOf(saleProduct.getQuantity()));
+
+                    // Apply any discounts at the product level
+                    productProfit = productProfit.subtract(saleProduct.getDiscount());
+
+                    // Ensure profit doesn't go below zero for this product
+                    productProfit = productProfit.max(BigDecimal.ZERO);
+
+                    totalProfit = totalProfit.add(productProfit);
+                }
+            }
+        }
+
+        return totalProfit.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public BigDecimal calculateTotalCost(List<Sale> sales) {
+        if (sales == null || sales.isEmpty()) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+
+        BigDecimal totalCost = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        // Add a Set to track processed sale IDs
+        Set<Long> processedSaleIds = new HashSet<>();
+
+        for (Sale sale : sales) {
+            // Skip if sale is canceled, has no products, or has already been processed
+            if (sale.getStatus() == SaleStatus.CANCELED ||
+                    sale.getSaleProducts() == null ||
+                    sale.getSaleProducts().isEmpty() ||
+                    !processedSaleIds.add(sale.getId())) {
+                continue;
+            }
+
+            for (SaleProduct saleProduct : sale.getSaleProducts()) {
+                Product product = saleProduct.getProduct();
+                if (product != null) {
+                    // Calculate cost for this product = cost price * quantity
+                    BigDecimal productCost = product.getCostPrice()
+                            .multiply(BigDecimal.valueOf(saleProduct.getQuantity()))
+                            .setScale(2, RoundingMode.HALF_UP);
+
+                    totalCost = totalCost.add(productCost);
+                }
+            }
+        }
+
+        return totalCost.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public BigDecimal calculateTotalSales(List<Sale> sales) {
+        if (sales == null || sales.isEmpty()) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+
+        // Uses Set to avoiding duplicate sales
+        Set<Long> processedSaleIds = new HashSet<>();
+        BigDecimal totalSales = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+
+        for (Sale sale : sales) {
+            // Skip if the sale is canceled or has already been processed
+            if (sale.getStatus() == SaleStatus.CANCELED || !processedSaleIds.add(sale.getId())) {
+                continue;
+            }
+
+            // Adds final price without discount
+            totalSales = totalSales.add(sale.getOriginalTotalPrice());
+        }
+
+        return totalSales.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public BigDecimal calculateAverageSale(List<Sale> sales) {
+        if (sales == null || sales.isEmpty()) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        long count = countSales(sales);
+        if (count == 0) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        BigDecimal total = calculateTotalSales(sales);
+        return total.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public long countSales(List<Sale> sales) {
+        if (sales == null || sales.isEmpty()) {
+            return 0;
+        }
+
+        Set<Long> uniqueSaleIds = new HashSet<>();
+
+        for (Sale sale : sales) {
+            if (sale.getStatus() != SaleStatus.CANCELED) {
+                uniqueSaleIds.add(sale.getId());
+            }
+        }
+        return uniqueSaleIds.size();
     }
 
     private void validateTotalPayment (Sale sale) throws SalePaymentException {
@@ -114,7 +254,7 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private void saveSaleProduct(Sale sale){
-        var saleProducts = sale.getItems();
+        var saleProducts = sale.getSaleProducts();
         saleProducts.forEach(saleProduct -> {
             saleProduct.setSale(sale);
             var prod = saleProduct.getProduct();

@@ -3,18 +3,15 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleCheckoutMovement;
-import com.gabrielosorio.gestor_inteligente.repository.Repository;
-import com.gabrielosorio.gestor_inteligente.service.AbstractTransactionalService;
+import com.gabrielosorio.gestor_inteligente.repository.base.SaleCheckoutMovementRepository;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleCheckoutMovementService;
-
 import java.util.List;
 
-public class SaleCheckoutMovementServiceImpl extends AbstractTransactionalService<SaleCheckoutMovement> implements SaleCheckoutMovementService {
+public class SaleCheckoutMovementServiceImpl implements SaleCheckoutMovementService {
 
-    private final Repository<SaleCheckoutMovement> REPOSITORY;
+    private final SaleCheckoutMovementRepository REPOSITORY;
 
-    public SaleCheckoutMovementServiceImpl(Repository<SaleCheckoutMovement> saleCheckoutMovementRepository) {
-        super(saleCheckoutMovementRepository);
+    public SaleCheckoutMovementServiceImpl(SaleCheckoutMovementRepository saleCheckoutMovementRepository) {
         REPOSITORY = saleCheckoutMovementRepository;
     }
 
@@ -27,5 +24,14 @@ public class SaleCheckoutMovementServiceImpl extends AbstractTransactionalServic
     @Override
     public SaleCheckoutMovement buildSaleCheckoutMovement(CheckoutMovement checkoutMovement, Sale sale) {
         return new SaleCheckoutMovement(checkoutMovement,sale);
+    }
+
+    @Override
+    public List<Sale> findSalesInCheckoutMovements(List<CheckoutMovement> checkoutMovements) {
+        var saleCheckoutMovements =  REPOSITORY.findSalesInCheckoutMovements(checkoutMovements);
+
+        return saleCheckoutMovements.stream()
+                .map(SaleCheckoutMovement::getSale)
+                .toList();
     }
 }

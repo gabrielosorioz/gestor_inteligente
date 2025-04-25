@@ -17,6 +17,7 @@
 .table-row-cell {
     -fx-border-color: #e5e5e5;
     -fx-border-width: 0 0 1.5px 0;
+    -fx-background-color: #fff;
 }
 
 .table-row-cell:selected {
@@ -28,7 +29,7 @@
     -fx-background-color: transparent;
     -fx-text-fill: #000000;
     -fx-alignment: CENTER_LEFT;
-    -fx-font-size: 18px;
+    -fx-font-size: 20px;
     -fx-font-family: 'Poppins';
     -fx-font-weight: normal;
     -fx-border-color: transparent;
@@ -50,7 +51,7 @@
 }
 
 .table-view .column-header, .table-view .filler {
-    -fx-size: 60px;
+    -fx-size: 50px;
     -fx-border-width: 0; /* Remove borda do cabeçalho */
     -fx-background-color: transparent;
 }
@@ -90,3 +91,14 @@
     -fx-background-insets: 0;
 }
 
+.table-row-cell:empty .table-cell {
+    -fx-pref-height: 0px;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.table-row-cell:empty {
+    -fx-pref-height: 0px;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}

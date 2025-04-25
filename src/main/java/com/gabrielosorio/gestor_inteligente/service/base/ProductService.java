@@ -5,8 +5,8 @@ import com.gabrielosorio.gestor_inteligente.model.Product;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductService extends TransactionalService {
-    void save(Product product);
+public interface ProductService {
+    Product save(Product product);
     void update(Product product);
     List<Product> findAllProducts();
     Optional<Product> findByBarCodeOrCode(String code);

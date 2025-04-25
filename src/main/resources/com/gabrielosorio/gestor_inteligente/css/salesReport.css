@@ -255,3 +255,54 @@
     -fx-text-fill: white;
     -fx-border-radius: 5px;
 }
+
+.combo-box {
+    -fx-background-color: #e7e7e7;
+    -fx-border-color: #c0c0c0;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #0077cc; /* Cor da seta */
+    -fx-padding: 5px;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z"; /* Formato da seta */
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #e7e7e7;
+    -fx-text-fill: #333;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #0077cc;
+    -fx-text-fill: white;
+}
+
+.combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #c0c0c0;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+}
+
+
+/* Barra de rolagem vertical */
+.scroll-bar:vertical {
+    -fx-background-color: #e6e6e6;  /* Fundo cinza claro */
+    -fx-border-radius: 8px;
+}
+
+/* Thumb (parte que se move na scroll bar) */
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #bfbfbf;  /* Cinza médio */
+    -fx-background-radius: 8px;
+}
+
+/* Hover no thumb */
+.scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #a6a6a6;  /* Tom um pouco mais escuro */
+}

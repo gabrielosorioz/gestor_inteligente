@@ -25,11 +25,11 @@ public class SaleValidator {
     }
 
     private static void validateProducts(Sale sale){
-        if(sale.getItems().isEmpty()){
+        if(sale.getSaleProducts().isEmpty()){
             throw new SaleValidationException("The sale must have at least one product.");
         }
 
-        for (SaleProduct saleProduct : sale.getItems()) {
+        for (SaleProduct saleProduct : sale.getSaleProducts()) {
             if (saleProduct.getQuantity() <= 0) {
                 throw new SaleValidationException("The quantity of products must be positive.");
             }

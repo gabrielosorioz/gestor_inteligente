@@ -1,9 +1,11 @@
 package com.gabrielosorio.gestor_inteligente.utils;
 
+import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -44,6 +46,13 @@ public class TableViewUtils {
             column.setReorderable(false);
             column.setSortable(false);
         }
+    }
+
+    public static <T> TableColumn<T, ?> getColumnById(TableView<T> tableView, String columnId) {
+        return tableView.getColumns().stream()
+                .filter(column -> columnId.equals(column.getId()))
+                .findFirst()
+                .orElse(null);
     }
 
 }

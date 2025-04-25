@@ -14,12 +14,12 @@ public class SaleProduct {
     private Product product;
     private Sale sale;
     private long quantity;
-    private BigDecimal unitPrice;
-    private BigDecimal originalSubtotal;
-    private BigDecimal subTotal;
-    private BigDecimal discount;
-    private ObjectProperty<BigDecimal> subTotalProperty;
-    private ObjectProperty<BigDecimal> unitPriceProperty;
+    private BigDecimal unitPrice = BigDecimal.ZERO;
+    private BigDecimal originalSubtotal = BigDecimal.ZERO;
+    private BigDecimal subTotal = BigDecimal.ZERO;
+    private BigDecimal discount = BigDecimal.ZERO;
+    private ObjectProperty<BigDecimal> subTotalProperty = new SimpleObjectProperty<>();
+    private ObjectProperty<BigDecimal> unitPriceProperty = new SimpleObjectProperty<>();
 
     public SaleProduct(Product product){
         this.product = product;
@@ -28,8 +28,8 @@ public class SaleProduct {
         quantity = 1;
         originalSubtotal = calculateOriginalSubtotal();
         subTotal = calculateSubtotal();
-        subTotalProperty = new SimpleObjectProperty<>(calculateSubtotal());
-        unitPriceProperty = new SimpleObjectProperty<>(unitPrice);
+        subTotalProperty.set(subTotal);
+        unitPriceProperty.set(unitPrice);
     }
 
     public SaleProduct(Product product,long quantity){

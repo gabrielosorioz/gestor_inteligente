@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
-<TabPane fx:id="checkoutTabPanel" focusTraversable="false" stylesheets="@../../css/checkoutTabPane.css" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="40.0" tabMinWidth="160.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.view.CheckoutTabController">
+<TabPane fx:id="checkoutTabPanel" focusTraversable="false" stylesheets="@../../css/checkoutTabPane.css" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="40.0" tabMinWidth="160.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gabrielosorio.gestor_inteligente.view.checkout.CheckoutTabController">
    <tabs>
        <Tab fx:id="checkoutTab" text="Caixa 1" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
            <content>

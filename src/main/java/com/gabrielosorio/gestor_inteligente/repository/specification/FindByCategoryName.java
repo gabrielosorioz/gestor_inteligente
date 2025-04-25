@@ -1,25 +1,20 @@
 package com.gabrielosorio.gestor_inteligente.repository.specification;
-
-import com.gabrielosorio.gestor_inteligente.config.DBScheme;
-import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Category;
-
+import com.gabrielosorio.gestor_inteligente.repository.specification.base.AbstractSpecification;
 import java.util.List;
 
-public class FindByCategoryName implements Specification<Category> {
+public class FindByCategoryName extends AbstractSpecification<Category> {
 
-    private final QueryLoader qLoader;
     private final String description;
 
     public FindByCategoryName(String description) {
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
         this.description = description;
     }
 
 
     @Override
     public String toSql() {
-        return qLoader.getQuery("findCategoryByName");
+        return getQuery("findCategoryByName");
     }
 
     @Override

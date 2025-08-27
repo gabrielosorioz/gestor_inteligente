@@ -30,6 +30,14 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
         log.info(() -> String.format("[%s#%s] %s", className, methodName, message));
     }
 
+    private void logError(String message, Exception e) {
+        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
+        String methodName = stackTraceElement.getMethodName();
+        String className = this.getClass().getSimpleName(); // Nome da classe sem pacote
+        log.log(Level.SEVERE, String.format("[%s#%s] %s", className, methodName, message), e);
+    }
+
+
     public PSQLSaleStrategy(ConnectionFactory connectionFactory){
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }

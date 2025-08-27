@@ -11,5 +11,4 @@ public interface RepositoryFactory {
     SalePaymentRepository getSalePaymentRepository();
     SaleProductRepository getSaleProductRepository();
     SaleRepository getSaleRepository();
-    UserRepository getUserRepository();
 }

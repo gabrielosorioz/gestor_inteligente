@@ -65,10 +65,4 @@ public class PSQLRepositoryFactory implements RepositoryFactory {
         var strategy = new PSQLSaleStrategy(ConnectionFactory.getInstance());
         return new PSQLSaleRepository(strategy);
     }
-
-    @Override
-    public UserRepository getUserRepository() {
-        var strategy = new PSQLUserStrategy(ConnectionFactory.getInstance());
-        return new PSQLUserRepository(strategy);
-    }
 }

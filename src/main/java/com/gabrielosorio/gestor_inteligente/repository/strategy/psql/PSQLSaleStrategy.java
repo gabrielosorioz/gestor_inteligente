@@ -31,7 +31,8 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
     }
 
     public PSQLSaleStrategy(ConnectionFactory connectionFactory){
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+        super(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override

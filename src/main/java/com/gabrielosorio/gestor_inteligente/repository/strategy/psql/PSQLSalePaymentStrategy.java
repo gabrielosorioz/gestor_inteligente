@@ -28,9 +28,10 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategyV2<S
     private final Logger log = Logger.getLogger(getClass().getName());
 
     public PSQLSalePaymentStrategy(ConnectionFactory connectionFactory) {
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+        super(connectionFactory);
+        paymentStrategy = new PSQLPaymentStrategy(connectionFactory);
         saleStrategy = new PSQLSaleStrategy(connectionFactory);
-        paymentStrategy = new PSQLPaymentStrategy();
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override

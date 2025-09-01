@@ -4,22 +4,23 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class ConnectionFactory {
 
     private final HikariDataSource dataSource;
-    private static ConnectionFactory instance;
-    private static final Logger log = Logger.getLogger(Connection.class.getName());
-    private static DBScheme dbScheme = null;
+    private static final Map<DBScheme, ConnectionFactory> instances = new ConcurrentHashMap<>();
+    private final DBScheme dbScheme;
 
     private ConnectionFactory(DBScheme dbScheme){
         this.dbScheme = dbScheme;
-        this.dataSource = getDataSourceCP(dbScheme);
+        this.dataSource = createDataSource(dbScheme);
     }
 
-    private static HikariDataSource getDataSourceCP(DBScheme dbScheme){
+    private static HikariDataSource createDataSource(DBScheme dbScheme){
         var config = new HikariConfig();
         config.setJdbcUrl(dbScheme.getUrl());
         config.setUsername(dbScheme.getUsername());
@@ -39,20 +40,12 @@ public class ConnectionFactory {
         }
     }
 
-    public static DBScheme getDBScheme() {
+    public DBScheme getDBScheme() {
         return dbScheme;
     }
 
-    public static ConnectionFactory getInstance(){
-        synchronized (ConnectionFactory.class){
-            if(Objects.isNull(instance)){
-                instance = new ConnectionFactory(DBScheme.POSTGRESQL);
-            } else {
-                log.info("Connection already established.");
-            }
-            return instance;
-        }
+    public static ConnectionFactory getInstance(DBScheme dbScheme) {
+        return instances.computeIfAbsent(dbScheme, ConnectionFactory::new);
     }
-
 
 }

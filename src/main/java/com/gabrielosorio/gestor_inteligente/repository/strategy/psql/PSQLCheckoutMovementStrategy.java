@@ -21,14 +21,15 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
     private final PSQLCheckoutStrategy checkoutStrategy;
     private final PSQLPaymentStrategy paymentStrategy;
     private final PSQLCheckoutMovementTypeStrategy checkoutMovementTypeStrategy;
-    private Logger log = Logger.getLogger(getClass().getName());
+    private final Logger log = Logger.getLogger(getClass().getName());
 
 
-    public PSQLCheckoutMovementStrategy() {
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.checkoutStrategy = new PSQLCheckoutStrategy(ConnectionFactory.getInstance());
-        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy();
-        this.paymentStrategy = new PSQLPaymentStrategy();
+    public PSQLCheckoutMovementStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
+        this.checkoutStrategy = new PSQLCheckoutStrategy(connectionFactory);
+        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy(connectionFactory);
+        this.paymentStrategy = new PSQLPaymentStrategy(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override

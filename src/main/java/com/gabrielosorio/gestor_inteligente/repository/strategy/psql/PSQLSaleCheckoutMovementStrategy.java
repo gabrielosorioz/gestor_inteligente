@@ -1,4 +1,5 @@
 package com.gabrielosorio.gestor_inteligente.repository.strategy.psql;
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.*;
@@ -24,7 +25,8 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
     private final QueryLoader qLoader;
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLSaleCheckoutMovementStrategy() {
+    public PSQLSaleCheckoutMovementStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
         this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
     }
 

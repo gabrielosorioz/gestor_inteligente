@@ -10,6 +10,12 @@ public abstract class TransactionalRepositoryStrategyV2<T> implements Repository
 
     private static final Logger LOGGER = Logger.getLogger(TransactionalRepositoryStrategyV2.class.getName());
 
+    protected final ConnectionFactory connectionFactory;
+
+    protected TransactionalRepositoryStrategyV2(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
     /**
      * Retorna a conexão atual. Se houver uma conexão transacional ativa,
      * ela é retornada. Caso contrário, é criada uma nova conexão.
@@ -20,14 +26,11 @@ public abstract class TransactionalRepositoryStrategyV2<T> implements Repository
             logInfo("Using transactional connection. " + currentTransactionConnection);
             return currentTransactionConnection;
         }
-        var c = ConnectionFactory.getInstance().getConnection();
+        var c = connectionFactory.getConnection();
         logWarning("No active transaction! Using a new connection." + c);
         return c;
     }
 
-    /**
-     * Fecha a conexão somente se ela não for a conexão transacional compartilhada.
-     */
     protected void closeConnection(Connection connection) {
         if (connection != null) {
             if (!TransactionManagerV2.isTransactionActive()) {
@@ -46,9 +49,6 @@ public abstract class TransactionalRepositoryStrategyV2<T> implements Repository
         }
     }
 
-    /**
-     * Método para log de informações com nome da classe e método.
-     */
     private void logInfo(String message) {
         StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
         String className = this.getClass().getSimpleName();
@@ -56,9 +56,7 @@ public abstract class TransactionalRepositoryStrategyV2<T> implements Repository
         LOGGER.info(String.format("[%s#%s] %s", className, methodName, message));
     }
 
-    /**
-     * Método para log de warnings com nome da classe e método.
-     */
+
     private void logWarning(String message) {
         StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
         String className = this.getClass().getSimpleName();
@@ -66,9 +64,6 @@ public abstract class TransactionalRepositoryStrategyV2<T> implements Repository
         LOGGER.warning(String.format("[%s#%s] %s", className, methodName, message));
     }
 
-    /**
-     * Método para log de erros com nome da classe e método.
-     */
     private void logError(String message, Exception e) {
         StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
         String className = this.getClass().getSimpleName();
@@ -76,4 +71,3 @@ public abstract class TransactionalRepositoryStrategyV2<T> implements Repository
         LOGGER.log(Level.SEVERE, String.format("[%s#%s] %s", className, methodName, message), e);
     }
 }
-

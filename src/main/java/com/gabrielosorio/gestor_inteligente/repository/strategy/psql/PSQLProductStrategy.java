@@ -27,9 +27,10 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Produ
 
 
     public PSQLProductStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
         categoryStrategy = new PSQLCategoryStrategy(connectionFactory);
         supplierStrategy = new PSQLSupplierStrategy(connectionFactory);
-        qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+        qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override

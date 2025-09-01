@@ -28,7 +28,8 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<S
     private Logger log = Logger.getLogger(getClass().getName());
 
     public PSQLSaleProductStrategy(ConnectionFactory connectionFactory){
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+        super(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
         this.productStrategy = new PSQLProductStrategy(connectionFactory);
         this.saleStrategy = new PSQLSaleStrategy(connectionFactory);
     }

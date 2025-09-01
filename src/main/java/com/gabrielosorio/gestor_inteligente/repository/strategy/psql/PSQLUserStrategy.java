@@ -33,7 +33,8 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
     }
 
     public PSQLUserStrategy(ConnectionFactory connectionFactory) {
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+        super(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override
@@ -263,23 +264,26 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
                 userMap.put(userId, user);
             }
 
-            Role role = roleMap.get(roleId);
-            if (role == null) {
-                role = mapRoleFromResultSet(rs);
-                roleMap.put(roleId, role);
-                user.setRole(role);
+            // FIX: Sempre verificar e setar a role se o usuário não tem uma
+            if (user.getRole() == null && !rs.wasNull()) {
+                Role role = roleMap.get(roleId);
+                if (role == null) {
+                    role = mapRoleFromResultSet(rs);
+                    roleMap.put(roleId, role);
+                }
+                user.setRole(role); // ← Agora sempre seta a role quando necessário
             }
+            System.out.println("Processing user: " + userId + ", roleId: " + roleId + ", user.getRole(): " + (user.getRole() != null ? user.getRole().getId() : "null"));
 
             long permissionId = rs.getLong("permission_id");
-            if (!rs.wasNull() && permissionId > 0) {
+            if (!rs.wasNull() && permissionId > 0 && user.getRole() != null) {
                 Permission permission = mapPermissionFromResultSet(rs);
-                role.addPermission(permission);
+                user.getRole().addPermission(permission);
             }
         }
 
         return new ArrayList<>(userMap.values());
     }
-
     /**
      * Mapeia os dados do usuário do ResultSet
      */

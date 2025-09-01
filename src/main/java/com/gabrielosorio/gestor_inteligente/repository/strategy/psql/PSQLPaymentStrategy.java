@@ -24,8 +24,9 @@ public class PSQLPaymentStrategy extends TransactionalRepositoryStrategyV2<Payme
     private final Logger log = Logger.getLogger(getClass().getName());
 
 
-    public PSQLPaymentStrategy() {
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+    public PSQLPaymentStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
 

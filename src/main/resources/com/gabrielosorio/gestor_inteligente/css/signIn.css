@@ -1,0 +1,53 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Regular.ttf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Bold.ttf');
+    font-weight: bold;
+}
+
+.body {
+    -fx-background-color: #fff;
+}
+
+.field {
+    -fx-focus-color: transparent;      /* remove a cor da borda no foco */
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: #e5e5e5;
+    -fx-background-radius: 8px;
+    -fx-font-family: 'Poppins';
+}
+
+.btn-login {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color:#695CFE;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff;
+    -fx-background-radius: 8px;
+    -fx-font-family: 'Poppins';
+
+}
+
+.field .prompt-text {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.title {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.text-medium {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 12px;
+}
+

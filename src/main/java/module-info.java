@@ -5,7 +5,8 @@ module com.gabrielosorio.gestor_inteligente {
     requires java.desktop;
     requires com.zaxxer.hikari;
     requires java.sql;
-
+    requires jbcrypt;
+    requires javafx.graphics;
 
     opens com.gabrielosorio.gestor_inteligente to javafx.fxml;
     exports com.gabrielosorio.gestor_inteligente;
@@ -33,4 +34,6 @@ module com.gabrielosorio.gestor_inteligente {
     opens com.gabrielosorio.gestor_inteligente.view.main.helpers to javafx.fxml;
     exports com.gabrielosorio.gestor_inteligente.view.checkout.helpers;
     opens com.gabrielosorio.gestor_inteligente.view.checkout.helpers to javafx.fxml;
+    opens com.gabrielosorio.gestor_inteligente.view.signin to javafx.fxml;
+
 }

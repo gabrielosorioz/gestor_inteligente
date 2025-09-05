@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout> {
+public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
 
     private final QueryLoader qLoader;
     private final ConnectionFactory connFactory;
@@ -73,7 +73,7 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout> {
 
 
     @Override
-    public Optional<Checkout> find(long id) {
+    public Optional<Checkout> find(Long id) {
         var query = qLoader.getQuery("findCheckoutById");
         try (var connection = connFactory.getConnection();
              var ps = connection.prepareStatement(query)) {
@@ -189,7 +189,7 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout> {
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteCheckoutById");
         try (var connection = connFactory.getConnection();
              var ps = connection.prepareStatement(query)) {

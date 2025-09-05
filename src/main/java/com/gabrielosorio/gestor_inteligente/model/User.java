@@ -1,10 +1,11 @@
 package com.gabrielosorio.gestor_inteligente.model;
 import com.gabrielosorio.gestor_inteligente.model.enums.PermissionType;
+import java.util.UUID;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class User {
-    private long id;
+    private UUID id;
     private String firstName;
     private String lastName;
     private String cellphone;
@@ -19,7 +20,7 @@ public class User {
     private String createdBy;
     private String updatedBy;
 
-    public User(long id, String firstName, String lastName, String cellphone,
+    public User(UUID id, String firstName, String lastName, String cellphone,
                 String email, String cpf, String password, Role role,
                 boolean active, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
@@ -36,25 +37,14 @@ public class User {
     }
 
     public User() {
+        this.id = UUID.randomUUID();
         this.active = true;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
-
-    public boolean hasPermission(PermissionType permissionType) {
-        return role != null && role.hasPermission(permissionType);
-    }
-
-    public void updateLastLogin() {
-        this.lastLogin = LocalDateTime.now();
-    }
-
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -104,17 +94,38 @@ public class User {
     public String getUpdatedBy() { return updatedBy; }
     public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    public boolean hasPermission(PermissionType permissionType) {
+        return role != null && role.hasPermission(permissionType);
+    }
+
+    public void updateLastLogin() {
+        this.lastLogin = LocalDateTime.now();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id;
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
     }
-}
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+}

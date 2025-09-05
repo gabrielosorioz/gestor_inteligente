@@ -5,6 +5,7 @@ import com.gabrielosorio.gestor_inteligente.model.enums.PermissionType;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface AuthenticationService {
 
@@ -47,7 +48,7 @@ public interface AuthenticationService {
      * @param newPassword Nova senha
      * @return true se a senha foi alterada com sucesso
      */
-    boolean changePassword(long userId, String currentPassword, String newPassword);
+    boolean changePassword(UUID userId, String currentPassword, String newPassword);
 
     /**
      * Redefine a senha de um usuário (apenas para administradores)
@@ -55,7 +56,7 @@ public interface AuthenticationService {
      * @param newPassword Nova senha
      * @return true se a senha foi redefinida com sucesso
      */
-    boolean resetPassword(long userId, String newPassword);
+    boolean resetPassword(UUID userId, String newPassword);
 
     static boolean verifyPassword(String password, String hashedPassword) {
         return BCrypt.checkpw(password, hashedPassword);

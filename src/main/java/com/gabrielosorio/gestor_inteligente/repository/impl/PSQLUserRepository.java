@@ -7,10 +7,11 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryS
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public class PSQLUserRepository extends Repository<User> implements UserRepository {
+public class PSQLUserRepository extends Repository<User, UUID> implements UserRepository {
 
-    public PSQLUserRepository(RepositoryStrategy<User> strategy) {
+    public PSQLUserRepository(RepositoryStrategy<User,UUID> strategy) {
         init(strategy);
     }
 

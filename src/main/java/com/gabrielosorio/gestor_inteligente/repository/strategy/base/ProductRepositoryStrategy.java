@@ -2,7 +2,7 @@ package com.gabrielosorio.gestor_inteligente.repository.strategy.base;
 
 import com.gabrielosorio.gestor_inteligente.model.Product;
 
-public interface ProductRepositoryStrategy extends RepositoryStrategy<Product> {
+public interface ProductRepositoryStrategy extends RepositoryStrategy<Product,Long> {
     boolean existsPCode(long pCode);
     boolean existsBarCode(String barCode);
     long genPCode();

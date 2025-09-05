@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> implements RepositoryStrategy<User> {
+public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User,UUID> implements RepositoryStrategy<User, UUID> {
 
     private final QueryLoader qLoader;
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -44,38 +44,38 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
         try {
             connection = getConnection();
             try (var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setString(1, user.getFirstName());
-                ps.setString(2, user.getLastName());
-                ps.setString(3, user.getCellphone());
-                ps.setString(4, user.getEmail());
-                ps.setString(5, user.getCpf());
-                ps.setString(6, user.getPassword());
-                ps.setLong(7, user.getRole().getId());
-                ps.setBoolean(8, user.isActive());
-                ps.setTimestamp(9, user.getLastLogin() != null ? Timestamp.valueOf(user.getLastLogin()) : null);
-                ps.setTimestamp(10, Timestamp.valueOf(user.getCreatedAt()));
-                ps.setTimestamp(11, Timestamp.valueOf(user.getUpdatedAt()));
-                ps.setString(12, user.getCreatedBy());
-                ps.setString(13, user.getUpdatedBy());
+                ps.setObject(1, user.getId());
+                ps.setString(2, user.getFirstName());
+                ps.setString(3, user.getLastName());
+                ps.setString(4, user.getCellphone());
+                ps.setString(5, user.getEmail());
+                ps.setString(6, user.getCpf());
+                ps.setString(7, user.getPassword());
+                ps.setLong(8, user.getRole().getId());
+                ps.setBoolean(9, user.isActive());
+                ps.setTimestamp(10, user.getLastLogin() != null ? Timestamp.valueOf(user.getLastLogin()) : null);
+                ps.setTimestamp(11, Timestamp.valueOf(user.getCreatedAt()));
+                ps.setTimestamp(12, Timestamp.valueOf(user.getUpdatedAt()));
+                ps.setString(13, user.getCreatedBy());
+                ps.setString(14, user.getUpdatedBy());
 
-                ps.executeUpdate();
+                int affectedRows = ps.executeUpdate();
 
-                try (var gKeys = ps.getGeneratedKeys()) {
-                    if (gKeys.next()) {
-                        user.setId(gKeys.getLong("id"));
-                        logInfo("User successfully inserted.");
-                    } else {
-                        throw new SQLException("Failed to insert user, no key generated.");
-                    }
+                if (affectedRows == 0) {
+                    throw new SQLException("Failed to insert user, no rows affected.");
                 }
 
+                logInfo("User successfully inserted with ID: " + user.getId());
+
             } catch (SQLException e) {
-                log.log(Level.SEVERE, "Failed to insert user. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                log.log(Level.SEVERE, "Failed to insert user. {0} {1} {2}",
+                        new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
                 throw new RuntimeException("Failed to insert user", e);
             }
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
             closeConnection(connection);
@@ -85,26 +85,28 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
     }
 
     @Override
-    public Optional<User> find(long id) {
+    public Optional<User> find(UUID id) {
         var query = qLoader.getQuery("findUserById");
         Connection connection = null;
         try {
             connection = getConnection();
 
             try (var ps = connection.prepareStatement(query)) {
-                ps.setLong(1, id);
+                ps.setObject(1, id); // UUID
 
                 try (var rs = ps.executeQuery()) {
                     List<User> users = mapResultSetToUserList(rs);
                     return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
                 }
             } catch (SQLException e) {
-                log.log(Level.SEVERE, "Failed to find user. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                log.log(Level.SEVERE, "Failed to find user. {0} {1} {2}",
+                        new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
                 throw new RuntimeException("User search error.", e);
             }
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
             closeConnection(connection);
@@ -123,12 +125,14 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
                  var rs = ps.executeQuery()) {
                 return mapResultSetToUserList(rs);
             } catch (SQLException e) {
-                log.log(Level.SEVERE, "Failed to find all users. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                log.log(Level.SEVERE, "Failed to find all users. {0} {1} {2}",
+                        new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
                 throw new RuntimeException("User find all error.", e);
             }
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
             closeConnection(connection);
@@ -156,12 +160,14 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
                     return mapResultSetToUserList(rs);
                 }
             } catch (SQLException e) {
-                log.log(Level.SEVERE, "Failed to find user by specification. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                log.log(Level.SEVERE, "Failed to find user by specification. {0} {1} {2}",
+                        new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
                 throw new RuntimeException("User find by specification error.", e);
             }
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
             closeConnection(connection);
@@ -190,7 +196,7 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
                 ps.setTimestamp(11, Timestamp.valueOf(user.getUpdatedAt()));
                 ps.setString(12, user.getCreatedBy());
                 ps.setString(13, user.getUpdatedBy());
-                ps.setLong(14, user.getId());
+                ps.setObject(14, user.getId());
 
                 int affectedRows = ps.executeUpdate();
 
@@ -198,14 +204,16 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
                     throw new SQLException("Failed to update user, no rows affected.");
                 }
 
-                logInfo("User successfully updated.");
+                logInfo("User successfully updated with ID: " + user.getId());
             } catch (SQLException e) {
-                log.log(Level.SEVERE, "Failed to update user. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                log.log(Level.SEVERE, "Failed to update user. {0} {1} {2}",
+                        new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
                 throw new RuntimeException("Failed to update user", e);
             }
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
             closeConnection(connection);
@@ -214,7 +222,7 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(UUID id) { // Mudado de long para UUID
         var query = qLoader.getQuery("deleteUserById");
         Connection connection = null;
         int affectedRows;
@@ -223,7 +231,7 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
             connection = getConnection();
 
             try (var ps = connection.prepareStatement(query)) {
-                ps.setLong(1, id);
+                ps.setObject(1, id); // UUID
                 affectedRows = ps.executeUpdate();
 
                 if (affectedRows == 0) {
@@ -235,12 +243,14 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
                 return true;
 
             } catch (SQLException e) {
-                log.log(Level.SEVERE, "Failed to delete user. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+                log.log(Level.SEVERE, "Failed to delete user. {0} {1} {2}",
+                        new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
                 throw new RuntimeException(e);
             }
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to obtain connection. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to obtain connection", e);
         } finally {
             closeConnection(connection);
@@ -251,13 +261,13 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
      * Mapeia o ResultSet para uma lista de usuários, agrupando as permissões por usuário
      */
     private List<User> mapResultSetToUserList(ResultSet rs) throws SQLException {
-        Map<Long, User> userMap = new LinkedHashMap<>();
+        Map<UUID, User> userMap = new LinkedHashMap<>(); // Mudado de Long para UUID
         Map<Long, Role> roleMap = new HashMap<>();
         int totalRows = 0;
 
         while (rs.next()) {
             totalRows++;
-            Long userId = rs.getLong("id");
+            UUID userId = (UUID) rs.getObject("id"); // Mudado para getObject() para UUID
             Long roleId = rs.getLong("role_id");
 
             if (totalRows % 10 == 0) {
@@ -303,7 +313,7 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
      */
     private User mapUserFromResultSet(ResultSet rs) throws SQLException {
         var user = new User();
-        user.setId(rs.getLong("id"));
+        user.setId((UUID) rs.getObject("id"));
         user.setFirstName(rs.getString("first_name"));
         user.setLastName(rs.getString("last_name"));
         user.setCellphone(rs.getString("cellphone"));

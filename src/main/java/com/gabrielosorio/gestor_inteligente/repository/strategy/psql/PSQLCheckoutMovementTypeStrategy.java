@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStrategyV2<CheckoutMovementType> implements RepositoryStrategy<CheckoutMovementType> {
+public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStrategyV2<CheckoutMovementType,Long> implements RepositoryStrategy<CheckoutMovementType,Long> {
 
     private final QueryLoader qLoader;
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -54,7 +54,7 @@ public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStr
     }
 
     @Override
-    public Optional<CheckoutMovementType> find(long id) {
+    public Optional<CheckoutMovementType> find(Long id) {
         var query = qLoader.getQuery("findCheckoutMovementTypeById");
 
         try (var connection = getConnection();
@@ -159,7 +159,7 @@ public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStr
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteCheckoutMovementTypeById");
         try (var connection = getConnection();
              var ps = connection.prepareStatement(query)) {

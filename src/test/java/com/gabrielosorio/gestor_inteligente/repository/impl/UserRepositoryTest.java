@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,7 +60,7 @@ public class UserRepositoryTest {
 
         // Then
         assertNotNull(savedUser);
-        assertTrue(savedUser.getId() > 0);
+        assertNotNull(savedUser.getId()); // UUID não pode ser > 0, apenas não nulo
         assertEquals(newUser.getFirstName(), savedUser.getFirstName());
         assertEquals(newUser.getLastName(), savedUser.getLastName());
         assertEquals(newUser.getEmail(), savedUser.getEmail());
@@ -95,7 +96,7 @@ public class UserRepositoryTest {
     @DisplayName("Deve retornar empty quando usuário não existe")
     void testFindUserByIdNotFound() {
         // Given
-        long nonExistentId = 99999L;
+        UUID nonExistentId = UUID.randomUUID(); // Mudado de long para UUID aleatório
 
         // When
         Optional<User> foundUser = userRepository.find(nonExistentId);
@@ -208,7 +209,7 @@ public class UserRepositoryTest {
         // Given
         User newUser = createTestUser("Sofia", "Rodrigues", "sofia.rodrigues@email.com");
         User savedUser = userRepository.add(newUser);
-        long userId = savedUser.getId();
+        UUID userId = savedUser.getId(); // Mudado de long para UUID
 
         // Verifica que o usuário existe
         assertTrue(userRepository.find(userId).isPresent());
@@ -226,7 +227,7 @@ public class UserRepositoryTest {
     @DisplayName("Deve retornar false ao tentar remover usuário inexistente")
     void testRemoveNonExistentUser() {
         // Given
-        long nonExistentId = 99999L;
+        UUID nonExistentId = UUID.randomUUID();
 
         // When
         boolean removed = userRepository.remove(nonExistentId);
@@ -337,13 +338,10 @@ public class UserRepositoryTest {
 
     private static void cleanDatabase() {
         try (Connection connection = connectionFactory.getConnection()) {
-            // Limpa as tabelas na ordem correta devido às foreign keys
-            connection.prepareStatement("TRUNCATE TABLE users RESTART IDENTITY CASCADE").executeUpdate();
+            connection.prepareStatement("TRUNCATE TABLE users CASCADE").executeUpdate();
             connection.prepareStatement("TRUNCATE TABLE role_permissions RESTART IDENTITY CASCADE").executeUpdate();
             connection.prepareStatement("TRUNCATE TABLE roles RESTART IDENTITY CASCADE").executeUpdate();
             connection.prepareStatement("TRUNCATE TABLE permissions RESTART IDENTITY CASCADE").executeUpdate();
-
-            // Insere dados básicos necessários para os testes
             insertBasicTestData(connection);
 
         } catch (SQLException e) {
@@ -374,8 +372,6 @@ public class UserRepositoryTest {
         String insertRolePermission = "INSERT INTO role_permissions (role_id, permission_id) VALUES (1, 1)";
         connection.prepareStatement(insertRolePermission).executeUpdate();
 
-        // Reinicia as sequences
-        connection.prepareStatement("ALTER SEQUENCE users_id_seq RESTART WITH 1").executeUpdate();
     }
 
     @AfterAll

@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCategoryStrategy implements RepositoryStrategy<Category> {
+public class PSQLCategoryStrategy implements RepositoryStrategy<Category,Long> {
 
     private final QueryLoader qLoader;
     private final ConnectionFactory connFactory;
@@ -56,7 +56,7 @@ public class PSQLCategoryStrategy implements RepositoryStrategy<Category> {
     }
 
     @Override
-    public Optional<Category> find(long id) {
+    public Optional<Category> find(Long id) {
         var query = qLoader.getQuery("findCategoryById");
         try(var connection = connFactory.getConnection();
             var ps = connection.prepareStatement(query)){
@@ -155,7 +155,7 @@ public class PSQLCategoryStrategy implements RepositoryStrategy<Category> {
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteCategoryById");
         try(var connection = connFactory.getConnection();
             var ps = connection.prepareStatement(query)){

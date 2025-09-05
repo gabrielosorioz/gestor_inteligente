@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStrategyV2<SaleCheckoutMovement> implements RepositoryStrategy<SaleCheckoutMovement>, BatchInsertable<SaleCheckoutMovement> {
+public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStrategyV2<SaleCheckoutMovement,Long> implements RepositoryStrategy<SaleCheckoutMovement,Long>, BatchInsertable<SaleCheckoutMovement> {
 
     private final QueryLoader qLoader;
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -256,7 +256,7 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
     }
 
     @Override
-    public Optional<SaleCheckoutMovement> find(long id) {
+    public Optional<SaleCheckoutMovement> find(Long id) {
         var query = qLoader.getQuery("findSaleCheckoutMovementById");
         Connection connection = null;
         try {
@@ -376,7 +376,7 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteSaleCheckoutMovementById");
         Connection connection = null;
 

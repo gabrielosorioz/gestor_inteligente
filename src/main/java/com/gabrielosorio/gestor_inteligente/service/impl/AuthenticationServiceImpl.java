@@ -7,6 +7,7 @@ import com.gabrielosorio.gestor_inteligente.service.base.AuthenticationService;
 import org.mindrot.jbcrypt.BCrypt;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
@@ -65,7 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return currentUser != null && currentUser.hasPermission(permissionType);
     }
 
-    public boolean changePassword(long userId, String currentPassword, String newPassword) {
+    public boolean changePassword(UUID userId, String currentPassword, String newPassword) {
         try {
             Optional<User> userOptional = userRepository.find(userId);
 
@@ -95,7 +96,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    public boolean resetPassword(long userId, String newPassword) {
+    public boolean resetPassword(UUID userId, String newPassword) {
         try {
             if (!hasPermission(PermissionType.RESET_PASSWORD)) {
                 return false;

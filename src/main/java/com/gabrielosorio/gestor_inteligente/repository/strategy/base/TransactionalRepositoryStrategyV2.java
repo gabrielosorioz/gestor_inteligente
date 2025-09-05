@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 
-public abstract class TransactionalRepositoryStrategyV2<T> implements RepositoryStrategy<T> {
+public abstract class TransactionalRepositoryStrategyV2<T,ID> implements RepositoryStrategy<T,ID> {
 
     private static final Logger LOGGER = Logger.getLogger(TransactionalRepositoryStrategyV2.class.getName());
 

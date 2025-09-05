@@ -8,8 +8,8 @@ import com.gabrielosorio.gestor_inteligente.repository.specification.FindSalesBy
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import java.util.List;
 
-public class PSQLSaleCheckoutMovementRepository extends Repository<SaleCheckoutMovement> implements SaleCheckoutMovementRepository {
-    public PSQLSaleCheckoutMovementRepository(RepositoryStrategy<SaleCheckoutMovement> strategy){
+public class PSQLSaleCheckoutMovementRepository extends Repository<SaleCheckoutMovement,Long> implements SaleCheckoutMovementRepository {
+    public PSQLSaleCheckoutMovementRepository(RepositoryStrategy<SaleCheckoutMovement,Long> strategy){
         init(strategy);
     }
 

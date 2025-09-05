@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLPaymentStrategy extends TransactionalRepositoryStrategyV2<Payment> implements RepositoryStrategy<Payment> {
+public class PSQLPaymentStrategy extends TransactionalRepositoryStrategyV2<Payment,Long> implements RepositoryStrategy<Payment,Long> {
 
     private final QueryLoader qLoader;
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -57,7 +57,7 @@ public class PSQLPaymentStrategy extends TransactionalRepositoryStrategyV2<Payme
     }
 
     @Override
-    public Optional<Payment> find(long id) {
+    public Optional<Payment> find(Long id) {
         var query = qLoader.getQuery("findPaymentById");
 
         try(var connection = getConnection();
@@ -161,7 +161,7 @@ public class PSQLPaymentStrategy extends TransactionalRepositoryStrategyV2<Payme
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deletePaymentById");
         try(var connection = getConnection();
             var ps = connection.prepareStatement(query)) {

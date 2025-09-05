@@ -4,8 +4,8 @@ import com.gabrielosorio.gestor_inteligente.repository.base.CheckoutMovementType
 import com.gabrielosorio.gestor_inteligente.repository.base.Repository;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 
-public class PSQLCheckoutMovementTypeRepository extends Repository<CheckoutMovementType> implements CheckoutMovementTypeRepository {
-    public PSQLCheckoutMovementTypeRepository(RepositoryStrategy<CheckoutMovementType> strategy) {
+public class PSQLCheckoutMovementTypeRepository extends Repository<CheckoutMovementType,Long> implements CheckoutMovementTypeRepository {
+    public PSQLCheckoutMovementTypeRepository(RepositoryStrategy<CheckoutMovementType,Long> strategy) {
         init(strategy);
     }
 }

@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategyV2<SalePayment> implements RepositoryStrategy<SalePayment>, BatchInsertable<SalePayment> {
+public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategyV2<SalePayment,Long> implements RepositoryStrategy<SalePayment,Long>, BatchInsertable<SalePayment> {
 
     private final QueryLoader qLoader;
     private final PSQLSaleStrategy saleStrategy;
@@ -66,7 +66,7 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategyV2<S
 
 
     @Override
-    public Optional<SalePayment> find(long id) {
+    public Optional<SalePayment> find(Long id) {
         var query = qLoader.getQuery("findSalePaymentById");
         try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){
@@ -167,7 +167,7 @@ public class PSQLSalePaymentStrategy extends TransactionalRepositoryStrategyV2<S
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteSalePaymentById");
         try(var connection = getConnection();
             var ps = connection.prepareStatement(query)){

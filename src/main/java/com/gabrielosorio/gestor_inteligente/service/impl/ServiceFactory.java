@@ -1,6 +1,9 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.repository.base.RepositoryFactory;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
+import com.gabrielosorio.gestor_inteligente.service.view.ScreenLoaderServiceImpl;
+
+import java.util.Objects;
 
 /**
  * Factory responsible for creating and managing instance of application services.
@@ -16,6 +19,9 @@ public class ServiceFactory {
     private CheckoutMovementService checkoutMovementService;
     private CheckoutService checkoutService;
     private SaleCheckoutMovementService saleCheckoutMovementService;
+    private AuthenticationService authenticationService;
+    private ScreenLoaderService screenLoaderService;
+
 
     /**
      * Constructor that receives a repository factory necessary to create the services.
@@ -84,5 +90,19 @@ public class ServiceFactory {
             );
         }
         return saleService;
+    }
+
+    public AuthenticationService getAuthenticationService(){
+        return Objects.requireNonNullElseGet(authenticationService,
+                () -> new AuthenticationServiceImpl(
+                repositoryFactory.getUserRepository()
+        ));
+    }
+
+    public ScreenLoaderService getScreenLoaderService() {
+        if (screenLoaderService == null) {
+            screenLoaderService = new ScreenLoaderServiceImpl(this);
+        }
+        return screenLoaderService;
     }
 }

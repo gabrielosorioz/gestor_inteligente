@@ -253,37 +253,51 @@ public class PSQLUserStrategy extends TransactionalRepositoryStrategyV2<User> im
     private List<User> mapResultSetToUserList(ResultSet rs) throws SQLException {
         Map<Long, User> userMap = new LinkedHashMap<>();
         Map<Long, Role> roleMap = new HashMap<>();
+        int totalRows = 0;
 
         while (rs.next()) {
+            totalRows++;
             Long userId = rs.getLong("id");
             Long roleId = rs.getLong("role_id");
 
+            if (totalRows % 10 == 0) {
+                logInfo("Processed " + totalRows + " rows so far. Current user: " + userId);
+            }
             User user = userMap.get(userId);
             if (user == null) {
                 user = mapUserFromResultSet(rs);
                 userMap.put(userId, user);
+                logInfo("New user mapped: ID=" + userId);
             }
 
-            // FIX: Sempre verificar e setar a role se o usuário não tem uma
-            if (user.getRole() == null && !rs.wasNull()) {
+            if (user.getRole() == null && roleId != null && !rs.wasNull()) {
                 Role role = roleMap.get(roleId);
                 if (role == null) {
                     role = mapRoleFromResultSet(rs);
                     roleMap.put(roleId, role);
                 }
-                user.setRole(role); // ← Agora sempre seta a role quando necessário
+                user.setRole(role);
             }
-            System.out.println("Processing user: " + userId + ", roleId: " + roleId + ", user.getRole(): " + (user.getRole() != null ? user.getRole().getId() : "null"));
 
             long permissionId = rs.getLong("permission_id");
             if (!rs.wasNull() && permissionId > 0 && user.getRole() != null) {
                 Permission permission = mapPermissionFromResultSet(rs);
-                user.getRole().addPermission(permission);
+
+                boolean permissionExists = user.getRole().getPermissions().stream()
+                        .anyMatch(p -> p.getId() == (permission.getId()));
+
+                if (!permissionExists) {
+                    user.getRole().addPermission(permission);
+                }
             }
         }
+        logInfo("ResultSet mapping completed. Total rows processed: " + totalRows +
+                ", Unique users: " + userMap.size() +
+                ", Unique roles: " + roleMap.size());
 
         return new ArrayList<>(userMap.values());
     }
+
     /**
      * Mapeia os dados do usuário do ResultSet
      */

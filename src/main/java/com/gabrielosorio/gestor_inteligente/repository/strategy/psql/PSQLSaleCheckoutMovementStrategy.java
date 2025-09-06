@@ -67,7 +67,7 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
 
                 new Checkout(
                         rs.getLong("id"),
-                        CheckoutStatus.fromDescription(rs.getString("checkout_status")),
+                        CheckoutStatus.valueOf(rs.getString("checkout_status")),
                         rs.getTimestamp("checkout_opened_at").toLocalDateTime(),
                         rs.getTimestamp("checkout_closed_at") != null ? rs.getTimestamp("checkout_closed_at").toLocalDateTime() : null,
                         rs.getBigDecimal("checkout_initial_cash"),

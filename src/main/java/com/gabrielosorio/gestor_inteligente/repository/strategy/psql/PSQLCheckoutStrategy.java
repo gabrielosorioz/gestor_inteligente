@@ -1,4 +1,5 @@
 package com.gabrielosorio.gestor_inteligente.repository.strategy.psql;
+
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
@@ -14,10 +15,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
+public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout, Long> {
 
     private final QueryLoader qLoader;
     private final ConnectionFactory connFactory;
@@ -28,25 +30,22 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
         this.connFactory = connFactory;
     }
 
-
     @Override
     public Checkout add(Checkout checkout) {
         var query = qLoader.getQuery("insertCheckout");
         try (var connection = connFactory.getConnection();
              var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, checkout.getStatus().getName());
+            ps.setString(1, checkout.getStatus().name());
             ps.setTimestamp(2, Timestamp.valueOf(checkout.getOpenedAt()));
             ps.setTimestamp(3,
-            checkout.getClosedAt() != null ? Timestamp.valueOf(checkout.getClosedAt()) : null);
+                    checkout.getClosedAt() != null ? Timestamp.valueOf(checkout.getClosedAt()) : null);
             ps.setBigDecimal(4, checkout.getInitialCash());
             ps.setBigDecimal(5, checkout.getTotalEntry());
             ps.setBigDecimal(6, checkout.getTotalExit());
             ps.setBigDecimal(7, checkout.getClosingBalance());
-            ps.setString(8, checkout.getOpenedBy().getFirstName());
-            ps.setString(9,
-                    checkout.getClosedBy() != null ? checkout.getClosedBy().getLastName() : null);
-
+            ps.setObject(8, checkout.getOpenedBy() != null ? checkout.getOpenedBy().getId() : null);
+            ps.setObject(9, checkout.getClosedBy() != null ? checkout.getClosedBy().getId() : null);
             ps.setTimestamp(10,
                     checkout.getCreatedAt() != null ? Timestamp.valueOf(checkout.getCreatedAt()) : null);
             ps.setTimestamp(11,
@@ -71,10 +70,10 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
         return checkout;
     }
 
-
     @Override
     public Optional<Checkout> find(Long id) {
-        var query = qLoader.getQuery("findCheckoutById");
+        // Usar query com JOIN para buscar dados completos do usuário
+        var query = qLoader.getQuery("findCheckoutByIdWithUsers");
         try (var connection = connFactory.getConnection();
              var ps = connection.prepareStatement(query)) {
 
@@ -82,7 +81,7 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
 
             try (var rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(mapResultSet(rs));
+                    return Optional.of(mapResultSetWithUsers(rs));
                 }
             }
 
@@ -94,18 +93,17 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
         return Optional.empty();
     }
 
-
     @Override
     public List<Checkout> findAll() {
         var checkouts = new ArrayList<Checkout>();
-        var query = qLoader.getQuery("findAllCheckouts");
+        var query = qLoader.getQuery("findAllCheckoutsWithUsers");
 
         try (var connection = connFactory.getConnection();
              var ps = connection.prepareStatement(query);
              var rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                var checkout = mapResultSet(rs);
+                var checkout = mapResultSetWithUsers(rs);
                 checkouts.add(checkout);
             }
 
@@ -117,7 +115,6 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
 
         return checkouts;
     }
-
 
     @Override
     public List<Checkout> findBySpecification(Specification<Checkout> specification) {
@@ -138,7 +135,13 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
 
             try (var rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    var checkout = mapResultSet(rs);
+                    Checkout checkout;
+                    try {
+                        rs.findColumn("opened_by_id");
+                        checkout = mapResultSetWithUsers(rs);
+                    } catch (SQLException ex) {
+                        checkout = mapResultSetBasic(rs);
+                    }
                     checkouts.add(checkout);
                 }
             }
@@ -152,25 +155,24 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
         return checkouts;
     }
 
-
     @Override
     public Checkout update(Checkout newCheckout) {
         var query = qLoader.getQuery("updateCheckout");
         try (var connection = connFactory.getConnection();
              var ps = connection.prepareStatement(query)) {
 
-            ps.setString(1, newCheckout.getStatus().getName());
+            ps.setString(1, newCheckout.getStatus().name());
             ps.setTimestamp(2, Timestamp.valueOf(newCheckout.getOpenedAt()));
-            ps.setTimestamp(3, newCheckout.getClosedAt() != null ? Timestamp.valueOf(newCheckout.getClosedAt()) : null);
+            ps.setTimestamp(3, newCheckout.getClosedAt() != null ?
+                    Timestamp.valueOf(newCheckout.getClosedAt()) : null);
             ps.setBigDecimal(4, newCheckout.getInitialCash());
             ps.setBigDecimal(5, newCheckout.getTotalEntry());
             ps.setBigDecimal(6, newCheckout.getTotalExit());
             ps.setBigDecimal(7, newCheckout.getClosingBalance());
-            ps.setString(8, newCheckout.getOpenedBy().getFirstName());
-            ps.setString(9, newCheckout.getClosedBy().getFirstName());
-            ps.setTimestamp(10, Timestamp.valueOf(newCheckout.getCreatedAt()));
-            ps.setTimestamp(11, Timestamp.valueOf(newCheckout.getUpdatedAt()));
-            ps.setLong(12, newCheckout.getId());
+            ps.setObject(8, newCheckout.getOpenedBy() != null ? newCheckout.getOpenedBy().getId() : null);
+            ps.setObject(9, newCheckout.getClosedBy() != null ? newCheckout.getClosedBy().getId() : null);
+            ps.setTimestamp(10, Timestamp.valueOf(newCheckout.getUpdatedAt()));
+            ps.setLong(11, newCheckout.getId());
 
             int affectedRows = ps.executeUpdate();
 
@@ -181,7 +183,8 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
             log.info("Checkout successfully updated.");
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to update checkout. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to update checkout. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to update checkout", e);
         }
 
@@ -206,27 +209,107 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout,Long> {
             }
 
         } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to delete checkout. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            log.log(Level.SEVERE, "Failed to delete checkout. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to delete checkout.", e);
         }
     }
 
+    private Checkout mapResultSetWithUsers(ResultSet rs) throws SQLException {
+        User openedBy = null;
+        if (rs.getObject("opened_by_id") != null) {
+            openedBy = new User();
+            openedBy.setId(UUID.fromString(rs.getString("opened_by_id")));
+            openedBy.setFirstName(rs.getString("opened_by_first_name"));
+            openedBy.setLastName(rs.getString("opened_by_last_name"));
+            openedBy.setCellphone(rs.getString("opened_by_cellphone"));
+            openedBy.setEmail(rs.getString("opened_by_email"));
+            openedBy.setCpf(rs.getString("opened_by_cpf"));
+            openedBy.setActive(rs.getBoolean("opened_by_active"));
 
-    private Checkout mapResultSet(ResultSet rs) throws SQLException {
+            Timestamp lastLogin = rs.getTimestamp("opened_by_last_login");
+            if (lastLogin != null) {
+                openedBy.setLastLogin(lastLogin.toLocalDateTime());
+            }
+
+            Timestamp createdAt = rs.getTimestamp("opened_by_created_at");
+            if (createdAt != null) {
+                openedBy.setCreatedAt(createdAt.toLocalDateTime());
+            }
+
+            Timestamp updatedAt = rs.getTimestamp("opened_by_updated_at");
+            if (updatedAt != null) {
+                openedBy.setUpdatedAt(updatedAt.toLocalDateTime());
+            }
+
+            openedBy.setCreatedBy(rs.getString("opened_by_created_by"));
+            openedBy.setUpdatedBy(rs.getString("opened_by_updated_by"));
+        }
+
+        User closedBy = null;
+        if (rs.getObject("closed_by_id") != null) {
+            closedBy = new User();
+            closedBy.setId(UUID.fromString(rs.getString("closed_by_id")));
+            closedBy.setFirstName(rs.getString("closed_by_first_name"));
+            closedBy.setLastName(rs.getString("closed_by_last_name"));
+            closedBy.setCellphone(rs.getString("closed_by_cellphone"));
+            closedBy.setEmail(rs.getString("closed_by_email"));
+            closedBy.setCpf(rs.getString("closed_by_cpf"));
+            closedBy.setActive(rs.getBoolean("closed_by_active"));
+
+            Timestamp lastLogin = rs.getTimestamp("closed_by_last_login");
+            if (lastLogin != null) {
+                closedBy.setLastLogin(lastLogin.toLocalDateTime());
+            }
+
+            Timestamp createdAt = rs.getTimestamp("closed_by_created_at");
+            if (createdAt != null) {
+                closedBy.setCreatedAt(createdAt.toLocalDateTime());
+            }
+
+            Timestamp updatedAt = rs.getTimestamp("closed_by_updated_at");
+            if (updatedAt != null) {
+                closedBy.setUpdatedAt(updatedAt.toLocalDateTime());
+            }
+
+            closedBy.setCreatedBy(rs.getString("closed_by_created_by"));
+            closedBy.setUpdatedBy(rs.getString("closed_by_updated_by"));
+        }
+
         return new Checkout(
                 rs.getLong("id"),
-                CheckoutStatus.fromDescription(rs.getString("status")),
+                CheckoutStatus.valueOf(rs.getString("status")),
                 rs.getTimestamp("opened_at").toLocalDateTime(),
                 rs.getTimestamp("closed_at") != null ? rs.getTimestamp("closed_at").toLocalDateTime() : null,
                 rs.getBigDecimal("initial_cash"),
                 rs.getBigDecimal("total_entry"),
                 rs.getBigDecimal("total_exit"),
                 rs.getBigDecimal("closing_balance"),
-                new User(),
-                new User(),
+                openedBy,
+                closedBy,
                 rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime() : null,
                 rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null
         );
     }
 
+    private Checkout mapResultSetBasic(ResultSet rs) throws SQLException {
+        // Criar usuários vazios para manter compatibilidade
+        User openedBy = new User();
+        User closedBy = new User();
+
+        return new Checkout(
+                rs.getLong("id"),
+                CheckoutStatus.valueOf(rs.getString("status")),
+                rs.getTimestamp("opened_at").toLocalDateTime(),
+                rs.getTimestamp("closed_at") != null ? rs.getTimestamp("closed_at").toLocalDateTime() : null,
+                rs.getBigDecimal("initial_cash"),
+                rs.getBigDecimal("total_entry"),
+                rs.getBigDecimal("total_exit"),
+                rs.getBigDecimal("closing_balance"),
+                openedBy,
+                closedBy,
+                rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime() : null,
+                rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null
+        );
+    }
 }

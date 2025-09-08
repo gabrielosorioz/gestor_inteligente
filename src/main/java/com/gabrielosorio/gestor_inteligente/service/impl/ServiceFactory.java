@@ -1,4 +1,5 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.repository.base.RepositoryFactory;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.service.view.ScreenLoaderServiceImpl;
@@ -21,14 +22,16 @@ public class ServiceFactory {
     private SaleCheckoutMovementService saleCheckoutMovementService;
     private AuthenticationService authenticationService;
     private ScreenLoaderService screenLoaderService;
+    private final ConnectionFactory connectionFactory;
 
 
     /**
      * Constructor that receives a repository factory necessary to create the services.
      * @param repositoryFactory factory que fornece acesso aos repositórios
      */
-    public ServiceFactory(RepositoryFactory repositoryFactory) {
+    public ServiceFactory(RepositoryFactory repositoryFactory,ConnectionFactory connectionFactory) {
         this.repositoryFactory = repositoryFactory;
+        this.connectionFactory = connectionFactory;
     }
 
     public ProductService getProductService() {
@@ -86,7 +89,8 @@ public class ServiceFactory {
                     getCheckoutMovementService(),
                     getCheckoutService(),
                     getProductService(),
-                    getSaleCheckoutMovementService()
+                    getSaleCheckoutMovementService(),
+                    connectionFactory
             );
         }
         return saleService;

@@ -93,7 +93,7 @@ public class SignInController implements Initializable {
                 Platform.runLater(() -> {
                     if (userOptional.isPresent()) {
                         try {
-                            screenLoaderService.loadMainApplication();
+                            screenLoaderService.loadMainApplication(userOptional.get());
                         } catch (RuntimeException e) {
                             e.printStackTrace();
                             showAlert("Erro do Sistema",

@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.service.view;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.service.base.ScreenLoaderService;
 import com.gabrielosorio.gestor_inteligente.service.impl.ServiceFactory;
 import com.gabrielosorio.gestor_inteligente.view.main.MainNavigationController;
@@ -7,8 +8,6 @@ import com.gabrielosorio.gestor_inteligente.view.signin.SignInController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 import java.io.IOException;
 
 public class ScreenLoaderServiceImpl implements ScreenLoaderService {
@@ -19,10 +18,10 @@ public class ScreenLoaderServiceImpl implements ScreenLoaderService {
         this.serviceFactory = serviceFactory;
     }
 
-    public void loadMainApplication() throws RuntimeException {
+    public void loadMainApplication(User user) throws RuntimeException {
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/MainNavigation.fxml"));
-            MainNavigationController mainController = new MainNavigationController(serviceFactory);
+            MainNavigationController mainController = new MainNavigationController(serviceFactory,user);
             loader.setController(mainController);
 
             Scene mainScene = new Scene(loader.load());

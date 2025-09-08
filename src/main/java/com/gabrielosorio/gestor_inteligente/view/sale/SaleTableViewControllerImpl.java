@@ -1,6 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.view.sale;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.view.payment.PaymentViewHelper;
 import com.gabrielosorio.gestor_inteligente.view.checkout.CheckoutTabController;
@@ -58,11 +59,13 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
     private TableColumn<SaleProduct, Void> actionCol;
 
     private final CheckoutTabController checkoutTabController;
+    private final User user;
 
     private ObjectProperty<BigDecimal> totalPriceProp = new SimpleObjectProperty<>(BigDecimal.ZERO);
 
-    public SaleTableViewControllerImpl(CheckoutTabController checkoutTabController){
+    public SaleTableViewControllerImpl(CheckoutTabController checkoutTabController, User user){
         this.checkoutTabController = checkoutTabController;
+        this.user = user;
     }
 
     @Override
@@ -445,7 +448,7 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
 
     @Override
     public void showPaymentScreen() {
-        PaymentViewHelper.showPaymentScreen(this);
+        PaymentViewHelper.showPaymentScreen(user,this);
     }
 
     @Override

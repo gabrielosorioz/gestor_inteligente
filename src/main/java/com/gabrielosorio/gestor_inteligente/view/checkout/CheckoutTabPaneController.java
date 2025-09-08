@@ -1,6 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.view.checkout;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import com.gabrielosorio.gestor_inteligente.view.shared.RequestFocus;
 import com.gabrielosorio.gestor_inteligente.view.shared.ShortcutHandler;
@@ -23,10 +24,12 @@ public class CheckoutTabPaneController implements Initializable, ShortcutHandler
     private int tabCounter;
     private static int initializeCounter = 0;
     private final ProductService PRODUCT_SERVICE;
+    private final User USER;
 
 
-    public CheckoutTabPaneController(ProductService productService) {
+    public CheckoutTabPaneController(ProductService productService, User user) {
         PRODUCT_SERVICE = productService;
+        USER = user;
     }
 
     @Override
@@ -78,7 +81,7 @@ public class CheckoutTabPaneController implements Initializable, ShortcutHandler
     private Tab getCheckoutTab(){
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/CheckoutTab.fxml"));
-            CheckoutTabController checkoutTabController = new CheckoutTabController(this,PRODUCT_SERVICE);
+            CheckoutTabController checkoutTabController = new CheckoutTabController(this,PRODUCT_SERVICE,USER);
             loader.setController(checkoutTabController);
             Tab newCheckoutTab = loader.load();
 

@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.view.main;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.service.impl.ServiceFactory;
 import com.gabrielosorio.gestor_inteligente.service.navigation.NavigationService;
@@ -45,18 +46,21 @@ public class MainNavigationController implements Initializable {
     private ShortcutHandler activeShortcutHandler;
 
     private final ServiceFactory serviceFactory;
+    private final User user;
+
     private NavigationService navigationService;
     private ScreenManager screenManager;
 
-    public MainNavigationController(ServiceFactory serviceFactory) {
+    public MainNavigationController(ServiceFactory serviceFactory, User user) {
         this.serviceFactory = serviceFactory;
+        this.user = user;
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         screenManager = new ScreenManagerImpl(mainContent);
-        navigationService = new NavigationServiceImpl(screenManager, serviceFactory, this::collapseSidebarIfOpen);
+        navigationService = new NavigationServiceImpl(screenManager, serviceFactory, this::collapseSidebarIfOpen,user);
 
         setupScreenChangeListener();
 

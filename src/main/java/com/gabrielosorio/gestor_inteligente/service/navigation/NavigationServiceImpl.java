@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.service.navigation;
 
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.service.impl.ServiceFactory;
 import com.gabrielosorio.gestor_inteligente.view.checkout.CheckoutMovementController;
 import com.gabrielosorio.gestor_inteligente.view.checkout.CheckoutTabPaneController;
@@ -14,11 +15,14 @@ public class NavigationServiceImpl implements NavigationService {
     private final ScreenManager screenManager;
     private final ServiceFactory serviceFactory;
     private final Runnable sidebarCollapseCallback;
+    private final User user;
 
-    public NavigationServiceImpl(ScreenManager screenManager, ServiceFactory serviceFactory, Runnable sidebarCollapseCallback) {
+    public NavigationServiceImpl(ScreenManager screenManager, ServiceFactory serviceFactory,
+                                 Runnable sidebarCollapseCallback, User user) {
         this.screenManager = screenManager;
         this.serviceFactory = serviceFactory;
         this.sidebarCollapseCallback = sidebarCollapseCallback;
+        this.user = user;
     }
 
     /**
@@ -34,7 +38,7 @@ public class NavigationServiceImpl implements NavigationService {
      */
     public void openPointOfSale() {
         var productService = serviceFactory.getProductService();
-        var controller = new CheckoutTabPaneController(productService);
+        var controller = new CheckoutTabPaneController(productService,user);
 
         screenManager.loadScreen("fxml/sale/CheckoutTabPane.fxml", controller);
         collapseSidebarIfOpen();
@@ -72,7 +76,8 @@ public class NavigationServiceImpl implements NavigationService {
                 checkoutService,
                 saleCheckoutMovementService,
                 saleService,
-                checkoutMovementService
+                checkoutMovementService,
+                user
         );
 
         screenManager.loadScreen("fxml/sale/CheckoutMovement.fxml", controller);

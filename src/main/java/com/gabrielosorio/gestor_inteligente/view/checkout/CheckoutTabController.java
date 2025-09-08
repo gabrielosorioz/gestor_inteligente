@@ -3,6 +3,7 @@ package com.gabrielosorio.gestor_inteligente.view.checkout;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import com.gabrielosorio.gestor_inteligente.view.sale.SaleTableViewController;
 import com.gabrielosorio.gestor_inteligente.view.sale.SaleTableViewControllerImpl;
@@ -50,14 +51,16 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     private Node removeItemsAlert;
     private Node productNotFoundAlert;
     private final CheckoutTabPaneController checkoutTabPaneController;
+    private final User user;
     private InfoMessageController infoController;
     private AlertMessageController alertController;
 
 
 
-    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController, ProductService productService) {
+    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController, ProductService productService, User user) {
         this.checkoutTabPaneController = checkoutTabPaneController;
         this.productService = productService;
+        this.user = user;
     }
 
     @Override
@@ -339,7 +342,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     private void loadTableView() {
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/SaleTableView.fxml"));
-            SaleTableViewControllerImpl saleTableViewControllerImpl = new SaleTableViewControllerImpl(this);
+            SaleTableViewControllerImpl saleTableViewControllerImpl = new SaleTableViewControllerImpl(this,user);
             loader.setController(saleTableViewControllerImpl);
             TableView tableView = loader.load();
             configureTableViewLayout(tableView);

@@ -15,8 +15,9 @@ import java.io.IOException;
 public class GestorInteligenteApp extends Application {
     double x,y = 0;
     private static Stage pStage;
-    PSQLRepositoryFactory psqlRepositoryFactory = new PSQLRepositoryFactory(ConnectionFactory.getInstance(DBScheme.POSTGRESQL));
-    private ServiceFactory serviceFactory = new ServiceFactory(psqlRepositoryFactory);
+    final ConnectionFactory connectionFactory = ConnectionFactory.getInstance(DBScheme.POSTGRESQL);
+    PSQLRepositoryFactory psqlRepositoryFactory = new PSQLRepositoryFactory(connectionFactory);
+    private ServiceFactory serviceFactory = new ServiceFactory(psqlRepositoryFactory,connectionFactory);
     private ScreenLoaderService screenLoaderService = new ScreenLoaderServiceImpl(serviceFactory);;
 
     @Override

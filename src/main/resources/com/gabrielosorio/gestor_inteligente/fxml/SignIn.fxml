@@ -39,7 +39,8 @@
             <Insets left="5.0" />
          </padding>
       </HBox>
-      <Label layoutX="131.0" layoutY="228.0" prefHeight="17.0" prefWidth="185.0" styleClass="text-medium" stylesheets="@../css/signIn.css" text="Esqueceu a senha? Redefinir" />
-      <Label layoutX="178.0" layoutY="252.0" styleClass="text-medium" stylesheets="@../css/signIn.css" text="Cadastre-se" />
+      <Label layoutX="131.0" layoutY="228.0" prefHeight="17.0" prefWidth="191.0" styleClass="text-medium" stylesheets="@../css/signIn.css" text="Esqueceu a senha?" />
+      <Label fx:id="signUpLbl" layoutX="178.0" layoutY="249.0" styleClass="text-medium-blue" stylesheets="@../css/signIn.css" text="Cadastre-se" />
+      <Label fx:id="resetPasswordLbl" layoutX="250.0" layoutY="228.0" prefHeight="17.0" prefWidth="67.0" styleClass="text-medium-blue" stylesheets="@../css/signIn.css" text="Redefinir" />
    </children>
 </AnchorPane>

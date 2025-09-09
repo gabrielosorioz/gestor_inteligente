@@ -35,5 +35,6 @@ module com.gabrielosorio.gestor_inteligente {
     exports com.gabrielosorio.gestor_inteligente.view.checkout.helpers;
     opens com.gabrielosorio.gestor_inteligente.view.checkout.helpers to javafx.fxml;
     opens com.gabrielosorio.gestor_inteligente.view.signin to javafx.fxml;
+    opens com.gabrielosorio.gestor_inteligente.view.signup to javafx.fxml;
 
 }

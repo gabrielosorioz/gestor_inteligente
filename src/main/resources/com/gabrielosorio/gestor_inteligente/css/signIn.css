@@ -51,3 +51,16 @@
     -fx-font-size: 12px;
 }
 
+.text-medium-blue {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 12px;
+    -fx-text-fill: blue;
+}
+
+.text-medium-blue:hover {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 12px;
+    -fx-text-fill: #0000b2;
+    -fx-cursor: hand;
+}
+

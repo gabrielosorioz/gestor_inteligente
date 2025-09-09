@@ -23,6 +23,7 @@ public class ServiceFactory {
     private AuthenticationService authenticationService;
     private ScreenLoaderService screenLoaderService;
     private final ConnectionFactory connectionFactory;
+    private UserService userService;
 
 
     /**
@@ -108,5 +109,9 @@ public class ServiceFactory {
             screenLoaderService = new ScreenLoaderServiceImpl(this);
         }
         return screenLoaderService;
+    }
+
+    public UserService getUserService(){
+        return new UserServiceImpl(repositoryFactory.getUserRepository());
     }
 }

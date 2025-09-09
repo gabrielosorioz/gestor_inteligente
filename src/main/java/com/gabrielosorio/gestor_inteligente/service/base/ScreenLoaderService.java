@@ -14,4 +14,9 @@ public interface ScreenLoaderService {
     void loadMainApplication(User user) throws RuntimeException;
 
     void loadLogin(Stage stage) throws IOException;
+
+    void loadSignInScreen() throws RuntimeException;
+
+    void loadSignUpScreen(UserService userService) throws RuntimeException;
+
 }

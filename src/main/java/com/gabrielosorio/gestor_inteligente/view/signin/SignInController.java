@@ -3,15 +3,18 @@ package com.gabrielosorio.gestor_inteligente.view.signin;
 import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.service.base.AuthenticationService;
 import com.gabrielosorio.gestor_inteligente.service.base.ScreenLoaderService;
+import com.gabrielosorio.gestor_inteligente.service.base.UserService;
 import com.gabrielosorio.gestor_inteligente.service.impl.ServiceFactory;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -21,19 +24,24 @@ public class SignInController implements Initializable {
     @FXML private TextField username;
     @FXML private TextField password;
     @FXML private Button loginButton;
+    @FXML private Label resetPasswordLbl;
+    @FXML private Label signUpLbl;
 
     private final AuthenticationService authenticationService;
     private final ScreenLoaderService screenLoaderService;
+    private final UserService userService;
 
     public SignInController(ServiceFactory serviceFactory) {
         this.authenticationService = serviceFactory.getAuthenticationService();
         this.screenLoaderService = serviceFactory.getScreenLoaderService();
+        userService = serviceFactory.getUserService();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupEventHandlers();
         setupFocusManagement();
+        setupLabelClickHandlers();
     }
 
     private void setupEventHandlers() {
@@ -60,6 +68,56 @@ public class SignInController implements Initializable {
                 event.consume();
             }
         });
+    }
+
+    private void setupLabelClickHandlers() {
+        signUpLbl.setOnMouseClicked(e -> {
+            showSignUpForm();
+        });
+        signUpLbl.setStyle("-fx-cursor: hand;");
+
+        resetPasswordLbl.setOnMouseClicked(this::onResetPasswordClicked);
+        resetPasswordLbl.setStyle("-fx-cursor: hand;");
+
+        // Adicionar efeito hover aos labels
+        setupLabelHoverEffects();
+    }
+
+    private void setupLabelHoverEffects() {
+        // Efeito hover para signUpLbl
+        signUpLbl.setOnMouseEntered(event -> {
+            signUpLbl.setStyle("-fx-cursor: hand; -fx-text-fill: #0066cc; -fx-underline: true;");
+        });
+
+        signUpLbl.setOnMouseExited(event -> {
+            signUpLbl.setStyle("-fx-cursor: hand;");
+        });
+
+        // Efeito hover para resetPasswordLbl
+        resetPasswordLbl.setOnMouseEntered(event -> {
+            resetPasswordLbl.setStyle("-fx-cursor: hand; -fx-text-fill: #0066cc; -fx-underline: true;");
+        });
+
+        resetPasswordLbl.setOnMouseExited(event -> {
+            resetPasswordLbl.setStyle("-fx-cursor: hand;");
+        });
+    }
+
+    private void showSignUpForm() {
+        try {
+            screenLoaderService.loadSignUpScreen(userService);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erro do Sistema",
+                    "Não foi possível carregar a tela de cadastro. Tente novamente.",
+                    Alert.AlertType.ERROR);
+        }
+    }
+
+    private void onResetPasswordClicked(MouseEvent event) {
+        showAlert("Funcionalidade em Desenvolvimento",
+                "A funcionalidade de redefinição de senha ainda não está disponível.",
+                Alert.AlertType.INFORMATION);
     }
 
     private void handleKeyPressed(KeyEvent event) {

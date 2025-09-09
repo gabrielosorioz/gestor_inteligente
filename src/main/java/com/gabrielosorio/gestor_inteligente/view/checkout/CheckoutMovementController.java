@@ -40,7 +40,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
 
     // Componentes da UI
     @FXML private Label salesAvg, canceled, cashMethod, cost, creditMethod, debitMethod, grossProfit,
-            grossProfitMargin, inflow, initialCash, outflow, pixMethod, qtdSales, statusLbl, totalSale;
+            grossProfitMargin, inflow, initialCash, outflow, pixMethod, qtdSales, statusLbl, totalSale, roleAndNameLbl;
     @FXML private DatePicker startDate, endDate;
     @FXML private AnchorPane mainContent, tableContent;
     @FXML private ImageView statusView;
@@ -80,6 +80,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         PaymentEventBus.getInstance().register(this);
+        roleAndNameLbl.setText(user.getRole().getName() + ": " +user.getFullName());
         setupDatePickers();
         initializeTableView();
         loadMovementsData();

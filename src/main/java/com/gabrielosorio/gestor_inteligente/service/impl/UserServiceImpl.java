@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
                 return UserRegistrationResult.failure("Email já está em uso por outro usuário.");
             }
 
+            Optional<User> existingUserByCpf = userRepository.findUserByCpf(formatCPF(request.getCpf()));
+            if (existingUserByCpf.isPresent()) {
+                return UserRegistrationResult.failure("CPF já está cadastrado no sistema.");
+            }
+
             // Criar novo usuário
             User newUser = createUserFromRequest(request);
 

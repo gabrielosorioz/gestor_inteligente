@@ -194,7 +194,7 @@ public class SignUpController implements Initializable {
     }
 
     private void performRegistration() {
-        // Criar o request com os dados dos campos
+
         UserRegistrationRequest request = new UserRegistrationRequest(
                 firstNameField.getText(),
                 lastNameField.getText(),

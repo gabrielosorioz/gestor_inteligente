@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface UserRepository extends RepositoryStrategy<User, UUID> {
     Optional<User> findUserByEmail(String email);
+    Optional<User> findUserByCpf(String cpf);
 }

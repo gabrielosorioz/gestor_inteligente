@@ -1,0 +1,129 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Regular.ttf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../font/poppins/Poppins-Bold.ttf');
+    font-weight: bold;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.table-row-cell {
+    -fx-border-color: #e5e5e5;
+    -fx-border-width: 0 0 1.5px 0;
+    -fx-background-color: #fff;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #d6d6d6;
+}
+
+/* Estilo das células da tabela */
+.table-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #000000;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-size: 16px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: normal;
+    -fx-border-color: transparent;
+    -fx-padding: 3px;
+    -fx-cursor: hand;
+}
+
+
+
+/* Estilo do cabeçalho da tabela */
+.table-view .column-header-background {
+    -fx-background-color: #fff;
+    -fx-border-width: 0 0 2.0 0px;
+    -fx-border-color: #CCC;
+    -fx-background-radius: 15 15 0 0px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-size: 25px;
+    -fx-border-width: 0; /* Remove borda do cabeçalho */
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #191919;
+}
+
+.table-view {
+    -fx-border-color: transparent; /* Remove borda ao redor da tabela */
+    -fx-background-color: transparent; /* Remove fundo ao redor da tabela */
+}
+
+/* ListCell Vertical Scroll Bar */
+.table-view .scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color: #f0f0f0;
+}
+
+.table-view .scroll-bar:vertical .increment-arrow,
+.table-view .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: #c0c0c0;
+}
+
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #c5c5c5;
+    -fx-background-insets: 2;
+    -fx-background-radius: 5;
+}
+
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #a2a2a2;
+}
+
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: #e0e0e0;
+    -fx-background-insets: 0;
+}
+
+.table-row-cell:empty .table-cell {
+    -fx-pref-height: 0px;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.table-row-cell:empty {
+    -fx-pref-height: 0px;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+.table-row-cell {
+    -fx-pref-height: 30px;
+}
+
+.field {
+    -fx-background-color: #fff;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: normal;
+    -fx-font-size: 16px;
+    -fx-border-width: 1.5 1.5 2.7 1.5px;
+    -fx-border-color: #cccccc;
+    -fx-text-fill: black;
+}
+
+.field:hover {
+    -fx-background-color: #eff0f0;
+}
+
+.field:focused {
+    -fx-border-color: #7f7f7f;
+}
+
+

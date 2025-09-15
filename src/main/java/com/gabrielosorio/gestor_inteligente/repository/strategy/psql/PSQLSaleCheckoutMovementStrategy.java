@@ -44,6 +44,7 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
         Map<Long, Product> productsMap = new HashMap<>();
         Map<Long, Category> categoriesMap = new HashMap<>();
         Map<Long, Supplier> suppliersMap = new HashMap<>();
+        Map<String, User> usersMap = new HashMap<>(); // Cache para usuários usando UUID como String
 
         while (rs.next()) {
             // Extract SaleCheckoutMovement data
@@ -60,13 +61,67 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                 paymentsMap.put(paymentId, payment);
             }
 
+            // Process Users
+            // User que abriu o checkout (sempre existe)
+            String openedByUserId = rs.getString("opened_by_user_id");
+            if (!usersMap.containsKey(openedByUserId)) {
+                User openedByUser = new User();
+                openedByUser.setId(UUID.fromString(openedByUserId));
+                openedByUser.setFirstName(rs.getString("opened_by_user_first_name"));
+                openedByUser.setLastName(rs.getString("opened_by_user_last_name"));
+                openedByUser.setCellphone(rs.getString("opened_by_user_cellphone"));
+                openedByUser.setEmail(rs.getString("opened_by_user_email"));
+                openedByUser.setCpf(rs.getString("opened_by_user_cpf"));
+                Role role = new Role();
+                role.setId(rs.getLong("opened_by_user_role_id"));
+                openedByUser.setRole(role);
+                openedByUser.setActive(rs.getBoolean("opened_by_user_active"));
+                openedByUser.setLastLogin(rs.getTimestamp("opened_by_user_last_login") != null ?
+                        rs.getTimestamp("opened_by_user_last_login").toLocalDateTime() : null);
+                openedByUser.setCreatedAt(rs.getTimestamp("opened_by_user_created_at") != null ?
+                        rs.getTimestamp("opened_by_user_created_at").toLocalDateTime() : null);
+                openedByUser.setUpdatedAt(rs.getTimestamp("opened_by_user_updated_at") != null ?
+                        rs.getTimestamp("opened_by_user_updated_at").toLocalDateTime() : null);
+                openedByUser.setCreatedBy(rs.getString("opened_by_user_created_by"));
+                openedByUser.setUpdatedBy(rs.getString("opened_by_user_updated_by"));
+
+                usersMap.put(openedByUserId, openedByUser);
+            }
+
+            // User que fechou o checkout (pode ser null)
+            User closedByUser = null;
+            String closedByUserId = rs.getString("closed_by_user_id");
+            if (closedByUserId != null && !usersMap.containsKey(closedByUserId)) {
+                closedByUser = new User();
+                closedByUser.setId(UUID.fromString(closedByUserId));
+                closedByUser.setFirstName(rs.getString("closed_by_user_first_name"));
+                closedByUser.setLastName(rs.getString("closed_by_user_last_name"));
+                closedByUser.setCellphone(rs.getString("closed_by_user_cellphone"));
+                closedByUser.setEmail(rs.getString("closed_by_user_email"));
+                closedByUser.setCpf(rs.getString("closed_by_user_cpf"));
+                Role role = new Role();
+                role.setId(rs.getLong("closed_by_user_role_id"));
+                closedByUser.setRole(role);
+                closedByUser.setActive(rs.getBoolean("closed_by_user_active"));
+                closedByUser.setLastLogin(rs.getTimestamp("closed_by_user_last_login") != null ?
+                        rs.getTimestamp("closed_by_user_last_login").toLocalDateTime() : null);
+                closedByUser.setCreatedAt(rs.getTimestamp("closed_by_user_created_at") != null ?
+                        rs.getTimestamp("closed_by_user_created_at").toLocalDateTime() : null);
+                closedByUser.setUpdatedAt(rs.getTimestamp("closed_by_user_updated_at") != null ?
+                        rs.getTimestamp("closed_by_user_updated_at").toLocalDateTime() : null);
+                closedByUser.setCreatedBy(rs.getString("closed_by_user_created_by"));
+                closedByUser.setUpdatedBy(rs.getString("closed_by_user_updated_by"));
+
+                usersMap.put(closedByUserId, closedByUser);
+            } else if (closedByUserId != null) {
+                closedByUser = usersMap.get(closedByUserId);
+            }
+
             // Process Checkout if not already in cache
             long checkoutId = rs.getLong("checkout_id");
             if (!checkoutsMap.containsKey(checkoutId)) {
-                Checkout checkout = new Checkout();
-
-                new Checkout(
-                        rs.getLong("id"),
+                Checkout checkout = new Checkout(
+                        rs.getLong("checkout_id"),
                         CheckoutStatus.valueOf(rs.getString("checkout_status")),
                         rs.getTimestamp("checkout_opened_at").toLocalDateTime(),
                         rs.getTimestamp("checkout_closed_at") != null ? rs.getTimestamp("checkout_closed_at").toLocalDateTime() : null,
@@ -74,8 +129,8 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                         rs.getBigDecimal("checkout_total_entry"),
                         rs.getBigDecimal("checkout_total_exit"),
                         rs.getBigDecimal("checkout_closing_balance"),
-                        new User(),
-                        new User(),
+                        usersMap.get(openedByUserId), // User que abriu
+                        closedByUser, // User que fechou (pode ser null)
                         rs.getTimestamp("checkout_created_at") != null ? rs.getTimestamp("checkout_created_at").toLocalDateTime() : null,
                         rs.getTimestamp("checkout_updated_at") != null ? rs.getTimestamp("checkout_updated_at").toLocalDateTime() : null
                 );
@@ -138,7 +193,6 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                     supplier = suppliersMap.get(supplierId);
                 }
 
-
                 Product product = Product.builder()
                         .id(rs.getLong("product_product_id"))
                         .description(rs.getString("product_description"))
@@ -154,7 +208,6 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                         .productCode(rs.getLong("product_product_code"))
                         .dateCreate(rs.getTimestamp("product_date_create"))
                         .build();
-
 
                 productsMap.put(productId, product);
             }
@@ -219,7 +272,6 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
         // Return the result list of SaleCheckoutMovement objects
         return new ArrayList<>(saleCheckoutMovementsMap.values());
     }
-
     @Override
     public SaleCheckoutMovement add(SaleCheckoutMovement saleCheckoutMovement) {
         var query = qLoader.getQuery("insertSaleCheckoutMovement");

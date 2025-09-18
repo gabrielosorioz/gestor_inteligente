@@ -5,7 +5,7 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryS
 
 import java.util.Optional;
 
-public interface CheckoutRepository extends RepositoryStrategy<Checkout> {
+public interface CheckoutRepository extends RepositoryStrategy<Checkout,Long> {
     /**
      * Finds the open checkout for today, if any.
      *

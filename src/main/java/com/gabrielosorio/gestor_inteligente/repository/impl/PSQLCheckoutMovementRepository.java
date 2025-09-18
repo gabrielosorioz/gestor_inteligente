@@ -10,9 +10,9 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryS
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class PSQLCheckoutMovementRepository extends Repository<CheckoutMovement> implements CheckoutMovementRepository {
+public class PSQLCheckoutMovementRepository extends Repository<CheckoutMovement,Long> implements CheckoutMovementRepository {
 
-    public PSQLCheckoutMovementRepository(RepositoryStrategy<CheckoutMovement> strategy) {
+    public PSQLCheckoutMovementRepository(RepositoryStrategy<CheckoutMovement,Long> strategy) {
         init(strategy);
     }
 

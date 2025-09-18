@@ -10,12 +10,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="mainContent" prefHeight="800.0" prefWidth="1300.0" styleClass="body" stylesheets="@../../css/checkoutMovement.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="mainContent" prefHeight="800.0" prefWidth="1300.0" styleClass="body" stylesheets="@../../css/checkoutMovement.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane layoutX="199.0" layoutY="6.0" prefHeight="179.0" prefWidth="1300.0" styleClass="header" stylesheets="@../../css/home.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label layoutX="81.0" layoutY="65.0" styleClass="title" stylesheets="@../../css/home.css" text="Movimento do caixa" />
-            <Label layoutX="81.0" layoutY="93.0" prefHeight="20.0" prefWidth="231.0" styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Admnistrador: Gabriel Osorio" />
+            <Label fx:id="roleAndNameLbl" layoutX="81.0" layoutY="93.0" prefHeight="20.0" prefWidth="231.0" styleClass="subtitle" stylesheets="@../../css/checkoutMovement.css" text="Admnistrador: Gabriel Osorio" />
             <DatePicker fx:id="startDate" editable="false" layoutX="329.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="Início" />
             <DatePicker fx:id="endDate" editable="false" layoutX="491.0" layoutY="117.0" prefHeight="30.0" prefWidth="146.0" promptText="FIm" />
             <Label layoutX="335.0" layoutY="93.0" styleClass="subtitle-black" stylesheets="@../../css/checkoutMovement.css" text="De:" />

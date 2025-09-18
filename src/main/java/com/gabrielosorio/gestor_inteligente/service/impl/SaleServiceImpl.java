@@ -1,4 +1,5 @@
 package com.gabrielosorio.gestor_inteligente.service.impl;
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
 import com.gabrielosorio.gestor_inteligente.exception.SaleProcessingException;
 import com.gabrielosorio.gestor_inteligente.model.*;
@@ -28,8 +29,12 @@ public class SaleServiceImpl implements SaleService {
     private final CheckoutService checkoutService;
     private final ProductService productService;
     private final SaleCheckoutMovementService saleCheckoutMovementService;
+    private final ConnectionFactory connectionFactory;
 
-    public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService, SalePaymentService salePaymentService, CheckoutMovementService checkoutMovementService, CheckoutService checkoutService, ProductService productService, SaleCheckoutMovementService saleCheckoutMovementService) {
+    public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService,
+                           SalePaymentService salePaymentService, CheckoutMovementService checkoutMovementService,
+                           CheckoutService checkoutService, ProductService productService,
+                           SaleCheckoutMovementService saleCheckoutMovementService, ConnectionFactory connectionFactory) {
         this.saleRepository = saleRepository;
         this.saleProductService = saleProductService;
         this.salePaymentService = salePaymentService;
@@ -37,6 +42,7 @@ public class SaleServiceImpl implements SaleService {
         this.checkoutService = checkoutService;
         this.productService = productService;
         this.saleCheckoutMovementService = saleCheckoutMovementService;
+        this.connectionFactory = connectionFactory;
     }
 
 
@@ -47,7 +53,7 @@ public class SaleServiceImpl implements SaleService {
         var checkout = checkoutService.openCheckout(user);
 
         try {
-            TransactionManagerV2.beginTransaction();
+            TransactionManagerV2.beginTransaction(connectionFactory);
 
             Sale savedSale = save(sale);
 

@@ -7,9 +7,9 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryS
 
 import java.util.Optional;
 
-public class PSQLCheckoutRepository extends Repository<Checkout> implements CheckoutRepository {
+public class PSQLCheckoutRepository extends Repository<Checkout,Long> implements CheckoutRepository {
 
-    public PSQLCheckoutRepository(RepositoryStrategy<Checkout> strategy){
+    public PSQLCheckoutRepository(RepositoryStrategy<Checkout,Long> strategy){
         init(strategy);
     }
     /**

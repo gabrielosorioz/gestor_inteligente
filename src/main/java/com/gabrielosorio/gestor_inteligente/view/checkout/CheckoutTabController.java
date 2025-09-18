@@ -3,21 +3,29 @@ package com.gabrielosorio.gestor_inteligente.view.checkout;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
+import com.gabrielosorio.gestor_inteligente.service.base.UserService;
 import com.gabrielosorio.gestor_inteligente.view.sale.SaleTableViewController;
 import com.gabrielosorio.gestor_inteligente.view.sale.SaleTableViewControllerImpl;
 import com.gabrielosorio.gestor_inteligente.view.shared.*;
+import com.gabrielosorio.gestor_inteligente.view.signup.SignUpController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -50,14 +58,16 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     private Node removeItemsAlert;
     private Node productNotFoundAlert;
     private final CheckoutTabPaneController checkoutTabPaneController;
+    private final User user;
     private InfoMessageController infoController;
     private AlertMessageController alertController;
 
 
 
-    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController, ProductService productService) {
+    public CheckoutTabController(CheckoutTabPaneController checkoutTabPaneController, ProductService productService, User user) {
         this.checkoutTabPaneController = checkoutTabPaneController;
         this.productService = productService;
+        this.user = user;
     }
 
     @Override
@@ -78,6 +88,11 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
 
         if (keyCode == KeyCode.F3) {
             finalizeSale();
+        }
+
+
+        if (keyCode == KeyCode.F1) {
+            findProductInNewWindow();
         }
     }
 
@@ -171,6 +186,10 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
             var qtdStr = qtdField.getText().trim();
             boolean isCodeFieldEmpty = search.isEmpty() || search.isBlank();
 
+            if (pressedKey.equals(KeyCode.F1)) {
+                findProductInNewWindow();
+            }
+
             if (pressedKey.equals(KeyCode.F3)) {
                 finalizeSale();
             }
@@ -221,6 +240,11 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
 
         qtdField.setOnKeyPressed(event -> {
             KeyCode pressedKey = event.getCode();
+
+
+            if (pressedKey.equals(KeyCode.F1)) {
+                findProductInNewWindow();
+            }
 
             if (KeyCode.F3 == event.getCode()) {
                 finalizeSale();
@@ -339,7 +363,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     private void loadTableView() {
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/sale/SaleTableView.fxml"));
-            SaleTableViewControllerImpl saleTableViewControllerImpl = new SaleTableViewControllerImpl(this);
+            SaleTableViewControllerImpl saleTableViewControllerImpl = new SaleTableViewControllerImpl(this,user);
             loader.setController(saleTableViewControllerImpl);
             TableView tableView = loader.load();
             configureTableViewLayout(tableView);
@@ -385,6 +409,36 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
             return;
         }
         saleTableOp.showPaymentScreen();
+    }
+
+    private void findProductInNewWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/FindProductPOS.fxml"));
+            loader.setController(new FindProductPOSController(productService));
+
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+
+            // Criar um novo stage para a janela de pesquisa
+            Stage findProductStage = new Stage();
+            findProductStage.setScene(scene);
+            findProductStage.setTitle("Pesquisar Produto - Gestor Inteligente");
+            findProductStage.setResizable(true);
+
+            // Definir como modal (opcional)
+            findProductStage.initModality(Modality.APPLICATION_MODAL);
+            findProductStage.initOwner(GestorInteligenteApp.getPrimaryStage()); // stage atual como owner
+
+            // Centralizar na tela
+            findProductStage.centerOnScreen();
+
+            // Mostrar e aguardar
+            findProductStage.showAndWait();
+
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar a tela de pesquisa de produto: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override

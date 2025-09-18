@@ -19,12 +19,12 @@ public class FindOpenCheckoutForToday extends AbstractSpecification<Checkout> {
 
     @Override
     public String toSql() {
-        return getQuery("findOpenCheckoutForToday");
+        return getQuery("findOpenCheckoutForTodayWithUsers");
     }
 
     @Override
     public List<Object> getParameters() {
-        return List.of(CheckoutStatus.OPEN.getName(), today);
+        return List.of(CheckoutStatus.OPEN.name(), today);
     }
 
     @Override

@@ -6,6 +6,6 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsert
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import java.util.List;
 
-public interface SaleCheckoutMovementRepository extends RepositoryStrategy<SaleCheckoutMovement>, BatchInsertable<SaleCheckoutMovement> {
+public interface SaleCheckoutMovementRepository extends RepositoryStrategy<SaleCheckoutMovement,Long>, BatchInsertable<SaleCheckoutMovement> {
     List<SaleCheckoutMovement> findSalesInCheckoutMovements(List<CheckoutMovement> checkoutMovements);
 }

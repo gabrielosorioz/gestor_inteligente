@@ -15,20 +15,21 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrategyV2<CheckoutMovement> implements RepositoryStrategy<CheckoutMovement>, BatchInsertable<CheckoutMovement> {
+public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrategyV2<CheckoutMovement,Long> implements RepositoryStrategy<CheckoutMovement,Long>, BatchInsertable<CheckoutMovement> {
 
     private final QueryLoader qLoader;
     private final PSQLCheckoutStrategy checkoutStrategy;
     private final PSQLPaymentStrategy paymentStrategy;
     private final PSQLCheckoutMovementTypeStrategy checkoutMovementTypeStrategy;
-    private Logger log = Logger.getLogger(getClass().getName());
+    private final Logger log = Logger.getLogger(getClass().getName());
 
 
-    public PSQLCheckoutMovementStrategy() {
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
-        this.checkoutStrategy = new PSQLCheckoutStrategy(ConnectionFactory.getInstance());
-        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy();
-        this.paymentStrategy = new PSQLPaymentStrategy();
+    public PSQLCheckoutMovementStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
+        this.checkoutStrategy = new PSQLCheckoutStrategy(connectionFactory);
+        this.checkoutMovementTypeStrategy = new PSQLCheckoutMovementTypeStrategy(connectionFactory);
+        this.paymentStrategy = new PSQLPaymentStrategy(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override
@@ -71,7 +72,7 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
 
 
     @Override
-    public Optional<CheckoutMovement> find(long id) {
+    public Optional<CheckoutMovement> find(Long id) {
         var query = qLoader.getQuery("findCheckoutMovementById");
         try (var connection = getConnection();
              var ps = connection.prepareStatement(query)) {
@@ -184,7 +185,7 @@ public class PSQLCheckoutMovementStrategy extends TransactionalRepositoryStrateg
 
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteCheckoutMovementById");
         try (var connection = getConnection();
              var ps = connection.prepareStatement(query)) {

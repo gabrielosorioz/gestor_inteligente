@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> implements RepositoryStrategy<Sale> {
+public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale,Long> implements RepositoryStrategy<Sale,Long> {
 
     private final QueryLoader qLoader;
     private final  Logger log = Logger.getLogger(getClass().getName());
@@ -30,16 +30,9 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
         log.info(() -> String.format("[%s#%s] %s", className, methodName, message));
     }
 
-    private void logError(String message, Exception e) {
-        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
-        String methodName = stackTraceElement.getMethodName();
-        String className = this.getClass().getSimpleName(); // Nome da classe sem pacote
-        log.log(Level.SEVERE, String.format("[%s#%s] %s", className, methodName, message), e);
-    }
-
-
     public PSQLSaleStrategy(ConnectionFactory connectionFactory){
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+        super(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override
@@ -85,7 +78,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
     }
 
     @Override
-    public Optional<Sale> find(long id) {
+    public Optional<Sale> find(Long id) {
         var query = qLoader.getQuery("findSaleById");
         Connection connection = null;
         try {
@@ -224,7 +217,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale> im
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteSaleById");
         Connection connection = null;
         int affectedRows;

@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Product> implements ProductRepositoryStrategy {
+public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Product,Long> implements ProductRepositoryStrategy {
 
     private final QueryLoader qLoader;
     private Logger log = Logger.getLogger(getClass().getName());
@@ -27,9 +27,10 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Produ
 
 
     public PSQLProductStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
         categoryStrategy = new PSQLCategoryStrategy(connectionFactory);
         supplierStrategy = new PSQLSupplierStrategy(connectionFactory);
-        qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+        qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override
@@ -85,7 +86,7 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Produ
     }
 
     @Override
-    public Optional<Product> find(long id) {
+    public Optional<Product> find(Long id) {
         var query = qLoader.getQuery("findProductById");
         Connection connection = null;
 
@@ -231,7 +232,7 @@ public class PSQLProductStrategy extends TransactionalRepositoryStrategyV2<Produ
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteProductById");
         Connection connection = null;
         try {

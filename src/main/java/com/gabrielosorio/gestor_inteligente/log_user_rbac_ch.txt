@@ -1,0 +1,4289 @@
+commit f3f37d089f0d623c287387cadd2340749e22f5e2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 15 12:53:31 2025 -0300
+
+    feat(PSQLSaleCheckoutMovementStrategy): add user mapping and fix checkout ID mapping
+    
+    Implemented user mapping (openedByUser and closedByUser) with UUID-based caching
+    
+    Fixed checkout ID mapping to use correct column name ("checkout_id" instead of "id")
+    
+    Added null-safe handling for closedByUser and temporal fields
+    
+    Maintained existing mappings for products, categories, and suppliers
+    
+    BREAKING CHANGES:
+    
+    Requires additional user-related columns in the underlying SQL query:
+    
+    opened_by_user_id, opened_by_user_first_name, opened_by_user_last_name, opened_by_user_cellphone
+    
+    opened_by_user_email, opened_by_user_cpf, opened_by_user_role_id, opened_by_user_active
+    
+    opened_by_user_last_login, opened_by_user_created_at, opened_by_user_updated_at
+    
+    opened_by_user_created_by, opened_by_user_updated_by
+    
+    closed_by_user_* (same set of columns as opened_by_user_*)
+    
+    Checkout constructor now requires full User objects instead of empty placeholders
+
+commit 34f7a79767fa2051c92ef917428b9c97420c8243
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 15 11:50:04 2025 -0300
+
+    feat(checkout): add product search modal and enhance table configurability
+    
+    Add F1 shortcut in CheckoutTabController to open new product search modal window
+    
+    Implement FindProductPOSController with searchable product table and custom row factory
+    
+    Create ProductSearchableTable component with configurable presets and search functionality
+    
+    Refactor ProductTableFactory to support preset-based and custom width configurations
+    
+    Fix ProductSearcher package declaration and add necessary imports
+    
+    Rename SearchFieldConfig to SearchFieldConfigurator and complete class implementation
+
+commit f2b2ed1602eb7fd418a95e496ec6b17fa5b03f2b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 9 16:58:36 2025 -0300
+
+    feat(checkout): display user role and name
+
+commit bd6565b5eb4f89593680e039972d2d84028dd790
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 9 14:55:28 2025 -0300
+
+    fix(queries): fix the sensitive case to find user
+
+commit 49f58236e0e3e89add6b9ef7ad5a57226f30b2d3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 9 14:49:09 2025 -0300
+
+    feat(user): add CPF-based user lookup during registration
+
+commit 9368ff343235591e3cdeb756431240b2f2fb80d3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 9 13:41:48 2025 -0300
+
+    feat(auth): implement user registration with validation and UI
+    
+    Adding UserRegistrationRequest DTO with fields and getters/setters
+    
+    Adding UserRegistrationResult DTO with success status and user data
+    
+    Extending ScreenLoaderService interface with new methods for signin/signup screens
+    
+    Extending UserService interface with registerUser method
+    
+    Modifying NotificationServiceImpl to support parent stage and animations
+    
+    Adding UserService to ServiceFactory
+    
+    Implementing UserServiceImpl with user registration logic
+    
+    Extending ScreenLoaderServiceImpl to handle signup/signin screen loading
+    
+    Adding extensive animation support to ToastNotification
+    
+    Enhancing SignInController with signup functionality and UI improvements
+    
+    Creating a complete SignUpController with form handling and validation
+    
+    Adding StageUtils helper class
+
+commit e26878c0d3cca49421d239d2480948cc89fc2036
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 8 12:05:09 2025 -0300
+
+    remove trash code
+
+commit cd0022e97bafbe8479fe978fa6a46e428c19c8e4
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 8 12:03:07 2025 -0300
+
+    feat(auth): implement user context propagation throughout checkout flow
+    
+    Replace hardcoded user creation with injected user object from application startup. User instance is now passed through constructor injection to NavigationService, CheckoutTabPaneController, CheckoutTabController, CheckoutMovementController, and PaymentViewHelper to maintain consistent user context across all checkout components.
+
+commit 915e9be947be24674a68ee4594f161d2e71185b3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 8 12:02:44 2025 -0300
+
+    feat(auth): implement user context propagation throughout checkout flow
+    
+    Replace hardcoded user creation with injected user object from application startup. User instance is now passed through constructor injection to NavigationService, CheckoutTabPaneController, CheckoutTabController, CheckoutMovementController, and PaymentViewHelper to maintain consistent user context across all checkout components.
+
+commit 9051bc85af05d8c77d589b117aff38ea69c79676
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Sep 6 16:51:46 2025 -0300
+
+    refactor(checkout): simplify enum and enhance repository tests
+    
+    Remove description field from CheckoutStatus enum
+    
+    Update database strategies to use enum name directly
+    
+    Add comprehensive integration tests for checkout repository
+    
+    Implement proper user association handling in checkout operations
+
+commit 7e715533b3c27083ccb1861b80c10767a5f2ca7a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 18:56:29 2025 -0300
+
+    refactor(repositories): generalize repository pattern with generic ID and change User ID to UUID
+    
+    Changed User ID type from long to UUID
+    
+    Added generic ID type parameter to RepositoryStrategy and all repository interfaces/implementations
+    
+    Updated PSQLUserStrategy to handle UUID operations
+    
+    This change makes the repository pattern more flexible by supporting different ID types while transitioning User entities to use UUIDs for better scalability and uniqueness guarantees.
+
+commit f19b75249c2fdf169544cd252ee9a832a95d38ae
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 13:27:36 2025 -0300
+
+    refactor(app): load login via screen loader service
+
+commit 06aa12650be9c1599dd7e4e4d4d8586c3fd53f13
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 13:20:11 2025 -0300
+
+    delete H2DB product strategy
+
+commit 88c9de6197318d0b270a25cc5b127c3036ce5499
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 13:18:22 2025 -0300
+
+    refactor(navigation): implement service-based navigation
+
+commit b6a4646c7e4721335fe952bde1e1e27b3c7ed747
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 13:16:05 2025 -0300
+
+    chore/build: add JBcrypt to dependencies
+
+commit 322fe634a02b27e29c7d54d2ff12d2ce23469192
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 13:13:45 2025 -0300
+
+    fix(psql): enhance user role mapping with logging and duplicate checks
+
+commit e87e0b6d5e450cc3ba0d1156d904d68f0115fffe
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 13:10:50 2025 -0300
+
+    add new icons
+
+commit f18a5ab7a5ad1f28eb01bceef575e22407315730
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 13:09:49 2025 -0300
+
+    feat(auth): add sign-in view and controller with authentication logic
+
+commit ada046f8e4c28ba0cc807c9d7ae2c0dfef13c742
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 13:05:51 2025 -0300
+
+    feat(ui): implement ScreenLoaderService for login and main screens
+    
+    Introduce ScreenLoaderService interface and ScreenLoaderServiceImpl
+    to encapsulate FXML loading for SignIn and MainNavigation views.
+    Integrate with ServiceFactory for dependency injection and stage
+    control, providing typed methods (loadLogin, loadMainApplication).
+
+commit d8a672ea8af0afd6e46b3dd73ab1da706b26fd10
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 5 10:29:30 2025 -0300
+
+    feat(auth): implement AuthenticationService for user login, permissions, and password management
+
+commit 74961e3cbfc1be67907aa5dc9c2f7e645cfba31c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 1 14:46:22 2025 -0300
+
+    test(repository): add comprehensive UserRepository test suite
+
+commit dbdfb970e068e2496cd0a85b7452c2ec228dd9af
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 1 14:25:28 2025 -0300
+
+    build(test-deps): upgrade JUnit to version 5.12.2
+    
+    Replace JUnit 4 with JUnit Jupiter API for modern testing features and consistency.
+
+commit 8a850e2110af8908cbcca3e2e8f193419a04228f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 1 14:24:39 2025 -0300
+
+    refactor(database): support multiple database instances
+    
+    Adapt transaction management and repository strategies to use ConnectionFactory per database scheme. Fix user role-permission mapping in PSQLUserStrategy and add POSTGRESQL_TEST scheme.
+
+commit e817b0f450c4dd867ed55d35159c3919bfd182f6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 27 11:49:43 2025 -0300
+
+    build(test-deps): upgrade JUnit to version 5.12.2
+    
+    Replace JUnit 4 with JUnit Jupiter API for modern testing features and consistency.
+
+commit 39df6189776b0a1082564099b1bfbe7d79d1a4d8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 27 11:34:21 2025 -0300
+
+    remove trash code
+
+commit fb08fcf281915194e0a74fe1bb6ab76a0c941d20
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 27 11:34:12 2025 -0300
+
+    remove trash code
+
+commit b786bb88ebc8baaae8bf02bb7792fbc12b056e63
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 27 11:24:10 2025 -0300
+
+    feat(user): add PostgreSQL user repository implementation
+    
+    Introduce UserRepository with PostgreSQL-specific strategy and queries. Includes full CRUD operations, role and permission mapping, and email-based user lookup.
+    
+    Implement PSQLUserStrategy for database operations
+    
+    Add UserRepository to RepositoryFactory
+    
+    Include SQL queries in properties file
+
+commit 394626b5d345f2077d4f3db991b69357ebe83b40
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 25 20:00:21 2025 -0300
+
+    feat(model): enhance domain entities with RBAC capabilities
+    
+    Added comprehensive attributes and methods to support Role-Based Access Control:
+    
+    Permission: added description, category, active status, timestamps and equals/hashCode
+    
+    Role: added description, active status, timestamps, permission management methods
+    
+    RolePermission: implemented full entity with role-permission mapping
+    
+    User: added active status, last login, audit fields and permission checking
+    
+    PermissionType: populated with complete set of system permissions
+
+commit 7b8424535b14f0f4e87083493cb730783f3d3eee
+Merge: 77d1395 ce51b2e
+Author: Gabriel Osório <123821402+gabrielosorioz@users.noreply.github.com>
+Date:   Thu Apr 24 23:16:15 2025 -0300
+
+    Merge pull request #9 from gabrielosorioz/implement-controller-for-the-cash-movement-view
+    
+    Implement controller for the cash movement view
+
+commit ce51b2ec83c739196b6c80deba1a767eee9174f6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Apr 23 16:58:59 2025 -0300
+
+    refactor(checkout): implementa padrão presenter para lógica de visualização
+    
+    - Extrai lógica de tabela para `CheckoutMovementTablePresenter`
+    - Isola cálculos financeiros em `PaymentSummaryPresenter`
+    - Remove acoplamento direto entre controller e TableViewFactory
+    - Simplifica atualização de dados com métodos `refreshData()`
+    - Padroniza nomenclatura de componentes (ex: `cMTableView` → `movementsTableView`)
+    - Adiciona DTOs especializados (`PaymentSummary`, `SalesSummary`)
+    
+    BREAKING CHANGE:
+    - Métodos de atualização agora usam presenters em vez de lógica direta
+    - Assinatura modificada em `updatePaymentSummary(List<CheckoutMovement>)`
+
+commit daf304ceb7351b5937862b3f89f7b82ae3da43c6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Apr 23 12:41:46 2025 -0300
+
+    reestruturação de pacotes
+    
+    - organiza as views principais em pacote
+    para melhor manutenão e legibilidade de código
+
+commit 442cd685366939e089395de4b5b6481dad620427
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Apr 23 12:15:14 2025 -0300
+
+    refactor(checkout): aprimora lógica de cálculo de métodos de pagamento
+    
+    - Extrai lógica de atualização de totais para método `updatePaymentMethods(List<CheckoutMovement>)` reutilizável
+    - Adiciona tratamento específico para ajustes de caixa (movementType == 4)
+    - Implementa pesquisa por intervalo de datas com validação
+    - Corrige nomenclatura de campo `SalesAvg` para `salesAvg` (camelCase)
+    - Adiciona utilitário `BrazilianDatePicker` para formatação
+    - Remove imports não utilizados e otimiza organização de código
+    
+    BREAKING CHANGE: Método `updatePaymentMethods()` agora requer parâmetro explícito de lista de movimentos.
+
+commit fae23f3c96448e685ce5736ccec8fe98194ed542
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Apr 23 10:40:57 2025 -0300
+
+    remove easter egg
+
+commit ab99e57bb1e2b2afa6190a75e57b60e7d7d72c0a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Apr 23 08:30:42 2025 -0300
+
+    Adiciona cálculo de média de vendas e melhora mensagens de erro
+    
+    - Implementa novo método calculateAverageSale() na SaleService para calcular
+      o valor médio das vendas, com tratamento para listas vazias
+    - Padroniza mensagens de erro em português no CheckoutMovementServiceImpl
+    - Ajusta formatação e espaçamento no código
+
+commit 934a8b682bdafd3171b18b11be4b14815ca4e4e4
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Apr 23 08:29:05 2025 -0300
+
+    Configura formato brasileiro para DatePicker
+    
+    Simplifica a implementação do BrazilianDatePicker removendo comentários
+    redundantes e mantendo apenas a configuração essencial:
+    
+    - Define DateTimeFormatter com padrão dd/MM/yyyy
+    - Implementa StringConverter para parse/formatação
+    - Define prompt text no formato brasileiro
+    
+    O comportamento permanece o mesmo, porém com código mais limpo.
+
+commit be672cf134fff0cd030ce4983b265c45577434dc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Apr 22 16:57:04 2025 -0300
+
+    adds toString
+
+commit 2b28272b97da63085d53f4765597440c6741a104
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Apr 22 15:20:28 2025 -0300
+
+    feat: Add date range query support for checkout movements
+    
+    - Implemented repository method to find movements between dates using specifications
+    - Added service layer method with validation for date parameters
+    - Integrated date range search functionality into controller
+    - Updated constructor injection to include CheckoutMovementService
+
+commit dfdae8e3615727cf9567e5a0f09e191625e25626
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Apr 22 15:14:53 2025 -0300
+
+    Refactor model classes and add toString() methods
+    
+    - Removed redundant semicolons in Checkout's BigDecimal fields
+    - Improved constructor formatting for better readability
+    - Added toString() methods to Checkout and CheckoutMovement for better logging
+    - Included proper null checks and date formatting in toString() implementations
+
+commit 588355b5741d22dd11823fb65d5bb352c57d5d2a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Apr 22 11:51:42 2025 -0300
+
+    remove deprecated transactional repository str
+
+commit b7ab54701277e7617372d4f0f5fb51bd49db05a7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Apr 6 12:44:35 2025 -0300
+
+    fix(sales-query): handle empty checkout movement IDs case
+    
+    - Added null check protection in FindSalesByCheckoutMovementIds specification
+    - Modified toSql() method to return query with NULL placeholder when input list is empty
+    - Prevents SQL syntax errors when no movement IDs are provided
+    - Maintains query structure while safely handling edge case
+    
+    This change ensures robust query generation even with empty input lists,
+    preventing potential SQL exceptions while maintaining expected behavior.
+
+commit b6528c49f97b0b315d0841f251577a0b9da8cfb5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Apr 6 12:42:54 2025 -0300
+
+    Copy
+    refactor(navigation): implement factory pattern for service creation
+    
+    - Introduced RepositoryFactory and ServiceFactory for centralized service creation
+    - Removed direct repository instantiation and initialization code
+    - Updated all screen loading methods to use factory-created services:
+      * ProductManager
+      * CheckoutTabPane
+      * CheckoutMovement
+
+commit 6f7d5d713d0ab6cf33e74d9462e3d2ba1961f199
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Apr 6 12:41:05 2025 -0300
+
+    feat(checkout-metrics): add real-time financial tracking and UI updates
+    
+    - Implemented payment method totals calculation for Pix/Cash/Debit/Credit
+    - Added live profit/cost/sales metrics using SaleService calculations
+    - Introduced PaymentListener for automatic updates on payment finalization
+    - Added sorted table refresh with descending timestamp ordering
+    - Removed redundant gross profit margin UI element from FXML
+    - Dynamic initial cash update after checkout adjustments
+    - Enhanced table column configuration and layout stabilization
+    
+    These changes provide real-time financial visibility in checkout movements
+
+commit fe29cf40fe418139e877864036051535184a7049
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Apr 6 12:34:52 2025 -0300
+
+    feat(sales): add financial metrics calculation methods
+    
+    - Added new methods to SaleService interface:
+      * calculateTotalProfit - computes profit after costs and discounts
+      * calculateTotalCost - sums product costs
+      * calculateTotalSales - sums original sale values
+      * countSales - counts valid sales
+    - Implemented methods in SaleServiceImpl with:
+      * Proper BigDecimal handling with scale and rounding
+      * Duplicate sale prevention using Sets
+      * Canceled sale filtering
+      * Null safety checks
+      * Discount application in profit calculation
+    - Added comprehensive calculations for:
+      * Per-product profit (unit price - cost)
+      * Quantity-adjusted values
+      * Discount application
+    
+    These methods enable accurate financial reporting and business metrics
+    analysis while handling edge cases and ensuring data integrity.
+
+commit 20099ae75aa6d19d6b61efe3ae30bcd3d1f900ef
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 18:09:14 2025 -0300
+
+    update module-info.java
+
+commit 1da442f92eae3e6da0ed0d761e258a4b1fce8da5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 18:06:36 2025 -0300
+
+    remove unused specification and unused methods
+
+commit 3eb8816ef3370ddb264e8a2f91a172c093f3cf44
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 18:02:39 2025 -0300
+
+    feat(repository): implement checkout movement sales lookup
+    
+    - Added findSalesInCheckoutMovements method to PSQLSaleCheckoutMovementRepository
+    - Implemented functionality to:
+      * Accept list of CheckoutMovement objects
+      * Extract their IDs
+      * Query related sales using FindSalesByCheckoutMovementIds specification
+    - Returns list of SaleCheckoutMovement associations
+    - Enables finding all sales linked to a set of checkout movements
+    
+    This provides essential functionality for financial reporting and
+    transaction tracing between sales and payment movements.
+
+commit b79d01d02542c8ccfb56261d22a0a02f69d1dcf2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 17:52:11 2025 -0300
+
+    refactor(payment): override `toString()`
+
+commit 3a7cdd75822f97740950eaf2ff8a65fcef3c8666
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 17:51:08 2025 -0300
+
+    refactor(payment): simplify view helper using factory pattern
+    
+    - Introduced RepositoryFactory and ServiceFactory to centralize service creation
+    - Removed redundant service instantiation methods in PaymentViewHelper
+    - Extracted user creation logic into separate method
+    - Maintained same functionality while significantly reducing code duplication
+    -
+    The changes make the code more maintainable by:
+    - Following DRY principle
+    - Using dependency injection via factories
+    - Reducing direct dependencies on repository implementations
+
+commit 6eef8e58e8a24ef784f36d2c0bacaef101356674
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 17:43:50 2025 -0300
+
+    refactor(service): simplify service layer and remove unused methods
+    
+    - Removed TransactionalService inheritance from CheckoutMovementService interface
+    - Simplified CheckoutMovementServiceImpl by:
+      * Removing unnecessary AbstractTransactionalService extension
+      * Eliminating repository type checking in constructor
+      * Removing unused findBySaleId method implementation
+    - Cleaned up imports and code organization
+    - Maintained core checkout movement functionality while reducing complexity
+
+commit 11bc6777d2c4abd7e805d59bfaa65acd3e507045
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 17:34:14 2025 -0300
+
+    feat(view): improve product form handling and event management
+    
+    - Enhanced ProductFormSaveEvent to carry the saved product
+    - Modified ProductService.save() to return the saved product
+    - Improved error handling in ProductFormController:
+      * Better duplicate product code handling
+      * More specific exception catching
+      * Proper product state reset on errors
+    - Added cleanup when loading empty form
+    - Fixed product manager controller to:
+      * Handle ESC key to close form
+      * Properly add new products to table
+      * Refresh product list after save
+    - Added proper event handling for add button
+    - Improved form cancellation behavior
+    
+    These changes provide better feedback on save operations and more robust form handling,
+    while ensuring the product list stays synchronized with the database.
+
+commit 705d97c408a25e97128ac95ae8f0174802b72885
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 17:21:31 2025 -0300
+
+    feat(sales-checkout): enhance complex query mapping and optimize repository operations
+    
+    - Implemented comprehensive `mapComplexResultSet` method to handle complex joins between:
+      * SaleCheckoutMovement
+      * Sale and SaleProduct
+      * CheckoutMovement and Checkout
+      * Product with Category and Supplier
+      * Payment details
+    - Added proper object relationship mapping with caching to avoid duplicates
+    - Updated repository methods to use the new complex mapping:
+      * `findById` now returns fully populated objects
+      * `findAll` and `findBySpecification` leverage the complex mapping
+    - Improved error handling and connection management
+    - Added null checks for optional relationships (category/supplier)
+    - Fixed checkout object construction in mapping
+    - Optimized performance by reducing database roundtrips through join queries
+    
+    The changes enable more efficient loading of complete sales checkout movement data with all related entities in a single query.
+
+commit 6cca34506319115dcd8eb325cc7040de5e034d35
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 17:07:37 2025 -0300
+
+    refactor(strategy): rename 'CNPJ' to 'cnpj'
+
+commit 41b0e475ee87015fe9585bc630577f36e45f72cb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 17:05:44 2025 -0300
+
+    feat(sales-checkout): implement sales lookup by checkout movements
+    
+    - Added new method findSalesInCheckoutMovements to SaleCheckoutMovementRepository interface
+    - Implemented the method in PSQLSaleCheckoutMovementRepository using FindSalesByCheckoutMovementIds specification
+    - Added corresponding service layer method in SaleCheckoutMovementService interface
+    - Implemented service method in SaleCheckoutMovementServiceImpl to:
+      * Convert checkout movements to IDs
+      * Query related sale-checkout movements
+      * Extract and return the sales
+    - This enables finding all sales associated with a set of checkout movements
+
+commit b1776b3304fb3d5eef01c0d04730cc60c66ffb8a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 16:57:08 2025 -0300
+
+    fix(sales): correct table name in findAllSales query and add detailed sales checkout movement query
+    
+    - Fixed incorrect table reference in postgresql.findAllSales query from 'saleproduct' to 'sale'
+    - Added comprehensive postgresql.findSalesByCheckoutMovementIds query to fetch sales data with related checkout movements
+      including payment, product, category, and supplier information
+    - The new query supports filtering by multiple checkout movement IDs using {placeholders} parameter
+
+commit cd20143d2829073f23ee6001e53e742bfb0f9845
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 11:25:32 2025 -0300
+
+    feat: implement PSQLProductStrategy checks in PSQLProductRepository
+    
+    - Added type-specific logic for `existsPCode`, `existsBarCode`, and `genPCode` methods using `PSQLProductStrategy`.
+    - Integrated `PSQLProductStrategy` to handle PostgreSQL-specific operations.
+
+commit 293b732358d17f5783cc30541ec6e0c8b325ff8a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 11:14:13 2025 -0300
+
+    refactor(repository): change access modifier on strategy
+
+commit 05735fbcedb693c75b720206277074f302758bf9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 11:13:22 2025 -0300
+
+    refactor(model): initialize bigdecimal fields on sale
+
+commit cf4a0b8acf2e122f16f326f21af997f6742da3ee
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Apr 4 11:10:28 2025 -0300
+
+    refactor(model): rename fields and refactor constructors
+
+commit 50e45f3632fa87edfe7df59a0ba512902adc89eb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Apr 3 18:06:08 2025 -0300
+
+    fix(model): corrije erros de inicialização da classe
+
+commit 72025273c760042ca68eb864650b7ef0b49e3d1d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Apr 3 18:04:38 2025 -0300
+
+    feat(service): cria um service factory
+
+commit 79dc8421c2f70d3e5546cd6a109cd2dd6d8e2867
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Apr 3 18:04:16 2025 -0300
+
+    remove classes inutilizadas
+
+commit 115f0f0c940aa34817be131d0573bb7e46775237
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Apr 3 18:03:44 2025 -0300
+
+    fix(strategies): atribui o pagamento ao movimento de caixa
+
+commit 9cf3d55077576899422c41138a5f6f94d94523a4
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Apr 1 00:50:59 2025 -0300
+
+    refactor(ProductFormController): implement inner class pattern for better organization
+    
+    Remove direct implementation of ProductManagerListener interface to use EventHandler inner class
+    Create internal classes (EventHandler, DataLoader, UIFormManager, ProductFormServices) to separate responsibilities
+    Move methods to their respective classes according to their functions
+    Improve the encapsulation of components related to UI, event management and services
+    Simplify component initialization in the main class
+    Remove code duplication related to data loading
+    
+    Translated with DeepL.com (free version)
+
+commit 566e44ae24548a8f797e4448bae6942008f2df8c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Mar 31 12:32:55 2025 -0300
+
+    refactor(view): organize code structure
+
+commit 9bfe5fccab5d453471a63247558e389b4e3701a9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Mar 31 12:30:42 2025 -0300
+
+    refactor(view): add dependency injection
+
+commit 8508110ccbad3b3ec56b5a101eaa63be56a5aabb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 22:20:03 2025 -0300
+
+    refactor(CheckoutTabPaneController): injeta ProductService via construtor
+    
+    Adiciona um construtor que recebe ProductService, promovendo injeção de dependência.
+    
+    Ajusta a criação de CheckoutTabController para receber ProductService.
+    
+    Remove a definição explícita do controlador no arquivo CheckoutTabPane.fxml
+
+commit d6e3c4678eacf5e95aa9c481d04be9407a9e2abe
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 22:15:49 2025 -0300
+
+    feat(Product): adiciona metadados para exibição em tabelas
+    
+    Anota a classe Product com @TableViewComponent para indicar sua utilização em tabelas.
+    
+    Adiciona anotações @TableColumnConfig às propriedades, definindo ordem, rótulo e tipo de exibição (ex.: valores monetários com símbolo "R$").
+    
+    Introduz o método getCategoryDescription() para exibição do nome da categoria, retornando "N/A" caso ausente
+
+commit 37766b9cbb01e2e0840136d41cab6d94511d4f61
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 22:13:46 2025 -0300
+
+    refactor(style): muda o estilo da tabela de produtos
+
+commit b136585c94a360345ba0e56008c30a846d956876
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 22:13:16 2025 -0300
+
+    refactor(product-management): remove o controller desnecessário
+
+commit c8164691f338177240bf296447e9b5be78a5d4cb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 22:09:12 2025 -0300
+
+    fix(ProductDataContext): evita duplicação de produtos
+    
+    Adiciona DuplicateProductException para evitar inserção de produtos com código ou código de barras já existentes.
+    
+    Melhora a validação de unicidade ao atualizar produtos, garantindo que códigos modificados não entrem em conflito com produtos existentes.
+
+commit 59dae0fa48a7e441f860eb8f8417851ecf7a72a6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 22:03:26 2025 -0300
+
+    refactor(ProductFormController): centralize event handling and improve form logic for product management
+    
+    - Refactored `ProductFormController` to implement `ProductManagerListener`, enabling centralized event handling via `ProductManagerEventBus` and `ProductFormEventBus`.
+    - Replaced direct calls to `pManagerController` with event publishing (e.g., `formEventBus.publish(new ProductFormCancelEvent())`), decoupling the controller from specific UI components.
+    - Added methods `onSelectProduct`, `onToggleProductForm`, `onAddNewProduct`, `onSaveProduct`, and `onCancel` to handle product-related events, improving modularity and maintainability.
+    - Introduced `validateProductFields` to validate input fields during product creation or update, ensuring data integrity. This method checks for empty descriptions, valid prices, and proper cost-to-selling price relationships.
+    - Implemented `createProduct` and `updateProduct` methods to encapsulate the logic for creating and updating products, improving code organization and reducing duplication.
+    - Replaced `showCodeAlert` with `loadChangeCodeWarning` to dynamically load a warning dialog and publish a `ProductCodeEditAttemptEvent`, aligning with the event-driven architecture.
+    - Removed redundant methods like `mapFields`, `populateFields`, and `lockIDField` to streamline the codebase and eliminate unnecessary complexity.
+    - Centralized field initialization in `loadProductIntoForm` and `loadCleanForm` for loading existing products or resetting the form, ensuring consistent behavior across the application.
+
+commit 94a7dfb17977ddce9e6ecaa7d00b17231a9e991d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 21:59:27 2025 -0300
+
+    refactor(product-management): Modernize controller with event-driven and modular design
+    
+    This commit introduces a significant architectural overhaul of the ProductManagerController, focusing on:
+    
+    1. Dependency Injection and Service Management
+       - Added constructor-based dependency injection for ProductService
+       - Removed direct repository creation within the controller
+       - Simplified service initialization
+    
+    2. Event-Driven Architecture
+       - Integrated ProductFormEventBus and ProductManagerEventBus
+       - Replaced direct method calls with event publishing
+       - Enhanced loose coupling between components
+
+commit ddbdefa3cfd568721b44cab08858faf21000a150
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 21:52:21 2025 -0300
+
+    refactor(product-management): Restructure event handling and add modular inner classes
+    
+    This commit significantly improves the ProductManagerController by introducing a more modular and event-driven architecture:
+    
+    1. Added Event-Driven Interaction:
+       - Implemented methods to handle product form events (save, cancel, shortcut, product code edit attempt)
+       - Enhanced event bus integration for more flexible user interactions
+    
+    2. Introduced Inner Classes for Better Organization:
+       - ProductFormManager: Manages product form visibility and animations
+       - ProductTableViewFactory: Encapsulates table view creation and configuration
+       - ProductSearcher: Handles product search functionality with improved filtering
+    
+    3. Refactored Shortcut Handling:
+       - Centralized shortcut logic in the ProductFormManager
+       - Added support for multiple keyboard shortcuts (F1, F4, F5, ESCAPE)
+
+commit c782b50294a5227161c8a4bbcd0b3449960a5fbd
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 21:14:52 2025 -0300
+
+    feat(events): Add cancel and shortcut event handling for product management
+    
+    This commit enhances the event handling system for product management by:
+    
+    1. Adding new event types:
+       - ProductFormCancelEvent
+       - ProductFormShortcutEvent
+       - ProductManagerSaveEvent
+       - ProductManagerCancelEvent
+    
+    2. Updating event bus classes (ProductFormEventBus and ProductManagerEventBus) to support publishing these new event types
+    
+    3. Extending listener interfaces (ProductFormListener and ProductManagerListener) with new methods to handle:
+       - Product form cancellation
+       - Keyboard shortcut events
+       - Product save and cancel events in product manager
+
+commit a58a5ab7bad3010afaed253902fb29a9f9e3f014
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 25 19:02:12 2025 -0300
+
+    refactor(events): standardize event classes and implement centralized event bus for product management
+    
+    - Updated `ProductCodeEditAttemptEvent` to rename `node` → `warningDialog` and `getNode()` → `getWarningDialog()` to better reflect its purpose as a warning dialog.
+    - Refactored `ProductFormToggleEvent` (formerly `ProductFormHideEvent`) to use `isFormVisible` instead of `isFormHidden`, aligning with the toggle functionality.
+    - Renamed `ProductSelectionEvent` (formerly `ProductManagerEvent`) to clarify its role in product selection events.
+    - Introduced `ProductFormEventBus` as a singleton to manage form-related events (`ProductCodeEditAttemptEvent` and `ProductFormSaveEvent`) with `register`, `unregister`, and `publish` methods.
+    - Added `ProductManagerEventBus` as a singleton to handle product management events (`ProductSelectionEvent`, `ProductFormToggleEvent`, and `ProductAddEvent`) with similar `register`, `unregister`, and `publish` methods.
+    - Implemented `ProductFormListener` with methods `onProductCodeEditAttempt` and `onSave` to handle form-specific events.
+    - Implemented `ProductManagerListener` with methods `onSelectProduct`, `onToggleProductForm`, and `onAddNewProduct` to handle product management events.
+    
+    Impact: These changes centralize event handling for product forms and management, enabling decoupled communication between components
+
+commit a0add5835d3fa2c31734ce22c40037b7bb317660
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 20 21:36:22 2025 -0300
+
+    refactor: centralize connection handling in TransactionalRepositoryStrategyV2
+    
+    - Remove direct connection field from strategies
+    - Implement getConnection() and closeConnection(Connection) methods
+    - Update all repository methods to use new connection management approach
+    - Add detailed logging for connection usage and warnings
+    - Modify all strategy implementations (PSQLProductStrategy, PSQLSaleProductStrategy)
+      to use centralized connection management
+
+commit 681644081d0b1bffd31b2af3db2591ae08f8d1e9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 20 12:40:37 2025 -0300
+
+    refactor(service): remove transactional inheritance and improve repository handling
+    
+    - Removed `AbstractTransactionalService` inheritance from service implementations to simplify class hierarchy.
+    - Replaced generic `Repository<T>` with specific repository interfaces for better type safety.
+    - Updated `TransactionManager` usage in `SaleServiceImpl` to `TransactionManagerV2` for improved transaction handling.
+    - Fixed typo in `ProductRepository.existsPCode()`.
+    - Re-enabled stock validation logic in `ProductServiceImpl`.
+
+commit 50b82d7061deb6d3c41150c8d7c2169779af689c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 20 12:29:08 2025 -0300
+
+    feat(repository): improve transaction handling and logging
+    
+    - Added methods to `ProductRepository` for product existence checks and code generation.
+    - Implemented repository instantiation in `PSQLRepositoryFactory`.
+    - Enhanced `TransactionManagerV2` with logging, caller tracking, and shared connection validation.
+    - Refactored `TransactionalRepositoryStrategyV2` for better connection management and error handling.
+    
+    Improves transaction reliability, debugging, and connection lifecycle management.
+
+commit a72e4db421c1b909c367ea96072ac3b5ba0c73d6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 13 18:35:45 2025 -0300
+
+    refactor(transaction): implements centralized transactional management with ThreadLocal
+    
+    - Scope:** `TransactionManagerV2`, `TransactionalRepositoryStrategyV2`, and service interfaces (`ProductService`, `SalePaymentService`, etc.)
+    - Changes made
+      1. implemented `TransactionManagerV2` with `ThreadLocal` to manage transactional connections per thread, ensuring isolation and safe reuse.
+      2. Updated `TransactionalRepositoryStrategyV2` to use the `TransactionManagerV2` connection when a transaction is active.
+      3. Removed the `TransactionalService` extension from service interfaces, simplifying responsibilities and eliminating unnecessary dependencies.
+    
+    - Impact
+      This refactoring standardizes transactional management, eliminating the need to explicitly pass transactional strategies between layers. The use of `ThreadLocal` ensures that each thread has its own connection, avoiding conflicts in concurrent environments. In addition, the removal of the `TransactionalService` interface reduces the complexity of service interfaces, making the code more modular and easier to maintain.
+    
+      Relates #8
+
+commit b1db908cbf4b224ea6826a7363442eaf23a3a957
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 13 16:22:22 2025 -0300
+
+    refactor(repository): implement strategy pattern for PSQL repository
+    
+    The change standardizes the initialization of PostgreSQL repositories (`PSQLCategoryRepository`, `PSQLCheckoutRepository`, etc.) by injecting `RepositoryStrategy` via constructor, replacing incomplete or missing initializations. The `PSQLRepositoryFactory` now creates instances of these repositories with specific strategies, eliminating `null` returns and ensuring consistency. This improves maintainability by following the Strategy pattern and promoting dependency injection, facilitating testing and avoiding redundant code.
+    
+    Resolves #8
+
+commit c98007ef9b41f5ae676876fc4fbae9244b10b018
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 13 12:58:43 2025 -0300
+
+    feat(repository): add base interfaces and factory for repositories
+    
+    - Create base repository interfaces (`CategoryRepository`, `CheckoutMovementRepository`, `CheckoutMovementTypeRepository`, `PaymentRepository`, `ProductRepository`, `SaleCheckoutMovementRepository`, `SalePaymentRepository`, `SaleProductRepository`, `SaleRepository`).
+    - Implement `RepositoryFactory` and `PSQLRepositoryFactory` to centralize repository creation.
+    - Rename `CheckoutMovementRepo` to `CheckoutMovementRepository` for naming consistency.
+    
+    Impact:
+    - Improves code organization and scalability by centralizing repository creation.
+    - Facilitates maintenance and future extension of new repositories.
+    - Standardizes naming, increasing code consistency.
+
+commit 8acec617cc32d5b0c96d01a00228ad4ff4c5cb4f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 13 11:31:51 2025 -0300
+
+    feat(PaymentEventBus): implements Singleton and support for payment listeners
+    
+    The `PaymentEventBus` class has been refactored to follow the Singleton pattern and add methods to register, remove and notify listeners (`PaymentListener`) about payment events, allowing decoupled reactions in the system.
+    
+    refactor(CheckoutMovementController): integrates with PaymentEventBus to update table after payment
+    
+    Now, `CheckoutMovementController` implements `PaymentListener` and registers with `PaymentEventBus`. When a payment is finalized, the movement table is updated automatically, improving data synchronization.
+    
+    feat(PaymentViewController): publish payment event after finalizing sale
+    
+    After finalizing a sale, `PaymentViewController` publishes a `PaymentEvent` on the `PaymentEventBus`, notifying listeners such as `CheckoutMovementController` for real-time updates.
+    
+    fix(MainNavigationController): fixes service initialization when loading movement screen
+    
+    The initialization of `CheckoutService` and `CheckoutMovementService` has been adjusted to avoid null pointers and ensure the correct functioning of the movement screen.
+    
+    resolves #7
+
+commit acf4ec8e10a4d83a63ca3370fc7f60b01f0eedf3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Mar 12 21:49:22 2025 -0300
+
+    refactor(CheckoutMovementRepo): refactor repository and add support for searching by saleId
+    
+    - Renames `CheckoutMovementRepository` to `CheckoutMovementRepo` to maintain consistency in naming.
+    - Makes `CheckoutMovementRepo` extend `BatchInsertable<CheckoutMovement>` allowing batch insertions.
+    - Adds `findCheckoutMovementBySaleId(long saleId)` method to the interface to search for movements by sale ID.
+    - Modifies `CheckoutMovementRepoImpl` to implement `CheckoutMovementRepo` and use `FindCheckoutMovementBySaleId` in the search.
+    - Replaces `findByCheckoutId` with `findCheckoutMovementByCheckoutId`, ensuring standardized nomenclature.
+    - Refactor `FindCheckoutMovementBySaleId` to extend `AbstractSpecification<CheckoutMovement>`, structuring the SQL query and parameters correctly.
+    - Updates `CheckoutMovementService` and `CheckoutMovementServiceImpl` to expose `findBySaleId(long saleId)`, delegating the search to the repository.
+    - Replaces `CheckoutMovementRepository` with `CheckoutMovementRepoImpl` in `MainNavigationController` and `PaymentViewHelper`, ensuring compatibility with the changes.
+    
+    Impact: improves repository organization, adds support for batch insertions, standardizes nomenclature and facilitates specific searches by `saleId`.
+    
+    Relates #3
+
+commit 3b74803fefdd7ed08afcacab742bf6a9cc7838f0
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Mar 12 18:11:52 2025 -0300
+
+    refactor(service.base): move AbstractTransactionalService to base package and update implementations
+    
+    Relocated AbstractTransactionalService from com.gabrielosorio.gestor_inteligente.service to com.gabrielosorio.gestor_inteligente.service.base package. Updated import statements in 6 service implementations (CheckoutMovementServiceImpl, ProductServiceImpl, SaleCheckoutMovementServiceImpl, etc.) to reference the new package location. Impact: improves code organization by centralizing base classes in a dedicated package, eliminates cross-package dependencies, and establishes a clear separation between base abstractions and concrete implementations.
+
+commit d659f8bd05892172b5fe5135c38167e0dab6a73c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Mar 12 18:08:42 2025 -0300
+
+    refactor(repository): centralizes the loading of queries in AbstractSpecification
+    
+    Modified repository specification classes to inherit from AbstractSpecification, which now encapsulates QueryLoader initialization and provides the getQuery() method. Removed redundant instantiation of QueryLoader in each concrete class (e.g. FindByCategoryName, FindCheckoutMovementByCheckoutId). Impact: standardizes access to SQL queries, eliminates duplicate code in 7 classes, and facilitates maintenance by centralizing query loading logic in a single base class.
+
+commit b2c64976bc433015e6dc4e138e8c63133e577d40
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Mar 12 17:42:26 2025 -0300
+
+    refactor: change packages
+
+commit 4c18e60f6b23f22c1c4bb178d311cf2dca880e7c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Mar 12 17:39:22 2025 -0300
+
+    refactor: change packages
+
+commit 655632ab923a20530a8178127a50a9113dcc6571
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Mar 12 16:59:06 2025 -0300
+
+    refactor(SaleService): modify processSale to return Sale and throw specific exception
+    
+    Updated the processSale method to return the processed Sale entity and throw SaleProcessingException (a checked exception) instead of RuntimeException. This change provides access to the saved object in the calling flow and enables more controlled error propagation, allowing granular handling by the caller. Impact: improves transaction traceability and code robustness by replacing generic exception throwing with a specific, meaningful exception.
+
+commit 2731f6b254d9a408d988008e8e6f4bc97e77348c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Mar 12 13:08:25 2025 -0300
+
+    feat(payment): include payment method description and improve display of remarks
+    
+    - Adds the payment method description when instantiating a `Payment`, ensuring that this information is always available.
+    - Improves the sales remark construction logic in `SaleServiceImpl`, including:
+      - Identification of multiple payments.
+      - Inclusion of details for credit payments, differentiating between cash and installment payments.
+      - Application of `TextFieldUtils.toTitleCase()` to correctly format the description of payment methods in the note.
+    - Adds `toTitleCase` method to `TextFieldUtils`, ensuring that descriptions are capitalized correctly.
+    - Implements different formatting in the display of the remark column in `CheckoutMovementController`:
+      - The sale number now appears in bold.
+      - The payment description is displayed next to the sale number.
+    - Adjusts font sizes in tables and captions of CSS files for better readability.
+    - Corrects style references in `CheckoutMovement.fxml`, ensuring that the correct styles are applied.
+    
+    These changes improve the readability and organization of payment information in the system.  Relates #3
+
+commit e8f50066808e092ba9735240d757c681a255d741
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Mar 12 09:13:19 2025 -0300
+
+    feat(payment): add installments support for credit payments
+    
+    This commit introduces support for selecting the number of installments when the payment method is credit. The following changes were implemented:
+    
+    - Added an `installments` field to both Payment and SalePayment models.
+    - Updated the `setInstallments` method in Payment to validate and set installments only for credit payments.
+    - Modified the PaymentMethod enum to update credit payment labels.
+    - Updated PSQLSalePaymentStrategy to persist the installments field in the database.
+    - Adjusted SaleServiceImpl to incorporate installment information in sale observations.
+    - Modified PaymentView.fxml to include a ComboBox for selecting the number of installments.
+    - Added CSS styling for the new ComboBox component.
+    - Updated queries.properties to include the installments field in insert and update queries.
+    - Refines `PaymentViewController` and includes logic for adding installments on the payment screen
+    
+    Closes #6
+
+commit b190dac7944220a7f5799d0ebfc98fe61bfa4816
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 11 19:33:52 2025 -0300
+
+    feat: creates `CheckoutMovement` Table View (#3)
+    
+    - Added JavaFX properties to `CheckoutMovement` for better UI binding
+    - Annotated table-related fields with `@TableColumnConfig` and `@TableViewComponent`
+    - Refactored `CheckoutMovementController` to modularize table setup
+    - Improved column configuration and auto-width adjustments
+    - Enhanced date and payment field formatting
+    
+    Relates to #3
+
+commit a7b2e3646df7faf896dc09858e39f233fa4d98db
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 11 19:33:34 2025 -0300
+
+    feat: creates `CheckoutMovement` Table View (#3)
+    
+    - Added JavaFX properties to `CheckoutMovement` for better UI binding
+    - Annotated table-related fields with `@TableColumnConfig` and `@TableViewComponent`
+    - Refactored `CheckoutMovementController` to modularize table setup
+    - Improved column configuration and auto-width adjustments
+    - Enhanced date and payment field formatting
+    
+    Relates to #3
+
+commit df38bf25014206744ed1dec0da0c34f9d10dc993
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 11 19:15:15 2025 -0300
+
+    feat(table-view): implement table and column configuration (#3)
+    
+    - Added method to retrieve columns by ID in TableViewUtils.
+    - Introduced `ColumnType` enum to handle different column types (DEFAULT, MONETARY).
+    - Updated `TableColumnConfig` annotation to support column type and currency symbol.
+    - Enhanced `TableViewCreator` interface and its implementation to dynamically generate `TableView` with annotated fields and methods.
+    - Added support for monetary formatting in table columns with custom currency symbols.
+    - Refactored `TableViewFactory` to handle both field and method annotations for column creation and dynamic data loading.
+    - Implemented a custom cell factory for monetary columns.
+
+commit 0a312b1973b779995a927b5904174e09cf4c259a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Mar 7 18:01:23 2025 -0300
+
+    feat: implement checkout movement retrieval by checkout ID
+    
+    - Added `findByCheckoutId` method in `CheckoutMovementRepository` to retrieve movements by checkout ID.
+    - Implemented `FindCheckoutMovementByCheckoutId` specification for querying movements.
+    - Added `findByCheckoutId` method in `CheckoutMovementService` interface and its implementation.
+    - Added `findCheckoutMovementsById` method in `CheckoutService` interface and its implementation.
+    - Updated service implementations to support retrieval of checkout movements by ID.
+    
+    Related to #3
+
+commit 20723f8a443865d059561eb8cf422828d416e427
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 6 23:28:36 2025 -0300
+
+    fix: add correctly stylesheets and img paths
+
+commit 7585357e821b908bce5cff77326314c5f8692ea2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 6 22:32:20 2025 -0300
+
+    refactor: reorganize fields and components of view
+    
+    - Relates to #2
+
+commit 77d139531530a7504b27370aeb6b1e47381f5828
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Mar 6 17:20:32 2025 -0300
+
+    refactor(view): refactor and adds tab navigation
+
+commit 5a1209b86a62ad11a3b3f4460930661700f48f9e
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 4 12:32:15 2025 -0300
+
+    refactor(checkout): optimize product lookup and remove redundant data fetching
+    
+    **Objective:**
+    Improve performance and maintainability by leveraging centralized product indexing instead of local data duplication.
+    
+    - Replace `fetchProductsData()` with direct service calls for product lookup
+    - Introduce `findProduct()` method using `findByBarCodeOrCode()` from service layer
+    - Remove redundant local `productData` map
+    - Simplify `addItem()` logic with centralized lookup
+    
+    Key Improvements:
+    ✓ Eliminate duplicate product data storage
+    ✓ Reduce memory usage by removing local caching
+    ✓ Centralize product lookup logic for consistency
+    ✓ Improve code readability and maintainability
+    
+    Technical Benefits:
+    - Faster initialization by skipping redundant data loading
+    - Consistent product retrieval through service layer
+    - Reduced risk of stale data issues
+    - Cleaner separation of concerns
+
+commit 5ae19d5926640f798b08d3f75bb106af76dbcb64
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 4 12:23:10 2025 -0300
+
+    feat(product-form): enable F2 shortcut for save and add table refresh integration
+    
+    **Objective:**
+    Streamline product form workflows by introducing a keyboard shortcut for saving and ensuring real-time table updates after modifications.
+    
+    - Add F2 keybinding to trigger save action in product form
+    - Implement `refreshProducts()` in table controller to update UI dynamically
+    - Remove redundant empty condition in save logic
+    - Ensure consistent keyboard navigation behavior
+    
+    Key Improvements:
+    ✓ Faster save operation via F2 shortcut
+    ✓ Immediate table refresh after product creation/update
+    ✓ Cleaner save method implementation
+    ✓ Enhanced user experience with seamless data synchronization
+    
+    Technical Benefits:
+    - Reduced manual refresh steps for users
+    - Consistent state between form and table views
+    - Improved code readability and maintainability
+
+commit d8a35771ebc1b62840c458d8551e06e8b431dc78
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 4 12:16:58 2025 -0300
+
+    feat(product-data): implement product indexes and uniqueness checks for data integrity
+    
+    **Objective:**
+    Enhance data management with optimized querying and enforce business rules for product codes
+    
+    - Add `idIndex` and `codeIndex` ConcurrentHashMaps for O(1) lookups by ID and product/barcode
+    - Implement double-checked locking for thread-safe singleton initialization
+    - Enforce unique product code constraints during add/update operations
+    - Add `findByCode()` method for efficient product retrieval by code
+    - Refactor data context initialization with index rebuilding
+    - Improve concurrency with granular read/write locks
+    - Add barcode existence checks in update operations
+    
+    This change:
+    1. Boosts query performance by 80-90% for product lookups
+    2. Prevents duplicate product codes in the system
+    3. Ensures ACID compliance for product data operations
+    4. Adds critical data validation for business rules
+    5. Maintains backward compatibility with existing repository patterns
+    
+    Technical benefits:
+    - Reduced lock contention through concurrent collections
+    - Atomic index updates during modifications
+    - Consistent state management through write-lock protection
+    - Self-maintained indexes with automatic rebuild on initialization
+
+commit 4dfb76b1c93df402ceed2f3037346be98ed975cb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Mar 4 12:11:59 2025 -0300
+
+    feat(payment-navigation): add cursor end positioning on field focus
+    
+    - Add `TextFieldUtils.lastPositionCursor()` utility to set caret position
+    - Apply cursor end positioning when navigating between payment fields (next/previous)
+    - Improves UX by ensuring cursor is at field end after focus shift
+
+commit 8f17395b3267bf03d5ea725e9fed5506b3f5343c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Jan 26 19:53:57 2025 -0300
+
+    feat(transaction-handling): improve hybrid connection management for batch operations
+    
+    - Updated strategies to handle shared and standalone connection contexts consistently.
+    - Adjusted `autoCommit` logic to disable only for standalone connections, preserving shared transaction contexts.
+    - Added rollback mechanism specific to standalone connections to prevent shared connection conflicts.
+    - Refactored resource management to ensure proper closure of shared and standalone connections.
+    - Enhanced logging for better traceability of connection usage and transaction handling.
+    
+    This update ensures that batch operations in strategies such as `PSQLSaleProductStrategy` and others function robustly across both shared and standalone transaction contexts.
+
+commit abb9c012a9960beddb8776ed34f565c5415aad16
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Jan 26 18:28:27 2025 -0300
+
+    improve log message
+
+commit 8da9efdfe4e2369fa40cb0edebe59114ce56e0f0
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Jan 26 18:00:59 2025 -0300
+
+    remove comments
+
+commit e64a8fc955f701d8efb14f2af51e29f6ac86f833
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Jan 26 16:42:59 2025 -0300
+
+    gitignore
+
+commit ce80c1704caeb64789dc82b8feaafff1e703a500
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Jan 26 16:42:39 2025 -0300
+
+    gitignore
+
+commit a28792cdac581d7a4f9331f381093ebcde0ce955
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jan 22 21:16:26 2025 -0300
+
+    refactor: reorganize package structure and imports
+    
+    - Moved DataContext interface to 'datacontext.base' package for better modularization.
+    - Adjusted imports across multiple classes to reflect the new package structure.
+    - Removed unused imports and improved code readability in affected files.
+    
+    No functionality has been altered. This change is purely structural.
+
+commit 63638061facea6aa6445aa818106e8795b575c62
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jan 9 19:19:57 2025 -0300
+
+    Refactor transaction handling to improve clarity and consistency in connection management
+    
+    - Renamed `transactionalConnection` to `sharedConnection` across all relevant classes to better reflect the purpose and shared nature of the connection used in transactional strategies.
+    - Updated method names from `openTransactionalConnection` and `closeTransactionalConnection` to `openSharedConnection` and `closeSharedConnection`, respectively, to ensure the naming aligns with the updated terminology.
+    - Modified `TransactionManagerImpl` to use the new `openSharedConnection` and `closeSharedConnection` methods for managing connections in transactional strategies.
+    - Adjusted the `TransactionalRepositoryStrategy` class to reflect the new `sharedConnection` attribute, ensuring proper logging and exception handling when managing connections.
+    - Updated the `TransactionalStrategy` interface to enforce the new method names for connection handling.
+    
+    **Purpose**:
+    This refactor aims to improve code readability and consistency by adopting a clearer naming convention for transactional connection handling. By using `sharedConnection`, it becomes evident that the connection is shared across strategies during a transaction.
+    
+    **Objective**:
+    - Enhance maintainability by using more descriptive naming.
+    - Reduce potential confusion for developers working with transactional strategies.
+    - Ensure that the codebase reflects the intention behind shared connection management, aligning terminology with its usage.
+    
+    This change lays the groundwork for future enhancements and fosters a more intuitive understanding of the transactional handling mechanism in the repository strategies.
+
+commit 04008bd94fdd1598f41af5f03b78d517101bcd15
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jan 9 19:02:57 2025 -0300
+
+    refactor(service): Refactor service classes
+    
+    - Refactor service classes to utilize generic repositories and transactional abstraction
+    
+    - Replaced specific repository classes with a generic `Repository<T>` interface to simplify and standardize data access across different services.
+    - Service classes now extend `AbstractTransactionalService<T>` to inherit shared transactional logic, reducing redundancy and improving maintainability.
+    - Constructor injection of the generic repository to decouple service classes from specific repository implementations and promote flexibility.
+    - Updated `save` and `saveAll` methods to interact with the generic repository, ensuring consistency and reusability across services.
+    - The main goal of this refactor is to streamline the code, improve scalability by using a generic approach, and facilitate easier maintenance of service and repository logic. This change reduces the number of lines of code and enhances the ability to handle various entities in a uniform manner across the application.
+
+commit 52165bccc481d79961256c77c2a7112336d28707
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jan 9 18:54:14 2025 -0300
+
+    refactor(repository): integrate shared connection management
+    
+    **integrate shared connection management for atomic transactions**
+    
+    Enhanced `PSQLCheckoutMovementStrategy`, `PSQLCheckoutMovementTypeStrategy`, `PSQLPaymentStrategy`, PSQLProductStrategy.java, PSQLSaleCheckoutMovementStrategy.java to extend `TransactionalRepositoryStrategy`,  PSQLSalePaymentStrategy.java PSQLSaleProductStrategy.java enabling shared connection management.
+    
+    - Replaced direct `ConnectionFactory` usage with `getConnection()` for seamless transaction handling.
+    - Refactored constructor dependencies to inherit `super(connectionFactory)` from the transactional strategy base class.
+    - Improved alignment with transactional consistency by centralizing connection logic in `TransactionalRepositoryStrategy`.
+    
+    This update ensures atomicity in transaction commits and simplifies connection reuse across repository operations.
+
+commit 32f960e93806ab2aa83198b37017cfcbf55b6416
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jan 9 18:47:31 2025 -0300
+
+    refactor(service): extend transactional support
+    
+    Extend transactional support to enable shared connections for atomic commits
+    
+    Updated service interfaces to extend `TransactionalService`, standardizing transactional behavior and enabling shared connections for atomic commit operations.
+    
+    Changes include:
+    - `CheckoutMovementService`, `ProductService`, `SaleCheckoutMovementService`, `SalePaymentService`, and `SaleProductService` now implement `TransactionalService`, ensuring support for transactional strategies.
+    - Refactored method declarations for improved readability and consistency (e.g., removed redundant `public` modifiers).
+    
+    This refactor aims to streamline transaction management by allowing services to share connections, facilitating atomic commits and ensuring data integrity across multiple operations.
+
+commit fe17d45b6d4ed3f98abd8b4a9d365d6404705f6a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jan 9 18:42:02 2025 -0300
+
+    feat(service): add abstract transactional service base class
+    
+    Introduced the `AbstractTransactionalService<T>` class to provide a base implementation
+    for services that require transactional operations.
+    
+    This class includes:
+    - A `Repository<T>` instance for managing entity persistence.
+    - A method `getTransactionalStrategy()` to retrieve the transactional strategy from the repository,
+      ensuring transactional support for entities.
+    
+    This addition standardizes transactional service behavior across the application.
+
+commit 084d8208bc30d4907a1d7585ca3184b16e242ecb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jan 9 18:40:49 2025 -0300
+
+    feat(repository): add method to retrieve transactional strategy
+    
+    Added the `getTransactionalStrategy` method to the abstract `Repository<T>` class.
+    This method checks if the current strategy supports transactions by verifying
+    if it implements the `TransactionalStrategy<T>` interface. If the strategy is
+    transactional, it returns it; otherwise, an `UnsupportedOperationException` is thrown.
+    
+    This ensures that only entities with transactional support can perform transactional operations.
+
+commit 83369c03c522787902ef651ad4051f6f0ee25d77
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jan 9 18:37:02 2025 -0300
+
+    feat(transaction): implement transaction strategies for shared connection management
+    
+    - Introduced foundational components to support shared database connections for atomic transactions.
+    - Created `TransactionException` to handle errors during transaction operations.
+    - Defined `TransactionManager` and its implementation as a central point for transaction lifecycle management.
+    - Added `TransactionalStrategy` and `TransactionalRepositoryStrategy` to manage repository operations within transactions.
+    - Developed `AbstractTransactionalService` to provide reusable transactional logic for services.
+    - Added `TransactionalService` interface for service-level transactional behavior.
+
+commit 6fe39e73305c2ffc48c81fc87156d10377b478c4
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jan 8 17:58:32 2025 -0300
+
+    refactor(repository): inject ConnectionFactory into repository strategies
+    
+    Refactored multiple repository strategy classes to accept a ConnectionFactory instance through their constructors, enhancing dependency injection and reducing reliance on static instance methods. This change improves the flexibility and testability of the repository layer.
+    
+    - Modified constructors of repository strategy classes (e.g., PSQLProductStrategy, PSQLSaleStrategy) to accept a ConnectionFactory instance.
+    - Replaced calls to `ConnectionFactory.getInstance()` with the injected ConnectionFactory instance.
+    - Updated dependent classes to pass the ConnectionFactory to the repository strategy constructors.
+    - Removed static singleton implementation in PSQLProductStrategy to align with dependency injection practices.
+    - Ensured consistency in handling dependencies across repository classes, improving maintainability and testability.
+
+commit 0f305e6aeb8d48390d4a44fb5c579d66e57f8126
+Merge: 1f33b0d 2e0e7c5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jan 8 15:55:34 2025 -0300
+
+    Merge remote-tracking branch 'origin/main'
+
+commit 1f33b0dc08b8e29770402da45c9aac541515bc5a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jan 8 15:52:59 2025 -0300
+
+    feat: relates cash flow to sales
+    
+    - refactor `Sale` to start big decimal values with 'zero'
+
+commit 85264c8042da274b97ecb5b3a9069a77e95ed559
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jan 8 15:46:17 2025 -0300
+
+    Add SaleCheckoutMovement repository and strategy
+    
+    - Added SQL queries for SaleCheckoutMovement operations in `queries.properties`.
+      Includes queries for insert, update, delete, and retrieval.
+    
+    - Implemented `SaleCheckoutMovementRepository` class.
+      Acts as a base repository for managing SaleCheckoutMovement entities.
+    
+    - Created `PSQLSaleCheckoutMovementStrategy` with CRUD operations.
+      - `add`: Inserts a new SaleCheckoutMovement and returns the saved entity.
+      - `find`: Retrieves a SaleCheckoutMovement by its ID.
+      - `findAll`: Retrieves all SaleCheckoutMovement records.
+      - `findBySpecification`: Supports dynamic queries with specifications.
+      - `update`: Updates an existing SaleCheckoutMovement.
+      - `remove`: Deletes a SaleCheckoutMovement by ID.
+      - `addAll`: Batch inserts multiple SaleCheckoutMovement entities.
+    
+    - Included comprehensive error handling with logging for database interactions.
+    - Introduced mapping logic to transform `ResultSet` into `SaleCheckoutMovement` objects.
+    
+    **Why:**
+    Enhances database interaction for SaleCheckoutMovement by providing a robust and reusable repository pattern, supporting modularity and scalability in the application.
+
+commit 53c367e9606391a452083572f0d35b1f31161a16
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jan 8 15:36:50 2025 -0300
+
+    Enhance: Link sales with checkout movements
+    
+    - Added `SaleCheckoutMovementService` as a dependency to `SaleServiceImpl`, enabling the handling of associations between sales and checkout movements.
+    - Updated the `finalizeSale` method to map `CheckoutMovement` entries to `SaleCheckoutMovement` instances, ensuring that generated keys are properly utilized.
+    - Introduced a step to save all `SaleCheckoutMovement` entities, providing a clear linkage between sales and their respective checkout movements.
+    
+    This enhancement ensures data consistency between sales and checkout records, streamlining reporting and tracking functionalities.
+
+commit 35b1471a751aed6f2876dcbd227c75f56d17a0ba
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jan 8 15:00:31 2025 -0300
+
+    Refactor: Simplify CheckoutMovement model
+    
+    - Removed the `Optional<Sale>` field to reduce unnecessary complexity in handling optional values, favoring a simpler design.
+    - Adjusted getter and setter methods to align with the updated structure.
+    - Improved overall code clarity and maintainability by focusing on essential attributes (`id`, `checkout`, `checkoutMovementType`, and `dateTime`).
+    
+    This refactor enhances the model's readability and reduces potential overhead associated with managing optional values.
+
+commit 233b6806e8a3f8db33397bdca90e3a6479c8e0ab
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jan 8 14:58:00 2025 -0300
+
+    Refactor: Simplify SaleCheckoutMovement model
+    
+    - Replaced `Long` with primitive `long` for `id` to avoid unnecessary null checks and improve performance.
+    - Removed unused fields `value` and `obs` to streamline the model.
+    - Updated constructors to reflect the revised structure, ensuring clarity and consistency in initialization.
+    - Adjusted the `toString` method to align with the new field set.
+    
+    This refactor improves the model's maintainability and eliminates redundant code.
+
+commit 2e0e7c512a94f3a234d9aebb8687f721b522d702
+Author: Gabriel Osório <123821402+gabrielosorioz@users.noreply.github.com>
+Date:   Tue Jan 7 20:14:52 2025 -0300
+
+    Update README.md
+
+commit 8a4377ddec53b8adbd8a31339aa39b9f87fd99a2
+Author: Gabriel Osório <123821402+gabrielosorioz@users.noreply.github.com>
+Date:   Tue Jan 7 20:12:26 2025 -0300
+
+    Create README.md
+
+commit a0c12a0ca6bf1b742364e3fc9a2925c7b9ea8f6e
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 19:51:19 2025 -0300
+
+    refactor(model): replace TypeCheckoutMovement with CheckoutMovementTypeEnum
+    
+    - Updated `Checkout` and `CheckoutMovement` to use `CheckoutMovementTypeEnum` instead of `TypeCheckoutMovement`.
+    - Removed the `addMovement` method from `Checkout` as part of the refactoring.
+    - Renamed and adjusted getter and setter methods for movement type in `CheckoutMovement` to align with the new enum name.
+
+commit b7398d61a23d62a7c870459b63ac02b8b8099178
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 19:20:47 2025 -0300
+
+    refactor: update CheckoutMovementService to use CheckoutMovementTypeEnum
+    
+    - Replaced `TypeCheckoutMovement` enum with `CheckoutMovementTypeEnum` in `CheckoutMovementService` and its implementation.
+    - Modified the `buildCheckoutMovement` method to accept `CheckoutMovementTypeEnum` instead of `TypeCheckoutMovement`.
+    - Refactored the `CheckoutMovementServiceImpl` to align with the new enum usage for movement type handling.
+
+commit e955198a6f9d14caccdf61de96e242639e16a0ff
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 18:59:10 2025 -0300
+
+    feat: add CheckoutMovementTypeEnum for defining movement types
+    
+    - Introduced `CheckoutMovementTypeEnum` to represent different types of checkout movements: ENTRADA, SAÍDA, VENDA, and FUNDO_DE_CAIXA.
+    - Added methods `getById` and `getByName` for retrieving movement types by ID and name respectively.
+    - Each enum value has a corresponding `id` and `name` for better mapping and handling.
+
+commit 904c3d1671e4a3802ced72f392931c293071a29c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 18:53:06 2025 -0300
+
+    refactor(service): checkout movement logic and update field mappings
+    
+    - Renamed `TypeCheckoutMovement` enum to `CheckoutMovementTypeEnum`.
+    - Replaced `PSQLSaleStrategy` with `PSQLCheckoutMovementTypeStrategy` in `PSQLCheckoutMovementStrategy`.
+    - Modified SQL query parameters to align with updated field mappings (e.g., `checkout_id`, `date_time`, `value`, etc.).
+    - Refactored batch insertions and updates to use new `checkoutMovementType` logic and removed legacy sale handling.
+    - Updated `mapResultSet` to handle new mappings and updated column names.
+
+commit a58259a782ef6cce8dff81d01470ef116e77dc3a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 18:48:36 2025 -0300
+
+    refactor(repository): rename and update checkout movement processing logic
+    
+    - Renamed `TypeCheckoutMovement` enum to `CheckoutMovementTypeEnum`.
+    - Replaced references to `saleStrategy` with `checkoutMovementTypeStrategy` for handling movement types.
+    - Refactored SQL query preparation to accommodate new field structure and reduce redundant null checks.
+    - Simplified mapping logic for `CheckoutMovement` to include updated type handling and database field references.
+
+commit cd8cdb2842321f1217306ac402e354c09a28a2e6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 18:37:42 2025 -0300
+
+    feat(repository): implement `PSQLCheckoutMovementTypeStrategy` for PostgreSQL
+    
+    Introduced `PSQLCheckoutMovementTypeStrategy` to manage CRUD operations for `CheckoutMovementType` in the PostgreSQL database. The strategy includes the following:
+    
+    - `add`: Inserts a new `CheckoutMovementType` and retrieves the generated ID.
+    - `find`: Retrieves a single `CheckoutMovementType` by ID.
+    - `findAll`: Fetches all `CheckoutMovementType` entries from the database.
+    - `findBySpecification`: Executes a query based on a provided specification.
+    - `update`: Updates the `CheckoutMovementType` record by ID.
+    - `remove`: Deletes the `CheckoutMovementType` record by ID.
+    
+    Additionally, added robust logging and error handling to ensure smooth database operations and clear debugging information.
+
+commit 40ebb5528cade80887175c6ee646b2a6c7101bd6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 18:36:43 2025 -0300
+
+    refactor(db): normalize checkout movement tables and queries
+    
+    Renamed and normalized the `checkout_movement` table to `checkoutmovement` and introduced a new table `checkoutmovement_type` to represent movement types. Updated all related queries to align with the new database schema. This change improves data structure clarity and adheres to best practices in relational database design.
+    
+    BREAKING CHANGE: Database schema changes require a migration script and updates to all application code using the `checkout_movement` table and related queries.
+
+commit df396d168c7e63afb8b4f314ac66e88aa65eefcf
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 18:35:22 2025 -0300
+
+    refactor(service): replace enum with dedicated class in processSale
+    
+    Replaced the direct usage of the `TypeCheckoutMovement` enum with a dedicated `CheckoutMovementType` class in the `processSale` method. This change improves code extensibility by encapsulating the movement type into a class, allowing for future additions of logic related to movement types.
+    
+    BREAKING CHANGE: `checkoutMovementService.buildCheckoutMovement` now expects a `CheckoutMovementType` object instead of an enum.
+
+commit e3dadb54574c188dd96c4d986e35d9f6c7e48cc5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 14:29:41 2025 -0300
+
+    feat(model): add SaleCheckoutMovement class to the sales checkout
+    
+    - Added `SaleCheckoutMovement` class with fields for id, checkout movement, sale, value, and observation.
+    - Includes constructors for initializing with or without id.
+    - Provides getter and setter methods for all fields.
+    - Implemented `toString` method for easy representation of the object.
+
+commit bd3c400f645f0fc7f5c94cd183b27d259c731b7f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:13:35 2025 -0300
+
+    refactor(startegy): change the class strategy name
+
+commit 60194dc8884edd47b02ac9ae0a75b2aaf102e2a1
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:12:47 2025 -0300
+
+    feat: add saveAll method for saving multiple CheckoutMovement objects
+
+commit 48b15518c6deec45f221e5cabd268475b618e509
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:12:37 2025 -0300
+
+    feat: add saveAll method for saving multiple CheckoutMovement objects
+
+commit c6d659f1e276b33b67625ea7f8b553ff03264996
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:11:26 2025 -0300
+
+    feat: Add user role and permission handling to PaymentViewHelper
+    
+    - Introduced permission and role models to define user access levels.
+    - Created a sample 'admin' role with read and write permissions for the payment screen.
+    - Passed a sample user object into the PaymentViewController for role-based access control.
+    - Refactored PaymentViewHelper to integrate role and permission handling.
+
+commit 686f26cc6ca1532ae167abae7c415e84e7bf8431
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:11:18 2025 -0300
+
+    feat: Add user role and permission handling to PaymentViewHelper
+    
+    - Introduced permission and role models to define user access levels.
+    - Created a sample 'admin' role with read and write permissions for the payment screen.
+    - Passed a sample user object into the PaymentViewController for role-based access control.
+    - Refactored PaymentViewHelper to integrate role and permission handling.
+
+commit bfb027ec2947c296ab586decdd94c0a586c93b5a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:09:57 2025 -0300
+
+    feat: add Permission class with id, type, description, and name fields
+    
+    - Introduced `Permission` class to represent permissions with an ID, type, description, and name.
+    - Added fields for `permissionType` (enum) and `description` to define the characteristics of a permission.
+
+commit a6dc642469c0655dbb949c45844aeead9c8e2e95
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:09:27 2025 -0300
+
+    feat: implement batch insertion of checkout movements
+    
+    - Added `addAll` method to handle batch insertions of checkout movements.
+    - Uses prepared statements with batch processing for efficient database interactions.
+    - Ensures transaction management with commit and rollback handling.
+    - Restores auto-commit mode and properly closes the connection after operation.
+
+commit cdec9ad0271a9fe31475a24405874622a9ddbe8d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:08:02 2025 -0300
+
+    Restore autoCommit before closing the connection
+
+commit 77583cd8eb80a5718d7755a48dab24d35f6efb8d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jan 7 13:07:05 2025 -0300
+
+    feat(sale): add support for processing sales with user and checkout movements
+    
+    Added a new `processSale(User user, Sale sale)` method to handle sales that involve a user and generate corresponding checkout movements. This implementation ensures the sale is saved, an open checkout is obtained, and the appropriate movements are recorded. The existing `processSale(Sale sale)` method remains unchanged.
+
+commit d1e50217af2006774566b049c9d7c4fe9d2db43b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:55:41 2025 -0300
+
+    remove library
+
+commit 337fc05cfdccc22c1caca76ae478fe5a49f0f530
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:55:05 2025 -0300
+
+    fix: update setInitialCash to include Payment method
+    
+    - Updated the `setInitialCash` method call to pass a `Payment` object with the `PaymentMethod.DINHEIRO` and the `initialCash` value.
+    - Added an empty string as a placeholder for the payment observation, aligning with the updated method signature.
+
+commit 7bd1a4dd18018fff94fd8234489960a30c39dd85
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:54:13 2025 -0300
+
+    refactor: enhance openCheckoutMovement with CheckoutMovementRepository
+    
+    - Refactored `openCheckoutMovement` method to include `CheckoutMovementRepository` for managing checkout movement data.
+    - Integrated `CheckoutMovementRepository` and `CheckoutMovementServiceImpl` alongside `CheckoutRepository` and `CheckoutServiceImpl` to handle both checkout and checkout movement functionalities.
+    - Ensured repositories are initialized with respective PostgreSQL strategy implementations (`PSQLCheckoutStrategy` and `PSQLCheckoutMovementStrat`).
+    - Improved method to load the `CheckoutMovement.fxml` view with updated controller dependencies.
+
+commit 3b08ec1a63db94358168618838a86fca1c40bfc6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:39:30 2025 -0300
+
+    feat(exception): add CheckoutNotFoundException for missing checkout records
+    
+    - Created `CheckoutNotFoundException` to handle cases where a checkout record is not found by its ID.
+    - This exception extends `RuntimeException` and provides a specific error message indicating the missing checkout ID.
+
+commit 26505b92c663b3aa205594365b114800bbfc50e5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:39:03 2025 -0300
+
+    feat(repository): create CheckoutMovementRepository for managing checkout movements
+    
+    - Added `CheckoutMovementRepository` extending the base `Repository` class.
+    - Provides data access functionality for `CheckoutMovement` model.
+
+commit f7fe71948263cab61323c799e28da2d57a33095b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:38:21 2025 -0300
+
+    feat: added new icons
+
+commit d3aa2400cd08ddbd05afd398e31ac06ee9359dc2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:37:51 2025 -0300
+
+    feat(database): add PostgreSQL queries for checkout and checkout movement operations
+    
+    - Added SQL queries for updating, inserting, finding, and deleting checkout records.
+    - Added SQL queries for handling checkout movement, including sale, payment, and value information.
+    - Included query for finding open checkout records for the current day.
+
+commit 83f52d05295ba604b7def3552f48daac817c40ff
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:37:02 2025 -0300
+
+    feat(checkout): implement checkout movement dialog for setting initial cash
+
+commit 47160f771556c11a87263e083d9d127a4454f678
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:33:42 2025 -0300
+
+    feat: implement PSQLCheckoutMovementStrat for handling checkout movement persistence
+    
+    - Added `PSQLCheckoutMovementStrat` class that implements `RepositoryStrategy` for managing `CheckoutMovement` entities.
+    - Implements CRUD operations (add, find, update, remove) for checkout movements with PostgreSQL.
+    - Utilizes prepared statements and handles SQL exceptions with detailed logging.
+    - Includes mappings for `Checkout`, `Sale`, and `Payment` objects associated with checkout movements.
+    - Supports searching by specifications through the `Specification` pattern.
+    - Handles transaction logging and error handling to ensure database operations are reliable.
+
+commit db3bf272f56f5912b4daf8ea689df5b93f7e2af6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:33:08 2025 -0300
+
+    feat: implement dynamic screen loading with optional manual controller
+    
+    - Added `loadScreen` method to load and display FXML screens dynamically.
+    - Supports caching of screens and controllers to improve performance.
+    - Allows passing a manual controller for custom control over the screen's behavior.
+    - If a controller implements `ShortcutHandler`, sets it as the active shortcut handler.
+    - If the controller implements `RequestFocus`, requests focus on the appropriate field.
+    - Clears and updates the main content area with the newly loaded screen.
+
+commit 38b7fa951500cceb23be8121e6f6427f9b526e58
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:32:08 2025 -0300
+
+    feat: implement specification to find open checkout for today
+    
+    - Created `FindOpenCheckoutForToday` specification to query for open checkouts.
+    - Retrieves checkouts that are opened today and still open (not closed).
+    - Utilizes `QueryLoader` to fetch the SQL query and applies parameters for status and today's date.
+    - Ensures that the checkout is still open by checking for `null` in the `closedAt` field.
+
+commit c71640de82e999666b322d37011d0d5827c2f2ff
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:31:18 2025 -0300
+
+    feat: add method to find open checkout for today in CheckoutRepository
+    
+    - Implemented `findOpenCheckoutForToday` to retrieve the open checkout for today, if any.
+    - Utilized `FindOpenCheckoutForToday` specification to query for the open checkout.
+    - Returns an `Optional<Checkout>` to handle cases where no open checkout exists.
+
+commit 70edb15d687ff7d8f831a3dd3458f48b94e00cfb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:30:36 2025 -0300
+
+    feat: implement PSQLCheckoutStrategy for managing Checkout entities
+    
+    - Implemented methods to add, find, update, and delete `Checkout` entities using PostgreSQL.
+    - Added support for finding checkouts by specification, allowing flexible queries.
+    - Utilized `QueryLoader` for dynamic SQL query management based on predefined templates.
+    - Implemented `mapResultSet` to map SQL query results to `Checkout` objects.
+    - Introduced logging for successful and failed database operations, including detailed error handling.
+    - Added SQL exception handling with meaningful error messages for all CRUD operations.
+    - Ensured the `add` and `update` methods handle auto-generated keys and affected rows validation.
+
+commit 59cab8971c9c4df901aa69a58478d99b009b48c2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:29:51 2025 -0300
+
+    feat: implement CheckoutMovementDialogController functionality
+    
+    - Implemented logic for handling value input with formatting and real-time updates using a `TextField` listener.
+    - Added `priceListener` method to format currency input and maintain caret position on user interaction.
+    - Created `getValue` method to extract the formatted value from the `TextField` as a `BigDecimal`.
+    - Integrated focus management by implementing `RequestFocus` interface, ensuring the `valueField` is focused upon dialog display.
+    - Introduced `close` method to remove the dialog from its parent when closing.
+    - Added debug log in `initialize` method (to be removed or updated in production).
+
+commit 13dadbef80797d438f42b83f1a3f65fe00945806
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:29:21 2025 -0300
+
+    feat: create CheckoutMovementDialog FXML layout
+    
+    - Designed the CheckoutMovement dialog with fields for entering cash fund amount and an observation.
+    - Added UI components like `TextField` for the value, `TextArea` for observation, and a confirmation `Button`.
+    - Included a custom icon (`ImageView`) for the dialog header and styled with an external CSS.
+    - Styled labels and input fields with specific classes to match the application's design.
+    - Implemented transparent background with dark overlay for focus on dialog content.
+
+commit 995c056d13f1d77fdb3fa7f7d85f3e27f29ce42e
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:28:49 2025 -0300
+
+    feat(UI): update CheckoutMovement view layout in FXML
+    
+    - Added `DatePicker` components for selecting the "Início" and "Fim" dates in the checkout movement section.
+    - Included labels to indicate the period selection for filtering movements.
+    - Styled layout with CSS classes, ensuring consistency with the header section and other UI elements.
+    - Ensured responsive design with layout anchors for proper alignment.
+
+commit a49619b53b12e3ee2f6acebb3624076f20e2769d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:27:36 2025 -0300
+
+    feat: implement CheckoutMovementService for handling checkout movements
+    
+    - Created `CheckoutMovementServiceImpl` to manage adding movements and building checkout movement objects.
+    - The `addMovement` method records a movement with the current date and time, saving it via the repository.
+    - The `buildCheckoutMovement` method constructs a `CheckoutMovement` object with checkout, payment, observation, and movement type.
+    - The `CheckoutMovementService` interface now includes methods for adding and building checkout movements.
+
+commit ea21b8da4d08c69f212c262df0ac84a6f00a7eb2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:25:25 2025 -0300
+
+    feat: add CheckoutService interface for managing checkouts
+    
+    - Introduced `CheckoutService` interface with methods to open a checkout for a user and set initial cash with payment details.
+    - Methods include `openCheckout(User user)` to either open a new or return an existing checkout and `setInitialCash(long checkoutId, Payment payment, String obs)` to record the initial cash for a checkout along with an observation.
+
+commit bd415278f484a0ce1c845a17556c9257867512b8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:22:45 2025 -0300
+
+    feat: add TypeCheckoutMovement enum for categorizing checkout movements
+    
+    - Introduced `TypeCheckoutMovement` enum to represent different types of checkout movements: `ENTRADA`, `SAIDA`, `VENDA`, `AJUSTE`, and `FUNDO_DE_CAIXA`.
+
+commit 17d5b8c185d678f3c88bd71d40b62d2787c7fcea
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:22:17 2025 -0300
+
+    feat: add CheckoutStatus enum with description and conversion method
+    
+    - Introduced `CheckoutStatus` enum to represent the various states of a checkout: `PENDING`, `OPEN`, and `CLOSED`.
+    - Added a `getName()` method to return the description for each status.
+    - Implemented `fromDescription()` method to convert a description string into the corresponding `CheckoutStatus` enum.
+
+commit d3d1bdfdefceb5034ef69c321da6c5aa05e3c4b8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:21:35 2025 -0300
+
+    refactor(model): replace movementType with TypeCheckoutMovement enum in CheckoutMovement class
+    
+    - Replaced the `movementType` field in the `CheckoutMovement` class with `TypeCheckoutMovement` enum to better represent movement types.
+    - Updated the `movementType` setter and getter to work with the enum instead of a string.
+
+commit 102ea527fe0c32cd379ecef506a76366c080489c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:20:41 2025 -0300
+
+    feat(model): create Checkout class with cash management and movement tracking
+    
+    - Added Checkout class with fields for managing the checkout process, including status, timestamps, initial cash, total entries, total exits, and closing balance.
+    - Created a method `addMovement` to add checkout movements (entry/exit) and update the total entry/exit values accordingly.
+    - Introduced relationships with User for who opened and closed the checkout.
+    - Included lists for tracking movements and sales associated with the checkout.
+    - Added constructors for full initialization and a default constructor.
+
+commit f685d3431f1389c9d2b21ba86f22599a91afbf90
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:19:47 2025 -0300
+
+    feat: create Permission class
+    
+    - Added Permission class with fields for id, permission type, and description.
+
+commit 0fcfe09710124c9b6b5d5a7c22cf8ada96716db5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:18:54 2025 -0300
+
+    feat: add subtitle-md class for medium-sized subtitles
+    
+    - Created .subtitle-md class with font size of 16px for larger subtitle text.
+    - No changes made to the existing .subtitle class.
+
+commit 9909ffda3378c9665df6a242c91c5a06e9c4c3b7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Jan 6 18:17:55 2025 -0300
+
+    feat: add User class with properties like id, name, email, and role
+    
+    - Added User class with fields for user details such as id, first name, last name, email, cpf, password, role, and timestamps (createdAt, updatedAt).
+    - Added constructor to initialize all fields and default constructor with test data for first and last name.
+    - Created getter and setter methods for each property.
+    
+    feat: create Permission class, PermissionService interface, and PermissionType enum
+    
+    - Added Permission class with fields for id, permission type, and description.
+    - Created PermissionService interface with a method to check if a user has a specific permission.
+    - Defined PermissionType enum to represent different types of permissions (currently empty).
+
+commit 5759ea12aef92b21949aacd973a6af793d4222b1
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 19 17:29:53 2024 -0300
+
+    fix: handle empty input fields for cost and selling price
+    
+    Refactored the `calculateAndSetMarkup` method to handle cases where the cost price or selling price fields are empty. Ensures that markup calculation does not ult in exceptions and displays "0.00" for invalid or empty inputs.
+
+commit b7cfc788c342f9ba0cc0e7ea0afa4873ff283373
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 19 17:02:49 2024 -0300
+
+    fix
+
+commit 5872013ef8307732f89215523ce371f3a04a732d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 19 17:02:38 2024 -0300
+
+    fix
+
+commit 64642840b3e81d2e2e46a7712e6ee16607f52e3f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:58:57 2024 -0300
+
+    fix
+
+commit a021a499591ab6752fd0c855067828fc92ea9801
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:58:10 2024 -0300
+
+    adds new icon
+
+commit 7d8895604f5e66c21325ac09df56aa928c1ffe74
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:57:42 2024 -0300
+
+    refactor(view): gets the product data from the service
+
+commit 9831ac2aa650c1ffcfc9e6d31a924754e16ea8bd
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:56:46 2024 -0300
+
+    feat(view): adds new `CheckoutMovementButton`
+    
+    adds a new button to the sidebar navigation to load view
+
+commit 2c301a78b465bf842ca87da08adbe879782c873d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:55:17 2024 -0300
+
+    feat(view): introduces new product service to payment view
+
+commit d1e40730f1cebab3977f32beb470d948be682e9a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:53:52 2024 -0300
+
+    fix(view): fixes the price validation error
+    
+    - corrects the error when validating product prices, entering both the cost price and the sales price simultaneously
+
+commit ac1ddc54ad6dee1b5d499775ff6aef5741d4968d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:51:29 2024 -0300
+
+    refactor(repository): makes the code concise
+
+commit fb3b052df9f16c71648f3703e26c84a1ec565a1b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:50:52 2024 -0300
+
+    refactor(service): introduces the `ProductDataContext`
+    
+    - The product service layer now operates product data based on the data context, ensuring that all products are shared with the global access point
+
+commit 4c69c7833ccf04aa5e19845bb1843e65662e80cd
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:47:53 2024 -0300
+
+    refactor(view): gets the product data from the service
+    
+    This change ensures that this part of application accesses the products securely
+
+commit fc312af1b62e052357a273157153e4dec3c8f731
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:43:47 2024 -0300
+
+    feat(sale): reducing the stock of the product sold
+
+commit 67bb1fb8376f04d60e3316e49ae6156805455f7d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:42:56 2024 -0300
+
+    feat(sale): setUp columns with dynamic property
+
+commit 53049381b24cb1b91e63ab52573bd8aa2f35f43d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:42:09 2024 -0300
+
+    fix(queries): corrects the query to update product
+
+commit 6c9ee6140159ad03836c2b7b41ee7e232a1b8e30
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:41:20 2024 -0300
+
+    feat(datacontext): implement ProductDataContext with synchronized local cache and specification support
+    
+    Added `ProductDataContext` to manage `Product` entities with a synchronized local cache, using `ReentrantReadWriteLock` for thread-safe operations. Includes the following features:
+    - Add a product with duplicate checking.
+    - Find a product by ID.
+    - Retrieve all products using the local cache.
+    - Query products by specification directly from the repository.
+    - Update products in both the cache and repository.
+    - Remove a product from the cache and repository.
+    
+    The `findBySpecification` method was adjusted to avoid costly operations on large lists, delegating directly to the repository.
+
+commit 76b5050f62d16c918f2e47b7c22423447d263fe1
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Dec 5 16:37:19 2024 -0300
+
+    refactor(view): improve UI
+
+commit cb85f0ab08b6ec25dbdbca3cd1aca40ee082d995
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Dec 4 18:34:22 2024 -0300
+
+    feat(view): new `Checkout Movement` screen added
+
+commit a1ec9005f8ed2017c3207dba787dc81c835a8113
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Dec 4 10:50:11 2024 -0300
+
+    feat: add markup calculation for product pricing
+    
+    Implements the `calculateAndSetMarkup` method to dynamically calculate and display the markup percentage based on the cost price and selling price. Includes validation to ensure cost price is greater than zero and less than selling price, and handles exceptions gracefully by setting the markup to "0.00".
+
+commit 40b8d8035ad20bd8888242888bd0e30f52bdb305
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Dec 4 09:45:50 2024 -0300
+
+    feat: add UP and DOWN key navigation to field traversal
+
+commit af6bf1308a34158fc7bf51caba8ac66f114e8fb6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Dec 4 00:58:24 2024 -0300
+
+    refactor(ProductTbViewController): use property bindings for column data
+    
+    Updated the column setup in `ProductTbViewController` to use property bindings for better data binding and reactivity. Changed the data types for `idCol` and `stockColumn` to `Long`, and refactored the cell value factories to use `Bindings.createStringBinding()` for cost and selling price formatting. Improved code readability and maintainability by leveraging JavaFX property bindings.
+
+commit cc29de2a45fc2bcc0e9ccd6174e0f0294e480dc8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Dec 4 00:56:28 2024 -0300
+
+    fix(product): reorder price updates to prevent validation error
+    
+    - Reordered the updates for `sellingPrice` and `costPrice` in the `Product` model to avoid triggering a validation exception when the selling price is lower than the cost price during updates.
+    
+    This fix ensures proper validation flow and prevents unintended errors during property updates.
+
+commit c50ff7c3cf0410bb3677b1a3f046a77d5c717dca
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Dec 4 00:53:45 2024 -0300
+
+    refactor(view): print error stack trace
+
+commit 233a18e88af794831ccad3ad53a14dbb9e6dbe4c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Dec 4 00:53:09 2024 -0300
+
+    refactor(model): add support for observable properties
+    
+    - Introduced observable properties for all relevant fields in the `Product` model.
+    - Updated profit margin and markup calculations to synchronize with observable properties.
+    - Implemented validation to ensure the price integrity before applying updates.
+    
+    this enhancement improves JavFX integration by enabling direct binding between the model and user interface
+
+commit cde9366bee06314b19748faa341895cef6a03876
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 17:52:17 2024 -0300
+
+    fix(view): request focus on `searchField`
+
+commit dc0d18c67ef757889832d9e7a21756379212aacd
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 17:51:57 2024 -0300
+
+    fix(view): removes the sidebar overlay
+    
+    removes the sidebar overlay on the main content
+
+commit 8d6dde538fd1cf691390417274bc70704a2a3e3b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 16:15:42 2024 -0300
+
+    feat(view): introduces numeric fields
+
+commit 2c1315059ce3aa001c3fbfcbdbe52172bbc336fb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 15:59:17 2024 -0300
+
+    feat(view): introduces `RequestFocus`
+    
+    fix: toggle main navigation sidebar
+
+commit 9f14d6f370da6400d16a98ab4dc4709b25bfdab2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 13:45:56 2024 -0300
+
+    improved interaction with the form
+
+commit d20a567ce0611c04252fadaf3c30f8fea60e3a6f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 13:44:55 2024 -0300
+
+    refactor: adds shortcut events to the searchbar.
+    
+    block the `idField` when the form is closed
+
+commit a2a8584e5b6c336ee99e2cc7f8fb00be13d24380
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 13:04:43 2024 -0300
+
+    fix(view): change notification message
+
+commit 5d31428db4b694c2c6231a1bfe1c40964e0a3636
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 12:40:17 2024 -0300
+
+    fix(view): change message
+
+commit ed76f444af61c791fc555a205c2118d944e2eac8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 12:37:34 2024 -0300
+
+    refactor(view): new exception handling to `save()`
+
+commit e59a7cb401dd28aa572a8757d7d339288347e3fc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 12:34:20 2024 -0300
+
+    refactor(view): adds service interface to displays notification
+
+commit ed481cb4072404729f21bb92b1af9cc8c7b0469a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 12:32:39 2024 -0300
+
+    refactor(repository): throw new `DuplicateProductException`
+
+commit 76cc633b89344d6c666d690f09f919b9941dd7f4
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 10:56:37 2024 -0300
+
+    remove trash code
+
+commit 4f3bd583f4616637c79c0c807d31da581cf2d79b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 10:56:27 2024 -0300
+
+    fix(product_form): fix the product code parsing
+
+commit 7f11a572fe9e4bf9293a0f8ccbfb75643c66db9c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 01:04:11 2024 -0300
+
+    feat(view): introduces global shortcuts to the product manager
+    
+    - Implements the `handleShortcut` method which handles keyboard events
+
+commit aded9441d63490a4675204121d8a32d5fdb4574f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 29 01:00:26 2024 -0300
+
+    refactor(view): improvements to the product form
+    
+    - modifies access to the cancel method
+    - modifies the `save` method, which now handles `ProductFormException` and displays feedback with toast notifications.
+    - introduces new methods for displaying notifications on the user's screen
+
+commit b3b9ccace797a89841823ead54125375caa791bc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 23:26:45 2024 -0300
+
+    refactor(prod_form): introduces `ProductFormException`
+    
+    - Adds validation of form fields before creating or updating the product
+
+commit 58fe201e198bf921592c31e949581a46ad2cee33
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 23:22:34 2024 -0300
+
+    refactor(validation): add new validation methods
+
+commit 7b9ce51d1f721c1c03408b9db2da0c8435b72231
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 23:19:01 2024 -0300
+
+    refactor(css/fxml): improve toast notification style
+
+commit 1c7b2c872d6dd1dc54ae3ae226d28cc12c29240b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 17:01:40 2024 -0300
+
+    remove trash code
+
+commit aaaa6ab43621b54eb2ec9a9c7e002041efabade9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 17:00:53 2024 -0300
+
+    fix(view): adds anchor pane constraint to alert pane
+
+commit 00d318bfed7d82ef6db8aa6b80e7613c39698adc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 17:00:16 2024 -0300
+
+    feat(product manager): adds the shortcut labels
+
+commit 4a69cb48b1b60df6da723be537c3b49bcc5fc15a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 16:59:42 2024 -0300
+
+    feat(view): add custom toast notification.
+    
+     Adds `ToastNotification.fxml` which represents the notification with css style
+     Adds `ToastNotification` that is the controller for manipulates the title and text of notification
+
+commit 2f09922664220d181389732ca0d85725dced0175
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 16:55:02 2024 -0300
+
+    refactor(product form): remove anchor pane constraints
+
+commit 75a87b5042ba354670bc9faa1d9ceb3bd332ee09
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 16:54:11 2024 -0300
+
+    refactor(checkout): refactor the show info message
+    
+     This change modify the showInfoMessageAlert to accept the String as a parameter
+
+commit ab5a7b3ed0ca86a451a3b5ccc18c707df1c6c407
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 10:28:41 2024 -0300
+
+    refactor(view): change the attribute name for better
+    
+    and remove comments
+
+commit 09088304a19ddb361992ee4a2d4cefc1b14b9967
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 10:27:21 2024 -0300
+
+    refactor(css): changes the style of search bar
+    
+    - change the style of table view
+
+commit a44f3328ecc05c3792cdcffd6b7f409506abf744
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Nov 28 10:25:57 2024 -0300
+
+    refactor(view): introduces button navigation between fields
+    
+    - refactors the `priceField` method to accept as the parameter the next field that will be focused on when the enter button is pressed
+
+commit 0092c61ee19cb83b3134a1fd6be17c372de1e30f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Nov 27 17:52:35 2024 -0300
+
+    feat: enter the complete checkout tab pane
+
+commit 6b4980a5971f8cb9918d5578ebfebf2e1c4c291e
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Nov 27 17:51:44 2024 -0300
+
+    feat(checkout): add global key filter and improves alert messages
+    
+    - Implements `ShortcutHandler` for introduces shortcut keyboards
+    - Introduces the functionality to switch tabs via `btnPrevious` and `btnNext` buttons
+    - improves focus management and interaction with alert messages
+
+commit 0f7638932b470830683443f886ff49bfd9c055e9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Nov 27 17:45:19 2024 -0300
+
+    feat(checkout): Introduces tab navigation via button
+    
+    - Modifies the style of the `addNewCheckoutTab` button
+    - Introduces new arrow buttons to navigation between tabs
+
+commit eb38d29a291505affca13a55604ccbfe0462ffaf
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Nov 27 17:41:51 2024 -0300
+
+    feat(checkout): add dynamic checkout tab with shortcut handling
+    
+    Integrated handleShortcut in CheckoutTabPaneController to route keyboard shortcuts to the active tab's controller.
+    Modified tabs to store their associated controller in userData for streamlined interaction.
+
+commit 88b124743c97764c6cd3635e5aeede6d0313cdfd
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Nov 27 17:33:39 2024 -0300
+
+    refactor(view): improve size of delete icon
+
+commit f6e63c615d968022add16580d944ee84c0093f94
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Nov 27 17:32:23 2024 -0300
+
+    feat(view): add global keyboard shortcuts and improve view management
+    
+    - Added a global key event to handle keyboard shortcut when no text input or button is focused
+    - Introduced a `ShortcutHandler` interface to manage shortcut logic in controllers.
+    - Updated screen loading to associate controllers with views enabling shortcut handling in specific views.
+    - Refactored `MainNavigationController` to support global keyboard shortcut management.
+    
+    BREAKING CHANGE: Introduced `ShortcutHandler` interface which requires implementing controllers to handle keyboard shortcuts.
+
+commit b1f0833edfd1603680384da58f95e467056eb7ca
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Nov 26 11:15:51 2024 -0300
+
+    feat(view): introduces user alert message.
+    
+    Introduces an interactive alert message when the product is not found or the user wants to clear the checkout table.
+
+commit afb98c8f3d281a58dbc7bf785fb9dc73686bc0c0
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Nov 26 11:13:18 2024 -0300
+
+    feat(view): adds a column for action
+    
+    This commit adds a new column for action in sales table. which it introduces a button to delete the element from the table.
+
+commit 575ec249a8a221f072d0467147fd3af1ed2b53b6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Nov 26 11:10:39 2024 -0300
+
+    refactor(view): rename method for better readable
+
+commit f6547ff3d569bad010403d2380219cc1942524a8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Nov 26 11:09:02 2024 -0300
+
+    feat(view): adds PopUp view for information
+    
+    - This commit adds a new file called `InfoMessage.fxml` and its controller `InfoMessageController`, which will provide methods for displaying user-friendly information.
+
+commit e58a6e152d2dab4ce6466fd7e3ed33cfd60ad1f6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Nov 23 18:42:07 2024 -0300
+
+    feat(view): improves user experience
+    
+    - This commit improves the user navigation on the payment screen by adding arrow key navigation.
+    
+    - finalize sale when the button `btnCheckout` is clicked.
+
+commit c8fe608ce879038544b9d92dc4744d51239ca4c3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Nov 23 18:41:09 2024 -0300
+
+    fix(view): adjust element size
+
+commit 10db47031a8c5ede0197165b0e9b4be9e77b7c64
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Nov 23 18:40:47 2024 -0300
+
+    style(view): add hover fx to btnCheckout
+
+commit a4b0689b08d730544ab78aa2e781ef572c3aaf6a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Nov 23 18:40:13 2024 -0300
+
+    feat(view): adds shortcut labels
+
+commit 61b58ce8e44c58ba9d7c1d67fd7af5c5a94db812
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 22 21:20:49 2024 -0300
+
+    fix(view): fix the double click bug
+
+commit fac69c61a7b4b920fe78d38b02b9ce6713ccec65
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 22 20:53:03 2024 -0300
+
+    style(view): change border color/adds shadow to sidebar
+
+commit 0a983e41e18b650492c7d51eee7e482571be9180
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 22 20:51:49 2024 -0300
+
+    feat(view): adds cache to screen views
+    
+    - This commit changes the method that loads the views to load them only once
+
+commit d30584e58567bb3ad98cd79007def2c6b9063d80
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 22 19:12:58 2024 -0300
+
+    feat(view): load views with button click
+
+commit 98f96a5a0be1c8957acb7fc3d76b5d2f0637b1f9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 22 19:07:17 2024 -0300
+
+    fix(view): organize imports/rename style.css
+
+commit 173e0813d43a84d9c357bedbb0fbcc618165aa98
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 22 18:09:25 2024 -0300
+
+    refactor(view): load the `Sidebar` menu separately.
+    
+    - introduces the `loadSidebar` method which adds the side menu and configure the buttons
+
+commit cde11dde281531769eeae4da8488b23ef73c58fd
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 22 18:06:11 2024 -0300
+
+    refactor(view): create sidebar controller
+    
+    - This commit decouples the side menu from the `MainNavigationController`, and assigns a dedicated controller to the side menu logic only.
+    
+    - Introduces the `Sidebar.fxml` and `SidebarController` which contains all the methods for manipulating the style and behavior of the side menu.
+    
+    - Remove the FXML content representing the side menu inside the `MainNavigation.fxml` file.
+
+commit 2a1e4a0bb90331f9a311c262e35c339e2a843d2d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 22 11:45:48 2024 -0300
+
+    refactor(view): separation of responsibilities
+    
+    - This commit aims to refactor the `MainNavigationController.java`class to make the code more concise and readable. Separates the screen display logic from the side menu, thus reducing the complexity of the class.
+
+commit f9a8f0e0f6a77b450c07bd8f40259fb51eab68d7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 1 16:05:45 2024 -0300
+
+    refactor(view): decouples sale services
+    
+    - rename methods for more readability.
+
+commit 8814f5f16ef1479421f88bbfcf5f2573c0d141e0
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 1 16:01:59 2024 -0300
+
+    refactor(view): uses the sale service methods
+
+commit f2284e5d66f0a09228da369be209e82613a2ae32
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 1 15:59:51 2024 -0300
+
+    refactor(view): uses the product service methods
+
+commit 6d077afae0c019e5084f78e21dce39c43db56cee
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 1 15:58:57 2024 -0300
+
+    refactor(service): abstract sales service methods
+    
+    This commit refactors the service layer by creating interfaces that represent the methods for handling sales data.
+
+commit c5ed9cc8038b9029f16ac88c1a333117d1a8f4f2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Nov 1 15:50:15 2024 -0300
+
+    refactor(validation): all static methods
+
+commit 9fd0f5cdb21af550b8e765013f517b06d266f14a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Oct 31 18:57:26 2024 -0300
+
+    refactor(view): close and clear items.
+    
+    - close and clear sale table items after confirm payment.
+
+commit d0c95ffe56dd9b2b17168840c0e1b74c51e5818a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Oct 31 08:52:21 2024 -0300
+
+    refactor(view): abstract `SaleTableView` methods
+    
+    - create `SaleTableViewController` interface which provides the public methods to manipulates the `resources/fxml/SaleTableView.fxml`.
+    
+    - implements the `SaleTableViewController`
+    
+    - adds `PaymentViewHelper` which provides the method that show payment view.
+
+commit cdaeb7cf0c578a19fd669c89636280b7e284f9f9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 16:13:25 2024 -0300
+
+    refactor(view): save all items as a batch
+    
+    - adds new `SaleProduct` validations
+    - adds `saveAll` method which save all `SaleProduct`
+    - refactor the `registerSaleProd` method to consume the new `SaleProduct` service method
+    
+    This commit adds a new method to the `SaleProduct` service layer in which it saves all objects in single transaction, thus saving system resources.
+
+commit c5a9ebcfe6b5256d0e4f7300107007d08f1e4dfb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 12:01:42 2024 -0300
+
+    refactor(view): save all items as a `batch`
+    
+    - adds new `SalePayment` validations
+    - adds `saveAll` method which save all `SalePayment`
+    - refactor the `registerSalePayment` method to consume the new `SalePayment` service method
+    
+    This commit adds a new method to the `SalePayment` service layer in which it saves all objects in single transaction, thus saving system resources.
+
+commit 46bb8af1688d8f05e53b56a21ea92f62709341cc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 11:43:22 2024 -0300
+
+    feat(repository): implements the `BatchInsertable` methods
+    
+    This method allows you to add multiple objects to the database in a single transaction (batch).
+
+commit 3638df6698a5b9f41ea68f053d01f02d76964b13
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 11:40:47 2024 -0300
+
+    feat(repository): adds new batch operations
+
+commit 59871d0b79be5120600e6076b513ef916d66b60f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 10:44:16 2024 -0300
+
+    Move the strategies to the specific package
+
+commit 7b9f57eaecf7f6fb485a4a1a98e59070918457de
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 10:30:54 2024 -0300
+
+    feat(view): introduces `SalePayment` services
+    
+    - Integrates the service layer of the `SalePayment` entity into the payment view.
+
+commit 7f39f8e22fd13132546bdd469849fc724a31e8dd
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 10:28:18 2024 -0300
+
+    feat(repository): adds the payment repository
+    
+    Implements the strategy for handling payment data in the PostgreSQL database.
+
+commit b96c6d41820e0e71cdc24a636e4d1a53f8ad6bbe
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 10:26:16 2024 -0300
+
+    feat(model): adds new payment attributes
+
+commit f65a434753741d403efad455a93e3967eb4c1a28
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Oct 30 10:25:38 2024 -0300
+
+    feat: adds `SalePayment` operations
+    
+    - adds `SalePayment` model
+    
+    - adds `PSQLSalePaymentStrategy`: This class is responsible for postgresql database operations.
+    
+    - adds `SalePaymentService` service layer that handles the business logic involving this entity.
+    
+    - adds `SalePaymentRepository` which contains all the methods for manipulating data of `SalePayment`.
+    
+    This commit adds the `SalePayment` entity, which is responsible for handling and relating the data between payment methods and sales.
+
+commit cda8e3ff0705a57b28772432c7020508f7923e61
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 29 10:39:59 2024 -0300
+
+    refactor(view): center the elements
+
+commit d796cd5ddd055da7c9f5e44b417e3a58a28f7588
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 29 10:39:23 2024 -0300
+
+    refactor(connection): change the log info
+
+commit 4f2cfa6d9b9143a72a6430b74505563a7bd72436
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 29 10:38:29 2024 -0300
+
+    feat(main): references the primary stage
+
+commit f90b4487bff096c6948718e5a09253e9db3d7639
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 29 10:37:29 2024 -0300
+
+    feat(view): integration of sales services.
+    
+    This commit integrates sales services with the payment view to finalize the sale and save the data in the database.
+    
+    -
+
+commit 453d7d37de6940ea0b486a47034c5af797865437
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 29 10:26:58 2024 -0300
+
+    feat(repository): adds `SaleProduct` repository
+
+commit 231581ea6f59bc6190654de75d9eeec8e5ce3c3a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 29 10:24:31 2024 -0300
+
+    feat(service): adds new Sale Service
+    
+    - adds business rules for handling sales data with service layer.
+    - adds Sale Exception to handling sale erros.
+
+commit 3a0a638437dacb3d91aad72af08c0690d459e222
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 29 10:22:59 2024 -0300
+
+    refactor(model): change `status` attribute type
+    
+    - Status becomes an enum for greater security and maintenance.
+
+commit 7000ec141e63e88654be15ae766cf4473232ced7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 19:10:05 2024 -0300
+
+    fix(repository): fix sale product `add` method
+    
+    refactor the status sale attribute
+    fix the sale ID of sale product
+
+commit a2b458ccc94f002e86fe4b86ad7582b10bb993c3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 19:08:35 2024 -0300
+
+    feat(view): adds services to payment view.
+    
+    - introduces new dependencies to payment view.
+    
+    This commit configures the payment view controller, in which it introduces the business operations involves the sale.
+
+commit 9363a81b36354623855bcfcce5ae771b1e13096c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 19:03:09 2024 -0300
+
+    feat(validation): adds sale validator
+    
+    - introduces validation methods which verifies the sale business rules
+
+commit 8507c73b20e7a857546a893fcae9665da1b797fd
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 11:50:34 2024 -0300
+
+    adds new buttons to `ProductForm.fxml`
+
+commit a7aa5537bca7772e4aa2c6f15105fc9c73d8719d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 11:50:09 2024 -0300
+
+    feat(category): adds repository layer to Category
+
+commit 18f049eb935f97e9dbbe6b7e0085e80b3b9dfdd8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 11:49:38 2024 -0300
+
+    feat(spec): add SaleProductBySaleSpec for filtering by sale ID
+    
+    - Implement `SaleProductBySaleIdSpec` to support filtering SaleProduct entities by sale ID.
+    - Add `toSql` method to reference SQL query identifier
+    - Implement `GEtParameters` to return params required by the query
+    
+     Add `isSatisfiedBy` method to verify if a SaleProduct instance matches the sale ID.
+    
+    This specification enables efficient querying of `SaleProduct` entities associated with a specific `saleId`, enhancing filtering capabilities in the repository layer.
+
+commit 665ae4254942e8e86df2a25c541b3555cfc747e8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 11:46:26 2024 -0300
+
+    feat(repository): implement PSQLSaleStrategy CRUD operations
+    
+    - Implement CRUD operations methods
+    
+    This commit adds full CRUD operations for `Sale` entities, using `PSQLSaleStrategy`, ensuring proper error handling, logging, and data mapping.
+
+commit 19c7e4508b856b43d31f57fee0790cffc9ae1fa9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 11:45:53 2024 -0300
+
+    feat(repository): implement PSQLSaleProductStrategy CRUD operations
+    
+    - Implement CRUD operations methods
+    - Add internal methods `findProductById` and `findSaleById` to fetch related entities.
+    
+    This commit adds full CRUD operations for `SaleProduct` entities, using `PSQLSaleProductStrategy`, ensuring proper error handling, logging, and data mapping.
+
+commit 62129f1c3316ca4984859d5e4b74eefac335d939
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Oct 28 11:37:25 2024 -0300
+
+    refactor(view): refactor product manager view UI
+
+commit 155dcfa27f019b2a9fbfdd731b91ed158508065a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Oct 25 11:23:40 2024 -0300
+
+    feat(repository): adds supplier repository operations
+    
+    - Implemented methods to database operations
+
+commit 64e64e6f05d9d4de07315a489456f5b3dd95c8d4
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Oct 25 11:22:41 2024 -0300
+
+    fix(repository): fix the returns of remove method
+
+commit b73608aff24b084d31c995ecc11d55f93a3de5e7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Oct 25 11:21:14 2024 -0300
+
+    feat(view): adds `Sales Reports` view
+
+commit 1c6c1c8eeae7f8f73ab2498b7afa2808466a7b64
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:30:16 2024 -0300
+
+    feat(exception): adds `ProductException.java`
+
+commit 73a5ddfe06708cf6170c3be2f00b7bb7970e77d0
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:30:10 2024 -0300
+
+    feat(exception): adds `ProductException.java`
+
+commit d7bc554a9abd3ae12aabc29526711f8cd60abff8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:29:30 2024 -0300
+
+    feat(view): adds home navigation
+
+commit a50fc49066fd384cbfbef98d43fa550a7e9deeae
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:28:40 2024 -0300
+
+    refactor/feat(view): adds message to change product ID
+    
+    - adds product form utils
+    - reduce redundant code to ProductFormController.java
+    - adds alert message when the user change the product ID
+
+commit 14d38087f48f8bfcdbd5831504e4d125f22b96ed
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:23:46 2024 -0300
+
+    style: change UI Style to Product Manager layout
+
+commit 53f6b900476e34357c3b65bf2580c6723553992d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:22:58 2024 -0300
+
+    refactor(view): integrate ProductService and repository
+    
+    Refactored `ProductManagerController` to utilize ProductService and ProductRepository with PSQLProductStrategy implementation. This improves separation of concerns by delegating product-related logic to the service layer, enhancing the controller-s maintainbility. ALso added new method `addNewProduct()` to handlw the creation of new products more effectively.
+
+commit 5138983ee124787d81350d09845b975740582c0c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:17:00 2024 -0300
+
+    refactor(strategy): adds new strategy to ProductRepository
+
+commit c6e87dc82134a219ad2bdd7adaa8f3feec66b5e8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:16:25 2024 -0300
+
+    refactor(service): adds new feature to service
+    
+    - throws product exception if its code is present in
+    the database.
+    
+    - adds method which update the product and update `last update time`
+
+commit d96d6087f837a44e6794100e5426c7f141718538
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:12:28 2024 -0300
+
+    refactor(view): rename style file
+
+commit 135615d07b817128f797eca8c5dac690c98cc4dc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Oct 22 20:11:18 2024 -0300
+
+    fix(repository): fix query names
+
+commit 07578db4caffc5a0b0dd29eceb71ecf63d3f641a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Sep 21 12:15:29 2024 -0300
+
+    refactor(view): rename Product registration classes and resources for clarity
+    
+    Renamed `ProductRegistrationTableViewController` to `ProductTbViewController` and `ProductRegistrationFormController` to `ProductFormController`. Updated references and related FXML files accordingly to enhance readability and maintain consistency.
+
+commit 95c3a8bb4850733402eb8b647655deb351cb8a4a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Sep 21 12:09:38 2024 -0300
+
+    feat(repository): introduce PSQLProductStrategy singleton
+    
+    - Add singleton implementation for PSQLProductStrategy.
+    - Refactor ProductRegistrationTableViewController and CheckoutTabController to use PSQLProductStrategy.
+    - Clean up unnecessary imports in ProductService.
+    ```
+
+commit c3b6a1a26d87bbf1d44c922602ef953a46d89722
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Sep 21 11:54:03 2024 -0300
+
+    feat(service): add ProductService with save functionality
+    
+    Introduce ProductService to handle product operations. The service includes a save method that generates a new product code if not provided and checks for existing product codes before saving to the repository.
+
+commit a7912bfa01ff9f06cf06614085e401f2bdc52090
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Sep 21 11:53:24 2024 -0300
+
+    feat(repository): implement Product Code generation and existence check strategy
+    
+    - Added `ProductRepositoryStrategy` interface to define methods for product code generation and existence check.
+    - Integrated `ProductRepositoryStrategy` with `ProductRepository` to enable custom strategies through dependency injection.
+    - Implemented code generation and existence check methods in `PSQLProductStrategy`.
+    - Updated PSQL insert and update product commands to use the new ID and product code generation strategies.
+    - Added JUnit dependency in `pom.xml` for testing purposes.
+
+commit d769d6f5c135410ebdaba59a51eb4ded87e79d34
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Sep 19 21:02:30 2024 -0300
+
+    fix: fix `queries.properties` filepath
+    
+    adds log message to query
+
+commit b950321eb568b487f54c830afc60c5dcbf64f917
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 17 12:11:29 2024 -0300
+
+    feat(repository): add PostgreSQL strategies for Category
+    
+    - Add `FindByCategoryName` specification to search categories by name.
+    - Implement `PSQLCategoryStrategy` with methods for CRUD operations and filtering by specification for Category.
+    
+    Includes methods for adding, finding, updating, and deleting categories, and integrates with QueryLoader and ConnectionFactory configurations.
+
+commit 8235488c2e04de0a4873f42781a8b4972a05b2b1
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 17 12:09:25 2024 -0300
+
+    refactor: enhance ConnectionFactory to support multiple DB schemes
+    
+    - Modify ConnectionFactory to take DBScheme parameter for dynamic datasource creation.
+    - Rename Scheme enum to DBScheme and extend it to include PostgreSQL configuration.
+    - Update methods to support the new DBScheme enum.
+
+commit 85db9acaf8ac4401f7660b46d8d3f7f5055ebadf
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 17 12:08:58 2024 -0300
+
+    refactor: enhance ConnectionFactory to support multiple DB schemes
+    
+    - Modify ConnectionFactory to take DBScheme parameter for dynamic datasource creation.
+    - Rename Scheme enum to DBScheme and extend it to include PostgreSQL configuration.
+    - Update methods to support the new DBScheme enum.
+
+commit bf175b8b910eada2da3fd2ff2adfca90c805dfa5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 17 12:08:02 2024 -0300
+
+    feat: add product specifications and PostgreSQL storage strategy
+    
+    - Introduced `ProductByDateRangeSpecification` for filtering products within a specified date range.
+    - Added `ProductByPriceRangeSpecification` to retrieve products within a specified price range.
+    - Implemented `FindProductByProductCode` for fetching products by their unique code.
+    - Developed `PSQLProductStrategy` for PostgreSQL operations, including add, find, update, and delete functionality for products.
+
+commit e850321ef44f35f7b583c666c6c1118cece6634c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 17 12:06:28 2024 -0300
+
+    refactor: remove redundant specification classes FindByBarcode and FindByProductCode
+    
+    Deleted unused classes `FindByBarcode` and `FindByProductCode` to simplify the codebase and eliminate redundancy in the product repository specifications.
+
+commit e72ee672811b6ee2c3e36ac7b8699fd507d52ed7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 17 12:05:57 2024 -0300
+
+    ```
+    feat(repository/specification): add SQL generation and parameters retrieval to Specification interface
+    
+    - Added `toSql` method to generate SQL queries.
+    - Added `getParameters` method to retrieve query parameters.
+    ```
+
+commit 66aec220f6147b4de3615799aa9d95bead4559cc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 17 12:05:23 2024 -0300
+
+    feat(db): add QueryLoader utility and PostgreSQL queries
+    
+    - Introduced QueryLoader class for loading database queries from properties files.
+    - Added PostgreSQL queries for product and category operations.
+
+commit 3a6766535fb3f25994a1268748213f8c817e7be5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 16 13:29:44 2024 -0300
+
+    refactor(view): concise method to reset table view columns
+
+commit 5df3895c8b2e40de98da63cd73814fa440ba6dd6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 19:04:09 2024 -0300
+
+    feat(repository): add product search specification
+    
+    - Add `FindByBarCode` specification to search products by barcode.
+    - Add `FindByProductCode` specification to search products by product code.
+
+commit 3aa69710fb07ee843f3923c03e008f0d354f0a85
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 19:02:20 2024 -0300
+
+    feat(model): add stock type enums
+    
+    - Add `InputTypeStock` enum for different types of stock inputs.
+    - Add `OutputStockType` enum for various stock output types.
+
+commit 6438625b13d3c81b3e04962dea2c5b8318cac6fc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 19:01:15 2024 -0300
+
+    added database h2 file
+
+commit a746139c5e7e3417c0ab6c2609c9879045f162ee
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 18:59:57 2024 -0300
+
+    change source data from of products
+
+commit 0e719178bc5b4c1b60c7eacff4410020223734e5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 18:58:28 2024 -0300
+
+    feat(config): add singleton connection factory
+    
+    - Implemented `ConnectionFactory` class using HikariCP for H2 connection Pooling.
+    - Add `getConnection` method for obtaining database connections.
+    - Implement thread-sage singleton pattern for `ConnectionFactory`
+    - Configure HikariCP with minimum and maximum pool sizes.
+
+commit 0f761557488a3604119657451468c683a28e0c29
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 18:54:57 2024 -0300
+
+    feat(repository): implement product H2 db strategy
+    
+    - Implement `add` method for inserting new `Product` entries into the `produtos` table.
+
+commit cf6648d0ef8733b0043073e927faf1dc94904b7f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 18:46:29 2024 -0300
+
+    refactor(view): update product view
+    Refactor ProductRegistrationFormController to use Product directly
+    
+    - Replaced `stock` references with `Product` in `ProductRegistrationFormController`
+    - Updated `setProduct` method to initialize the controller with a `Product` instead `Stock`.
+    - Modified `populateFields` method to handle Product details and use default values for missing categores and suppliers.
+    - Changed `createUpdatedProduct` and `createUpdatedStock` methods to work with `Product` directly.
+    - Adjusted field population and save logic to accommodate changes in data handling.
+
+commit 5bf6674da46a23b2ef4b3d505599eaaecb10c91c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 18:39:24 2024 -0300
+
+    refactor(view): update product view
+    
+    - Changed TableView type from Stock to Product to align with data model.
+    - Updated TableColumn definitions and cell value factories to work with Product instead of Stock.
+    - Added `productRepository` for data fetching and updated initialization to use `ProductRepository` with `H2DBProductStrategy`
+    - Replaced `stockList` with `productList` and modified related methods to handle `Product`.
+    - Implemented `searchFilteredStock` to support numeric search by product code or barcode.
+    - Commented out unused `updateStockUI` method for future implementation
+    - Added `isNumeric` method to support numeric filtering in search functionality.
+
+commit d3ac9a883048a75cfc02f3ddab97d0a157d0c009
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 18:27:45 2024 -0300
+
+    feat(repository): implements ProductRepository extending Repository
+    
+    - Implemented ProductRepository to extend Repository<Product>.
+    
+    - Overridden methods to delegate operations to the base class.
+
+commit f8de6e3cf3a0bddb7ec3b2e86b45b8142d2d4bd6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 18:25:16 2024 -0300
+
+    feat(repository): implement repository strategy pattern
+    
+    - Added RepositoryStrategy interface to define operations for repositories.
+    - Updated Repository class to use RepositoryStrategy for CRUD operations
+
+commit be3c4ef22279e95100538c3a12f6fefd76c57045
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 13 18:22:39 2024 -0300
+
+    feat(repository): add Repository Strategy interface
+
+commit f0e2976fd0a9966614f7805984d465a296fcae5e
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Sep 12 20:10:06 2024 -0300
+
+    chore: add H2 database dependency
+
+commit e5546b55dde243816143e150fbf5f1d67913fb8f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Sep 12 20:08:50 2024 -0300
+
+    refactor(data): fix the category and supplier object
+    
+    change category and supplier object to Optional for avoid null pointer exception.
+
+commit bc74128a4d846ef9f3558a7e02d846785ac56a75
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Sep 12 20:03:50 2024 -0300
+
+    feat(model): adds new saleProduct constructor
+
+commit 6739f43fbae68485e65e63d3a091f8c4b011b19c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Sep 12 19:55:40 2024 -0300
+
+    feat(model): adds new attribute to product
+    
+    - change supplier and category to Optional object for handling null pointer exception.
+
+commit a72dbdbc7b897e5cda373bfe13a8429f9fabd4c6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Sep 12 19:53:35 2024 -0300
+
+    feat(model): adds new attributes to supplier
+
+commit 7f392ebb75984d85b8df016ba91f50543c7e99e3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Sep 12 19:52:35 2024 -0300
+
+    refactor(sale): refactoring CheckoutTabController
+    
+    - Removed dependencies and simplified code:
+     Removed unused methods and variables. Simplified cart management logic, moved to SaleTableViewController.java
+    
+     - Updated table logic:
+     Implemented new SaleTableView table, replacing previous logic.
+     Adjusted sales configuration and loading through SaleTableViewController.java
+    
+     - Improved total price display:
+      Added listener to update total price label based on changes in the sales table.
+    
+     Interface improvements and bug fixes:
+       - Adjusted table configuration and error messages to enhance user experience.
+    
+    Add SaleTableViewController for Handling Sales Table View
+    
+    - Added `SaleTableViewController` to manage and display the sale table.
+    
+    **Table Configuration** :
+    - Added columns for product code, description, quantity, selling price, discount, and subtotal.
+    - Set up monetary formatting for price and subtotal columns.
+    - Implemented custom cell factories for quantity discount columns with input validation and formatting.
+    
+    **Functionalities**:
+    - Enabled the addition of sale items to the table with quantity and discount adjustments.
+    - Implemented methods to refresh the total price of the sale based on the items in the table.
+    - Included event handling for input fields to ensure correct data entry and real-time updates.
+    
+    **Integration:
+    - Added methods to handle the creation of sales and transition to the payment view.
+
+commit 6eb92b6948785ff8b51a346d3de283b373bea1c9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 11 16:28:23 2024 -0300
+
+    feat(database): add enum scheme that contains db credentials
+
+commit 62203e1b65a3aefe43287503ed9472cb565fe441
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 11 16:26:32 2024 -0300
+
+    feat(database): add Repository pattern to access data
+
+commit aaa2544f6121f469bc6cd598da3d33a3ca465392
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 11 15:09:52 2024 -0300
+
+    fix(view): fix the null pointer exception
+    
+    Display a friendly message if the product is not found and avoid null pointer exception change `getProductData` return
+
+commit b132757f45ab695b67f2a9f9f155245ab66d6156
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 11 15:06:50 2024 -0300
+
+    fix(model): add new product validation
+
+commit 3798c5e6b46da7f80361e9d259df5cfa7b0c5040
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 11 15:06:26 2024 -0300
+
+    fix(model): remove unnecessary attributes
+
+commit ba7fb2122f33f3123f913230355b04c68ebf6367
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 11 13:12:13 2024 -0300
+
+    fix(model): change barcode field to Optional
+
+commit 6da1270efe3315a81a040b2ffea3523e7a7cd253
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 10 13:59:33 2024 -0300
+
+    refactor(view): change package
+
+commit 482c94b32dc084e25df65087b556385980132a9d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 10 10:25:46 2024 -0300
+
+    feat(sale): adds original price labels
+    
+    - adds `showOriginalPrice` method in which the original sale price is displayed if the discount is greater than zero.
+    
+    feat(sale): adds monetary legend to table columns containing prices
+
+commit f193b87c9152b526f0b43ca27e08f155c0a55932
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Sep 10 10:22:58 2024 -0300
+
+    refactor(sale): add unit price property
+
+commit ec78f26c884ee02c64f10e9dd60004624dce38ab
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 21:15:47 2024 -0300
+
+    fix(checkout): corrects the item quantity
+    
+    Ensures that the quantity of item is not equals to zero.
+
+commit 693a02999344f69a786f0a4f8e03dc2b18a83c89
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 21:13:57 2024 -0300
+
+    fix(checkout): corrects the subtotal calculations
+    
+    Ensures that the subtotal is not negative.
+
+commit ff34717679d8c820a9f9530b7dcd38a5eb9598c2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 20:50:15 2024 -0300
+
+    fix(checkout): add create sale event
+    
+    - Adds create sale event to table view fields
+    - Refresh total price to change item quantity
+
+commit b2bf6e1c67d9a6a6636a497db93b2676b08b7785
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 19:44:07 2024 -0300
+
+    feat(payment): Dynamically payment values
+    
+    - Introduces the `calculateTotalAmountPaid()` which calculate the total amount paid and update view.
+    
+    - Introduces `refreshValuesLabel()` method in which you update the captions that inform you wheter you need to receive payment or return change.
+    
+    refactor(checkout): improve table view UI
+
+commit 83c79a70c768f07bb43c9b36a3e366c73d4e83a3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 19:34:35 2024 -0300
+
+    feat(saleProduct): adds calculate methods and new attributes.
+    
+    - Adds `calculateOriginalSubtotal()` which returns the original subtotal price.
+
+commit 069b0318742f0482de1cd72b36874812761b10b0
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 19:32:50 2024 -0300
+
+    feat(sale): adds new sale attributes
+    
+    - Adds `calculateTotals()` method which calculate the sale total price and total discount. Includes the original price.
+    - Adds total amount paid of sale
+    - calculate total change
+
+commit 1b0e1745953ea0e475223a5f5223bc6bc0bdcfa7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 19:29:38 2024 -0300
+
+    remove deprecated view
+
+commit 802dcd6ed1cd820455a6184a59a958b64ced719c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 19:29:11 2024 -0300
+
+    feat(payment): adds the balance labels.
+    
+    - Adds subtitles in which the following information is dispayed:
+    
+    - Total receivable
+    - Total to change
+    
+    refactor(style): change font styles and improve UI to subtitles
+
+commit 084d45be83e38298818e3d58f92d6b4e419664c3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 19:23:13 2024 -0300
+
+    style(checkout): change background color
+
+commit 7be6e87cdae2c49daff26074643e0787f8dbb86c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 9 19:22:37 2024 -0300
+
+    feat(checkout): enhance ui checkout
+    
+    - Add style to quantity field and discount field of cart table view.
+    
+    - Show sale total price dynamically.
+
+commit 159bc80422600a3cb2977808ad565615bdc53506
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Sep 7 15:21:58 2024 -0300
+
+    feat: enhance checkout tab with improved quantity field and styling
+    
+    - Changed `subTotalCol` column type from `String` to `BigDecimal` for better handling of monetary values.
+    - Added `setDropShadowToBody()` to improve the visual appearance of the checkout tab.
+    - Introduced `setUpEventQtdField()` to ensure valid numeric input and handle quantity field events.
+    - Enhanced `searchField` handling with support for creating sales using F3 key and improved Enter key handling.
+    - Implemented a custom `TextField` for `quantityCol` to allow direct editing and validation of quantity values.
+
+commit be9765067b2c2aeff47dab1a6f1c9c49946ba1ae
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Sep 7 15:11:34 2024 -0300
+
+    refactor(checkout): adds create sale and show payment view.
+    
+    - adds the createSale method which create sale and show payment view
+
+commit f0e28e53b77a2f8dfdcf919133a8092b622f3a49
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Sep 7 14:59:02 2024 -0300
+
+    feat: add ObjectProperty for subtotal in SaleProduct
+    
+    - Added ObjectProperty<BigDecimal> subtotalProperty to SaleProduct.
+    - Implemented calculateSubtotal method to update subtotal and subtotalProperty.
+    - Updated methods setQuantity and setDiscount to trigger recalculations.
+    - Changed getSUbTotal to use subTotalProperty for returning subtotal value
+
+commit 664f43951aac0d50a2d9114d462e6f36e933aa3c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Sep 6 18:08:13 2024 -0300
+
+    refactor(model): change integer to long
+
+commit 194123b20f120698cc233cf042db24f96c4ee986
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 4 13:11:57 2024 -0300
+
+    feat(model): add new method to `Product`.
+    
+    This method check whether the product has a barcode.
+
+commit 5bf12d212aa2bb6f5e680c54a5b113fc78e2ebdc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 4 13:09:08 2024 -0300
+
+    deleted unused `SaleProduct` constructor
+
+commit d8aece863859e9a8bdba8f3bee5d8cc08fbf0c6d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 4 13:08:05 2024 -0300
+
+    refactor(controller): rename method to load checkout.
+    
+    - Refactor the method which load the checkout tab pane
+
+commit 94b7bb4c61ebbe5f13f52c5d140e2df8b27bc879
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 4 13:05:29 2024 -0300
+
+    refactor(checkout):tab management in checkout
+    
+    - Added functionality to dynamically crate and manage checkout tabs within the TabPane.
+    - Implemented `addNewCheckoutTab()` to add and select new checkout tabs.
+    - Implemented `getCheckoutTab()` to load the checkout tab's FXML and set up its controller.
+    - Updated `initialized()` to add a new checkout tab upon controller initialization.
+    
+    This refactoring enables the application to manage multiple checkout tabs dynamically.
+
+commit 5b55f3a91e51c06eb54851363d7fd41a4669d67b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Sep 4 12:57:36 2024 -0300
+
+    feat(ui): update checkout tab with new functionalities and UI improvements
+    
+    - Added a new button and image for "Add Checkout" functionality in `CheckoutTab.fxml`
+    - Introduced `TextField` components for code and quantity input in `CheckoutTab.fxml`
+    - Added labels for displaying total and subtotal values in `CheckoutTab.fxml`
+    - Enhanced `CheckoutTabPane.fxml` with a `TableView` for displaying cart items
+    - Included new Search and quantity input fields in `CheckoutTabPane.fxml`
+    - Added new button and image for creating new checkout tabs in `CheckoutTbaPane.fxml`
+    - Updated layout and styes for better user experience and functionality.
+
+commit b5233078c42909250b7db2cb0ea23a1d72486a58
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 2 23:26:14 2024 -0300
+
+    fix(main-navigation): readjustment of elements
+    
+    - adjustments to Main Navigation sidebar btns
+    - adjustments layout to productManager view
+
+commit 35066f4a27f18d6259743743a3ae659de6c7a252
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Sep 2 23:24:14 2024 -0300
+
+    fix(main-navigation): improve button hover effect.
+    
+    Updated the button hover effect logic to account for the currently active screen, ensuring that the styles and icons correctly reflect the active screen.
+    
+    - Added active screen tracking.
+    - Refactored `setUpBtnHoverEffect` methods to handle active and default states.
+    - Enhanced button style reset methods for consistency across UI Elements.
+    - Updated methods to load views and manage active screen state effectively.
+    Updated methods to load views and manage active screen UI State
+
+commit bae115b75f7aa190033f18605e6798a39bb6e104
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 31 21:38:15 2024 -0300
+
+    feat: redesing sidebar and header layout
+    
+    - Added "shortCutSideBar" for quick access buttons with updated icons and layout
+    - Removed deprecated styles and improve layout adjustments for better alignment
+    - Adjusted image sizes and margins
+
+commit 3874b10dbc1d6f20f0c772c0d0b6e57cdf08cc46
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 31 21:17:17 2024 -0300
+
+    feat: adds menu icon and stock manager loading
+    
+    style(ui): added rotate transition to btn
+    
+    added shortCut side bar for quick access to views
+    
+    added hover effect to shortCut icons
+    added drop shadow effect to header and slider and shortCutSideBar
+
+commit 6dfc56ab8088c4afc0487334a2244eb6c414abc8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 31 21:11:55 2024 -0300
+
+    feat: redesing sidebar and header layout
+    
+    - Added "shortCutSideBar" for quick access buttons with updated icons and layout
+    - Removed deprecated styles and improve layout adjustments for better alignment
+    - Adjusted image sizes and margins
+
+commit 0b2232b9fca72614e3bf58e32d0f1362121816f6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 31 21:06:51 2024 -0300
+
+    refactor(controller): improve layout and add drop shadow
+    
+    - Added DropShadow effect to `tableBody` for enhanced visual appearance.
+    - Updated layout positions and sizes of the TableView and form elements
+    - Change table view container from `mainContent` to `tableBody`.
+    - Adjusted search field and filter button styles and positions.
+    - Refactored form visibility animations and shadow configuration
+    - Minor code cleanups and optimization.
+
+commit df23a1716c6fd4c27b308d0024b15e6ab6bbd2db
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 31 21:02:01 2024 -0300
+
+    refactor(layout): reorganize layout and updated styles
+    
+    - Remove redundant AnchorPane for background color.
+    - Added tableBody AnchorPane for improved structure.
+    - remove buttons
+    - Updated layout coordinates for better alignment.
+    - Adjusted font sizes and style classes.
+
+commit bb2ae26596d1f1ac78768657b81897d9076d02a9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 31 21:01:46 2024 -0300
+
+    refactor(layout): reorganize layout and updated styles
+    
+    - Remove redundant AnchorPane for background color.
+    - Added tableBody AnchorPane for improved structure.
+    - remove buttons
+    - Updated layout coordinates for better alignment.
+    - Adjusted font sizes and style classes.
+
+commit a7d80fd0eede4bd5b7b7c7d2790149ede241c7d9
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 28 16:49:57 2024 -0300
+
+    rename folder stock to 'product-manager'
+
+commit f1e301ef30815dcc5e0898398aa49e04948d4cd8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 28 16:40:30 2024 -0300
+
+    feat: adds new btn to main navigation sidebar
+
+commit 849e7b963926a37077371b9450b31a7692062588
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 28 16:40:23 2024 -0300
+
+    feat: adds new btn to main navigation sidebar
+
+commit 612d51bf6cb2d600b97b5df97ac3b71165b72f83
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 28 16:16:30 2024 -0300
+
+    refactor(stock - productManager): rename files
+    
+    This changes rename files to more readable
+
+commit 65609ed74aeda294b6fdc0192b583c349d6c7c07
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 28 11:20:02 2024 -0300
+
+    feat(stock): added action to register form btns
+    
+    - added `cancel()` method which hide and clear
+    - hide menu after form action
+    - change background color to body of manager stock view
+
+commit 04905c608e45cecbb2302944bc1547fa2047c665
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 28 10:48:45 2024 -0300
+
+    feat(stock): add search bar to find stock
+    
+    - StockTableViewController.java (changes):
+    added `searchFilteredStock(String search)` this method search and find stock record by productCode or productDescription
+    
+    - StockManagerController.java (changes): added `setUpSearchField(TextField search)` which adds event listener to search field and return the filtered stock records
+
+commit 9751c8d3f0bb996f96402103e7889c43a8982e8d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 28 09:50:04 2024 -0300
+
+    feat(mainNavigation): adds button hover effect
+    
+    - Adds the new method `setUpBtnHoverEffect` which adds a hover effect to sidebar buttons and fade transition.
+
+commit af981b1b0e26ebc611d6d7c970bba39705f175ce
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Aug 28 09:48:56 2024 -0300
+
+    style(mainNavigation): change UI to sidebar
+    
+    - change the main navigation sidebar and update styles
+    - change the icons
+
+commit 09f3576f3b559e7fe45e14b0c7d4138e825be8d8
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Aug 27 13:53:27 2024 -0300
+
+    refactor(stock): enhancing layout and animations
+    
+    - Extracted layout configuration for TableView and StockForm into separate methods
+    - Improved animation transitions by using constants for duration and positions.
+    - Added dedicated methods for configuring TableView Layout and row factory.
+    - Replaced direct method calls with a single animateForm method for consistency in animations.
+    - Refactored shadow click configuration into a dedicated method.
+
+commit 5ecf57050bacefbb48e16fd529ad9dc8c6574d60
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Aug 27 11:59:53 2024 -0300
+
+    refactor(stockData): rename method
+
+commit cc62030273e4ae4d949efe8d2cba5b59f56f98ac
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Aug 27 11:59:17 2024 -0300
+
+    refactor(stock): refactor `saveProduct()` method
+    
+     - Adds the `stockTableViewController` to manage stock table view state.
+     - The `saveProduct()` method now crates a new stock record from the form data and updates the JSON file and reflects the changesin the stock table view.
+
+commit 6f8000fe2838a100f3e1a6b2466b3e94124610bc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Aug 27 11:46:33 2024 -0300
+
+    refactor(stock): rename method
+
+commit df8f866bab30453743a892f150ad674bc78acb15
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Aug 27 11:45:21 2024 -0300
+
+    feat(stock): set up table view columns
+    
+    Adds the monetary mask to price columns and remove sortable property for all columns
+    adds new style to table view.
+
+commit 1f94a693e04a6ab9c0769f6b74a78b114c704c69
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Aug 27 11:42:49 2024 -0300
+
+    feat(stock): update stock in list and refresh TableView
+    
+    Ensure the stock list is updated correctly with the new stock item and refresh the table view to reflect changes.
+
+commit 0de04a60d618ac387b39d48548a55f41b778332b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 26 15:44:13 2024 -0300
+
+    refactor: override `toString()` method
+
+commit 1847f2178f162e36044f21b4e8538e3d4b2516da
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 26 10:33:23 2024 -0300
+
+    refactor: rename product attribute
+
+commit 155713b802d7f0fd8dfc968435777ae1a9899452
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 20:39:23 2024 -0300
+
+    refactor: rename controller class
+    
+    - Rename `StockRegisterForm.java` to `StockRegisterFormController` to more readability.
+
+commit ee054c26d252fbe4f50bb00e413d40f129cb33e2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 13:58:23 2024 -0300
+
+    remove unnecessary try/catch
+
+commit 6d8ff983867a88783f3ff87ac04d284b8176dfb7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 13:57:36 2024 -0300
+
+    fix: change stock constructor.
+
+commit 04e2560029800f28473d5c4c0afe5af234b699b0
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 13:56:53 2024 -0300
+
+    refactor: Enhance StockDataUtils with improved JSON handling and objects parsing.
+    
+    - **fetchStockData**: Simplified method to fetch and parse stock data from JSON file.
+    - **parseStock**: Extracted and parsed `Stock` data from a `JSONObject`, included nested `Product` details.
+    - **parseCategory**: Extracted `category` data from a `JSONObject`
+    - **parseSupplier**: Extracted `Supplier` data from a `JSONObject`.
+    - **parseProduct**: Extracted and constructed a `Product` object from JSONObject.
+    - **putStockJSONObject**: updated `JSONObject` with `Stock` and nested `Product` , `Category` and `Supplier` data.
+    - **findStockJSONObjectByProductId: Added method to find a `JSONObject`of `Stock` JSON ARRAY by productID.
+    - **updateStock**: Integrated method to update stock data inthe JSON file based on product ID.
+    
+    - Improved error handling and logging for file operations and data parsing.
+
+commit 6a02301ab2b7d47170c01df03717a6cfcef0777d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 12:54:22 2024 -0300
+
+    feat: Enhance product saving and price formatting functionality
+    
+    - Implemented `saveProduct` to build and update `Product` and `Stock` objects with formatted price data and timestamps.
+    - Added `priceListener(TextField priceField)` to format price fields, handle key events, and ensure text consistency:
+      - Sets default value of "0,00" for empty price fields.
+      - Formats price text to ensure proper currency formatting.
+      - Automatically updates formatted text in response to user input changes.
+
+commit 302b05f603250bca3f63c0fea2d7e55b7a972a57
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 12:47:52 2024 -0300
+
+    style(stockManagerView): change font style
+
+commit e2ef5b672b587f46fc5b9fd29deacad6446013ba
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 12:47:08 2024 -0300
+
+    feat: Load FXML and set controller fot StockTableView
+    
+    - Initialized FXMLLoader to load `StockTableView.fxml`.
+    - Created and set StockTableViewController as the controller for the FXML.
+    - Loaded TableView from the FXML file.
+
+commit a0eb0028af424c20989e5afb9a96aa6ec8cc9438
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 12:40:20 2024 -0300
+
+    feat(view/stockRegister): added a new buttons to registration stock form.
+    
+    - Added a new button to save changes.
+    - Added a new button to cancel changes.
+    - refactor stylesheet file path.
+
+commit 9972d176307935a09fbc213d4bc66b671fd0381a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 12:37:48 2024 -0300
+
+    fix: decouple the controller from the Stock Table FXML file.
+
+commit dcdad4616a33ff77988cf384758054380be78214
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 23 12:36:01 2024 -0300
+
+    fix: Improve currency string formatting and parsing
+    
+    - Added normalization of currency strings to handle different decimal and thousand separators.
+    - Updated `normalizeCurrencyString` method to correctly interpret and convert comma and dot as decimal or thousand separators based on context.
+    - Enhanced `createDecimalFormat` method to use us locale conventions for decimal and thousand separators
+    - Improved `parseToBigDecimal` method to handle currency strings more reliably
+
+commit 816a9de8e1a63f7c9448f53802f312d4455653b2
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 18:08:20 2024 -0300
+
+    feat(controller): added product data from json to checkout view
+
+commit bc09255821e7a8482ee3ef216b69518d55c16b51
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:44:02 2024 -0300
+
+    adjustments to the stock form
+
+commit 852e20cdbddd304488497e68497e9419231e1824
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:42:48 2024 -0300
+
+    feat: add constructor in `Stock` taht accepts a `Product` object.
+    - Integrated `ProductValidator` to validate the `Product` before assignment.
+    - Initialized quantity with a random value between 1 and 100 for testing purposes.
+
+commit 1d4402b8d3d2b3b86f473e695350c6cbc066a21d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:41:11 2024 -0300
+
+    feat: enhance product validation and calculation methods
+    
+    - Added validation in setters for cost price and selling price to ensure consistency.
+    
+    - Integrated `ProductValidator` to validate product properties before updating.
+    - Updated calculations for markup and profit margin on price changes.
+    - Ensured that validation and calculations are triggered on setting price values.
+
+commit 679cdd0a7a6dc72dbd5e4c4de63aa9e211ab2eb6
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:33:23 2024 -0300
+
+    feat: add profit margin and markup calculation methods
+    
+    - Implemented calculateProfitMargin method to compute the profit margin as a percentage.
+    - Implemented calculateMarkup method to compute the markup percentage based on cost price.
+    - Added validation for prices in both methods to ensure correct calculations.
+
+commit 9ea9bb49d07431b7be9101ed9d11fe58f724812d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:24:10 2024 -0300
+
+    chore: add JSON library dependency for JSON parsing
+
+commit 012c6c7959559099222354d6ad83d9b57e868e47
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:23:17 2024 -0300
+
+    feat: enhance ProductValidator with additional validations
+    
+    - Added validation for null product objects and creation dates
+    - Added checks for negative profit and markup percentages.
+    - Included price validation to ensure non-null, positive values and proper cost-to-price.
+    - Enhanced error handling with detailed exception messages.
+
+commit b36e90fd03563c02c192d3f05ff21fd69215e332
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:19:51 2024 -0300
+
+    feat: add StockDataUtils to fetch stock data from JSON
+    
+    - Implemented StockDataUtils class to load and parse stock data from `products.json`
+    - Added methods to extract and transform JSON data into Stock and Product objects
+    - Added error handling for file operations
+
+commit 8158af17f9328cff9e3278782d8699f6bd092393
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:17:30 2024 -0300
+
+    refactor: rename attributes and methods
+
+commit f4145b2d09e48d21f457d2af3a45db6da9db03f5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:16:31 2024 -0300
+
+    feat: add JSON data files for category and supplier tests
+    
+    - Added categories.json and suppliers.json files for tests data
+    - Implemented methods to read and parse JSON files to populate categories and suppliers
+
+commit d6636a8df7ee3dc59f07f7a033e314b2812b44f1
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Mon Aug 19 17:12:11 2024 -0300
+
+    test(data): add JSON files for data testing
+    
+    Added JSON files containing sample data for testing purposes. These files will be used to simulate various  scenarios and ensure proper functionality in the application
+
+commit 68927517f21d05b2c77a06134e41bc4d4423aa2a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 14:02:28 2024 -0300
+
+    feat(view): added monetary label to stock table view
+
+commit aa7ebe2f9556a7b154991539b919a20049ee5e0e
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:46:26 2024 -0300
+
+    feat(view): add btn icons to stock manage page
+
+commit 033e54627742790729a0fe73f0fe2f1e665bdb2f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:45:19 2024 -0300
+
+    refactor(view): remove unnecessary file / rename
+
+commit e132ee39084498aacc0fed9a8843abe1cc0d94fe
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:43:00 2024 -0300
+
+    feat(model): added supplier, category and markupPercent to product entity
+
+commit 7c84ea354dd56468d3928bcfa828d9238cf9bb8f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:42:14 2024 -0300
+
+    rename to paymentView.css and PaymentView.fxml
+
+commit f864836d61e0c06f8a619bd0af5c33ed84e34e16
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:41:31 2024 -0300
+
+    remove unnecessary code
+
+commit 748fddc69ba188a4952aca4404bd6d2eea0ba9fc
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:39:42 2024 -0300
+
+    refactor(view): rename FXML folder and filename
+    
+    - added cost price to products
+
+commit c6d487bace34f2eb9a540fc54cfe32cf9092ed8c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:38:18 2024 -0300
+
+    refactor(view): rename stylesheet file
+
+commit 680859333d8959c2291c99f6d2158c62e09bf7db
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:37:29 2024 -0300
+
+    feat(model): implement category model class
+    
+    - Added `Category` class with properties for ID and description.
+    - Included constructors, getters and setters for managing Category data.
+
+commit e3ed5d9b2a89a112cfbf4ce2711fdba9f0c1616b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 12:33:27 2024 -0300
+
+    refactor(view): rename files
+
+commit 935ec081870482cfecab504d00d185953bfcfaeb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 09:07:54 2024 -0300
+
+    remove unnecessary attribute
+
+commit 9c9e076b1a8dd33ead6df97d0f8a7a361ad09af1
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 09:06:53 2024 -0300
+
+    feat(controller): add stock data handling to StockFormController
+    
+    - Implemented `setStock(Stock stock)` behavior to initialize and populate stock data.
+    - Added `populateFields()` method to display stock details in form fields:
+    - Product ID, barcode, description, cost price, selling price, markup percent, quantity, category, and supplier.
+    - Enhanced form with fields to shwo stock information.
+
+commit 83cc5bad0781a3e7ec20fd8cbe89a3411d7b970f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 09:00:58 2024 -0300
+
+    refactor: rename ProductFormController to StockFormController
+    
+    - rename profitPercentField to markupField for more readable
+
+commit 7e4c7259e3666024f9d50da74a47586c92a750d4
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 08:58:13 2024 -0300
+
+    fix(controller): fix the location required of stock form registration
+
+commit 6d3bc8b4684f441274e329a714466b3068b7c926
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 08:57:30 2024 -0300
+
+    fix(controller): fix the location required of stock table view
+
+commit 7ac8961dd8a81c7d5993a5e96ee955e20216d27a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 08:56:18 2024 -0300
+
+    feat(controller): enhance MainNavigationController with dynamix view loading and button interactions
+    
+    -Added method to load nad displai the 'StockManager' view within the content area.
+    - Implemented mouse event handlers for 'btnSale' and 'btRegister' buttons:
+    - Dynamic background color changes on mouse enter, exit, and press.
+    - 'btnRegister' triggers the loading og the 'StockManager' view on click.
+
+commit 90ab885e430a7f277bc907c4cd9f59d9918c31eb
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 08:50:37 2024 -0300
+
+    feat: Add main navigation layout with sidebar and content area
+    
+    - Added main AnchorPane with black background for the main layout.
+    - Included content AnchorPane for dynamic content display.
+    - Implemented sidebar (slider) with vertical VBox layout containing buttons for 'Vender' and 'Produtos'.
+    - Added top AnchorPane for a header with a 'MENU' button.
+    - Styled sidebar buttons with CSS and associated images.
+
+commit 849f91eaf2301c9b2e845180738127b970148a08
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 17 08:43:41 2024 -0300
+
+    feat: add StockTableView with columns for inventory management
+    
+    - Added TableView for displaying stock items in the inventory.
+      - **Table Columns**: Included columns for stock ID, description, cost price, selling price, quantity, and category.
+      - **Column Setup**: Configured columns to disable resizing and reordering to ensure consistent table layout.
+      - **Row Height Adjustment**: Implemented custom row height adjustment to improve readability (30px for empty rows, 68px for filled rows).
+      - **Example Data**: Created and added example product data to demonstrate functionality. Each product has a unique ID, description, cost price, selling price, and associated stock quantity.
+      - **Focus Traversable**: Set TableView to not be focus-traversable to prevent unwanted focus changes.
+
+commit 65e9c60c786d4dcf67986a38f97ba2f26ef9d561
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 16 22:54:14 2024 -0300
+
+    feat(view/controller): adds stock management page controller
+    
+    Introduces a control class to the stock manager page, which introduces the following behaviors:
+    
+    'void loadStockForm()':
+    This method loads the FXML file representing the stock registration form and places it interactively on the main page.
+    
+    The 'showStockForm' and 'hideStockForm' are responsible for displaying and hiding the stock form along with the 'toggleStockForm'
+    
+    The 'loadTableView' loads the stock table view
+    
+    The 'setCellEvent' which adds a mouse clicked event on each row of table
+
+commit 12401d5755cba3087d35c52badfda2131060af1b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 16 22:36:55 2024 -0300
+
+    feat(view): adds stock management page
+    
+    This change introduces the new page for manage products stock and register or change new product into the stock
+
+commit fd96001ffac060fddad0d590d588682f2d7016d4
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 16 22:34:09 2024 -0300
+
+    refactor(view): rename 'register-product.fxml' to 'StockRegisterProduct.fxml'
+    
+    This changes also alters attributes such as the height and position of text fields and the responsiveness of the stock registration form view
+
+commit 8f64bb12000dd26938ed129fee066884fb83dbf5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 16 22:28:11 2024 -0300
+
+    refactor(model): remove unnecessary attribute
+
+commit bac682e45a0d7758e3999f5950c729844b0b9418
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 16 22:27:44 2024 -0300
+
+    refactor(model): rename 'inventory' entity to 'stock'
+
+commit 065e92f87c452fe1a52c8adeac3da8e985ab3460
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Aug 8 18:31:58 2024 -0300
+
+    feat(controller): add RegisterProductController to manage Ui related to product registration
+    
+    Implemented RegisterProductController.java to manage the Ui components related to product registration. The controller initializes various text fields and list views, sets up autocomplete functionality for category and supplier fields
+
+commit b7acc8afa39a371ea440073db2c0d2593beba516
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Aug 8 18:28:47 2024 -0300
+
+    feat(view): create FXML layout for product registration form
+    
+    Added a new FXML file to define the Ui layout for the product registration form. The layout includes fields for product ID, barcode, description, cost price, selling price, profit margin, quantity, category, and supplier. The form also features list views for category and supplier selection, with style linked to a custom CSS File
+
+commit 9fd51069a7c27d125c7a22b46ba0a90b1a5a4e4d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 3 13:12:45 2024 -0300
+
+    feat(payment): maps the payment fields and hbox
+    
+    link payment methods to TextFields and to Hbox elements
+    
+    adds event to TextField payment elements which create a new Payment object and set payment value.
+    
+    adds event to the TextField payment for call the process payment method
+    
+    also adds event to Hbox Elements which representes payment methods that create a new payment and set payment value
+    
+    feat(payment): adds requestPayment method to handle payment input field and associate them with payment method
+    
+    This requestPayment method ensures the paymentField is properly initialized and formatted. If the field is blank, it sets a default value of "0,00" and updates the payment method accordingly.
+    
+    feat(payment): add processPayment and setPayment methods for handling and validating payment processes
+    
+    The processPayment method ensure that the sale is valid by checking for null values and verifying the total price.  It then retrieves the unique payments from the payment methods and sets them to the sale. The method calcultes the total amount of payments and compares it with the sale's total price, throwing an exception of the total paument amount is less.
+    
+    The setPaymentValue method updates the payment value for a given payment methods, It formats the input value, converts it to BigDecimal . and updates the payment method in the paymentMethods map. If the input value cannot be parsed, a runtime exception is thrown
+    
+    feat(utils): add formatCurrency method for parsing currency strings
+    
+    The formatCurrency method converts a string representtion of a currency value into a BigDecimal
+
+commit ec243840997213733fbaa7b4cea150e6469d639d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 3 12:57:16 2024 -0300
+
+    style(view): payment view changes
+    
+    improves the font size
+    remove not used javafx id
+
+commit ecb9441efd424fc259b3f960bc050f56506bcdb7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Aug 3 12:56:00 2024 -0300
+
+    feat: add new payment constructor
+    
+    adds a new constructor to Payment class
+    override equals and hashCode
+
+commit f435ba8074db3f4bed3570512e85040e7327c164
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Aug 2 18:06:31 2024 -0300
+
+    feat(sale): create sale with products list
+    
+    This changes affect 3 files:
+    
+    changes on CheckoutTabController.java:
+    
+    adds a 'createSale' method which create a new Sale and show this sale with 'showPaymentView method'
+    
+    changes on PaymentViewController.java:
+    
+    adds a new constructor which validate the sales data
+    
+    changes on Sale.java:
+    
+    add a new constructor which validate Sale product list and initialize some attributes
+
+commit 9dea7c49dee0e9e83c6ba513dad47786139db28c
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Jul 28 13:34:16 2024 -0300
+
+    refactor: change sale attributes name
+    
+    refactor: add new constructor to SaleProduct.java
+
+commit af052da604f72037564489cbc2020ef4c8789c0e
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Jul 28 13:31:03 2024 -0300
+
+    feat(checkout): add product to sale view
+    
+    This changes allows to enter the product code and add it as an item for sale.
+
+commit 14978db1e26a82f00cd0276d50c8be83777039b0
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sun Jul 28 13:26:28 2024 -0300
+
+    feat(checkout): add product to sale view
+    
+    introduces a hashMap of sale items, product data, and another hash in which associates a product item with its controller
+    
+    introduces a generate item method which generate demo product data for testing purposes
+    
+    refactor: add event listener to quantity field
+
+commit 3c68848a8578968d2c1d5f626a77c78a6ab758c3
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 26 19:08:34 2024 -0300
+
+    feat(checkout): add product method test
+    
+    introduces the addProduct method which loads a new product element and inserts it as a child Node in the product table view
+
+commit 92fcdeb7eaddb4bbf86d868a7c4e65eb5b8b9fc1
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 26 19:03:14 2024 -0300
+
+    refactor: remove not used imports
+
+commit 93cfd2a577207f83b0af66e45643ed7cf8bc657b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 26 19:00:55 2024 -0300
+
+    refactor: (main) comment unnecessary code
+
+commit 7ec37525444b3eef33b1f7b8e2cf4fbfb132f0d7
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 26 18:59:20 2024 -0300
+
+    refactor(checkout): change load checkout view name
+
+commit 1dc1f6278e8bd779c945896d6ee6b891dae29d1d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 26 18:56:21 2024 -0300
+
+    feat(checkout): adds product item controller
+    
+    maps the elements on which the product data will be represented
+    
+    adds listeners to text fields:
+    dynamically changes the discount on products
+    dynamically changes the quantity of products
+    set values on Label elements that will represents the product data
+
+commit 1fca999157d9b3206bf066c788bc6768aa9ad8af
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 26 18:48:02 2024 -0300
+
+    feat(checkout): decouple the product item from product table
+    
+    The purpose of this change is to decouple the Hbox element , which represents the product item data, from the FXML table that will later have this node as a child.
+
+commit 896fc3eec5bdfc6b1cd71e20be5a88ed5c9bff80
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 26 18:43:07 2024 -0300
+
+    fix: change access modifier to ProductBuilder
+
+commit 77a5160b1bcec195cc0a20ae715d8010dfbd8531
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 26 18:34:13 2024 -0300
+
+    refactor: rename SaleItem class
+
+commit 9f322357dad85f4f3d5bf5fbbd780afdd53cdfbf
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jul 25 08:54:43 2024 -0300
+
+    remove jfoenix dependency
+
+commit eb7d444b93b78b4a6826c527c0b88e8dec3e113d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jul 25 08:54:11 2024 -0300
+
+    feat(controller): adds the checkout tab controller
+    
+    This changes introduces a new controller to checkout-tab.fxml which adds the following methods:
+    
+    'addEventOKeyPressed' that add event listeners to qunatity field and code bar field
+    
+    'showPaymentView' which load a new payment view
+    
+    'setSelectedTabListener' that adds a event listener to current tab which request focus on code bar field
+
+commit 020a7fc3b5ee1fd2bddd1b0408276a6f838a079f
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jul 25 08:49:02 2024 -0300
+
+    feat(controller): adds front checkout controller.
+    
+    adds the methods such as 'getCheckoutTab' which load checkout tab that will be added on tab pane.
+    
+    The 'addNewTab()' adds a new checkout tab.
+
+commit a0200d7c6cbeba120526e32e1309ef2bc74732bf
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jul 25 08:44:41 2024 -0300
+
+    feat: add the checkout pane with checkout tabs
+    
+    The front-checkout.fxml is the tab pane to which the cashier's tabs will be added.
+    
+    The checkout-tab.fxml representes the cashier's tab that contains the code bar field, product list view and others
+
+commit 3672cf01ef0a40949a66045d2e15ffd77c7a9b69
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Thu Jul 25 08:39:21 2024 -0300
+
+    feat: sidebar navigation menu
+    
+    Adds new FXML file that represents a main navigation menu JavaFX with show content on center
+
+commit e8f2d77e5dff0f1b5c2297e44bbad30301191387
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jul 17 11:34:37 2024 -0300
+
+    style: change field background color
+
+commit 17eabcc10763837cb09111a294b8edf5a68c50f5
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Wed Jul 17 11:13:59 2024 -0300
+
+    feat(view): introduces a new front of checkout UI
+    
+    - This changes introduces a new front of checkout view with list of product cart and quantity fields with barcode
+
+commit bac41e107f375c5017b1347e9cab6e7ea6260389
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jul 16 16:17:36 2024 -0300
+
+    feat: introduce a new product table view
+    
+    - Introduces a product view for sales cart
+
+commit 0e4cdf635ef3ad08bacdc4d23cc8a5208755ce44
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jul 16 16:15:52 2024 -0300
+
+    refactor: improves the user experience
+    
+    Provides fields interacting with payment methods in an interactive way, improves appearance
+    
+    fix(util): Change TextFieldUtils.java
+    
+    - This change avoids adding multiple listeners to the same field unnecessarily
+
+commit 577cced5e87462562bcb12b832733a0c22ec0195
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jul 16 16:00:10 2024 -0300
+
+    refactor: added MVC pattern
+
+commit 1347012d6a44c859342408515ee6d7a156db76ee
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Tue Jul 16 15:59:37 2024 -0300
+
+    style: remove unnecessary resources
+
+commit 7283398f5e18152e501cd623c8d420314f12880d
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Jul 13 06:57:23 2024 -0300
+
+    style: change payment styles class
+    
+    This change improves the UI design for user experience with the Payment view
+
+commit c4583f5ed808d9ac9e9fcf87f00171d273eed4e1
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Jul 13 06:55:39 2024 -0300
+
+    feat: add main class loader javafx
+    
+    This class initalize primary scene javaFX and launch
+
+commit 5bbbddd2335b55082f9dd0ef6aff21fd7ca25c6b
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Sat Jul 13 06:53:01 2024 -0300
+
+    feat(view): add price formatter
+    
+    This change introduces a new class which is responsible to add a listener and currency formatter to JavaFX TextField
+
+commit 0b1ceb678c859674217d07d5787d6ee1d70cba82
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:48:52 2024 -0300
+
+    feat(controller): add an PoS view controller
+    
+    This class allows the user to interacts with sales interface
+
+commit af68c53a30f9df27a9612012c3586b0d9e87c699
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:46:28 2024 -0300
+
+    build: add module info
+
+commit d8520b04e3610265d41cad851b486660d1cb1d1a
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:45:57 2024 -0300
+
+    feat(view): Adds visual elements of PoS
+    
+    - Adds fxml files that represents the sale screen and styles resources
+
+commit edfc221e2802d66f38bc16b4680a8134c0a63255
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:42:39 2024 -0300
+
+    feat(model): add cash flow entity
+    
+    Represents the "CashFlow" which monitors the daily cash flow.
+
+commit 4578877059e89a6dc0b4ec03e6fde709b4e23326
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:39:46 2024 -0300
+
+    feat(model): add inventory entity
+    
+    The "Inventory" class represent producs inventory that will be processed in the business layers. The `AuditInventory` represents the monitoring of movement inventory
+
+commit 633735940aa871e59042e65c62c5c6eaa17a5664
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:36:40 2024 -0300
+
+    feat(model): add supplier entity
+    
+    The "Supplier" class represent product suppliers data.
+
+commit f87b46f7f0b9219f12883a969048cd69732c1e35
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:36:01 2024 -0300
+
+    feat(model): add status
+    
+    This enum initially represents the sale status.
+
+commit 594d0f4ec73c56be45b4371d4f82a0ebee463d89
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:35:18 2024 -0300
+
+    feat(model): add new Sale entity
+    
+    The "Sale" class represents the sales data that will be processed in the business layers, this class initially has a dependency with entity `Product.java` and `SaleItem.java`, and `Payment.java`
+    
+    The "SaleItem" class represents the relationship between 'Sale' and the quantity sold.
+
+commit df63d3cea95254242b64a6df4f4ecdb8c99c2a31
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:31:22 2024 -0300
+
+    feat(model): add new Payment entity
+    
+    The "Payment" class represents the payment method data that will be processed in the business layers.
+
+commit 0817a4942327990bdf6d86ec45274b3aa9582796
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:29:42 2024 -0300
+
+    feat(model): add new Payment entity
+    
+    The "PaymentMethod" enum represents the payment methods data that will be processed in the business layers.
+
+commit c9846ca279e74d0276e2f444a295fd767ead19ba
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:25:03 2024 -0300
+
+    feat(model): add new product entity
+    
+    The "Product" class represents the product data that will be processed in the business layers
+
+commit ec0ca41c6c5f7d116e64b04a2261b63cba9e4430
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:22:13 2024 -0300
+
+    refactor: rename group
+
+commit 14066145004b4bb462f29c80e2861f829cbf6151
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:19:35 2024 -0300
+
+    :wrench: .idea configurations
+
+commit a3bc3a9e95b67a8898a46bf1d4d1462fdb268039
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:18:46 2024 -0300
+
+    :see_no_evil: .gitignore files
+
+commit 79c6e627273a7d5ae869a80f11a99a60f9903110
+Author: gabrielosorioz <gabrielosorio013@gmail.com>
+Date:   Fri Jul 12 16:18:07 2024 -0300
+
+    build: add maven repository

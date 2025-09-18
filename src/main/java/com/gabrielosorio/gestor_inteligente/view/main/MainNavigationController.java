@@ -1,16 +1,16 @@
 package com.gabrielosorio.gestor_inteligente.view.main;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
-import com.gabrielosorio.gestor_inteligente.repository.base.RepositoryFactory;
-import com.gabrielosorio.gestor_inteligente.repository.factory.PSQLRepositoryFactory;
+import com.gabrielosorio.gestor_inteligente.model.User;
 import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.service.impl.ServiceFactory;
-import com.gabrielosorio.gestor_inteligente.view.checkout.CheckoutMovementController;
-import com.gabrielosorio.gestor_inteligente.view.checkout.CheckoutTabPaneController;
+import com.gabrielosorio.gestor_inteligente.service.navigation.NavigationService;
+import com.gabrielosorio.gestor_inteligente.service.navigation.NavigationServiceImpl;
 import com.gabrielosorio.gestor_inteligente.view.main.helpers.SideBarController;
 import com.gabrielosorio.gestor_inteligente.view.main.helpers.SidebarButton;
-import com.gabrielosorio.gestor_inteligente.view.product.ProductManagerController;
 import com.gabrielosorio.gestor_inteligente.view.shared.RequestFocus;
+import com.gabrielosorio.gestor_inteligente.view.shared.ScreenManagerImpl;
 import com.gabrielosorio.gestor_inteligente.view.shared.ShortcutHandler;
+import com.gabrielosorio.gestor_inteligente.view.shared.base.ScreenManager;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -18,7 +18,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.effect.DropShadow;
@@ -30,26 +29,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class MainNavigationController implements Initializable {
 
-    @FXML
-    private VBox menuBtn;
-
-    @FXML
-    private AnchorPane mainContent,header,root;
-
-    @FXML
-    private ImageView menuIcon;
-
-    private final Map<String,Parent> viewCache = new HashMap<>();
-    private final Map<Parent,Object> viewController = new HashMap<>();
+    @FXML private VBox menuBtn;
+    @FXML private AnchorPane mainContent,header,root;
+    @FXML private ImageView menuIcon;
 
     private SideBarController sideBarController;
 
@@ -57,32 +45,64 @@ public class MainNavigationController implements Initializable {
 
     private ShortcutHandler activeShortcutHandler;
 
-    private ServiceFactory serviceFactory;
-    private RepositoryFactory psqlRepositoryFactory;
+    private final ServiceFactory serviceFactory;
+    private final User user;
+
+    private NavigationService navigationService;
+    private ScreenManager screenManager;
+
+    public MainNavigationController(ServiceFactory serviceFactory, User user) {
+        this.serviceFactory = serviceFactory;
+        this.user = user;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        psqlRepositoryFactory = new PSQLRepositoryFactory();
-        serviceFactory = new ServiceFactory(psqlRepositoryFactory);
+        screenManager = new ScreenManagerImpl(mainContent);
+        navigationService = new NavigationServiceImpl(screenManager, serviceFactory, this::collapseSidebarIfOpen,user);
 
-        Platform.runLater(() -> {
-            addGlobalKeyFilter();
+        setupScreenChangeListener();
 
-        });
+        Platform.runLater(this::addGlobalKeyFilter);
         addHeaderShadow(header);
         setUpMenuButtonToggle();
         loadSidebar();
-        openHome();
+        navigationService.openHome();
     }
 
-    private void addGlobalKeyFilter(){
-        GestorInteligenteApp.getPrimaryStage().getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (GestorInteligenteApp.getPrimaryStage().getScene().getFocusOwner() instanceof TextInputControl) {
-                return;
-            }
+    private void setupScreenChangeListener() {
+        screenManager.setScreenChangeListener(controller -> {
+            handleShortcutController(controller);
+            handleFocusRequest(controller);
+        });
+    }
 
-            if (GestorInteligenteApp.getPrimaryStage().getScene().getFocusOwner() instanceof Button) {
+    private void handleShortcutController(Object controller) {
+        if (controller instanceof ShortcutHandler) {
+            activeShortcutHandler = (ShortcutHandler) controller;
+        } else {
+            activeShortcutHandler = null;
+        }
+    }
+
+    private void handleFocusRequest(Object controller) {
+        if (controller instanceof RequestFocus) {
+            ((RequestFocus) controller).requestFocusOnField();
+        }
+    }
+
+    private void collapseSidebarIfOpen() {
+        Platform.runLater(() -> {
+            if (isSidebarOpen) {
+                toggleSideBar();
+            }
+        });
+    }
+
+    private void addGlobalKeyFilter() {
+        GestorInteligenteApp.getPrimaryStage().getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (shouldIgnoreKeyEvent()) {
                 return;
             }
 
@@ -93,197 +113,125 @@ public class MainNavigationController implements Initializable {
         });
     }
 
+    private boolean shouldIgnoreKeyEvent() {
+        var focusOwner = GestorInteligenteApp.getPrimaryStage().getScene().getFocusOwner();
+        return focusOwner instanceof TextInputControl || focusOwner instanceof Button;
+    }
+
     private void loadSidebar() {
         try {
             FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/Sidebar.fxml"));
             Node sidebar = loader.load();
             sideBarController = loader.getController();
-            AnchorPane.setBottomAnchor(sidebar,0.0);
-            AnchorPane.setTopAnchor(sidebar,0.0);
-            root.getChildren().add(1,sidebar);
-            sideBarController.addButton(new SidebarButton("Início", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48-white.png",this::openHome));
-            sideBarController.addButton(new SidebarButton("Vender", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png",this::openPDV));
-            sideBarController.addButton(new SidebarButton("Produtos", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png", this::openProductManager));
-            sideBarController.addButton(new SidebarButton("Relatório Vendas", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48-white.png",this::openSalesReport));
-            sideBarController.addButton(new SidebarButton("Mov. do caixa", "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-caixa-registradora-48.png","file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-caixa-registradora-48-white.png",this::openCheckoutMovement));
+
+            configureSidebarLayout(sidebar);
+            createSidebarButtons();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void loadScreen(String fxmlPath) {
-        Parent newScreen = viewCache.get(fxmlPath);
+    /**
+     * Configura o layout da sidebar
+     */
+    private void configureSidebarLayout(Node sidebar) {
+        AnchorPane.setBottomAnchor(sidebar, 0.0);
+        AnchorPane.setTopAnchor(sidebar, 0.0);
+        root.getChildren().add(1, sidebar);
+    }
 
-        if(newScreen == null){
-            try {
-                FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource(fxmlPath));
-                newScreen = loader.load();
-                Object controller = loader.getController();
-                // Armazena a view e o controlador
-                viewCache.put(fxmlPath, newScreen);
-                viewController.put(newScreen,controller);
+    private void createSidebarButtons() {
+        var buttons = new SidebarButton[] {
+                new SidebarButton("Início",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48.png",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-casa-48-white.png",
+                        navigationService::openHome),
 
-            } catch (IOException e) {
-                throw new RuntimeException("Error loading screen: " + fxmlPath, e);
-            }
+                new SidebarButton("Vender",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48.png",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-tag-de-preço-de-venda-48-white.png",
+                        navigationService::openPointOfSale),
 
+                new SidebarButton("Produtos",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48.png",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-produto-novo-48-white.png",
+                        navigationService::openProductManager),
+
+                new SidebarButton("Relatório Vendas",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48.png",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-relatório-gráfico-48-white.png",
+                        navigationService::openSalesReport),
+
+                new SidebarButton("Mov. do caixa",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-caixa-registradora-48.png",
+                        "file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-caixa-registradora-48-white.png",
+                        navigationService::openCheckoutMovement)
+        };
+
+        for (SidebarButton button : buttons) {
+            sideBarController.addButton(button);
         }
+    }
 
-        Object controller = viewController.get(newScreen);
+    private void toggleSideBar() {
+        Platform.runLater(() -> {
+            var animation = createSidebarAnimation();
+            animation.play();
+        });
+    }
 
-        if(controller instanceof ShortcutHandler){
-            activeShortcutHandler = (ShortcutHandler) controller;
+    private SidebarAnimation createSidebarAnimation() {
+        VBox sidebar = sideBarController.getSidebar();
+        VBox shortcutSidebar = sideBarController.getShortCutSideBar();
+
+        TranslateTransition slide = new TranslateTransition(Duration.seconds(0.2), sidebar);
+        RotateTransition rotate = new RotateTransition(Duration.millis(150), menuBtn);
+
+        if (isSidebarOpen) {
+            return createCloseAnimation(slide, rotate, sidebar, shortcutSidebar);
         } else {
-            activeShortcutHandler = null;
+            return createOpenAnimation(slide, rotate, sidebar, shortcutSidebar);
         }
-
-        if(controller instanceof RequestFocus){
-            ((RequestFocus) controller).requestFocusOnField();
-        }
-
-        mainContent.getChildren().clear();
-        mainContent.getChildren().add(newScreen);
-
     }
 
-    private void loadScreen(String fxmlPath, Object manualController) {
-        Parent newScreen = viewCache.get(fxmlPath);
+    /**
+     * Cria animação para fechar sidebar
+     */
+    private SidebarAnimation createCloseAnimation(TranslateTransition slide, RotateTransition rotate,
+                                                  VBox sidebar, VBox shortcutSidebar) {
+        rotate.setByAngle(-180);
+        slide.setToX(-265);
+        slide.setOnFinished(e -> sidebar.setPrefWidth(0));
 
-        if (newScreen == null) {
-            try {
-                FXMLLoader loader = new FXMLLoader(GestorInteligenteApp.class.getResource(fxmlPath));
+        shortcutSidebar.setVisible(true);
+        shortcutSidebar.setStyle("-fx-background-color: #fff;");
 
-                // Define o controlador manualmente, se fornecido
-                if (manualController != null) {
-                    loader.setController(manualController);
-                }
-
-                newScreen = loader.load();
-                Object controller = (manualController != null) ? manualController : loader.getController();
-
-                // Armazena a view e o controlador
-                viewCache.put(fxmlPath, newScreen);
-                viewController.put(newScreen, controller);
-            } catch (IOException e) {
-                throw new RuntimeException("Error loading screen: " + fxmlPath, e);
-            }
-        }
-
-        Object controller = viewController.get(newScreen);
-
-        if (controller instanceof ShortcutHandler) {
-            activeShortcutHandler = (ShortcutHandler) controller;
-        } else {
-            activeShortcutHandler = null;
-        }
-
-        if (controller instanceof RequestFocus) {
-            ((RequestFocus) controller).requestFocusOnField();
-        }
-
-        mainContent.getChildren().clear();
-        mainContent.getChildren().add(newScreen);
-    }
-
-
-    private void openHome(){
-        loadScreen("fxml/Home.fxml");
-        Platform.runLater(() -> {
-            if(isSidebarOpen){
-                toggleSideBar();
-            }
-        });
-    }
-
-    private void openPDV(){
-        ProductService ps = serviceFactory.getProductService();
-        var checkoutTabPaneController = new CheckoutTabPaneController(ps);
-        loadScreen("fxml/sale/CheckoutTabPane.fxml",checkoutTabPaneController);
-        Platform.runLater(() -> {
-            if(isSidebarOpen){
-                toggleSideBar();
-            }
-        });
-    }
-
-    private void openProductManager(){
-        ProductService ps = serviceFactory.getProductService();
-        var productManagerController = new ProductManagerController(ps);
-        loadScreen("fxml/product-manager/ProductManager.fxml",productManagerController);
-        Platform.runLater(() -> {
-            if(isSidebarOpen){
-                toggleSideBar();
-            }
-        });
-    }
-
-    private void openSalesReport(){
-        loadScreen("fxml/reports/SalesReport.fxml");
-        Platform.runLater(() -> {
-            if(isSidebarOpen){
-                toggleSideBar();
-            }
-        });
-    }
-
-    private void openCheckoutMovement(){
-
-        CheckoutService cService = serviceFactory.getCheckoutService();
-        SaleCheckoutMovementService slcmService = serviceFactory.getSaleCheckoutMovementService();
-        SaleService saleService = serviceFactory.getSaleService();
-        CheckoutMovementService cmService = serviceFactory.getCheckoutMovementService();
-
-        loadScreen("fxml/sale/CheckoutMovement.fxml", new CheckoutMovementController(cService,slcmService,saleService,cmService));
-        Platform.runLater(() -> {
-            if(isSidebarOpen){
-                toggleSideBar();
-            }
-        });
-    }
-
-    private void toggleSideBar(){
         Image menuIconDef = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64.png");
-        Image menuIconActive = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64-active.png");
+        menuIcon.setImage(menuIconDef);
+        isSidebarOpen = false;
 
-        Platform.runLater(() -> {
-            TranslateTransition slide = new TranslateTransition();
-            slide.setDuration(Duration.seconds(0.2));
-            VBox sidebar = sideBarController.getSidebar();
-            VBox shortcutSidebar = sideBarController.getShortCutSideBar();
-            slide.setNode(sidebar);
-
-            RotateTransition rotateTransition = new RotateTransition(Duration.millis(150));
-            rotateTransition.setNode(menuBtn);
-
-            if(isSidebarOpen) {
-                rotateTransition.setByAngle(-180);
-                slide.setToX(-265);
-                slide.setOnFinished(actionEvent -> {
-                    sidebar.setPrefWidth(0);
-                });
-                shortcutSidebar.setVisible(true);
-                shortcutSidebar.setStyle("-fx-background-color: #fff;");
-                menuIcon.setImage(menuIconDef);
-                isSidebarOpen = false;
-            } else {
-                rotateTransition.setByAngle(180);
-                sidebar.setPrefWidth(265);
-                slide.setToX(0);
-                menuIcon.setImage(menuIconActive);
-                slide.setOnFinished(actionEvent -> {
-                    shortcutSidebar.setVisible(false);
-                    shortcutSidebar.setStyle("-fx-background-color: transparent;");
-                });
-
-                isSidebarOpen = true;
-            }
-
-            slide.play();
-            rotateTransition.play();
-        });
+        return new SidebarAnimation(slide, rotate);
     }
 
+    private SidebarAnimation createOpenAnimation(TranslateTransition slide, RotateTransition rotate,
+                                                 VBox sidebar, VBox shortcutSidebar) {
+        rotate.setByAngle(180);
+        sidebar.setPrefWidth(265);
+        slide.setToX(0);
+
+        Image menuIconActive = new Image("file:src/main/resources/com/gabrielosorio/gestor_inteligente/image/icons8-cardápio-64-active.png");
+        menuIcon.setImage(menuIconActive);
+
+        slide.setOnFinished(e -> {
+            shortcutSidebar.setVisible(false);
+            shortcutSidebar.setStyle("-fx-background-color: transparent;");
+        });
+
+        isSidebarOpen = true;
+
+        return new SidebarAnimation(slide, rotate);
+    }
     private void addHeaderShadow(Node node){
         DropShadow shadow = new DropShadow();
         shadow.setOffsetX(2); // Deslocamento horizontal da sombra
@@ -300,6 +248,21 @@ public class MainNavigationController implements Initializable {
                 toggleSideBar();
             }
         });
+    }
+
+    private static class SidebarAnimation {
+        private final TranslateTransition slide;
+        private final RotateTransition rotate;
+
+        public SidebarAnimation(TranslateTransition slide, RotateTransition rotate) {
+            this.slide = slide;
+            this.rotate = rotate;
+        }
+
+        public void play() {
+            slide.play();
+            rotate.play();
+        }
     }
 
 }

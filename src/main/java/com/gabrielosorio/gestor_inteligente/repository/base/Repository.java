@@ -6,11 +6,11 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryS
 import java.util.List;
 import java.util.Optional;
 
-public abstract class Repository <T> {
+public abstract class Repository <T,ID> {
 
-    protected RepositoryStrategy<T> strategy;
+    protected RepositoryStrategy<T,ID> strategy;
 
-    public void init(RepositoryStrategy<T> strategy){
+    public void init(RepositoryStrategy<T,ID> strategy){
         this.strategy = strategy;
     }
 
@@ -18,7 +18,7 @@ public abstract class Repository <T> {
         return strategy.add(entity);
     }
 
-    public Optional<T> find(long id){
+    public Optional<T> find(ID id){
         return strategy.find(id);
     }
 
@@ -34,7 +34,7 @@ public abstract class Repository <T> {
         return strategy.update(newT);
     }
 
-    public boolean remove(long id){
+    public boolean remove(ID id){
         return strategy.remove(id);
     }
 

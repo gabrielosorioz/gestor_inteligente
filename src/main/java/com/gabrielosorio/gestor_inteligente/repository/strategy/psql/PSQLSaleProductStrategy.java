@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<SaleProduct> implements RepositoryStrategy<SaleProduct>, BatchInsertable<SaleProduct> {
+public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<SaleProduct,Long> implements RepositoryStrategy<SaleProduct,Long>, BatchInsertable<SaleProduct> {
 
     private final QueryLoader qLoader;
     private final PSQLProductStrategy productStrategy;
@@ -28,7 +28,8 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<S
     private Logger log = Logger.getLogger(getClass().getName());
 
     public PSQLSaleProductStrategy(ConnectionFactory connectionFactory){
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+        super(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
         this.productStrategy = new PSQLProductStrategy(connectionFactory);
         this.saleStrategy = new PSQLSaleStrategy(connectionFactory);
     }
@@ -70,7 +71,7 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<S
     }
 
     @Override
-    public Optional<SaleProduct> find(long id) {
+    public Optional<SaleProduct> find(Long id) {
         var query = qLoader.getQuery("findSaleProductById");
         Connection connection = null;
         try {
@@ -185,7 +186,7 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<S
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteSaleProductById");
         Connection connection = null;
         try {

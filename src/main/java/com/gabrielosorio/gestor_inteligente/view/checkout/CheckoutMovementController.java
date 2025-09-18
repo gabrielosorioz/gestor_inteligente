@@ -40,7 +40,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
 
     // Componentes da UI
     @FXML private Label salesAvg, canceled, cashMethod, cost, creditMethod, debitMethod, grossProfit,
-            grossProfitMargin, inflow, initialCash, outflow, pixMethod, qtdSales, statusLbl, totalSale;
+            grossProfitMargin, inflow, initialCash, outflow, pixMethod, qtdSales, statusLbl, totalSale, roleAndNameLbl;
     @FXML private DatePicker startDate, endDate;
     @FXML private AnchorPane mainContent, tableContent;
     @FXML private ImageView statusView;
@@ -51,6 +51,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     private final SaleService saleService;
     private final CheckoutMovementService checkoutMovementService;
     private final Checkout checkout;
+    private final User user;
 
     // Componentes de UI e estado
     private TableView<CheckoutMovement> movementsTableView;
@@ -65,13 +66,13 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     public CheckoutMovementController(CheckoutService checkoutService,
                                       SaleCheckoutMovementService saleCheckoutMovementService,
                                       SaleService saleService,
-                                      CheckoutMovementService checkoutMovementService) {
+                                      CheckoutMovementService checkoutMovementService, User user) {
         this.checkoutService = checkoutService;
         this.saleCheckoutMovementService = saleCheckoutMovementService;
         this.saleService = saleService;
         this.checkoutMovementService = checkoutMovementService;
-        this.checkout = checkoutService.openCheckout(createUser());
-
+        this.user = user;
+        this.checkout = checkoutService.openCheckout(user);
         this.tablePresenter = new CheckoutMovementTablePresenter();
         this.paymentPresenter = new PaymentSummaryPresenter();
     }
@@ -79,6 +80,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         PaymentEventBus.getInstance().register(this);
+        roleAndNameLbl.setText(user.getRole().getName() + ": " +user.getFullName());
         setupDatePickers();
         initializeTableView();
         loadMovementsData();
@@ -244,10 +246,4 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         refreshData();
     }
 
-    private User createUser() {
-        User user = new User();
-        user.setFirstName("Gabriel");
-        user.setLastName("Osório");
-        return user;
-    }
 }

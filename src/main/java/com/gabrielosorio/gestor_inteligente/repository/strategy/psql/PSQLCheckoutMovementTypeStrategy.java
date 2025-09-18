@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.repository.strategy.psql;
 
+import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.CheckoutMovementType;
@@ -16,13 +17,14 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStrategyV2<CheckoutMovementType> implements RepositoryStrategy<CheckoutMovementType> {
+public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStrategyV2<CheckoutMovementType,Long> implements RepositoryStrategy<CheckoutMovementType,Long> {
 
     private final QueryLoader qLoader;
     private final Logger log = Logger.getLogger(getClass().getName());
 
-    public PSQLCheckoutMovementTypeStrategy() {
-        this.qLoader = new QueryLoader(DBScheme.POSTGRESQL);
+    public PSQLCheckoutMovementTypeStrategy(ConnectionFactory connectionFactory) {
+        super(connectionFactory);
+        this.qLoader = new QueryLoader(connectionFactory.getDBScheme());
     }
 
     @Override
@@ -52,7 +54,7 @@ public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStr
     }
 
     @Override
-    public Optional<CheckoutMovementType> find(long id) {
+    public Optional<CheckoutMovementType> find(Long id) {
         var query = qLoader.getQuery("findCheckoutMovementTypeById");
 
         try (var connection = getConnection();
@@ -157,7 +159,7 @@ public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStr
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteCheckoutMovementTypeById");
         try (var connection = getConnection();
              var ps = connection.prepareStatement(query)) {

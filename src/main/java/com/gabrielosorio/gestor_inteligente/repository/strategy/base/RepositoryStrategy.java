@@ -5,12 +5,12 @@ import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specif
 import java.util.List;
 import java.util.Optional;
 
-public interface RepositoryStrategy <T> {
+public interface RepositoryStrategy<T, ID> {
     T add(T t);
-    Optional<T> find(long id);
+    Optional<T> find(ID id);
     List<T> findAll();
     List<T> findBySpecification(Specification<T> specification);
     T update(T newT);
-    boolean remove(long id);
+    boolean remove(ID id);
 }
 

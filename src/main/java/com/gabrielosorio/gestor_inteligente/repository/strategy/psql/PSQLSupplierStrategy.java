@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PSQLSupplierStrategy implements RepositoryStrategy<Supplier> {
+public class PSQLSupplierStrategy implements RepositoryStrategy<Supplier,Long> {
 
     private final QueryLoader qLoader;
     private final ConnectionFactory connFactory;
@@ -56,7 +56,7 @@ public class PSQLSupplierStrategy implements RepositoryStrategy<Supplier> {
     }
 
     @Override
-    public Optional<Supplier> find(long id) {
+    public Optional<Supplier> find(Long id) {
         var query = qLoader.getQuery("findSupplierById");
         try(var connection = connFactory.getConnection();
             var ps = connection.prepareStatement(query)){
@@ -159,7 +159,7 @@ public class PSQLSupplierStrategy implements RepositoryStrategy<Supplier> {
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteSupplierById");
         try(var connection = connFactory.getConnection();
             var ps = connection.prepareStatement(query)){

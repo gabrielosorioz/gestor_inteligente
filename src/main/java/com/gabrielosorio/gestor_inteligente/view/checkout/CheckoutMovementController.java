@@ -81,8 +81,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         PaymentEventBus.getInstance().register(this);
         setupDatePickers();
         initializeTableView();
-        loadMovementsData();
-        updateInitialCashLabel();
+        loadMovements();
     }
 
     private void setupDatePickers() {
@@ -93,9 +92,35 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         startDate.setValue(today);
         endDate.setValue(today);
 
-        startDate.setOnAction(event -> searchMovementsByDateRange());
-        endDate.setOnAction(event -> searchMovementsByDateRange());
+        startDate.setOnAction(event -> {
+            if (isValidDateRange()) {
+                loadMovements();
+            }
+        });
+
+        endDate.setOnAction(event -> {
+            if (isValidDateRange()) {
+                loadMovements();
+            }
+        });
     }
+
+    private boolean isValidDateRange() {
+        LocalDate start = startDate.getValue();
+        LocalDate end = endDate.getValue();
+
+        if (start == null || end == null) {
+            return false;
+        }
+
+        if (start.isAfter(end)) {
+            showAlert("Data inválida", "A data inicial não pode ser posterior à data final.");
+            return false;
+        }
+
+        return true;
+    }
+
 
     private void initializeTableView() {
         movementsList = FXCollections.observableArrayList();
@@ -115,33 +140,35 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         AnchorPane.setRightAnchor(movementsTableView, 0.0);
     }
 
-    private void loadMovementsData() {
-        List<CheckoutMovement> movements = checkoutService.findCheckoutMovementsById(checkout.getId());
-        tablePresenter.displayMovements(movementsTableView, movementsList, movements);
-        updatePaymentSummary(movements);
-    }
-
-    private void searchMovementsByDateRange() {
+    private void loadMovements() {
         try {
+            List<CheckoutMovement> movements;
             LocalDate startLocalDate = startDate.getValue();
             LocalDate endLocalDate = endDate.getValue();
 
-            if (startLocalDate == null || endLocalDate == null) {
-                showAlert("Data inválida", "Por favor, selecione as datas inicial e final.");
-                return;
+            if (startLocalDate != null && endLocalDate != null) {
+                LocalDateTime startDateTime = LocalDateTime.of(startLocalDate, LocalTime.MIN);
+                LocalDateTime endDateTime = LocalDateTime.of(endLocalDate, LocalTime.MAX);
+                movements = checkoutMovementService.findByDateRange(startDateTime, endDateTime);
+            } else {
+                movements = checkoutService.findCheckoutMovementsById(checkout.getId());
             }
 
-            LocalDateTime startDateTime = LocalDateTime.of(startLocalDate, LocalTime.MIN);
-            LocalDateTime endDateTime = LocalDateTime.of(endLocalDate, LocalTime.MAX);
-
-            List<CheckoutMovement> movements = checkoutMovementService.findByDateRange(startDateTime, endDateTime);
             tablePresenter.displayMovements(movementsTableView, movementsList, movements);
-            updateInitialCashLabel();
             updatePaymentSummary(movements);
+            updateInitialCashLabel();
         } catch (Exception e) {
-            log.severe("Erro ao buscar movimentos por data: " + e.getMessage());
-            showAlert("Erro na pesquisa", "Ocorreu um erro ao buscar os movimentos: " + e.getMessage());
+            log.severe("Erro ao carregar movimentos: " + e.getMessage());
+            showAlert("Erro", "Ocorreu um erro ao carregar os movimentos: " + e.getMessage());
         }
+    }
+
+    private void searchMovementsByDateRange() {
+        if (startDate.getValue() == null || endDate.getValue() == null) {
+            showAlert("Data inválida", "Por favor, selecione as datas inicial e final.");
+            return;
+        }
+        loadMovements();
     }
 
     private void updatePaymentSummary(List<CheckoutMovement> movements) {
@@ -175,7 +202,20 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     }
 
     private void updateInitialCashLabel() {
-        initialCash.setText(TextFieldUtils.formatText(checkout.getInitialCash().toPlainString()));
+        try {
+            Checkout currentCheckout = checkoutService.findById(checkout.getId()).get();
+            if (currentCheckout != null) {
+                BigDecimal currentInitialCash = currentCheckout.getInitialCash();
+                initialCash.setText(TextFieldUtils.formatText(currentInitialCash.toPlainString()));
+
+                checkout.setInitialCash(currentInitialCash);
+            } else {
+                initialCash.setText(TextFieldUtils.formatText(checkout.getInitialCash().toPlainString()));
+            }
+        } catch (Exception e) {
+            log.warning("Erro ao atualizar label do fundo de caixa: " + e.getMessage());
+            initialCash.setText(TextFieldUtils.formatText(checkout.getInitialCash().toPlainString()));
+        }
     }
 
     private void updateInitialCashLabel(BigDecimal value) {
@@ -207,7 +247,9 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
             checkoutMovementDialogController.getBtnOk().setOnMouseClicked(mouseEvent -> {
                 BigDecimal initialCash = checkoutMovementDialogController.getValue();
                 String obs = checkoutMovementDialogController.getObs();
+
                 setInitialCash(initialCash, obs);
+
                 checkoutMovementDialogController.close();
             });
         } catch (Exception e) {
@@ -221,15 +263,33 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
             obs = "F. Caixa";
         }
 
-        checkoutService.setInitialCash(checkout.getId(), new Payment(PaymentMethod.DINHEIRO, initialCash), obs.strip());
-        updateInitialCashLabel(initialCash);
-        refreshData();
+        try {
+            // Atualizar no serviço/banco de dados
+            checkoutService.setInitialCash(checkout.getId(), new Payment(PaymentMethod.DINHEIRO, initialCash), obs.strip());
+
+            // Atualizar o objeto checkout local (se necessário)
+            checkout.setInitialCash(initialCash);
+
+            // Atualizar a interface com o novo valor
+            updateInitialCashLabel(initialCash);
+
+            // Recarregar todos os dados para manter consistência
+            refreshData();
+
+            log.info("Fundo de caixa atualizado com sucesso: " + initialCash);
+
+        } catch (Exception e) {
+            log.severe("Erro ao definir fundo de caixa: " + e.getMessage());
+            showAlert("Erro", "Falha ao atualizar o fundo de caixa: " + e.getMessage());
+
+            // Reverter para o valor anterior em caso de erro
+            updateInitialCashLabel();
+        }
     }
 
+
     private void refreshData() {
-        List<CheckoutMovement> movements = checkoutService.findCheckoutMovementsById(checkout.getId());
-        tablePresenter.displayMovements(movementsTableView, movementsList, movements);
-        updatePaymentSummary(movements);
+       loadMovements();
     }
 
     @Override

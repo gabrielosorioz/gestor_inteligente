@@ -9,6 +9,7 @@ import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class CheckoutServiceImpl implements CheckoutService {
 
@@ -38,6 +39,11 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Override
     public List<CheckoutMovement> findCheckoutMovementsById(long id) {
         return checkoutMovementService.findByCheckoutId(id);
+    }
+
+    @Override
+    public Optional<Checkout> findById(Long id) {
+        return checkoutRepository.find(id);
     }
 
     private Checkout validateCheckoutExists(long checkoutId) {

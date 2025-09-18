@@ -6,6 +6,7 @@ import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CheckoutService {
 
@@ -38,6 +39,8 @@ public interface CheckoutService {
      * @throws IllegalArgumentException if the provided ID is invalid (e.g., less than or equal to 0)
      */
     List<CheckoutMovement> findCheckoutMovementsById(long id);
+
+    Optional<Checkout> findById(Long id);
 
 
 

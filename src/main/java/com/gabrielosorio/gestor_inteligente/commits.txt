@@ -1,0 +1,23 @@
+f3f37d0 | gabrielosorioz | 2025-09-15 | feat(PSQLSaleCheckoutMovementStrategy): add user mapping and fix checkout ID mapping
+34f7a79 | gabrielosorioz | 2025-09-15 | feat(checkout): add product search modal and enhance table configurability
+f2b2ed1 | gabrielosorioz | 2025-09-09 | feat(checkout): display user role and name
+bd6565b | gabrielosorioz | 2025-09-09 | fix(queries): fix the sensitive case to find user
+49f5823 | gabrielosorioz | 2025-09-09 | feat(user): add CPF-based user lookup during registration
+9368ff3 | gabrielosorioz | 2025-09-09 | feat(auth): implement user registration with validation and UI
+e26878c | gabrielosorioz | 2025-09-08 | remove trash code
+cd0022e | gabrielosorioz | 2025-09-08 | feat(auth): implement user context propagation throughout checkout flow
+915e9be | gabrielosorioz | 2025-09-08 | feat(auth): implement user context propagation throughout checkout flow
+9051bc8 | gabrielosorioz | 2025-09-06 | refactor(checkout): simplify enum and enhance repository tests
+7e71553 | gabrielosorioz | 2025-09-05 | refactor(repositories): generalize repository pattern with generic ID and change User ID to UUID
+f19b752 | gabrielosorioz | 2025-09-05 | refactor(app): load login via screen loader service
+06aa126 | gabrielosorioz | 2025-09-05 | delete H2DB product strategy
+88c9de6 | gabrielosorioz | 2025-09-05 | refactor(navigation): implement service-based navigation
+b6a4646 | gabrielosorioz | 2025-09-05 | chore/build: add JBcrypt to dependencies
+322fe63 | gabrielosorioz | 2025-09-05 | fix(psql): enhance user role mapping with logging and duplicate checks
+e87e0b6 | gabrielosorioz | 2025-09-05 | add new icons
+f18a5ab | gabrielosorioz | 2025-09-05 | feat(auth): add sign-in view and controller with authentication logic
+ada046f | gabrielosorioz | 2025-09-05 | feat(ui): implement ScreenLoaderService for login and main screens
+d8a672e | gabrielosorioz | 2025-09-05 | feat(auth): implement AuthenticationService for user login, permissions, and password management
+74961e3 | gabrielosorioz | 2025-09-01 | test(repository): add comprehensive UserRepository test suite
+dbdfb97 | gabrielosorioz | 2025-09-01 | build(test-deps): upgrade JUnit to version 5.12.2
+8a850e2 | gabrielosorioz | 2025-09-01 | refactor(database): support multiple database instances

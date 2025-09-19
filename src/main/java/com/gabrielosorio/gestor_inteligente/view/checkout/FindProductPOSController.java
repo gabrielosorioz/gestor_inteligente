@@ -1,5 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.view.checkout;
 
+import com.gabrielosorio.gestor_inteligente.events.FindProductEvent;
+import com.gabrielosorio.gestor_inteligente.events.FindProductEventBus;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import com.gabrielosorio.gestor_inteligente.view.shared.product.ProductSearchableTable;
@@ -76,6 +78,8 @@ public class FindProductPOSController implements Initializable {
     }
 
     private void handleProductSelection(Product product) {
-        System.out.println("Produto selecionado: " + product.getDescription());
+        var findProductEvent = new FindProductEvent(product);
+        FindProductEventBus.getInstance().publish(findProductEvent);
     }
+
 }

@@ -1,6 +1,9 @@
 package com.gabrielosorio.gestor_inteligente.view.checkout;
 
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
+import com.gabrielosorio.gestor_inteligente.events.FindProductEvent;
+import com.gabrielosorio.gestor_inteligente.events.FindProductEventBus;
+import com.gabrielosorio.gestor_inteligente.events.listeners.FindProductListener;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
 import com.gabrielosorio.gestor_inteligente.model.User;
@@ -32,7 +35,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class CheckoutTabController implements Initializable, ShortcutHandler, RequestFocus {
+public class CheckoutTabController implements Initializable, ShortcutHandler, RequestFocus, FindProductListener {
 
 
     private final Logger log = Logger.getLogger(getClass().getName());
@@ -73,6 +76,7 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Platform.runLater(() -> {
+            FindProductEventBus.getInstance().register(this);
             loadTableView();
             setUpEvents();
             setDropShadowToBody();
@@ -403,6 +407,13 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
 
     }
 
+    private void addItem(Product product){
+        final var newItem = new SaleProduct(product,1);
+        saleTableOp.add(newItem);
+        searchField.clear();
+        qtdField.setText("1");
+    }
+
     private void finalizeSale(){
         if(saleTableOp.getItems().isEmpty()){
             showInfoMessageAlert("Não foi possível finalizar a venda. Caixa vazio");
@@ -419,20 +430,16 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
             Parent root = loader.load();
             Scene scene = new Scene(root);
 
-            // Criar um novo stage para a janela de pesquisa
             Stage findProductStage = new Stage();
             findProductStage.setScene(scene);
             findProductStage.setTitle("Pesquisar Produto - Gestor Inteligente");
             findProductStage.setResizable(true);
 
-            // Definir como modal (opcional)
             findProductStage.initModality(Modality.APPLICATION_MODAL);
-            findProductStage.initOwner(GestorInteligenteApp.getPrimaryStage()); // stage atual como owner
+            findProductStage.initOwner(GestorInteligenteApp.getPrimaryStage());
 
-            // Centralizar na tela
             findProductStage.centerOnScreen();
 
-            // Mostrar e aguardar
             findProductStage.showAndWait();
 
         } catch (IOException e) {
@@ -446,5 +453,11 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
         Platform.runLater(() -> {
             searchField.requestFocus();
         });
+    }
+
+    @Override
+    public void onSelectProduct(FindProductEvent findProductEvent) {
+        var selectedProduct = findProductEvent.getSelectedProduct();
+        addItem(selectedProduct);
     }
 }

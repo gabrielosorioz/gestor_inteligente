@@ -232,7 +232,6 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
                 // Adicionando evento de clique ao ícone
                 actionBox.setOnMouseClicked(event -> {
                     SaleProduct item = getTableRow().getItem();
-                    System.out.println("V de vilão");
 
                     if (item != null) {
                         saleItems.remove(item); // Remove o item da lista
@@ -409,6 +408,11 @@ public class SaleTableViewControllerImpl implements Initializable, SaleTableView
     }
 
     private void refreshTotalPrice(){
+        if (saleItems.isEmpty()) {
+            totalPriceProp.set(BigDecimal.ZERO);
+            return;
+        }
+
         var totalPrice = new Sale(saleItems).getTotalPrice();
         totalPriceProp.set(totalPrice);
     }

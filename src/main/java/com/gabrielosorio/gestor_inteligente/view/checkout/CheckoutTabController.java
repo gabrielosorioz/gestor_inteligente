@@ -28,6 +28,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.math.RoundingMode;
@@ -459,5 +460,18 @@ public class CheckoutTabController implements Initializable, ShortcutHandler, Re
     public void onSelectProduct(FindProductEvent findProductEvent) {
         var selectedProduct = findProductEvent.getSelectedProduct();
         addItem(selectedProduct);
+
+        Platform.runLater(() -> {
+            Stage stage = (Stage) GestorInteligenteApp.getPrimaryStage().getScene().getWindow();
+            // Recupera a lista de janelas abertas
+            for (Window window : Stage.getWindows()) {
+                if (window instanceof Stage s
+                        && s.getScene() != null
+                        && "Pesquisar Produto - Gestor Inteligente".equals(s.getTitle())) {
+                    s.close();
+                    break;
+                }
+            }
+        });
     }
 }

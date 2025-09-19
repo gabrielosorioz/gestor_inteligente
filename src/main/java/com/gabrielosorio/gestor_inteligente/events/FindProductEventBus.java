@@ -1,7 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.events;
 
 import com.gabrielosorio.gestor_inteligente.events.listeners.FindProductListener;
-import com.gabrielosorio.gestor_inteligente.events.listeners.PaymentListener;
 
 import java.util.ArrayList;
 import java.util.List;

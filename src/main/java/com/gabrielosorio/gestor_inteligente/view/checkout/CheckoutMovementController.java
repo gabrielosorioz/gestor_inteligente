@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 public class CheckoutMovementController implements Initializable, ShortcutHandler, PaymentListener {
@@ -220,10 +221,6 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         }
     }
 
-    private void updateInitialCashLabel(BigDecimal value) {
-        initialCash.setText(TextFieldUtils.formatText(value.toPlainString()));
-    }
-
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -232,32 +229,37 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         alert.showAndWait();
     }
 
-    @FXML
-    public void showCheckoutMovementDialog() {
+    private Node loadCheckoutMovementDialogView() {
         try {
             if (checkoutMovementDialog == null) {
-                FXMLLoader fxmlLoader = new FXMLLoader(GestorInteligenteApp.class.getResource("fxml/CheckoutMovementDialog.fxml"));
+                FXMLLoader fxmlLoader = new FXMLLoader(
+                        GestorInteligenteApp.class.getResource("fxml/CheckoutMovementDialog.fxml")
+                );
                 checkoutMovementDialog = fxmlLoader.load();
                 checkoutMovementDialogController = fxmlLoader.getController();
             }
-
-            if (!mainContent.getChildren().contains(checkoutMovementDialog)) {
-                mainContent.getChildren().add(checkoutMovementDialog);
-                checkoutMovementDialogController.requestFocusOnField();
-            }
-
-            checkoutMovementDialogController.getBtnOk().setOnMouseClicked(mouseEvent -> {
-                BigDecimal initialCash = checkoutMovementDialogController.getValue();
-                String obs = checkoutMovementDialogController.getObs();
-
-                setInitialCash(initialCash, obs);
-
-                checkoutMovementDialogController.close();
-            });
+            return checkoutMovementDialog;
         } catch (Exception e) {
             log.severe("ERROR at load checkout movement dialog: " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("Failed to load CheckoutMovementDialog", e);
         }
+    }
+
+    private void showDialog(Node dialogView) {
+        if (!mainContent.getChildren().contains(dialogView)) {
+            mainContent.getChildren().add(dialogView);
+            checkoutMovementDialogController.requestFocusOnField();
+        }
+    }
+
+    public void showCheckoutMovementDialog(BiConsumer<BigDecimal, String> consumer) {
+        Node dialogView = loadCheckoutMovementDialogView();
+        showDialog(dialogView);
+
+        checkoutMovementDialogController.setOnConfirm((value, obs) -> {
+            consumer.accept(value, obs);
+            checkoutMovementDialogController.close();
+        });
     }
 
     void setInitialCash(BigDecimal initialCash, String obs) {
@@ -266,16 +268,8 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         }
 
         try {
-            // Atualizar no serviço/banco de dados
             checkoutService.setInitialCash(checkout.getId(), new Payment(PaymentMethod.DINHEIRO, initialCash), obs.strip());
-
-            // Atualizar o objeto checkout local (se necessário)
             checkout.setInitialCash(initialCash);
-
-            // Atualizar a interface com o novo valor
-            updateInitialCashLabel(initialCash);
-
-            // Recarregar todos os dados para manter consistência
             refreshData();
 
             log.info("Fundo de caixa atualizado com sucesso: " + initialCash);
@@ -283,8 +277,6 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         } catch (Exception e) {
             log.severe("Erro ao definir fundo de caixa: " + e.getMessage());
             showAlert("Erro", "Falha ao atualizar o fundo de caixa: " + e.getMessage());
-
-            // Reverter para o valor anterior em caso de erro
             updateInitialCashLabel();
         }
     }
@@ -296,8 +288,8 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
 
     @Override
     public void handleShortcut(KeyCode keyCode) {
-        if (keyCode.equals(KeyCode.F1)) {
-            showCheckoutMovementDialog();
+        switch (keyCode) {
+            case F1 -> showCheckoutMovementDialog(this::setInitialCash);
         }
     }
 

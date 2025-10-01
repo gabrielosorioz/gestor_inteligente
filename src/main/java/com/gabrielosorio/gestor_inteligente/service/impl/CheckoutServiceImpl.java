@@ -27,13 +27,125 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .orElseGet(() -> createNewCheckout(user));
     }
 
+@Override
+public void setInitialCash(long checkoutId, Payment payment, String obs) {
+    Checkout checkout = validateCheckoutExists(checkoutId);
+
+    BigDecimal previousInitialCash = checkout.getInitialCash();
+    BigDecimal newInitialCash = payment.getValue();
+
+    BigDecimal difference = newInitialCash.subtract(previousInitialCash);
+
+    if (difference.compareTo(BigDecimal.ZERO) == 0) {
+        return;
+    }
+
+    var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.FUNDO_DE_CAIXA);
+
+    Payment adjustmentPayment = new Payment(payment.getPaymentMethod(), difference);
+
+    String finalObs = obs;
+    if (previousInitialCash.compareTo(BigDecimal.ZERO) > 0) {
+        finalObs = String.format("%s (Alteração: %s → %s)",
+                obs,
+                previousInitialCash.toPlainString(),
+                newInitialCash.toPlainString()
+        );
+    }
+
+    CheckoutMovement checkoutMovement = checkoutMovementService.buildCheckoutMovement(
+            checkout,
+            adjustmentPayment,
+            finalObs,
+            checkoutMovementType
+    );
+
+    checkoutMovementService.addMovement(checkoutMovement);
+
+    // Atualizar o valor do fundo de caixa no checkout
+    updateInitialCash(checkout, newInitialCash);
+}
+
     @Override
-    public void setInitialCash(long checkoutId, Payment payment, String obs) {
+    public void addCashInflow(long checkoutId, Payment payment, String obs) {
         Checkout checkout = validateCheckoutExists(checkoutId);
-        var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.FUNDO_DE_CAIXA);
-        CheckoutMovement checkoutMovement = checkoutMovementService.buildCheckoutMovement(checkout, payment, obs, checkoutMovementType);
+        if (payment.getValue().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("O valor da entrada deve ser maior que zero");
+        }
+
+        var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.ENTRADA);
+
+        CheckoutMovement checkoutMovement = checkoutMovementService.buildCheckoutMovement(
+                checkout, payment, obs,
+                checkoutMovementType);
+
         checkoutMovementService.addMovement(checkoutMovement);
-        updateInitialCash(checkout, payment.getValue());
+        updateTotalEntry(checkout, payment.getValue());
+    }
+
+    @Override
+    public void addCashOutflow(long checkoutId, Payment payment, String obs) {
+        Checkout checkout = validateCheckoutExists(checkoutId);
+
+        if (payment.getValue().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("O valor da saída deve ser maior que zero");
+        }
+
+        BigDecimal currentCashTotal = calculateCurrentCashTotal(checkout);
+        if (currentCashTotal.compareTo(payment.getValue()) < 0) {
+            throw new IllegalArgumentException(
+                    String.format("Saldo insuficiente. Disponível: %s, Solicitado: %s",
+                            currentCashTotal, payment.getValue()));
+        }
+
+        var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.SAIDA);
+        CheckoutMovement checkoutMovement = checkoutMovementService.buildCheckoutMovement(
+                checkout, payment, obs, checkoutMovementType);
+
+        checkoutMovementService.addMovement(checkoutMovement);
+
+        updateTotalExit(checkout, payment.getValue());
+    }
+
+    private BigDecimal calculateCurrentCashTotal(Checkout checkout) {
+        return checkout.getInitialCash()
+                .add(checkout.getTotalEntry())
+                .subtract(checkout.getTotalExit());
+    }
+
+    private void updateTotalExit(Checkout checkout, BigDecimal exitAmount) {
+        if (exitAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Valor de saída deve ser positivo");
+        }
+
+        BigDecimal currentTotal = checkout.getTotalExit();
+        BigDecimal newTotal = currentTotal.add(exitAmount);
+
+        checkout.setTotalExit(newTotal);
+        checkout.setUpdatedAt(LocalDateTime.now());
+
+        checkoutRepository.update(checkout);
+    }
+
+    public void validateCheckoutConsistency(long checkoutId) {
+        Checkout checkout = validateCheckoutExists(checkoutId);
+
+        List<CheckoutMovement> movements = checkoutMovementService.findByCheckoutId(checkoutId);
+
+        BigDecimal calculatedEntry = movements.stream()
+                .filter(m -> m.getMovementType().equals(CheckoutMovementTypeEnum.ENTRADA))
+                .map(m -> m.getPayment().getValue())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal calculatedExit = movements.stream()
+                .filter(m -> m.getMovementType().equals(CheckoutMovementTypeEnum.SAIDA))
+                .map(m -> m.getPayment().getValue())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (!calculatedEntry.equals(checkout.getTotalEntry()) ||
+                !calculatedExit.equals(checkout.getTotalExit())) {
+            throw new IllegalStateException("Inconsistência detectada nos totais do checkout");
+        }
     }
 
     @Override
@@ -51,6 +163,18 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .orElseThrow(() -> new CheckoutNotFoundException(checkoutId));
     }
 
+    private void updateInitialCash(Checkout checkout, BigDecimal initialCash) {
+        checkout.setInitialCash(initialCash);
+        checkoutRepository.update(checkout);
+    }
+
+    private void updateTotalEntry(Checkout checkout, BigDecimal entryAmount) {
+        BigDecimal currentTotal = checkout.getTotalEntry();
+        BigDecimal newTotal = currentTotal.add(entryAmount);
+        checkout.setTotalEntry(newTotal);
+        checkoutRepository.update(checkout);
+    }
+
     private Checkout createNewCheckout(User user) {
         Checkout checkout = new Checkout();
         LocalDateTime now = LocalDateTime.now();
@@ -66,9 +190,4 @@ public class CheckoutServiceImpl implements CheckoutService {
         return checkoutRepository.add(checkout);
     }
 
-
-    private void updateInitialCash(Checkout checkout, BigDecimal initialCash) {
-        checkout.setInitialCash(initialCash);
-        checkoutRepository.update(checkout);
-    }
 }

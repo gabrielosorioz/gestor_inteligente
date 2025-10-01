@@ -277,6 +277,8 @@
                </padding>
             </HBox>
             <Label layoutX="22.0" layoutY="13.0" prefHeight="20.0" prefWidth="147.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="(F1) Fundo de caixa" />
+            <Label layoutX="168.0" layoutY="13.0" prefHeight="20.0" prefWidth="147.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="(F2) Entrada" />
+            <Label layoutX="269.0" layoutY="13.0" prefHeight="20.0" prefWidth="147.0" styleClass="subtitle" stylesheets="@../../css/home.css" text="(F3) Saida" />
          </children>
       </AnchorPane>
       <HBox alignment="CENTER_LEFT" layoutX="70.0" layoutY="499.0" prefHeight="63.0" prefWidth="231.0" spacing="8.0" styleClass="profit-card" stylesheets="@../../css/checkoutMovement.css">

@@ -171,9 +171,10 @@ public class PSQLCheckoutStrategy implements RepositoryStrategy<Checkout, Long> 
             ps.setBigDecimal(7, newCheckout.getClosingBalance());
             ps.setObject(8, newCheckout.getOpenedBy() != null ? newCheckout.getOpenedBy().getId() : null);
             ps.setObject(9, newCheckout.getClosedBy() != null ? newCheckout.getClosedBy().getId() : null);
-            ps.setTimestamp(10, Timestamp.valueOf(newCheckout.getUpdatedAt()));
-            ps.setLong(11, newCheckout.getId());
-
+            ps.setTimestamp(10, newCheckout.getCreatedAt() != null ?
+                    Timestamp.valueOf(newCheckout.getCreatedAt()) : null);
+            ps.setTimestamp(11, Timestamp.valueOf(newCheckout.getUpdatedAt()));
+            ps.setLong(12, newCheckout.getId());
             int affectedRows = ps.executeUpdate();
 
             if (affectedRows == 0) {

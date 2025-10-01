@@ -177,13 +177,11 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     private void updatePaymentSummary(List<CheckoutMovement> movements) {
         PaymentSummary summary = paymentPresenter.calculatePaymentSummary(movements);
 
-        // Atualiza os rótulos de método de pagamento
         pixMethod.setText(TextFieldUtils.formatText(summary.getPixTotal().toPlainString()));
         cashMethod.setText(TextFieldUtils.formatText(summary.getCashTotal().toPlainString()));
         debitMethod.setText(TextFieldUtils.formatText(summary.getDebitTotal().toPlainString()));
         creditMethod.setText(TextFieldUtils.formatText(summary.getCreditTotal().toPlainString()));
 
-        // Atualiza os rótulos de estatísticas de vendas
         List<Sale> sales = saleCheckoutMovementService.findSalesInCheckoutMovements(movements);
         SalesSummary salesSummary = calculateSalesSummary(sales);
 
@@ -221,6 +219,40 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         }
     }
 
+    private void updateInflowLabel() {
+        try {
+            Checkout currentCheckout = checkoutService.findById(checkout.getId()).get();
+            if (currentCheckout != null) {
+                BigDecimal currentTotalEntry = currentCheckout.getTotalEntry();
+                inflow.setText(TextFieldUtils.formatText(currentTotalEntry.toPlainString()));
+
+                checkout.setTotalEntry(currentTotalEntry);
+            } else {
+                inflow.setText(TextFieldUtils.formatText(checkout.getTotalEntry().toPlainString()));
+            }
+        } catch (Exception e) {
+            log.warning("Erro ao atualizar label de entrada de caixa: " + e.getMessage());
+            inflow.setText(TextFieldUtils.formatText(checkout.getTotalEntry().toPlainString()));
+        }
+    }
+
+    private void updateOutflowLabel() {
+        try {
+            Checkout currentCheckout = checkoutService.findById(checkout.getId()).get();
+            if (currentCheckout != null) {
+                BigDecimal currentTotalExit = currentCheckout.getTotalExit();
+                outflow.setText(TextFieldUtils.formatText(currentTotalExit.toPlainString()));
+
+                checkout.setTotalExit(currentTotalExit);
+            } else {
+                outflow.setText(TextFieldUtils.formatText(checkout.getTotalExit().toPlainString()));
+            }
+        } catch (Exception e) {
+            log.warning("Erro ao atualizar label de saída de caixa: " + e.getMessage());
+            outflow.setText(TextFieldUtils.formatText(checkout.getTotalExit().toPlainString()));
+        }
+    }
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -245,16 +277,17 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         }
     }
 
-    private void showDialog(Node dialogView) {
+    private void showDialog(Node dialogView,String title) {
         if (!mainContent.getChildren().contains(dialogView)) {
             mainContent.getChildren().add(dialogView);
+            checkoutMovementDialogController.setTitle(title);
             checkoutMovementDialogController.requestFocusOnField();
         }
     }
 
-    public void showCheckoutMovementDialog(BiConsumer<BigDecimal, String> consumer) {
+    public void showCheckoutMovementDialog(BiConsumer<BigDecimal, String> consumer, String title) {
         Node dialogView = loadCheckoutMovementDialogView();
-        showDialog(dialogView);
+        showDialog(dialogView,title);
 
         checkoutMovementDialogController.setOnConfirm((value, obs) -> {
             consumer.accept(value, obs);
@@ -262,7 +295,7 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         });
     }
 
-    void setInitialCash(BigDecimal initialCash, String obs) {
+    private void setInitialCash(BigDecimal initialCash, String obs) {
         if (obs.isBlank()) {
             obs = "F. Caixa";
         }
@@ -281,6 +314,76 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         }
     }
 
+    private void setCashInflow(BigDecimal cashInflow, String obs) {
+        if (obs.isBlank()) {
+            obs = "Entrada";
+        }
+        try {
+            checkoutService.addCashInflow(checkout.getId(), new Payment(PaymentMethod.DINHEIRO, cashInflow),
+                    obs.strip());
+            refreshData();
+            updateInflowLabel();
+
+            log.info("Entrada de caixa adicionada com sucesso: " + cashInflow);
+
+        } catch (Exception e) {
+            log.severe("Erro ao adicionar entrada de caixa: " + e.getMessage());
+            showAlert("Erro", "Falha ao adicionar entrada de caixa: " + e.getMessage());
+            updateInflowLabel();
+        }
+    }
+
+    private void setCashOutflow(BigDecimal cashOutflow, String obs) {
+        if (obs.isBlank()) {
+            obs = "Saída";
+        }
+
+        BigDecimal currentCashTotal = getCurrentCashTotal();
+
+        if (currentCashTotal.compareTo(cashOutflow) < 0) {
+            showAlert("Saldo Insuficiente",
+                    "Não há dinheiro suficiente no caixa para esta saída.");
+            return;
+        }
+
+        try {
+            checkoutService.addCashOutflow(checkout.getId(),
+                    new Payment(PaymentMethod.DINHEIRO, cashOutflow), obs.strip());
+            refreshData();
+            updateOutflowLabel();
+            logCurrentCashStatus();
+
+            log.info("Saída de caixa adicionada com sucesso: " + cashOutflow);
+
+        } catch (Exception e) {
+            log.severe("Erro ao adicionar saída de caixa: " + e.getMessage());
+            showAlert("Erro", "Falha ao adicionar saída de caixa: " + e.getMessage());
+            updateOutflowLabel();
+        }
+    }
+
+    private void logCurrentCashStatus() {
+        try {
+            Checkout currentCheckout = checkoutService.findById(checkout.getId())
+                    .orElse(checkout);
+
+            log.info(String.format("Status do Caixa - ID: %d", currentCheckout.getId()));
+            log.info(String.format("Fundo Inicial: %s", currentCheckout.getInitialCash()));
+            log.info(String.format("Total Entradas: %s", currentCheckout.getTotalEntry()));
+            log.info(String.format("Total Saídas: %s", currentCheckout.getTotalExit()));
+            log.info(String.format("Saldo Atual: %s", getCurrentCashTotal()));
+        } catch (Exception e) {
+            log.warning("Erro ao exibir status do caixa: " + e.getMessage());
+        }
+    }
+
+
+
+    private BigDecimal getCurrentCashTotal() {
+        return checkout.getInitialCash()
+                .add(checkout.getTotalEntry())
+                .subtract(checkout.getTotalExit());
+    }
 
     private void refreshData() {
        loadMovements();
@@ -289,8 +392,11 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     @Override
     public void handleShortcut(KeyCode keyCode) {
         switch (keyCode) {
-            case F1 -> showCheckoutMovementDialog(this::setInitialCash);
+            case F1 -> showCheckoutMovementDialog(this::setInitialCash,"Fundo de Caixa");
+            case F2 -> showCheckoutMovementDialog(this::setCashInflow,"Entrada");
+            case F3 -> showCheckoutMovementDialog(this::setCashOutflow,"Saída");
         }
+        logCurrentCashStatus();
     }
 
     @Override

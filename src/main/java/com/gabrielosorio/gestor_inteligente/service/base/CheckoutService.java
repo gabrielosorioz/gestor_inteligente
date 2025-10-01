@@ -27,6 +27,10 @@ public interface CheckoutService {
      */
     void setInitialCash(long checkoutId, Payment payment, String obs);
 
+    void addCashInflow(long checkoutId, Payment payment, String obs);
+
+    void addCashOutflow(long checkoutId, Payment payment, String obs);
+
     /**
      * Retrieves a list of all cash movements associated with a specific checkout by its ID.
      * This method is useful for auditing, tracking, or displaying the history of cash movements

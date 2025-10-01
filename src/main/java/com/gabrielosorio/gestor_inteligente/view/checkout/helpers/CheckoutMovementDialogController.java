@@ -89,6 +89,7 @@ public class CheckoutMovementDialogController implements Initializable, RequestF
         AnchorPane parent = (AnchorPane) mainContent.getParent();
         parent.getChildren().remove(mainContent);
         obsField.clear();
+        valueField.clear();
     }
 
     private void onEscapeEvent(Node node) {
@@ -107,5 +108,13 @@ public class CheckoutMovementDialogController implements Initializable, RequestF
     public void requestFocusOnField() {
         valueField.requestFocus();
         valueField.positionCaret(valueField.getLength());
+    }
+
+    public String getTitle() {
+        return title.getText();
+    }
+
+    public void setTitle(String title) {
+        this.title.setText(title);
     }
 }

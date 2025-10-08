@@ -9,10 +9,9 @@ import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.service.base.ProductService;
 import com.gabrielosorio.gestor_inteligente.utils.TableViewUtils;
 import com.gabrielosorio.gestor_inteligente.view.shared.ShortcutHandler;
+import com.gabrielosorio.gestor_inteligente.view.shared.SlidePanel;
 import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.view.table.TableViewFactory;
-import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -90,15 +89,11 @@ public class ProductManagerController implements Initializable, ShortcutHandler,
                 break;
             case ESCAPE:
                 eventBus.publish(new ProductManagerCancelEvent());
-                if(productFormManager.isFormVisible){
-                    productFormManager.hide();
-                }
+                productFormManager.hide();
                 break;
             case F1:
-                if(!productFormManager.isFormVisible){
-                    eventBus.publish(new ProductAddEvent());
-                    productFormManager.toggle();
-                }
+                eventBus.publish(new ProductAddEvent());
+                productFormManager.toggle();
                 break;
         }
     }
@@ -145,7 +140,6 @@ public class ProductManagerController implements Initializable, ShortcutHandler,
         shadowEffect.setOffsetX(0);
         shadowEffect.setOffsetY(0);
         tableBody.setEffect(shadowEffect);
-        onShadowClick();
     }
 
     private void setupEventHandlers() {
@@ -157,10 +151,6 @@ public class ProductManagerController implements Initializable, ShortcutHandler,
         TextFieldUtils.setUpperCaseTextFormatter(searchField);
         searchField.textProperty().addListener((obsValue, oldValue, newValue) -> searchProduct(newValue));
         searchField.setOnKeyPressed(keyEvent -> handleShortcut(keyEvent.getCode()));
-    }
-
-    private void onShadowClick() {
-        shadow.setOnMouseClicked(mouseEvent -> productFormManager.toggle());
     }
 
     private void searchProduct(String search) {
@@ -205,74 +195,37 @@ public class ProductManagerController implements Initializable, ShortcutHandler,
 
     /** Inner class to manage the product form functionality */
     private class ProductFormManager {
-
-        private static final Duration FORM_ANIMATION_DURATION = Duration.seconds(0.4);
-        private static final Duration FADE_DURATION = Duration.seconds(0.2);
-        private static final double FORM_HIDDEN_POSITION = 750;
-        private static final double FORM_VISIBLE_POSITION = 0;
-        private boolean isFormVisible;
-
-        private final AnchorPane mainContent,productForm;
-
+        private SlidePanel slidePanel;
 
         public ProductFormManager(AnchorPane mainContent, AnchorPane productForm) {
-            this.mainContent = mainContent;
-            this.productForm = productForm;
-            config();
-        }
+            if (mainContent == null || productForm == null) {
+                throw new IllegalArgumentException("mainContent e productForm não podem ser null");
+            }
 
-        private void config(){
-            configureProductFormLayout(mainContent,productForm);
+            slidePanel = new SlidePanel.Builder(mainContent, productForm)
+                    .direction(SlidePanel.SlideDirection.RIGHT)
+                    .animationDuration(Duration.millis(400))
+                    .fadeDuration(Duration.millis(400))
+                    .shadowOverlay(shadow)
+                    .offset(550.00)
+                    .onToggle(visible -> {
+                        eventBus.publish(new ProductFormToggleEvent(visible));
+                    })
+                    .build();
+
         }
 
         protected void toggle() {
-            if (isFormVisible) {
-                hide();
-            } else {
-                show();
-            }
-            eventBus.publish(new ProductFormToggleEvent(isFormVisible));
-            isFormVisible = !isFormVisible;
+            slidePanel.toggle();
         }
 
-        private void configureProductFormLayout(AnchorPane mainContent, AnchorPane productForm) {
-            mainContent.getChildren().add(productForm);
-            AnchorPane.setLeftAnchor(productForm, 550.0);
-            AnchorPane.setRightAnchor(productForm, 0.0);
-            AnchorPane.setTopAnchor(productForm, 39.0);
-            productForm.setTranslateX(FORM_HIDDEN_POSITION);
-        }
 
         private void show() {
-            animateForm(FORM_VISIBLE_POSITION, 0.2);
-            shadow.setVisible(true);
+            slidePanel.show();
         }
 
         private void hide() {
-            animateForm(FORM_HIDDEN_POSITION, 0.0);
-            shadow.setVisible(false);
-        }
-
-        private void animateForm(double translateX, double fadeToValue) {
-            // Create and configure transition for form
-            TranslateTransition translateTransition = new TranslateTransition(FORM_ANIMATION_DURATION, productForm);
-            translateTransition.setToX(translateX);
-
-            // Create and configure transition for shadow
-            FadeTransition fadeTransition = new FadeTransition(FADE_DURATION, shadow);
-            fadeTransition.setFromValue(shadow.getOpacity());
-            fadeTransition.setToValue(fadeToValue);
-
-            // Handle shadow visibility after fade completes
-            fadeTransition.setOnFinished(actionEvent -> {
-                if (fadeToValue == 0.0) {
-                    shadow.setVisible(false);
-                }
-            });
-
-            // Play animations
-            fadeTransition.play();
-            translateTransition.play();
+            slidePanel.hide();
         }
 
     }

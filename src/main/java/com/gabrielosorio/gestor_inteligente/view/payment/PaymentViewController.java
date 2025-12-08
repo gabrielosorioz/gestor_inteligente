@@ -2,7 +2,9 @@ package com.gabrielosorio.gestor_inteligente.view.payment;
 
 import com.gabrielosorio.gestor_inteligente.events.PaymentEvent;
 import com.gabrielosorio.gestor_inteligente.events.PaymentEventBus;
+import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
 import com.gabrielosorio.gestor_inteligente.exception.SaleProcessingException;
+import com.gabrielosorio.gestor_inteligente.exception.SaleValidationException;
 import com.gabrielosorio.gestor_inteligente.model.Payment;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.User;
@@ -14,10 +16,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -332,7 +331,7 @@ public class PaymentViewController implements Initializable {
     }
 
     private void refreshDiscountPrice() {
-        discountField.setText(TextFieldUtils.formatText(sale.getTotalDiscount().toPlainString()));
+        discountField.setText(TextFieldUtils.formatText(sale.getSaleDiscount().toPlainString()));
     }
 
     private void showOriginalPrice() {
@@ -364,7 +363,7 @@ public class PaymentViewController implements Initializable {
                 Platform.runLater(() -> {
                     discountField.setText(formatted);
                     discountField.positionCaret(formatted.length());
-                    sale.setTotalDiscount(TextFieldUtils.formatCurrency(formatted));
+                    sale.setSaleDiscount(TextFieldUtils.formatCurrency(formatted));
                     refreshValuesLabel();
                     refreshTotalPrice();
                     showOriginalPrice();
@@ -380,11 +379,18 @@ public class PaymentViewController implements Initializable {
             var savedSale = saleService.processSale(user, sale);
             PaymentEvent paymentEvent = new PaymentEvent(savedSale);
             PaymentEventBus.getInstance().publish(paymentEvent);
-        } catch (SaleProcessingException e) {
-            throw new RuntimeException(e);
+            closeWindow();
+            clearItems();
+        } catch (SaleProcessingException | SaleValidationException | SalePaymentException e) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erro na venda");
+                alert.setHeaderText("Não foi possível finalizar a venda");
+                alert.setContentText(e.getMessage());
+                alert.getButtonTypes().setAll(new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
+                alert.showAndWait();
+            });
         }
-        closeWindow();
-        clearItems();
     }
 
     // Confirma os pagamentos, removendo os de valor zero

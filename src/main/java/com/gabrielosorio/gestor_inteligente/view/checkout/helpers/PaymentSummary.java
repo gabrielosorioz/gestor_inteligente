@@ -31,4 +31,15 @@ public class PaymentSummary {
     public BigDecimal getCreditTotal() {
         return creditTotal;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder("PaymentSummary{")
+                .append("pixTotal=").append(pixTotal)
+                .append(", cashTotal=").append(cashTotal)
+                .append(", debitTotal=").append(debitTotal)
+                .append(", creditTotal=").append(creditTotal)
+                .append('}')
+                .toString();
+    }
 }

@@ -224,11 +224,9 @@ public class SaleServiceImpl implements SaleService {
         }
 
         BigDecimal totalProfit = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        // Add a Set to track processed sale IDs
         Set<Long> processedSaleIds = new HashSet<>();
 
         for (Sale sale : sales) {
-            // Skip if sale is canceled, has no products, or has already been processed
             if (sale.getStatus() == SaleStatus.CANCELED ||
                     sale.getSaleProducts() == null ||
                     sale.getSaleProducts().isEmpty() ||
@@ -236,22 +234,20 @@ public class SaleServiceImpl implements SaleService {
                 continue;
             }
 
+            BigDecimal totalCost = BigDecimal.ZERO;
             for (SaleProduct saleProduct : sale.getSaleProducts()) {
                 Product product = saleProduct.getProduct();
                 if (product != null) {
-                    // Calculate profit for this product = (selling price - cost price) * quantity
-                    BigDecimal unitProfit = saleProduct.getUnitPrice().subtract(product.getCostPrice());
-                    BigDecimal productProfit = unitProfit.multiply(BigDecimal.valueOf(saleProduct.getQuantity()));
-
-                    // Apply any discounts at the product level
-                    productProfit = productProfit.subtract(saleProduct.getDiscount());
-
-                    // Ensure profit doesn't go below zero for this product
-                    productProfit = productProfit.max(BigDecimal.ZERO);
-
-                    totalProfit = totalProfit.add(productProfit);
+                    BigDecimal productCost = product.getCostPrice()
+                            .multiply(BigDecimal.valueOf(saleProduct.getQuantity()));
+                    totalCost = totalCost.add(productCost);
                 }
             }
+
+            BigDecimal saleFinalPrice = sale.getTotalPrice();
+            BigDecimal saleProfit = saleFinalPrice.subtract(totalCost);
+
+            totalProfit = totalProfit.add(saleProfit);
         }
 
         return totalProfit.setScale(2, RoundingMode.HALF_UP);
@@ -307,7 +303,6 @@ public class SaleServiceImpl implements SaleService {
             if (sale.getStatus() == SaleStatus.CANCELED || !processedSaleIds.add(sale.getId())) {
                 continue;
             }
-            System.out.println("Preço final: R$" + sale.getTotalPrice());
 
             totalSales = totalSales.add(sale.getTotalPrice());
         }

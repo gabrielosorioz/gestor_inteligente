@@ -2,6 +2,7 @@ package com.gabrielosorio.gestor_inteligente.service.impl;
 import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.exception.SalePaymentException;
 import com.gabrielosorio.gestor_inteligente.exception.SaleProcessingException;
+import com.gabrielosorio.gestor_inteligente.exception.SaleValidationException;
 import com.gabrielosorio.gestor_inteligente.model.*;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
@@ -11,6 +12,7 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.Transaction
 import com.gabrielosorio.gestor_inteligente.service.base.*;
 import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.validation.SaleValidator;
+import com.gabrielosorio.gestor_inteligente.view.shared.ToastNotification;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class SaleServiceImpl implements SaleService {
 
@@ -30,6 +33,8 @@ public class SaleServiceImpl implements SaleService {
     private final ProductService productService;
     private final SaleCheckoutMovementService saleCheckoutMovementService;
     private final ConnectionFactory connectionFactory;
+    private final Logger log = Logger.getLogger(SaleServiceImpl.class.getName());
+
 
     public SaleServiceImpl(SaleRepository saleRepository, SaleProductService saleProductService,
                            SalePaymentService salePaymentService, CheckoutMovementService checkoutMovementService,
@@ -46,17 +51,21 @@ public class SaleServiceImpl implements SaleService {
     }
 
 
-
     @Override
     public Sale processSale(User user, Sale sale) throws SaleProcessingException {
-
-        var checkout = checkoutService.openCheckout(user);
-
         try {
             TransactionManagerV2.beginTransaction(connectionFactory);
 
+            // 1. Validar política de troco ANTES de qualquer operação
+            validateChangePolicy(sale);
+
+            // 2. Abrir/obter checkout
+            var checkout = checkoutService.openCheckout(user);
+
+            // 3. Salvar venda
             Sale savedSale = save(sale);
 
+            // 4. Processar movimentos de recebimento (vendas)
             var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.VENDA);
             String saleObservationBase = "Venda #" + savedSale.getId();
             boolean hasMultiplePayments = savedSale.getPaymentMethods().size() > 1;
@@ -75,12 +84,18 @@ public class SaleServiceImpl implements SaleService {
                             }
                         }
 
-                        return checkoutMovementService.buildCheckoutMovement(checkout, payment, saleObservation, checkoutMovementType);
+                        return checkoutMovementService.buildCheckoutMovement(
+                                checkout, payment, saleObservation, checkoutMovementType);
                     })
                     .toList();
 
+            // 5. Registrar troco (se necessário)
+            registerChangeIfNeeded(checkout, savedSale, saleObservationBase);
+
+            // 6. Salvar todos os movimentos
             var checkoutMovementsWithGenKeys = checkoutMovementService.saveAll(checkoutMovements);
 
+            // 7. Relacionar movimentos com a venda
             List<SaleCheckoutMovement> saleCheckoutMovements = checkoutMovementsWithGenKeys.stream()
                     .map(checkoutMovement -> saleCheckoutMovementService
                             .buildSaleCheckoutMovement(checkoutMovement, savedSale))
@@ -92,13 +107,98 @@ public class SaleServiceImpl implements SaleService {
 
             return savedSale;
 
+        } catch (SaleProcessingException | SaleValidationException | SalePaymentException e) {
+            try {
+                TransactionManagerV2.rollback();
+            } catch (SQLException rollbackEx) {
+                log.severe("Failed to perform rollback after SaleProcessingException.");
+            }
+            throw e;
         } catch (Exception e) {
             try {
                 TransactionManagerV2.rollback();
-            } catch (SQLException ex) {
-                throw new SaleProcessingException("Failed to rollback transaction after error.", ex);
+            } catch (SQLException rollbackEx) {
+                e.addSuppressed(rollbackEx);
             }
-            throw new SaleProcessingException("Failed to process sale.", e);
+            log.severe(e.getMessage());
+            throw new SaleProcessingException("Erro inesperado ao processar a venda.", e);
+        }
+    }
+
+    /**
+     * Valida a política de troco:
+     * - Pagamentos eletrônicos nunca podem exceder o valor da venda
+     * - O valor em dinheiro deve ser suficiente para cobrir o troco
+     */
+    private void validateChangePolicy(Sale sale) throws SaleProcessingException {
+        BigDecimal totalChange = sale.getTotalChange();
+
+        if (totalChange.compareTo(BigDecimal.ZERO) <= 0) {
+            return;
+        }
+
+        BigDecimal totalCash = sale.getPaymentMethods().stream()
+                .filter(payment -> payment.getPaymentMethod() == PaymentMethod.DINHEIRO)
+                .map(Payment::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalElectronic = sale.getPaymentMethods().stream()
+                .filter(payment -> payment.getPaymentMethod() != PaymentMethod.DINHEIRO)
+                .map(Payment::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (totalElectronic.compareTo(sale.getTotalPrice()) > 0) {
+            throw new SaleProcessingException(
+                    "Crédito/débito/Pix não podem ultrapassar o valor da venda."
+            );
+        }
+
+        BigDecimal minCashNeeded = sale.getTotalPrice().subtract(totalElectronic);
+        BigDecimal requiredCash = minCashNeeded.add(totalChange);
+
+        if (totalCash.compareTo(requiredCash) < 0) {
+            throw new SaleProcessingException(
+                    "Dinheiro insuficiente para o troco. Precisa de R$ "
+                            + requiredCash + ", tem R$ " + totalCash
+            );
+        }
+    }
+
+    /**
+     * Registra automaticamente uma saída de troco quando:
+     * - Há troco (valor recebido > valor da venda)
+     * - Pagamento inclui DINHEIRO
+     */
+    private void registerChangeIfNeeded(Checkout checkout, Sale sale, String saleObservationBase) {
+        BigDecimal totalChange = sale.getTotalChange();
+
+        // Se não há troco, não há o que registrar
+        if (totalChange.compareTo(BigDecimal.ZERO) <= 0) {
+            return;
+        }
+
+        // Verificar se há pagamento em DINHEIRO
+        boolean hasCashPayment = sale.getPaymentMethods().stream()
+                .anyMatch(payment -> payment.getPaymentMethod() == PaymentMethod.DINHEIRO);
+
+        if (hasCashPayment) {
+            // Criar pagamento representando o troco em dinheiro
+            Payment changePayment = new Payment(PaymentMethod.DINHEIRO);
+            changePayment.setValue(totalChange);
+
+            // Criar movimento de SAÍDA para o troco
+            var changeMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.SAIDA);
+            String changeObservation = saleObservationBase + " - Troco";
+
+            CheckoutMovement changeMovement = checkoutMovementService.buildCheckoutMovement(
+                    checkout,
+                    changePayment,
+                    changeObservation,
+                    changeMovementType
+            );
+
+            // Salvar o movimento de troco
+            checkoutMovementService.saveAll(List.of(changeMovement));
         }
     }
 
@@ -207,9 +307,9 @@ public class SaleServiceImpl implements SaleService {
             if (sale.getStatus() == SaleStatus.CANCELED || !processedSaleIds.add(sale.getId())) {
                 continue;
             }
+            System.out.println("Preço final: R$" + sale.getTotalPrice());
 
-            // Adds final price without discount
-            totalSales = totalSales.add(sale.getOriginalTotalPrice());
+            totalSales = totalSales.add(sale.getTotalPrice());
         }
 
         return totalSales.setScale(2, RoundingMode.HALF_UP);

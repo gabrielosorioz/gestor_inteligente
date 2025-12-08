@@ -1,10 +1,12 @@
 package com.gabrielosorio.gestor_inteligente.model.enums;
-public enum CheckoutMovementTypeEnum {
 
+public enum CheckoutMovementTypeEnum {
     ENTRADA(1, "ENTRADA"),
     SAIDA(2, "SAÍDA"),
     VENDA(3, "VENDA"),
-    FUNDO_DE_CAIXA(4, "FUNDO DE CAIXA");
+    FUNDO_DE_CAIXA(4, "FUNDO DE CAIXA"),
+    AJUSTE_POSITIVO(5, "AJUSTE POSITIVO"),
+    AJUSTE_NEGATIVO(6, "AJUSTE NEGATIVO");
 
     private final long id;
     private final String name;
@@ -31,7 +33,6 @@ public enum CheckoutMovementTypeEnum {
         }
         throw new IllegalArgumentException("Invalid checkout movement type name: " + name);
     }
-
 
     public long getId() {
         return id;

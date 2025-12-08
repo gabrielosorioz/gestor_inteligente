@@ -217,6 +217,8 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                 Sale sale = new Sale();
                 sale.setId(saleId);
                 sale.setOriginalTotalPrice(rs.getBigDecimal("sale_originaltotalprice"));
+                sale.setItemsDiscount(rs.getBigDecimal("sale_items_discount"));
+                sale.setSaleDiscount(rs.getBigDecimal("sale_sale_discount"));
                 sale.setTotalDiscount(rs.getBigDecimal("sale_totaldiscount"));
                 sale.setTotalPrice(rs.getBigDecimal("sale_totalprice"));
                 sale.setStatus(SaleStatus.valueOf(rs.getString("sale_status")));

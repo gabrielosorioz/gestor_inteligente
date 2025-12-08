@@ -1,6 +1,5 @@
 package com.gabrielosorio.gestor_inteligente.model;
 import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -15,17 +14,20 @@ public class Sale {
     private Timestamp dataCancel;
     private List<SaleProduct> saleProducts;
     private BigDecimal totalChange = BigDecimal.ZERO;
-    private BigDecimal totalAmountPaid = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);;
-    private BigDecimal originalTotalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);;
-    private BigDecimal totalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);;
-    private BigDecimal totalDiscount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);;
+    private BigDecimal totalAmountPaid = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+
+    private BigDecimal originalTotalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+    private BigDecimal itemsDiscount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+    private BigDecimal saleDiscount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+    private BigDecimal totalDiscount = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+    private BigDecimal totalPrice = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+
     private List<Payment> paymentMethods;
     private SaleStatus status;
 
-    public Sale (List<SaleProduct> saleProducts){
-
-        if(saleProducts.isEmpty() || saleProducts == null){
-            throw new IllegalArgumentException("Error at initializing Sale constructor:Product saleProducts for sale is null.");
+    public Sale(List<SaleProduct> saleProducts) {
+        if(saleProducts == null || saleProducts.isEmpty()) {
+            throw new IllegalArgumentException("Error at initializing Sale constructor: Product saleProducts for sale is null.");
         }
 
         this.saleProducts = new ArrayList<>(saleProducts);
@@ -34,44 +36,24 @@ public class Sale {
 
         calculateTotals();
     }
-    
-    public Sale(){
+
+    public Sale() {
     }
 
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public Timestamp getDateSale() {
         return dateSale;
-    }
-
-    public void setDateSale(Timestamp dateSale) {
-        this.dateSale = dateSale;
     }
 
     public Timestamp getDataCancel() {
         return dataCancel;
     }
 
-    public void setDataCancel(Timestamp dataCancel) {
-        this.dataCancel = dataCancel;
-    }
-
     public List<SaleProduct> getSaleProducts() {
         return saleProducts;
-    }
-
-    public void setSaleProducts(List<SaleProduct> saleProducts) {
-        if(saleProducts == null || saleProducts.isEmpty()){
-            throw new IllegalArgumentException("Items for sale cannot be null or empty.");
-        }
-        this.saleProducts = saleProducts;
-        calculateTotals();
     }
 
     public BigDecimal getTotalPrice() {
@@ -82,29 +64,28 @@ public class Sale {
         return originalTotalPrice;
     }
 
-    public void setOriginalTotalPrice(BigDecimal originalTotalPrice) {
-        this.originalTotalPrice = originalTotalPrice;
+    /**
+     * Retorna o desconto total aplicado aos produtos individuais
+     * @return soma dos descontos dos SaleProducts
+     */
+    public BigDecimal getItemsDiscount() {
+        return itemsDiscount;
     }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
+    /**
+     * Retorna o desconto aplicado na venda como um todo
+     * @return desconto da venda (negociação, cupom, etc)
+     */
+    public BigDecimal getSaleDiscount() {
+        return saleDiscount;
     }
 
+    /**
+     * Retorna o desconto total (itens + venda)
+     * @return itemsDiscount + saleDiscount
+     */
     public BigDecimal getTotalDiscount() {
         return totalDiscount;
-    }
-
-    public void setTotalDiscount(BigDecimal totalDiscount) {
-        this.totalDiscount = totalDiscount;
-        this.totalPrice = originalTotalPrice.subtract(this.totalDiscount).setScale(2,RoundingMode.HALF_UP).max(BigDecimal.ZERO);
-        calculateChange();
-    }
-
-    public void setPaymentMethods(List<Payment> paymentMethods) {
-        if (paymentMethods == null || paymentMethods.isEmpty()) {
-            throw new IllegalArgumentException("Error to set payment: Sale items are null or empty");
-        }
-        this.paymentMethods = paymentMethods;
     }
 
     public List<Payment> getPaymentMethods() {
@@ -115,45 +96,151 @@ public class Sale {
         return status;
     }
 
-    public void setStatus(SaleStatus status) {
-        this.status = status;
-    }
-
-    private void calculateTotals(){
-        BigDecimal subtotal = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        BigDecimal discountTotal = BigDecimal.ZERO.setScale(2,RoundingMode.HALF_UP);
-
-        for(SaleProduct item : this.saleProducts){
-            subtotal = subtotal.add(item.getOriginalSubtotal());
-            discountTotal = discountTotal.add(item.getDiscount());
-        }
-
-        this.originalTotalPrice = subtotal;
-        this.totalDiscount = discountTotal;
-        this.totalPrice = subtotal.subtract(discountTotal).max(BigDecimal.ZERO).max(BigDecimal.ZERO);
-
-    }
-
     public BigDecimal getTotalAmountPaid() {
         return totalAmountPaid;
     }
 
+    public BigDecimal getTotalChange() {
+        calculateChange();
+        return totalChange.max(BigDecimal.ZERO);
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setDateSale(Timestamp dateSale) {
+        this.dateSale = dateSale;
+    }
+
+    public void setDataCancel(Timestamp dataCancel) {
+        this.dataCancel = dataCancel;
+    }
+
+    /**
+     * Define os produtos da venda e recalcula os totais
+     * Recalcula: originalTotalPrice, itemsDiscount, totalDiscount e totalPrice
+     * Preserva: saleDiscount (deve ser setado separadamente)
+     *
+     * @param saleProducts Lista de produtos da venda
+     */
+    public void setSaleProducts(List<SaleProduct> saleProducts) {
+        if(saleProducts == null || saleProducts.isEmpty()) {
+            throw new IllegalArgumentException("Items for sale cannot be null or empty.");
+        }
+        this.saleProducts = saleProducts;
+        calculateTotals();
+    }
+
+    /**
+     * Define o preço original total (usado no mapeamento do banco)
+     * @param originalTotalPrice Preço original sem descontos
+     */
+    public void setOriginalTotalPrice(BigDecimal originalTotalPrice) {
+        this.originalTotalPrice = originalTotalPrice;
+    }
+
+    /**
+     * Define o desconto dos itens (usado no mapeamento do banco)
+     * @param itemsDiscount Soma dos descontos dos produtos
+     */
+    public void setItemsDiscount(BigDecimal itemsDiscount) {
+        this.itemsDiscount = itemsDiscount;
+    }
+
+    /**
+     * Define o desconto da venda e recalcula os totais
+     * @param saleDiscount Desconto aplicado na venda como um todo
+     */
+    public void setSaleDiscount(BigDecimal saleDiscount) {
+        this.saleDiscount = saleDiscount;
+        recalculateTotals();
+    }
+
+    /**
+     * Define o desconto total (usado no mapeamento do banco)
+     * @param totalDiscount Desconto total da venda
+     */
+    public void setTotalDiscount(BigDecimal totalDiscount) {
+        this.totalDiscount = totalDiscount;
+        recalculateTotals();
+    }
+
+    /**
+     * Define o preço total (usado no mapeamento do banco)
+     * @param totalPrice Preço final da venda
+     */
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    /**
+     * Define os métodos de pagamento
+     * @param paymentMethods Lista de métodos de pagamento
+     */
+    public void setPaymentMethods(List<Payment> paymentMethods) {
+        if (paymentMethods == null || paymentMethods.isEmpty()) {
+            throw new IllegalArgumentException("Error to set payment: Sale items are null or empty");
+        }
+        this.paymentMethods = paymentMethods;
+    }
+
+    public void setStatus(SaleStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * Define o valor pago pelo cliente e recalcula o troco
+     * @param totalAmountPaid Valor total pago
+     */
     public void setTotalAmountPaid(BigDecimal totalAmountPaid) {
         this.totalAmountPaid = totalAmountPaid;
         calculateChange();
     }
 
-    private void calculateChange() {
-        if(totalPrice.compareTo(totalAmountPaid) > 0){
-            totalChange = BigDecimal.ZERO;
-        } else {
-            totalChange = totalAmountPaid.subtract(totalPrice).setScale(2,RoundingMode.HALF_UP);
+    /**
+     * Calcula os totais da venda baseado nos produtos
+     * - originalTotalPrice: soma dos originalSubtotal dos produtos
+     * - itemsDiscount: soma dos descontos dos produtos
+     * - totalDiscount: itemsDiscount + saleDiscount
+     * - totalPrice: originalTotalPrice - totalDiscount
+     */
+    private void calculateTotals() {
+        BigDecimal subtotal = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        BigDecimal itemsDiscountCalc = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+
+        for(SaleProduct item : this.saleProducts) {
+            subtotal = subtotal.add(item.getOriginalSubtotal());
+            itemsDiscountCalc = itemsDiscountCalc.add(item.getDiscount());
         }
+
+        this.originalTotalPrice = subtotal;
+        this.itemsDiscount = itemsDiscountCalc;
+
+        recalculateTotals();
     }
 
-    public BigDecimal getTotalChange(){
-        calculateChange();
-        return totalChange.max(BigDecimal.ZERO);
+    /**
+     * Recalcula apenas totalDiscount e totalPrice
+     * Usado quando saleDiscount é alterado
+     */
+    private void recalculateTotals() {
+        this.totalDiscount = this.itemsDiscount.add(this.saleDiscount);
+        this.totalPrice = this.originalTotalPrice
+                .subtract(this.totalDiscount)
+                .setScale(2, RoundingMode.HALF_UP)
+                .max(BigDecimal.ZERO);
+    }
+
+    /**
+     * Calcula o troco baseado no valor pago vs preço total
+     */
+    private void calculateChange() {
+        if(totalPrice.compareTo(totalAmountPaid) > 0) {
+            totalChange = BigDecimal.ZERO;
+        } else {
+            totalChange = totalAmountPaid.subtract(totalPrice).setScale(2, RoundingMode.HALF_UP);
+        }
     }
 
     @Override
@@ -166,8 +253,10 @@ public class Sale {
                 ", totalChange=" + totalChange +
                 ", totalAmountPaid=" + totalAmountPaid +
                 ", originalTotalPrice=" + originalTotalPrice +
-                ", totalPrice=" + totalPrice +
+                ", itemsDiscount=" + itemsDiscount +
+                ", saleDiscount=" + saleDiscount +
                 ", totalDiscount=" + totalDiscount +
+                ", totalPrice=" + totalPrice +
                 ", paymentMethods=" + paymentMethods +
                 ", status=" + status +
                 '}';

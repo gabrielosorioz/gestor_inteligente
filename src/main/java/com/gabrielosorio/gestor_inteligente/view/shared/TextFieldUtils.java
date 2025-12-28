@@ -71,16 +71,21 @@ public class TextFieldUtils {
 
         try {
             // Format the text as Brazilian currency
-            return CURRENCY_FORMAT.format(Double.parseDouble(builder.toString())).substring(3);
+            String result = CURRENCY_FORMAT.format(Double.parseDouble(builder.toString())).substring(3);
+            return result;
         } catch (NumberFormatException e) {
             return "0,00";
         }
     }
 
     public static BigDecimal formatCurrency(String value) {
+
         value = normalizeCurrencyString(value);
+
         DecimalFormat df = createDecimalFormat();
-        return parseToBigDecimal(value, df);
+        BigDecimal result = parseToBigDecimal(value, df);
+
+        return result;
     }
 
     // Normalizes the currency string to a format that DecimalFormat can parse

@@ -6,6 +6,7 @@ import com.gabrielosorio.gestor_inteligente.model.SaleCheckoutMovement;
 import com.gabrielosorio.gestor_inteligente.repository.base.SaleCheckoutMovementRepository;
 import com.gabrielosorio.gestor_inteligente.service.base.SaleCheckoutMovementService;
 import java.util.List;
+import java.util.Optional;
 
 public class SaleCheckoutMovementServiceImpl implements SaleCheckoutMovementService {
 
@@ -33,5 +34,21 @@ public class SaleCheckoutMovementServiceImpl implements SaleCheckoutMovementServ
         return saleCheckoutMovements.stream()
                 .map(SaleCheckoutMovement::getSale)
                 .toList();
+    }
+
+    @Override
+    public Optional<Sale> findSaleByCheckoutMovement(CheckoutMovement checkoutMovement) {
+        if (checkoutMovement == null) {
+            return Optional.empty();
+        }
+
+        List<CheckoutMovement> singleMovement = List.of(checkoutMovement);
+        List<Sale> sales = findSalesInCheckoutMovements(singleMovement);
+
+        if (sales.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(sales.get(0));
     }
 }

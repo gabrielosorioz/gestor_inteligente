@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -29,7 +30,6 @@ import java.util.*;
 public class TableViewFactory<T> implements TableViewCreator<T> {
 
     private final Class<T> clazz;
-    private final Map<String, List<TextField>> columnTextFields = new HashMap<>();
     private final Map<KeyCode, Runnable> globalKeyHandlers = new HashMap<>();
     private AfterModelUpdateCallback<T, Object> afterModelUpdateCallback;
     private BeforeModelUpdateCallback<T, Object> beforeModelUpdateCallback;
@@ -54,12 +54,34 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
      * @param resourceCssPath path to the CSS file for styling.
      * @return a fully constructed TableView.
      */
+
+    // TableViewFactory.java
     @Override
     public TableView<T> createTableView(String resourceCssPath) {
         TableView<T> tableView = new TableView<>();
-        tableView.getStylesheets().add(Objects.requireNonNull(getClass().getResource(resourceCssPath)).toExternalForm());
+
+        String raw = resourceCssPath;
+        String path = (raw == null) ? null : raw.trim();
+
+        // 1) tentativa padrão
+        URL cssUrl = (path == null) ? null : getClass().getResource(path);
+
+        // 2) fallback via ClassLoader (às vezes ajuda dependendo de como está empacotado)
+        if (cssUrl == null && path != null && path.startsWith("/")) {
+            cssUrl = getClass().getClassLoader().getResource(path.substring(1));
+        }
+
+        if (cssUrl == null) {
+            throw new IllegalArgumentException(
+                    "CSS não encontrado no classpath: [" + raw + "] (trim=[" + path + "])"
+            );
+        }
+
+        tableView.getStylesheets().add(cssUrl.toExternalForm());
         return createTableViewInternal(tableView);
     }
+
+
 
     /**
      * Creates a TableView without custom CSS styling.
@@ -220,15 +242,12 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
                         : ((Method) member.member).getAnnotation(EditableColumn.class);
 
         String columnId = column.getId();
-        columnTextFields.putIfAbsent(columnId, new ArrayList<>());
 
         column.setCellFactory(col -> new TableCell<S, Object>() {
             private final TextField textField = new TextField();
 
             {
 
-                // Registrar o TextField
-                columnTextFields.get(columnId).add(textField);
 
                 applyGlobalKeyHandlers(textField);
 
@@ -341,7 +360,6 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
      */
     private <S> void applyEditableMonetaryCellFactory(TableColumn<S, Object> column, ColumnMember member, String currencySymbol) {
         String columnId = column.getId();
-        columnTextFields.putIfAbsent(columnId, new ArrayList<>());
 
         column.setCellFactory(col -> new TableCell<S, Object>() {
             EditableColumn editConfig =
@@ -357,8 +375,6 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
 
              {
 
-                // Registrar o TextField
-                columnTextFields.get(columnId).add(monetaryField);
 
                 applyGlobalKeyHandlers(monetaryField);
 
@@ -619,14 +635,15 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
         this.beforeModelUpdateCallback = callback;
     }
 
-    /**
-     * Retorna os TextFields de uma coluna editável específica.
-     *
-     * @param columnId o ID da coluna conforme definido em @TableColumnConfig
-     * @return lista de TextFields da coluna, ou lista vazia se não encontrada
-     */
-    public List<TextField> getColumnTextFields(String columnId) {
-        return columnTextFields.getOrDefault(columnId, Collections.emptyList());
+    private void setColumnWidthById(TableView<?> tableView, String columnId, ColumnWidthSpec spec) {
+        for (TableColumn<?, ?> col : tableView.getColumns()) {
+            if (columnId.equals(col.getId())) {
+                if (spec.min  != null) col.setMinWidth(spec.min);
+                if (spec.pref != null) col.setPrefWidth(spec.pref);
+                if (spec.max  != null) col.setMaxWidth(spec.max);
+                return;
+            }
+        }
     }
 
     /**
@@ -640,14 +657,6 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
         return new Builder<>(clazz);
     }
 
-    /**
-     * Retorna todos os TextFields de todas as colunas editáveis.
-     *
-     * @return Map com columnId como chave e lista de TextFields como valor
-     */
-    public Map<String, List<TextField>> getAllColumnTextFields() {
-        return new HashMap<>(columnTextFields);
-    }
 
     /**
      * Helper class to unify annotated members (fields and methods).
@@ -661,13 +670,33 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
     public static class Builder<T> {
         private final Class<T> clazz;
         private String stylesheet;
+        private boolean lockColumns = false;
+//        private final Map<String, Double> columnWidths = new HashMap<>();
+        private final Map<String, ColumnWidthSpec> columnWidths = new HashMap<>();
         private final Map<KeyCode, Runnable> keyHandlers = new HashMap<>();
         private AfterModelUpdateCallback<T, Object> afterModelUpdateCallback;
         private BeforeModelUpdateCallback<T, Object> beforeModelUpdateCallback;
+        private final List<ActionColumnConfig<T>> actionColumns = new ArrayList<>();
+
+        public Builder<T> lockColumns(boolean value) {
+            this.lockColumns = value;
+            return this;
+        }
 
         private Builder(Class<T> clazz) {
             this.clazz = clazz;
         }
+
+        public Builder columnWidth(String columnId, double prefWidth) {
+            this.columnWidths.put(columnId, new ColumnWidthSpec(null, prefWidth, null));
+            return this;
+        }
+
+        public Builder columnWidth(String columnId, Double minWidth, Double prefWidth, Double maxWidth) {
+            this.columnWidths.put(columnId, new ColumnWidthSpec(minWidth, prefWidth, maxWidth));
+            return this;
+        }
+
 
         /**
          * Define o arquivo CSS para estilização da TableView.
@@ -722,28 +751,130 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
          *
          * @return a TableView configurada
          */
+        // TableViewFactory.java (dentro da classe Builder<T>)
         public TableView<T> build() {
             TableViewFactory<T> factory = new TableViewFactory<>(clazz);
 
-            // Registrar handlers ANTES de criar a TableView
             keyHandlers.forEach(factory::registerGlobalKeyHandler);
 
-            // Registrar callbacks
             if (afterModelUpdateCallback != null) {
                 factory.setAfterModelUpdateCallback(afterModelUpdateCallback);
             }
-
             if (beforeModelUpdateCallback != null) {
                 factory.setBeforeModelUpdateCallback(beforeModelUpdateCallback);
             }
 
-            // Criar a TableView com ou sem stylesheet
+            TableView<T> table;
             if (stylesheet != null && !stylesheet.isEmpty()) {
-                return factory.createTableView(stylesheet);
+                table = factory.createTableView(stylesheet);
             } else {
-                return factory.createTableView();
+                table = factory.createTableView();
+            }
+
+            // Aplicar larguras definidas no builder
+            columnWidths.forEach((id, width) -> factory.setColumnWidthById(table, id, width));
+
+            if (lockColumns) {
+                for (TableColumn<T, ?> col : table.getColumns()) {
+                    col.setResizable(false);
+                    col.setReorderable(false);
+                    col.setSortable(false);
+                }
+            }
+
+            for (ActionColumnConfig<T> cfg : actionColumns) {
+                TableColumn<T, Void> actionCol = new TableColumn<>(cfg.header);
+                actionCol.setId(cfg.columnId);
+                actionCol.setPrefWidth(cfg.prefWidth);
+
+                actionCol.setCellFactory(col -> new TableCell<>() {
+                    private final HBox actionBox = new HBox();
+                    private final javafx.scene.Node graphic =
+                            (cfg.graphicSupplier != null ? cfg.graphicSupplier.get() : null);
+
+                    {
+                        if (cfg.actionBoxStyleClass != null && !cfg.actionBoxStyleClass.isBlank()) {
+                            actionBox.getStyleClass().add(cfg.actionBoxStyleClass);
+                        }
+                        actionBox.setAlignment(javafx.geometry.Pos.CENTER);
+
+                        if (graphic != null) {
+                            actionBox.getChildren().add(graphic);
+                        }
+
+                        actionBox.setOnMouseClicked(evt -> {
+                            T rowItem = getTableRow() == null ? null : getTableRow().getItem();
+                            if (rowItem != null && cfg.onClick != null) {
+                                cfg.onClick.accept(rowItem);
+                            }
+                        });
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setGraphic((empty || getTableRow() == null || getTableRow().getItem() == null) ? null : actionBox);
+                    }
+                });
+
+                table.getColumns().add(actionCol);
+            }
+
+
+            return table;
+        }
+
+        public Builder<T> actionColumn(
+                String columnId,
+                String header,
+                double prefWidth,
+                java.util.function.Supplier<? extends javafx.scene.Node> graphicSupplier,
+                java.util.function.Consumer<T> onClick
+        ) {
+            return actionColumn(columnId, header, prefWidth, null, graphicSupplier, onClick);
+        }
+
+
+
+        public Builder<T> actionColumn(
+                String columnId,
+                String header,
+                double prefWidth,
+                String actionBoxStyleClass,
+                java.util.function.Supplier<? extends javafx.scene.Node> graphicSupplier,
+                java.util.function.Consumer<T> onClick
+        ) {
+            this.actionColumns.add(new ActionColumnConfig<>(
+                    columnId, header, prefWidth, actionBoxStyleClass, graphicSupplier, onClick
+            ));
+            return this;
+        }
+
+        private static final class ActionColumnConfig<T> {
+            final String columnId;
+            final double prefWidth;
+            final String header;
+            final String actionBoxStyleClass;
+            final java.util.function.Supplier<? extends javafx.scene.Node> graphicSupplier;
+            final java.util.function.Consumer<T> onClick;
+
+            private ActionColumnConfig(
+                    String columnId,
+                    String header,
+                    double prefWidth,
+                    String actionBoxStyleClass,
+                    java.util.function.Supplier<? extends javafx.scene.Node> graphicSupplier,
+                    java.util.function.Consumer<T> onClick
+            ) {
+                this.columnId = columnId;
+                this.header = header;
+                this.prefWidth = prefWidth;
+                this.actionBoxStyleClass = actionBoxStyleClass;
+                this.graphicSupplier = graphicSupplier;
+                this.onClick = onClick;
             }
         }
+
     }
 
     private class ColumnMember {
@@ -765,6 +896,15 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
             } else {
                 return ((Method) member).getName();
             }
+        }
+    }
+
+    private static final class ColumnWidthSpec {
+        final Double min;
+        final Double pref;
+        final Double max;
+        ColumnWidthSpec(Double min, Double pref, Double max) {
+            this.min = min; this.pref = pref; this.max = max;
         }
     }
 }

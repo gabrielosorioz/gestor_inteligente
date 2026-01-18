@@ -1,54 +1,209 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="300.0" styleClass="body" stylesheets="@../css/saleDetails.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="762.0" prefWidth="738.0" styleClass="body" stylesheets="@../css/saleDetails.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="9.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="btnClose" fitHeight="25.0" fitWidth="25.0" layoutX="14.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/icons8-excluir-60.png" />
          </image>
       </ImageView>
-      <Label layoutX="14.0" layoutY="55.0" styleClass="amount" stylesheets="@../css/saleDetails.css" text="R$" />
-      <Label layoutX="46.0" layoutY="55.0" styleClass="amount" stylesheets="@../css/saleDetails.css" text="217,09" />
-      <Label layoutX="14.0" layoutY="84.0" styleClass="subtitle" stylesheets="@../css/saleDetails.css" text="Venda #0326" />
+      <Label fx:id="saleIdLbl" layoutX="609.0" layoutY="57.0" styleClass="subtitle" stylesheets="@../css/saleDetails.css" text="Venda #0326" />
       <HBox layoutX="11.0" layoutY="77.0" style="-fx-background-color: #f4f4f4;" />
-      <Label layoutX="14.0" layoutY="105.0" styleClass="subtitle" stylesheets="@../css/saleDetails.css" text="07/10/2025 - 18:06:23" />
-      <HBox alignment="CENTER_LEFT" layoutX="6.0" layoutY="148.0" prefHeight="32.0" prefWidth="294.0" styleClass="user-hbox" stylesheets="@../css/saleDetails.css" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="0.0">
+      <VBox fx:id="tableContainer" layoutX="8.0" layoutY="104.0" prefHeight="267.0" prefWidth="722.0" style="-fx-background-color: transparent;" />
+      <HBox alignment="CENTER_LEFT" layoutX="354.0" layoutY="383.0" prefHeight="47.0" prefWidth="351.0" style="-fx-background-color: transparent;" styleClass="hbox-sale-discount" stylesheets="@../css/saleViewDetails.css">
          <children>
-            <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../image/icons8-user-48.png" />
-               </image>
-            </ImageView>
-            <Label styleClass="subtitle" stylesheets="@../css/saleDetails.css" text="Yasmin">
-               <HBox.margin>
-                  <Insets left="5.0" />
-               </HBox.margin>
-            </Label>
+            <HBox alignment="CENTER" prefHeight="30.0" prefWidth="160.0">
+               <children>
+                  <Label styleClass="sale-discount-lbl" stylesheets="@../css/saleViewDetails.css" text="Desconto na Venda" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="11.0" layoutY="11.0" prefHeight="37.0" prefWidth="183.0">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="30.0" prefWidth="27.0" styleClass="currency-vbox" stylesheets="@../css/saleViewDetails.css">
+                     <children>
+                        <Label styleClass="currency-vbox-lbl" stylesheets="@../css/saleViewDetails.css" text="R$" />
+                     </children>
+                  </VBox>
+                  <TextField fx:id="saleDiscountField" alignment="CENTER_RIGHT" prefHeight="37.0" prefWidth="156.0" styleClass="sale-discount-field" stylesheets="@../css/saleViewDetails.css" />
+               </children>
+            </HBox>
          </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
       </HBox>
-      <HBox alignment="CENTER" layoutY="543.0" prefHeight="51.0" prefWidth="300.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <VBox layoutX="354.0" layoutY="438.0" prefHeight="104.0" prefWidth="351.0" styleClass="hbox-sale-subtotal" stylesheets="@../css/saleViewDetails.css">
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="51.0" prefWidth="274.0" text="Editar Pagamento (F2)">
-               <padding>
-                  <Insets bottom="5.0" right="5.0" top="5.0" />
-               </padding>
-            </Button>
+            <HBox alignment="CENTER_RIGHT" layoutX="15.0" layoutY="15.0" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="41.0" prefWidth="145.0" spacing="3.0">
+                     <children>
+                        <Label styleClass="total-discount-lbl" stylesheets="@../css/saleViewDetails.css" text="N. SUBTOTAL:" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" layoutX="216.0" layoutY="15.0" prefHeight="51.0" prefWidth="232.0" spacing="3.0">
+                     <children>
+                        <Label prefHeight="32.0" prefWidth="33.0" styleClass="subtotal-price-lbl" stylesheets="@../css/saleViewDetails.css" text="R$" />
+                        <Label fx:id="subtotalLbl" alignment="CENTER_RIGHT" prefHeight="35.0" prefWidth="164.0" styleClass="subtotal-price-lbl" stylesheets="@../css/saleViewDetails.css" text="217,09" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" layoutX="11.0" layoutY="11.0" prefHeight="100.0" prefWidth="200.0" styleClass="sale-total-discount-hbox">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="41.0" prefWidth="145.0" spacing="3.0">
+                     <children>
+                        <Label styleClass="total-discount-lbl" stylesheets="@../css/saleViewDetails.css" text="DESC. TOTAIS:" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" layoutX="216.0" layoutY="15.0" prefHeight="41.0" prefWidth="230.0" spacing="3.0">
+                     <children>
+                        <Label prefHeight="32.0" prefWidth="33.0" styleClass="total-discount-lbl-value" stylesheets="@../css/saleViewDetails.css" text="R$" />
+                        <Label fx:id="totalDiscountLbl" alignment="CENTER_RIGHT" prefHeight="35.0" prefWidth="161.0" styleClass="total-discount-lbl-value" stylesheets="@../css/saleViewDetails.css" text="60,00" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
          </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
+      </VBox>
+      <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="438.0" prefHeight="49.0" prefWidth="310.0" styleClass="payment-card">
+         <children>
+            <HBox alignment="CENTER" styleClass="payment-badge payment-badge--pix">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/payment-icons/cash_96px.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <Label prefHeight="23.0" prefWidth="69.0" styleClass="payment-title" text="Dinheiro" />
+            <HBox HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="155.0" styleClass="payment-amount-box">
+               <children>
+                  <Label prefHeight="23.0" prefWidth="50.0" styleClass="payment-amount-currency" text="R$" />
+                  <TextField fx:id="cashMethodField" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="106.0" styleClass="payment-amount-field" text="0,00" />
+               </children>
+            </HBox>
+         </children>
       </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="490.0" prefHeight="49.0" prefWidth="310.0" styleClass="payment-card">
+         <children>
+            <HBox alignment="CENTER" styleClass="payment-badge payment-badge--pix">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/payment-icons/debit_card_96px_rec.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <Label prefHeight="23.0" prefWidth="69.0" styleClass="payment-title" text="Debito" />
+            <HBox HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="155.0" styleClass="payment-amount-box">
+               <children>
+                  <Label prefHeight="23.0" prefWidth="50.0" styleClass="payment-amount-currency" text="R$" />
+                  <TextField fx:id="debitMethodField" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="106.0" styleClass="payment-amount-field" text="0,00" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="544.0" prefHeight="49.0" prefWidth="310.0" styleClass="payment-card">
+         <children>
+            <HBox alignment="CENTER" styleClass="payment-badge payment-badge--pix">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/payment-icons/credit_card_96px_rec.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <Label prefHeight="23.0" prefWidth="74.0" styleClass="payment-title" text="Credito" />
+            <VBox alignment="CENTER" prefHeight="39.0" prefWidth="71.0">
+               <children>
+                  <ComboBox fx:id="creditInstallments" prefWidth="150.0" />
+               </children>
+            </VBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="130.0" styleClass="payment-amount-box">
+               <children>
+                  <Label prefHeight="23.0" prefWidth="50.0" styleClass="payment-amount-currency" text="R$" />
+                  <TextField fx:id="creditMethodField" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="106.0" styleClass="payment-amount-field" text="0,00" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="382.0" prefHeight="49.0" prefWidth="310.0" styleClass="payment-card">
+         <children>
+            <HBox alignment="CENTER" styleClass="payment-badge payment-badge--pix">
+               <children>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/payment-icons/pix.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </HBox>
+            <Label prefHeight="23.0" prefWidth="69.0" styleClass="payment-title" text="Pix" />
+            <HBox HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" prefHeight="39.0" prefWidth="155.0" styleClass="payment-amount-box">
+               <children>
+                  <Label prefHeight="23.0" prefWidth="50.0" styleClass="payment-amount-currency" text="R$" />
+                  <TextField fx:id="pixMethodField" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="106.0" styleClass="payment-amount-field" text="0,00" />
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <Button id="btnSave" fx:id="btnSave" layoutX="356.0" layoutY="550.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="349.0" styleClass="save-btn" stylesheets="@../css/saleViewDetails.css" text="Salvar" />
+      <HBox layoutX="14.0" layoutY="57.0">
+         <children>
+            <HBox prefHeight="32.0" prefWidth="200.0" spacing="5.0" styleClass="client-hbox" stylesheets="@../css/saleViewDetails.css">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="32.0" prefWidth="35.0">
+                     <children>
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/icons8-usuário.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label fx:id="clientName" styleClass="subtitle" stylesheets="@../css/saleDetails.css" text="Cliente" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <VBox alignment="CENTER">
+               <children>
+                  <Label fx:id="saleDate" styleClass="subtitle" stylesheets="@../css/saleDetails.css" text="07/10/2025" />
+                  <Label fx:id="saleDateTime" styleClass="subtitle" stylesheets="@../css/saleDetails.css" text="18:06:23" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+       <!-- Troco (card moderno) -->
+       <HBox alignment="CENTER_LEFT" layoutX="14.0" layoutY="600.0" prefHeight="45.0" prefWidth="236.0" spacing="10.0" styleClass="change-card" stylesheets="@../css/saleViewDetails.css">
+
+           <children>
+               <Label styleClass="change-title" stylesheets="@../css/saleViewDetails.css" text="TROCO" />
+
+               <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                   <children>
+                       <Label styleClass="change-currency" stylesheets="@../css/saleViewDetails.css" text="R$" />
+                       <Label fx:id="totalChangeLbl" nodeOrientation="RIGHT_TO_LEFT" prefHeight="23.0" prefWidth="93.0" styleClass="change-value" stylesheets="@../css/saleViewDetails.css" text="0,00" />
+                   </children>
+               </HBox>
+           </children>
+       </HBox>
+
    </children>
 </AnchorPane>

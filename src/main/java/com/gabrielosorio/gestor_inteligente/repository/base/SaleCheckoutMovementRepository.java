@@ -8,4 +8,8 @@ import java.util.List;
 
 public interface SaleCheckoutMovementRepository extends RepositoryStrategy<SaleCheckoutMovement,Long>, BatchInsertable<SaleCheckoutMovement> {
     List<SaleCheckoutMovement> findSalesInCheckoutMovements(List<CheckoutMovement> checkoutMovements);
+    List<SaleCheckoutMovement> findSaleDetailsByCheckoutMovement(CheckoutMovement checkoutMovement);
+    List<SaleCheckoutMovement> findSaleDetailsBySaleId(Long saleId);
+    List<SaleCheckoutMovement> findBySaleId(Long saleId);
+    void removeAllBySaleId(Long saleId);
 }

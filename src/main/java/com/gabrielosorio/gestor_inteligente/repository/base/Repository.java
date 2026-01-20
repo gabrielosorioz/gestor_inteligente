@@ -1,6 +1,8 @@
 package com.gabrielosorio.gestor_inteligente.repository.base;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchDeletable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchUpdatable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 
 import java.util.List;
@@ -45,6 +47,24 @@ public abstract class Repository <T,ID> {
             throw new UnsupportedOperationException("Batch insert not supported for this entity.");
         }
     }
+
+    public List<T> updateAll(List<T> entities) {
+        if (strategy instanceof BatchUpdatable) {
+            return ((BatchUpdatable<T>) strategy).updateAll(entities);
+        } else {
+            throw new UnsupportedOperationException("Batch update not supported for this entity.");
+        }
+    }
+
+    public int deleteAll(List<ID> ids) {
+        if (strategy instanceof BatchDeletable) {
+            return ((BatchDeletable<ID>) strategy).deleteAll(ids);
+        } else {
+            throw new UnsupportedOperationException("Batch delete not supported for this entity.");
+        }
+    }
+
+
 
 
 }

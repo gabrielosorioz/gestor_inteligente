@@ -59,4 +59,6 @@ public interface CheckoutMovementService {
      */
     List<CheckoutMovement> findByDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
+    void removeAllByIds(List<Long> checkoutMovementIds);
+
 }

@@ -8,6 +8,7 @@ module com.gabrielosorio.gestor_inteligente {
     requires jbcrypt;
     requires javafx.graphics;
     requires java.logging;
+    requires javafx.base;
 
     opens com.gabrielosorio.gestor_inteligente to javafx.fxml;
     exports com.gabrielosorio.gestor_inteligente;

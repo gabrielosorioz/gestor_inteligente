@@ -3,8 +3,12 @@ package com.gabrielosorio.gestor_inteligente.view.checkout;
 import com.gabrielosorio.gestor_inteligente.GestorInteligenteApp;
 import com.gabrielosorio.gestor_inteligente.events.PaymentEvent;
 import com.gabrielosorio.gestor_inteligente.events.PaymentEventBus;
+import com.gabrielosorio.gestor_inteligente.events.SaleUpdatedEvent;
+import com.gabrielosorio.gestor_inteligente.events.SaleUpdatedEventBus;
 import com.gabrielosorio.gestor_inteligente.events.listeners.PaymentListener;
+import com.gabrielosorio.gestor_inteligente.events.listeners.SaleUpdateListener;
 import com.gabrielosorio.gestor_inteligente.model.*;
+import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutMovementTypeEnum;
 import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutService;
@@ -12,6 +16,7 @@ import com.gabrielosorio.gestor_inteligente.service.base.SaleCheckoutMovementSer
 import com.gabrielosorio.gestor_inteligente.service.base.SaleService;
 import com.gabrielosorio.gestor_inteligente.view.checkout.helpers.*;
 import com.gabrielosorio.gestor_inteligente.view.shared.ShortcutHandler;
+import com.gabrielosorio.gestor_inteligente.view.shared.SlidePanel;
 import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
 import com.gabrielosorio.gestor_inteligente.view.shared.util.BrazilianDatePicker;
 import javafx.collections.FXCollections;
@@ -24,6 +29,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -31,11 +38,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.BiConsumer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CheckoutMovementController implements Initializable, ShortcutHandler, PaymentListener {
+public class CheckoutMovementController implements Initializable, ShortcutHandler, PaymentListener, SaleUpdateListener {
 
     private final Logger log = Logger.getLogger(getClass().getName());
 
@@ -59,9 +68,14 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
     private CheckoutMovementDialogController checkoutMovementDialogController;
     private ObservableList<CheckoutMovement> movementsList;
     private Node checkoutMovementDialog;
+    private AnchorPane saleDetailView;
+    private SlidePanel saleDetailSlidePanel;
+    private Pane saleDetailShadow;
+    private SaleDetailsViewController saleViewDetailsController;
+
 
     // Apresentadores para separar lógica de visualização
-    private final CheckoutMovementTablePresenter tablePresenter;
+    private final CheckoutMovementTablePresenter checkoutMovementTablePresenter;
     private final PaymentSummaryPresenter paymentPresenter;
 
     public CheckoutMovementController(CheckoutService checkoutService,
@@ -74,16 +88,18 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         this.checkoutMovementService = checkoutMovementService;
         this.user = user;
         this.checkout = checkoutService.openCheckout(user);
-        this.tablePresenter = new CheckoutMovementTablePresenter();
+        this.checkoutMovementTablePresenter = new CheckoutMovementTablePresenter();
         this.paymentPresenter = new PaymentSummaryPresenter();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         PaymentEventBus.getInstance().register(this);
+        SaleUpdatedEventBus.getInstance().register(this);
         roleAndNameLbl.setText(user.getRole().getName() + ": " +user.getFullName());
         setupDatePickers();
         initializeTableView();
+        initializeSaleDetailSlidePanel();
         loadMovements();
     }
 
@@ -127,10 +143,111 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
 
     private void initializeTableView() {
         movementsList = FXCollections.observableArrayList();
-        movementsTableView = tablePresenter.createTableView();
+        movementsTableView = checkoutMovementTablePresenter.createTableView();
         configureTableViewLayout();
+        checkoutMovementTablePresenter.setOnRowClick(movementsTableView, movement -> {
+            handleMovementClick(movement);
+        });
         tableContent.getChildren().add(movementsTableView);
     }
+
+    private Pane createShadowOverlay() {
+        Pane shadow = new Pane();
+        shadow.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+        shadow.setVisible(false);
+
+        // Faz o shadow ocupar todo o container
+        AnchorPane.setTopAnchor(shadow, 0.0);
+        AnchorPane.setBottomAnchor(shadow, 0.0);
+        AnchorPane.setLeftAnchor(shadow, 0.0);
+        AnchorPane.setRightAnchor(shadow, 0.0);
+
+        return shadow;
+    }
+
+    // CheckoutMovementController.java
+    private void handleMovementClick(CheckoutMovement movement) {
+        if (!isSaleMovement(movement)) return;
+
+        Optional<Sale> saleOptional = saleCheckoutMovementService.findSaleDetailsByCheckoutMovement(movement);
+
+        if (saleDetailSlidePanel != null) saleDetailSlidePanel.show();
+
+        saleOptional.ifPresent(sale -> {
+            if (saleViewDetailsController != null) {
+                saleViewDetailsController.setSale(sale);
+                saleViewDetailsController.setCheckout(movement.getCheckout());
+            }
+        });
+    }
+
+    private void initializeSaleDetailSlidePanel() {
+        AnchorPane saleDetail = loadSaleDetailView();
+
+        if (saleDetail == null) {
+            log.severe("Não foi possível carregar a view de detalhes da venda");
+            return;
+        }
+
+        saleDetailShadow = createShadowOverlay();
+        if (!mainContent.getChildren().contains(saleDetailShadow)) {
+            mainContent.getChildren().add(saleDetailShadow);
+        }
+
+        saleDetailSlidePanel = new SlidePanel.Builder(mainContent, saleDetail)
+                .direction(SlidePanel.SlideDirection.RIGHT)
+                .animationDuration(Duration.millis(400))
+                .fadeDuration(Duration.millis(400))
+                .offset(550.00)
+                .shadowOverlay(saleDetailShadow)
+                .onToggle(visible -> {
+                    log.info("Painel de detalhes da venda " + (visible ? "aberto" : "fechado"));
+                })
+                .build();
+
+        if (saleViewDetailsController != null) {
+            saleViewDetailsController.setOnClose(() -> saleDetailSlidePanel.hide());
+        }
+
+    }
+
+
+
+    private AnchorPane loadSaleDetailView() {
+        try {
+            if (saleDetailView == null) {
+
+                URL fxmlUrl = GestorInteligenteApp.class.getResource("fxml/SaleDetails.fxml");
+                if (fxmlUrl == null) {
+                    log.severe("SaleDetails.fxml NÃO encontrado no classpath. Verifique o caminho do resource.");
+                    return null;
+                }
+
+                log.info("Carregando FXML (URL): " + fxmlUrl);
+
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
+
+                SaleDetailsViewController controller = new SaleDetailsViewController(saleService,user);
+                controller.setOverlayHost(mainContent);
+                loader.setController(controller);
+
+                saleDetailView = loader.load();
+                this.saleViewDetailsController = controller;
+            }
+
+            return saleDetailView;
+
+        } catch (Exception e) { // inclui LoadException (runtime) + outros problemas de parsing/binding do FXML
+            log.log(Level.SEVERE, "Falha ao carregar SaleDetails.fxml (stacktrace completo).", e);
+            logThrowableChain("Falha ao carregar SaleDetails.fxml", e);
+            return null;
+        }
+    }
+
+    private void showSaleDetails(Sale sale){
+
+    }
+
 
     private void configureTableViewLayout() {
         movementsTableView.setLayoutX(4.0);
@@ -157,14 +274,25 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
                 movements = checkoutService.findCheckoutMovementsById(checkout.getId());
             }
 
-            tablePresenter.displayMovements(movementsTableView, movementsList, movements);
+            checkoutMovementTablePresenter.displayMovements(movementsTableView, movementsList, movements);
             updatePaymentSummary(movements);
             updateInitialCashLabel();
         } catch (Exception e) {
-            log.severe("Erro ao carregar movimentos: " + e.getMessage());
+            log.log(Level.SEVERE, "Erro ao carregar movimentos (stacktrace completo).", e);
+            logThrowableChain("Erro ao carregar movimentos", e);
             showAlert("Erro", "Ocorreu um erro ao carregar os movimentos: " + e.getMessage());
         }
     }
+
+    private void logThrowableChain(String prefix, Throwable t) {
+        int depth = 0;
+        while (t != null && depth < 10) {
+            log.severe(prefix + " cause[" + depth + "]: " + t.getClass().getName() + " - " + t.getMessage());
+            t = t.getCause();
+            depth++;
+        }
+    }
+
 
     private void searchMovementsByDateRange() {
         if (startDate.getValue() == null || endDate.getValue() == null) {
@@ -172,6 +300,13 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
             return;
         }
         loadMovements();
+    }
+
+    private boolean isSaleMovement(CheckoutMovement movement) {
+        if (movement == null || movement.getMovementType() == null) {
+            return false;
+        }
+        return movement.getMovementType().getId() == CheckoutMovementTypeEnum.VENDA.getId();
     }
 
     private void updatePaymentSummary(List<CheckoutMovement> movements) {
@@ -404,4 +539,9 @@ public class CheckoutMovementController implements Initializable, ShortcutHandle
         refreshData();
     }
 
+    @Override
+    public void onSaleUpdated(SaleUpdatedEvent saleEvent) {
+        saleDetailSlidePanel.hide();
+        refreshData();
+    }
 }

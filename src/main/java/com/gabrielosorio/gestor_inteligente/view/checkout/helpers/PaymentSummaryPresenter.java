@@ -23,7 +23,6 @@ public class PaymentSummaryPresenter {
         Map<LocalDate, List<CheckoutMovement>> byDate = movements.stream()
                 .collect(Collectors.groupingBy(m -> m.getDateTime().toLocalDate()));
 
-        // Identificar o último dia
         LocalDate lastDay = byDate.keySet().stream()
                 .max(LocalDate::compareTo)
                 .orElseThrow(() -> new IllegalArgumentException("Data inválida"));
@@ -39,13 +38,20 @@ public class PaymentSummaryPresenter {
             BigDecimal v = m.getValue();
 
             if (pid != null && movementType != null) {
-                BigDecimal amount;
-                // Lógica para PIX, Crédito e Débito: somente vendas
-                if (movementType.getId() == CheckoutMovementTypeEnum.VENDA.getId()) {
+                BigDecimal amount = BigDecimal.ZERO;
+                long typeId = movementType.getId();
+
+                // Lógica para Meios Eletrônicos (PIX, Crédito, Débito)
+                // VENDA: Soma
+                if (typeId == CheckoutMovementTypeEnum.VENDA.getId()) {
                     amount = v;
-                } else {
-                    amount = BigDecimal.ZERO;
                 }
+                // ESTORNO DE VENDA: Subtrai
+                else if (typeId == CheckoutMovementTypeEnum.ESTORNO.getId()) {
+                    amount = v.negate();
+                }
+                // ESTORNO DE TROCO: N/A para eletrônicos (geralmente troco é só dinheiro)
+                // TROCO: N/A para eletrônicos
 
                 if (pid == 1L) { // PIX
                     pixTotal = pixTotal.add(amount);
@@ -75,10 +81,12 @@ public class PaymentSummaryPresenter {
             CheckoutMovementType movementType = m.getMovementType();
             Payment p = m.getPayment();
 
+            // Verifica se é DINHEIRO (ID 4)
             if (p != null && p.getId() == 4L && movementType != null) {
                 BigDecimal v = m.getValue();
                 long movementTypeId = movementType.getId();
 
+                // Lógica de Fundo de Caixa (mantida)
                 if (movementTypeId == CheckoutMovementTypeEnum.FUNDO_DE_CAIXA.getId()) {
                     if (lastFundoDateTime == null || m.getDateTime().isAfter(lastFundoDateTime)) {
                         lastFundoDateTime = m.getDateTime();
@@ -87,6 +95,7 @@ public class PaymentSummaryPresenter {
                     continue;
                 }
 
+                // Aplica Soma ou Subtração baseado no Tipo
                 if (isPositiveCashMovement(movementTypeId)) {
                     cashTotal = cashTotal.add(v);
                 } else if (isNegativeCashMovement(movementTypeId)) {
@@ -100,12 +109,17 @@ public class PaymentSummaryPresenter {
 
     private boolean isPositiveCashMovement(long movementTypeId) {
         return movementTypeId == CheckoutMovementTypeEnum.ENTRADA.getId() ||
-                movementTypeId == CheckoutMovementTypeEnum.VENDA.getId() ||
-                movementTypeId == CheckoutMovementTypeEnum.AJUSTE_POSITIVO.getId();
+                movementTypeId == CheckoutMovementTypeEnum.VENDA.getId() ||            // Venda entra dinheiro
+                movementTypeId == CheckoutMovementTypeEnum.AJUSTE_POSITIVO.getId() ||
+                movementTypeId == CheckoutMovementTypeEnum.ESTORNO_TROCO.getId();      // Estorno de troco = Devolve dinheiro pro caixa
     }
 
     private boolean isNegativeCashMovement(long movementTypeId) {
         return movementTypeId == CheckoutMovementTypeEnum.SAIDA.getId() ||
-                movementTypeId == CheckoutMovementTypeEnum.AJUSTE_NEGATIVO.getId();
+                movementTypeId == CheckoutMovementTypeEnum.AJUSTE_NEGATIVO.getId() ||
+                movementTypeId == CheckoutMovementTypeEnum.ESTORNO.getId() ||          // Estorno de venda = Sai dinheiro (devolve pro cliente)
+                movementTypeId == CheckoutMovementTypeEnum.TROCO.getId();              // Troco sai dinheiro
     }
+
+
 }

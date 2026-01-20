@@ -377,6 +377,11 @@ public class PaymentViewController implements Initializable {
         confirmPayment(sale);
         try {
             var savedSale = saleService.processSale(user, sale);
+            System.out.println("\nSale Original Price: R$ " + sale.getOriginalTotalPrice());
+            System.out.println("\nSale Subtotal Price: R$ " + sale.getTotalPrice());
+            System.out.println("\nSale Discount: R$ " + sale.getSaleDiscount());
+            System.out.println("\nSale Items Discount: R$ " + sale.getItemsDiscount());
+            System.out.println("\nSale Total Discount: R$ " + sale.getTotalDiscount());
             PaymentEvent paymentEvent = new PaymentEvent(savedSale);
             PaymentEventBus.getInstance().publish(paymentEvent);
             closeWindow();

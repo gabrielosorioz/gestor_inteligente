@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Sale {
 
-    private long id;
+    private Long id;
     private Timestamp dateSale;
     private Timestamp dataCancel;
     private List<SaleProduct> saleProducts;
@@ -40,7 +40,7 @@ public class Sale {
     public Sale() {
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -105,7 +105,7 @@ public class Sale {
         return totalChange.max(BigDecimal.ZERO);
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -179,10 +179,11 @@ public class Sale {
      * @param paymentMethods Lista de métodos de pagamento
      */
     public void setPaymentMethods(List<Payment> paymentMethods) {
-        if (paymentMethods == null || paymentMethods.isEmpty()) {
-            throw new IllegalArgumentException("Error to set payment: Sale items are null or empty");
+        if (paymentMethods == null) {
+            this.paymentMethods = new ArrayList<>();
+        } else {
+            this.paymentMethods = paymentMethods;
         }
-        this.paymentMethods = paymentMethods;
     }
 
     public void setStatus(SaleStatus status) {

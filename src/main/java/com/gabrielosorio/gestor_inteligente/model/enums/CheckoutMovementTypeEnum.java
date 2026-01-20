@@ -6,7 +6,11 @@ public enum CheckoutMovementTypeEnum {
     VENDA(3, "VENDA"),
     FUNDO_DE_CAIXA(4, "FUNDO DE CAIXA"),
     AJUSTE_POSITIVO(5, "AJUSTE POSITIVO"),
-    AJUSTE_NEGATIVO(6, "AJUSTE NEGATIVO");
+    AJUSTE_NEGATIVO(6, "AJUSTE NEGATIVO"),
+    ESTORNO(7, "ESTORNO"),
+    TROCO(8, "TROCO"),
+    ESTORNO_TROCO(9, "ESTORNO TROCO");
+
 
     private final long id;
     private final String name;

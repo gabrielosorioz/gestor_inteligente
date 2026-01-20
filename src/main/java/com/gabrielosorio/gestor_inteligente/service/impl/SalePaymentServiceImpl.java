@@ -26,6 +26,11 @@ public class SalePaymentServiceImpl implements SalePaymentService {
         return REPOSITORY.addAll(salePayments);
     }
 
+    @Override
+    public List<SalePayment> findBySaleId(Long saleId) {
+        return REPOSITORY.findBySaleId(saleId);
+    }
+
     private void validateSalePayment(SalePayment salePayment){
         if (salePayment.getPayment() == null) {
             throw new IllegalArgumentException("The payment method is null.");
@@ -44,6 +49,22 @@ public class SalePaymentServiceImpl implements SalePaymentService {
             throw new IllegalArgumentException("The sale ID is invalid.");
         }
     }
+
+    @Override
+    public int deleteByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return 0;
+        return REPOSITORY.deleteAll(ids);
+    }
+
+    @Override
+    public List<SalePayment> updateAll(List<SalePayment> salePayments) {
+        if (salePayments == null || salePayments.isEmpty()) return salePayments;
+
+        salePayments.forEach(this::validateSalePayment);
+        return REPOSITORY.updateAll(salePayments);
+    }
+
+
 
 }
 

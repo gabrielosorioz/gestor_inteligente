@@ -1,13 +1,13 @@
 package com.gabrielosorio.gestor_inteligente.view.table;
 
 import com.gabrielosorio.gestor_inteligente.view.shared.TextFieldUtils;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -18,10 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Factory class for creating a JavaFX TableView based on fields and methods annotated with {@link TableColumnConfig}.
@@ -30,7 +28,12 @@ import java.util.Objects;
  * @param <T> The type of the data for the table rows.
  */
 public class TableViewFactory<T> implements TableViewCreator<T> {
+
     private final Class<T> clazz;
+    private final Map<KeyCode, Runnable> globalKeyHandlers = new HashMap<>();
+    private AfterModelUpdateCallback<T, Object> afterModelUpdateCallback;
+    private BeforeModelUpdateCallback<T, Object> beforeModelUpdateCallback;
+
 
     /**
      * Constructs a TableViewFactory for a specific class type.
@@ -51,12 +54,34 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
      * @param resourceCssPath path to the CSS file for styling.
      * @return a fully constructed TableView.
      */
+
+    // TableViewFactory.java
     @Override
     public TableView<T> createTableView(String resourceCssPath) {
         TableView<T> tableView = new TableView<>();
-        tableView.getStylesheets().add(Objects.requireNonNull(getClass().getResource(resourceCssPath)).toExternalForm());
+
+        String raw = resourceCssPath;
+        String path = (raw == null) ? null : raw.trim();
+
+        // 1) tentativa padrão
+        URL cssUrl = (path == null) ? null : getClass().getResource(path);
+
+        // 2) fallback via ClassLoader (às vezes ajuda dependendo de como está empacotado)
+        if (cssUrl == null && path != null && path.startsWith("/")) {
+            cssUrl = getClass().getClassLoader().getResource(path.substring(1));
+        }
+
+        if (cssUrl == null) {
+            throw new IllegalArgumentException(
+                    "CSS não encontrado no classpath: [" + raw + "] (trim=[" + path + "])"
+            );
+        }
+
+        tableView.getStylesheets().add(cssUrl.toExternalForm());
         return createTableViewInternal(tableView);
     }
+
+
 
     /**
      * Creates a TableView without custom CSS styling.
@@ -111,11 +136,72 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
                 TableColumn<T, Object> column = new TableColumn<>(config.header());
                 column.setCellValueFactory(cellData -> getCellValue(cellData.getValue(), member));
                 column.setId(columnId);
+
+                if (member.member.isAnnotationPresent(EditableColumn.class)) {
+                    EditableColumn editConfig = member.member.getAnnotation(EditableColumn.class);
+                    if (editConfig.editType() == EditType.INTEGER) {
+                        applyEditableNumericCellFactory(column,member);
+                    } else if (editConfig.editType() == EditType.MONETARY) {
+                        applyEditableMonetaryCellFactory(column, member, editConfig.currencySymbol());
+                    }
+                }
+
                 tableView.getColumns().add(column);
             }
         }
         return tableView;
     }
+
+    /**
+     * Registra um handler global para uma tecla específica que será aplicado
+     * a todos os TextFields das colunas editáveis.
+     *
+     * @param keyCode a tecla a ser monitorada
+     * @param action a ação a ser executada quando a tecla for pressionada
+     */
+    public void registerGlobalKeyHandler(KeyCode keyCode, Runnable action) {
+        globalKeyHandlers.put(keyCode, action);
+    }
+
+    /**
+     * Remove um handler global para uma tecla específica.
+     *
+     * @param keyCode a tecla cujo handler será removido
+     */
+    public void removeGlobalKeyHandler(KeyCode keyCode) {
+        globalKeyHandlers.remove(keyCode);
+    }
+
+    /**
+     * Limpa todos os handlers globais registrados.
+     */
+    public void clearGlobalKeyHandlers() {
+        globalKeyHandlers.clear();
+    }
+
+    /**
+     * Aplica os handlers de tecla globais a um TextField.
+     *
+     * @param textField o TextField que receberá os handlers
+     */
+    /**
+     * Aplica os handlers de tecla globais a um TextField.
+     * Usa addEventHandler para permitir múltiplos handlers.
+     *
+     * @param textField o TextField que receberá os handlers
+     */
+    private void applyGlobalKeyHandlers(TextField textField) {
+        textField.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
+            KeyCode pressedKey = keyEvent.getCode();
+            Runnable handler = globalKeyHandlers.get(pressedKey);
+
+            if (handler != null) {
+                handler.run();
+                keyEvent.consume(); // Previne propagação do evento
+            }
+        });
+    }
+
 
     /**
      * Returns the value for a cell by invoking the field or method annotated with @TableColumnConfig.
@@ -145,6 +231,358 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
     }
 
     /**
+     * Applies a custom cell factory for editable numeric columns.
+     *
+     * @param column the column to make editable.
+     */
+    private <S> void applyEditableNumericCellFactory(TableColumn<S, Object> column, ColumnMember member) {
+        EditableColumn editConfig =
+                (member.member instanceof Field)
+                        ? ((Field) member.member).getAnnotation(EditableColumn.class)
+                        : ((Method) member.member).getAnnotation(EditableColumn.class);
+
+        String columnId = column.getId();
+
+        column.setCellFactory(col -> new TableCell<S, Object>() {
+            private final TextField textField = new TextField();
+
+            {
+
+
+                applyGlobalKeyHandlers(textField);
+
+                var stylesheets = col.getTableView().getStylesheets();
+                textField.getStylesheets().addAll(stylesheets);
+                textField.getStyleClass().add("editable-col-textfield");
+
+
+                if (editConfig.fieldWidth() > 0){
+                    textField.setPrefWidth(Math.max(95.0, editConfig.fieldWidth()));
+                } else {
+                    textField.setPrefWidth(95);
+                };
+
+                textField.setTextFormatter(new TextFormatter<>(change -> {
+                    if (change.getControlNewText().matches("\\d*")) {
+                        return change;
+                    }
+                    return null;
+                }));
+
+                textField.textProperty().addListener((obs, oldValue, newValue) -> {
+                    if (getTableRow() == null || getTableRow().getItem() == null) return;
+
+                    EditableColumn editConfig =
+                            (member.member instanceof Field)
+                                    ? ((Field) member.member).getAnnotation(EditableColumn.class)
+                                    : ((Method) member.member).getAnnotation(EditableColumn.class);
+
+                    if (editConfig == null || editConfig.propertyUpdater().isEmpty()) return;
+
+                    try {
+                        String valueToUpdate =
+                                (newValue == null || newValue.isEmpty() || newValue.matches("^0+$"))
+                                        ? "1"
+                                        : newValue;
+
+                        // Atualiza o modelo para evitar subtotal inconsistente,
+                        // mas o TextField continua vazio enquanto o usuário edita
+                        updateModelValue(getTableRow().getItem(),
+                                editConfig.propertyUpdater(),
+                                valueToUpdate,
+                                editConfig.editType(),
+                                columnId);
+
+                    } catch (NumberFormatException ignored) {
+                    }
+                });
+
+                textField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                    if (!isNowFocused) {
+                        // Validação ao perder o foco
+                        String text = textField.getText().trim();
+                        if (text.isEmpty() || text.matches("^0+$")) {
+                            textField.setText("1");
+                            text = "1";
+                        }
+
+                        // Atualizar o modelo
+                        if (getTableRow() != null && getTableRow().getItem() != null) {
+                            S item = getTableRow().getItem();
+                            EditableColumn editConfig =
+                                    (member.member instanceof Field)
+                                            ? ((Field) member.member).getAnnotation(EditableColumn.class)
+                                            : ((Method) member.member).getAnnotation(EditableColumn.class);
+
+                            if (editConfig != null && !editConfig.propertyUpdater().isEmpty()) {
+                                updateModelValue(item, editConfig.propertyUpdater(), text, editConfig.editType(),columnId);
+                            }
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                // Evita sobrescrever o que o usuário está digitando (e resetar o caret)
+                if (!textField.isFocused()) {
+                    textField.setText(item.toString());
+                }
+
+                setGraphic(textField);
+            }
+
+        });
+    }
+
+    /**
+     * Applies a custom cell factory for editable monetary columns.
+     *
+     * @param column the column to make editable.
+     * @param member the column member containing field/method information.
+     * @param currencySymbol the currency symbol to display.
+     */
+    /**
+     * Applies a custom cell factory for editable monetary columns.
+     *
+     * @param column the column to make editable.
+     * @param member the column member containing field/method information.
+     * @param currencySymbol the currency symbol to display.
+     */
+    private <S> void applyEditableMonetaryCellFactory(TableColumn<S, Object> column, ColumnMember member, String currencySymbol) {
+        String columnId = column.getId();
+
+        column.setCellFactory(col -> new TableCell<S, Object>() {
+            EditableColumn editConfig =
+                    (member.member instanceof Field)
+                            ? ((Field) member.member).getAnnotation(EditableColumn.class)
+                            : ((Method) member.member).getAnnotation(EditableColumn.class);
+
+            private final TextField monetaryField = new TextField();
+            private final Label currencyLabel = new Label(currencySymbol);
+            private final HBox hbox = new HBox(2, currencyLabel, monetaryField);
+            private boolean isUpdatingFromUser = false;
+
+
+             {
+
+
+                applyGlobalKeyHandlers(monetaryField);
+
+                 // Adicionar folha de estilo
+                var stylesheets = col.getTableView().getStylesheets();
+                monetaryField.getStylesheets().addAll(stylesheets);
+                monetaryField.getStyleClass().add("editable-col-textfield");
+
+                currencyLabel.setStyle("-fx-text-fill: black;");
+                currencyLabel.setPrefWidth(30);
+
+                if (editConfig.fieldWidth() > 0){
+                    monetaryField.setPrefWidth(Math.max(95.0, editConfig.fieldWidth()));
+                } else {
+                    monetaryField.setPrefWidth(95);
+                }
+
+                hbox.setAlignment(Pos.CENTER_LEFT);
+
+                // Posicionar cursor no final ao pressionar setas
+                 monetaryField.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
+                     KeyCode keyCodePressed = keyEvent.getCode();
+                     if (keyCodePressed.isArrowKey()) {
+                         monetaryField.positionCaret(monetaryField.getText().length());
+                     }
+                 });
+
+
+                 // Posicionar cursor no final ao clicar
+                monetaryField.setOnMouseClicked(mouseEvent -> {
+                    monetaryField.positionCaret(monetaryField.getText().length());
+                });
+
+                // Listener para formatação automática enquanto digita
+                monetaryField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+                    // Ignora mudanças que vêm do updateItem()
+                    if (!isUpdatingFromUser) {
+                        return;
+                    }
+
+                    String formattedText = TextFieldUtils.formatText(newValue);
+
+                    if (!newValue.equals(formattedText)) {
+                        Platform.runLater(() -> {
+                            monetaryField.setText(formattedText);
+                            monetaryField.positionCaret(formattedText.length());
+                            // Atualizar o valor no modelo
+                            if (getTableRow() != null && getTableRow().getItem() != null) {
+                                S item = getTableRow().getItem();
+                                EditableColumn editConfig =
+                                        (member.member instanceof Field)
+                                                ? ((Field) member.member).getAnnotation(EditableColumn.class)
+                                                : ((Method) member.member).getAnnotation(EditableColumn.class);
+
+                                if (editConfig != null && !editConfig.propertyUpdater().isEmpty()) {
+                                    try {
+                                        BigDecimal value = TextFieldUtils.formatCurrency(monetaryField.getText());
+                                        updateModelValue(item, editConfig.propertyUpdater(), value.toPlainString(), editConfig.editType(),columnId);
+                                    } catch (NumberFormatException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+                // Marca que o usuário está editando quando ganha foco
+                monetaryField.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+                    if (isNowFocused) {
+                        isUpdatingFromUser = true;
+                    } else {
+                        isUpdatingFromUser = false;
+
+                        // Validação ao perder o foco
+                        String text = monetaryField.getText().trim();
+                        if (text.isEmpty() || text.isBlank()) {
+                            monetaryField.setText("0,00");
+                        }
+                    }
+                });
+
+
+            }
+
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    if (isUpdatingFromUser && monetaryField.isFocused()) {
+                        setGraphic(hbox);
+                        return;
+                    }
+
+                    String displayValue;
+                    if (item instanceof BigDecimal) {
+                        displayValue = ((BigDecimal) item).toPlainString();
+                    } else {
+                        displayValue = item.toString();
+                    }
+
+                    if (displayValue.isEmpty() || displayValue.isBlank()) {
+                        monetaryField.setText("0,00");
+                    } else {
+                        String formattedValue = TextFieldUtils.formatText(displayValue);
+                        monetaryField.setText(formattedValue);
+                    }
+                    setGraphic(hbox);
+                }
+            }
+        });
+    }  /**
+     * Updates the model value using reflection to invoke the setter method.
+     *
+     * @param item the data item to update.
+     * @param setterName the name of the setter method.
+     * @param value the new value as a string.
+     * @param editType the type of edit to determine how to parse the value.
+     */
+    private <S> void updateModelValue(S item, String setterName, String value, EditType editType, String columnId) {
+        try {
+            Method setter = null;
+            Object parsedValue = null;
+            Object oldValue = null;
+
+            // Obter o valor antigo se houver callback de pré-atualização
+            if (beforeModelUpdateCallback != null) {
+                oldValue = getCurrentValue(item, setterName);
+            }
+
+
+            switch (editType) {
+                case INTEGER:
+                    parsedValue = Integer.parseInt(value);
+                    try {
+                        setter = item.getClass().getMethod(setterName, int.class);
+                    } catch (NoSuchMethodException e) {
+                        try {
+                            setter = item.getClass().getMethod(setterName, long.class);
+                            parsedValue = Long.parseLong(value);
+                        } catch (NoSuchMethodException ex) {
+                            setter = item.getClass().getMethod(setterName, Integer.class);
+                        }
+                    }
+                    break;
+
+                case MONETARY:
+                    parsedValue = new BigDecimal(value);
+                    setter = item.getClass().getMethod(setterName, BigDecimal.class);
+                    break;
+            }
+
+            if (setter != null) {
+                if (beforeModelUpdateCallback != null) {
+                    @SuppressWarnings("unchecked")
+                    boolean shouldProceed = beforeModelUpdateCallback.beforeUpdate(
+                            (T) item,
+                            columnId,
+                            oldValue,
+                            parsedValue
+                    );
+
+                    if (!shouldProceed) {
+                        return; // Cancelar atualização
+                    }
+                }
+                //atualiza o modelo
+                setter.invoke(item, parsedValue);
+                // Callback DEPOIS da atualização
+                if (afterModelUpdateCallback != null) {
+                    @SuppressWarnings("unchecked")
+                    AfterModelUpdateCallback<T, Object> callback =
+                            (AfterModelUpdateCallback<T, Object>) afterModelUpdateCallback;
+                    callback.onUpdate((T) item, columnId, parsedValue);
+                }
+
+            }
+
+        } catch (NoSuchMethodException e) {
+            System.err.println("Setter method '" + setterName + "' not found in class " + item.getClass().getName());
+            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            System.err.println("Error invoking setter '" + setterName + "'");
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.err.println("Error parsing value '" + value + "' for edit type " + editType);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Obtém o valor atual de um campo através do getter correspondente.
+     */
+    private <S> Object getCurrentValue(S item, String setterName) {
+        try {
+            // Converter setXxx para getXxx
+            String getterName = setterName.replaceFirst("set", "get");
+            Method getter = item.getClass().getMethod(getterName);
+            return getter.invoke(item);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
      * Applies a custom cell factory to format monetary values in a column.
      *
      * @param currencyColumn the column for monetary values.
@@ -156,7 +594,7 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
             private final Text valueText = new Text();
             {
                 currencyLabel.setStyle("-fx-text-fill: black;");
-                currencyLabel.setPrefWidth(35);
+                currencyLabel.setPrefWidth(30);
                 valueText.setTextAlignment(TextAlignment.CENTER);
                 HBox hbox = new HBox(5, currencyLabel, valueText);
                 hbox.setAlignment(Pos.CENTER_LEFT);
@@ -180,8 +618,265 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
     }
 
     /**
+     * Define o callback a ser executado após atualização do modelo.
+     *
+     * @param callback o callback
+     */
+    public void setAfterModelUpdateCallback(AfterModelUpdateCallback<T, Object> callback) {
+        this.afterModelUpdateCallback = callback;
+    }
+
+    /**
+     * Define o callback a ser executado antes da atualização do modelo.
+     *
+     * @param callback o callback
+     */
+    public void setBeforeModelUpdateCallback(BeforeModelUpdateCallback<T, Object> callback) {
+        this.beforeModelUpdateCallback = callback;
+    }
+
+    private void setColumnWidthById(TableView<?> tableView, String columnId, ColumnWidthSpec spec) {
+        for (TableColumn<?, ?> col : tableView.getColumns()) {
+            if (columnId.equals(col.getId())) {
+                if (spec.min  != null) col.setMinWidth(spec.min);
+                if (spec.pref != null) col.setPrefWidth(spec.pref);
+                if (spec.max  != null) col.setMaxWidth(spec.max);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Cria um builder para configuração fluente da TableViewFactory.
+     *
+     * @param clazz a classe representando o tipo de dados da TableView
+     * @param <T> o tipo de dados da TableView
+     * @return uma nova instância do builder
+     */
+    public static <T> Builder<T> builder(Class<T> clazz) {
+        return new Builder<>(clazz);
+    }
+
+
+    /**
      * Helper class to unify annotated members (fields and methods).
      */
+
+    /**
+     * Builder para configuração fluente da TableViewFactory.
+     *
+     * @param <T> o tipo de dados da TableView
+     */
+    public static class Builder<T> {
+        private final Class<T> clazz;
+        private String stylesheet;
+        private boolean lockColumns = false;
+//        private final Map<String, Double> columnWidths = new HashMap<>();
+        private final Map<String, ColumnWidthSpec> columnWidths = new HashMap<>();
+        private final Map<KeyCode, Runnable> keyHandlers = new HashMap<>();
+        private AfterModelUpdateCallback<T, Object> afterModelUpdateCallback;
+        private BeforeModelUpdateCallback<T, Object> beforeModelUpdateCallback;
+        private final List<ActionColumnConfig<T>> actionColumns = new ArrayList<>();
+
+        public Builder<T> lockColumns(boolean value) {
+            this.lockColumns = value;
+            return this;
+        }
+
+        private Builder(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        public Builder columnWidth(String columnId, double prefWidth) {
+            this.columnWidths.put(columnId, new ColumnWidthSpec(null, prefWidth, null));
+            return this;
+        }
+
+        public Builder columnWidth(String columnId, Double minWidth, Double prefWidth, Double maxWidth) {
+            this.columnWidths.put(columnId, new ColumnWidthSpec(minWidth, prefWidth, maxWidth));
+            return this;
+        }
+
+
+        /**
+         * Define o arquivo CSS para estilização da TableView.
+         *
+         * @param resourceCssPath caminho do recurso CSS
+         * @return esta instância do builder
+         */
+        public Builder<T> withStylesheet(String resourceCssPath) {
+            this.stylesheet = resourceCssPath;
+            return this;
+        }
+
+        /**
+         * Registra um handler para uma tecla específica que será aplicado
+         * a todos os campos editáveis da tabela.
+         *
+         * @param keyCode a tecla a ser monitorada
+         * @param action a ação a ser executada quando a tecla for pressionada
+         * @return esta instância do builder
+         */
+        public Builder<T> keyHandler(KeyCode keyCode, Runnable action) {
+            this.keyHandlers.put(keyCode, action);
+            return this;
+        }
+
+        /**
+         * Registra um callback que será executado APÓS cada atualização de modelo
+         * nos campos editáveis.
+         *
+         * @param callback o callback a ser executado
+         * @return esta instância do builder
+         */
+        public Builder<T> afterModelUpdate(AfterModelUpdateCallback<T, Object> callback) {
+            this.afterModelUpdateCallback = callback;
+            return this;
+        }
+
+        /**
+         * Registra um callback que será executado ANTES de cada atualização de modelo
+         * nos campos editáveis. O callback pode cancelar a atualização retornando false.
+         *
+         * @param callback o callback a ser executado
+         * @return esta instância do builder
+         */
+        public Builder<T> beforeModelUpdate(BeforeModelUpdateCallback<T, Object> callback) {
+            this.beforeModelUpdateCallback = callback;
+            return this;
+        }
+
+        /**
+         * Constrói a TableView com todas as configurações definidas.
+         *
+         * @return a TableView configurada
+         */
+        // TableViewFactory.java (dentro da classe Builder<T>)
+        public TableView<T> build() {
+            TableViewFactory<T> factory = new TableViewFactory<>(clazz);
+
+            keyHandlers.forEach(factory::registerGlobalKeyHandler);
+
+            if (afterModelUpdateCallback != null) {
+                factory.setAfterModelUpdateCallback(afterModelUpdateCallback);
+            }
+            if (beforeModelUpdateCallback != null) {
+                factory.setBeforeModelUpdateCallback(beforeModelUpdateCallback);
+            }
+
+            TableView<T> table;
+            if (stylesheet != null && !stylesheet.isEmpty()) {
+                table = factory.createTableView(stylesheet);
+            } else {
+                table = factory.createTableView();
+            }
+
+            // Aplicar larguras definidas no builder
+            columnWidths.forEach((id, width) -> factory.setColumnWidthById(table, id, width));
+
+            if (lockColumns) {
+                for (TableColumn<T, ?> col : table.getColumns()) {
+                    col.setResizable(false);
+                    col.setReorderable(false);
+                    col.setSortable(false);
+                }
+            }
+
+            for (ActionColumnConfig<T> cfg : actionColumns) {
+                TableColumn<T, Void> actionCol = new TableColumn<>(cfg.header);
+                actionCol.setId(cfg.columnId);
+                actionCol.setPrefWidth(cfg.prefWidth);
+
+                actionCol.setCellFactory(col -> new TableCell<>() {
+                    private final HBox actionBox = new HBox();
+                    private final javafx.scene.Node graphic =
+                            (cfg.graphicSupplier != null ? cfg.graphicSupplier.get() : null);
+
+                    {
+                        if (cfg.actionBoxStyleClass != null && !cfg.actionBoxStyleClass.isBlank()) {
+                            actionBox.getStyleClass().add(cfg.actionBoxStyleClass);
+                        }
+                        actionBox.setAlignment(javafx.geometry.Pos.CENTER);
+
+                        if (graphic != null) {
+                            actionBox.getChildren().add(graphic);
+                        }
+
+                        actionBox.setOnMouseClicked(evt -> {
+                            T rowItem = getTableRow() == null ? null : getTableRow().getItem();
+                            if (rowItem != null && cfg.onClick != null) {
+                                cfg.onClick.accept(rowItem);
+                            }
+                        });
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setGraphic((empty || getTableRow() == null || getTableRow().getItem() == null) ? null : actionBox);
+                    }
+                });
+
+                table.getColumns().add(actionCol);
+            }
+
+
+            return table;
+        }
+
+        public Builder<T> actionColumn(
+                String columnId,
+                String header,
+                double prefWidth,
+                java.util.function.Supplier<? extends javafx.scene.Node> graphicSupplier,
+                java.util.function.Consumer<T> onClick
+        ) {
+            return actionColumn(columnId, header, prefWidth, null, graphicSupplier, onClick);
+        }
+
+
+
+        public Builder<T> actionColumn(
+                String columnId,
+                String header,
+                double prefWidth,
+                String actionBoxStyleClass,
+                java.util.function.Supplier<? extends javafx.scene.Node> graphicSupplier,
+                java.util.function.Consumer<T> onClick
+        ) {
+            this.actionColumns.add(new ActionColumnConfig<>(
+                    columnId, header, prefWidth, actionBoxStyleClass, graphicSupplier, onClick
+            ));
+            return this;
+        }
+
+        private static final class ActionColumnConfig<T> {
+            final String columnId;
+            final double prefWidth;
+            final String header;
+            final String actionBoxStyleClass;
+            final java.util.function.Supplier<? extends javafx.scene.Node> graphicSupplier;
+            final java.util.function.Consumer<T> onClick;
+
+            private ActionColumnConfig(
+                    String columnId,
+                    String header,
+                    double prefWidth,
+                    String actionBoxStyleClass,
+                    java.util.function.Supplier<? extends javafx.scene.Node> graphicSupplier,
+                    java.util.function.Consumer<T> onClick
+            ) {
+                this.columnId = columnId;
+                this.header = header;
+                this.prefWidth = prefWidth;
+                this.actionBoxStyleClass = actionBoxStyleClass;
+                this.graphicSupplier = graphicSupplier;
+                this.onClick = onClick;
+            }
+        }
+
+    }
+
     private class ColumnMember {
         final TableColumnConfig config;
         final AccessibleObject member; // Can be Field or Method
@@ -201,6 +896,15 @@ public class TableViewFactory<T> implements TableViewCreator<T> {
             } else {
                 return ((Method) member).getName();
             }
+        }
+    }
+
+    private static final class ColumnWidthSpec {
+        final Double min;
+        final Double pref;
+        final Double max;
+        ColumnWidthSpec(Double min, Double pref, Double max) {
+            this.min = min; this.pref = pref; this.max = max;
         }
     }
 }

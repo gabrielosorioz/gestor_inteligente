@@ -8,10 +8,12 @@ import com.gabrielosorio.gestor_inteligente.repository.base.CheckoutMovementRepo
 import com.gabrielosorio.gestor_inteligente.service.base.CheckoutMovementService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class CheckoutMovementServiceImpl implements CheckoutMovementService {
 
     private final CheckoutMovementRepository REPOSITORY;
+    private final Logger log = Logger.getLogger(getClass().getName());
 
     public CheckoutMovementServiceImpl(CheckoutMovementRepository checkoutMovementRepository) {
         REPOSITORY = checkoutMovementRepository;
@@ -19,6 +21,9 @@ public class CheckoutMovementServiceImpl implements CheckoutMovementService {
 
     @Override
     public List<CheckoutMovement> saveAll(List<CheckoutMovement> checkoutMovements) {
+        checkoutMovements.forEach(m ->
+                log.info("PRE-SAVE Repositório: Tipo=" + m.getMovementType().getName() + " Valor=" + m.getValue())
+        );
         return REPOSITORY.addAll(checkoutMovements);
     }
 
@@ -57,6 +62,17 @@ public class CheckoutMovementServiceImpl implements CheckoutMovementService {
 
         return REPOSITORY.findCheckoutMovementByDateRange(startDate, endDate);
     }
+
+    @Override
+    public void removeAllByIds(List<Long> checkoutMovementIds) {
+        if (checkoutMovementIds == null || checkoutMovementIds.isEmpty()) return;
+
+        for (Long id : checkoutMovementIds) {
+            if (id == null) continue;
+            REPOSITORY.remove(id);
+        }
+    }
+
 
 }
 

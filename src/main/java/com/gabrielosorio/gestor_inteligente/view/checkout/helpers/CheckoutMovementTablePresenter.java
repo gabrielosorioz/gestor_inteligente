@@ -5,12 +5,14 @@ import com.gabrielosorio.gestor_inteligente.view.table.TableViewFactory;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Classe responsável por criar e configurar a TableView de movimentos de caixa
@@ -102,4 +104,23 @@ public class CheckoutMovementTablePresenter {
             }
         });
     }
+
+    /**
+     * Configura ação ao clicar em uma linha da tabela
+     */
+    public void setOnRowClick(TableView<CheckoutMovement> tableView,
+                              Consumer<CheckoutMovement> onClick) {
+        tableView.setRowFactory(tv -> {
+            TableRow<CheckoutMovement> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty()) {
+                     if (event.getClickCount() == 2) {
+                         onClick.accept(row.getItem());
+                     }
+                }
+            });
+            return row;
+        });
+    }
+
 }

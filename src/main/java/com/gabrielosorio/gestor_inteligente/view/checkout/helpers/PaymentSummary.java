@@ -1,5 +1,6 @@
 package com.gabrielosorio.gestor_inteligente.view.checkout.helpers;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class PaymentSummary {
     private final BigDecimal pixTotal;
@@ -7,11 +8,12 @@ public class PaymentSummary {
     private final BigDecimal debitTotal;
     private final BigDecimal creditTotal;
 
-    public PaymentSummary(BigDecimal pixTotal, BigDecimal cashTotal, BigDecimal debitTotal, BigDecimal creditTotal) {
-        this.pixTotal = pixTotal;
-        this.cashTotal = cashTotal;
-        this.debitTotal = debitTotal;
-        this.creditTotal = creditTotal;
+    public PaymentSummary(BigDecimal pixTotal, BigDecimal cashTotal,
+                          BigDecimal debitTotal, BigDecimal creditTotal) {
+        this.pixTotal = Objects.requireNonNull(pixTotal);
+        this.cashTotal = Objects.requireNonNull(cashTotal);
+        this.debitTotal = Objects.requireNonNull(debitTotal);
+        this.creditTotal = Objects.requireNonNull(creditTotal);
     }
 
     public BigDecimal getPixTotal() {
@@ -28,5 +30,16 @@ public class PaymentSummary {
 
     public BigDecimal getCreditTotal() {
         return creditTotal;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder("PaymentSummary{")
+                .append("pixTotal=").append(pixTotal)
+                .append(", cashTotal=").append(cashTotal)
+                .append(", debitTotal=").append(debitTotal)
+                .append(", creditTotal=").append(creditTotal)
+                .append('}')
+                .toString();
     }
 }

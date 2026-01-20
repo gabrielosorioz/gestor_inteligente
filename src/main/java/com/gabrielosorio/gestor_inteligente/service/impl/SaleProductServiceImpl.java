@@ -14,6 +14,12 @@ public class SaleProductServiceImpl implements SaleProductService {
         REPOSITORY = saleProductRepository;
     }
 
+    @Override
+    public SaleProduct update(SaleProduct saleProduct) {
+        validate(saleProduct);
+        return REPOSITORY.update(saleProduct);
+    }
+
     public SaleProduct save(SaleProduct saleProduct){
         validate(saleProduct);
         return REPOSITORY.add(saleProduct);
@@ -42,9 +48,19 @@ public class SaleProductServiceImpl implements SaleProductService {
         if(saleProduct.getSale() == null){
             throw new IllegalArgumentException("The sale item must be associated with a sale.");
         }
-
-
     }
 
+    @Override
+    public int deleteByIds(List<Long> ids) {
+        return REPOSITORY.deleteAll(ids);
+    }
+
+    @Override
+    public List<SaleProduct> updateAll(List<SaleProduct> saleProducts) {
+        if (saleProducts == null || saleProducts.isEmpty()) return saleProducts;
+
+        saleProducts.forEach(this::validate);
+        return REPOSITORY.updateAll(saleProducts);
+    }
 
 }

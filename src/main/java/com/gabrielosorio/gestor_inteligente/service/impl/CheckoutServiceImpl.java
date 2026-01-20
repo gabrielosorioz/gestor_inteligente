@@ -27,44 +27,51 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .orElseGet(() -> createNewCheckout(user));
     }
 
-@Override
-public void setInitialCash(long checkoutId, Payment payment, String obs) {
-    Checkout checkout = validateCheckoutExists(checkoutId);
+    @Override
+    public void setInitialCash(long checkoutId, Payment payment, String obs) {
+        Checkout checkout = validateCheckoutExists(checkoutId);
 
-    BigDecimal previousInitialCash = checkout.getInitialCash();
-    BigDecimal newInitialCash = payment.getValue();
+        BigDecimal previousInitialCash = checkout.getInitialCash();
+        BigDecimal newInitialCash = payment.getValue();
 
-    BigDecimal difference = newInitialCash.subtract(previousInitialCash);
+        BigDecimal difference = newInitialCash.subtract(previousInitialCash);
 
-    if (difference.compareTo(BigDecimal.ZERO) == 0) {
-        return;
-    }
+        if (difference.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
 
-    var checkoutMovementType = new CheckoutMovementType(CheckoutMovementTypeEnum.FUNDO_DE_CAIXA);
+        CheckoutMovementTypeEnum movementTypeEnum;
+        if (previousInitialCash.compareTo(BigDecimal.ZERO) == 0) {
+            movementTypeEnum = CheckoutMovementTypeEnum.FUNDO_DE_CAIXA;
+        } else if (difference.compareTo(BigDecimal.ZERO) > 0) {
+            movementTypeEnum = CheckoutMovementTypeEnum.AJUSTE_POSITIVO;
+        } else {
+            movementTypeEnum = CheckoutMovementTypeEnum.AJUSTE_NEGATIVO;
+            difference = difference.abs(); // Valor positivo para registro
+        }
 
-    Payment adjustmentPayment = new Payment(payment.getPaymentMethod(), difference);
+        var checkoutMovementType = new CheckoutMovementType(movementTypeEnum);
+        Payment adjustmentPayment = new Payment(payment.getPaymentMethod(), difference);
 
-    String finalObs = obs;
-    if (previousInitialCash.compareTo(BigDecimal.ZERO) > 0) {
-        finalObs = String.format("%s (Alteração: %s → %s)",
-                obs,
-                previousInitialCash.toPlainString(),
-                newInitialCash.toPlainString()
+        String finalObs = obs;
+        if (previousInitialCash.compareTo(BigDecimal.ZERO) > 0) {
+            finalObs = String.format("%s (Alteração: %s → %s)",
+                    obs,
+                    previousInitialCash.toPlainString(),
+                    newInitialCash.toPlainString()
+            );
+        }
+
+        CheckoutMovement checkoutMovement = checkoutMovementService.buildCheckoutMovement(
+                checkout,
+                adjustmentPayment,
+                finalObs,
+                checkoutMovementType
         );
+
+        checkoutMovementService.addMovement(checkoutMovement);
+        updateInitialCash(checkout, newInitialCash);
     }
-
-    CheckoutMovement checkoutMovement = checkoutMovementService.buildCheckoutMovement(
-            checkout,
-            adjustmentPayment,
-            finalObs,
-            checkoutMovementType
-    );
-
-    checkoutMovementService.addMovement(checkoutMovement);
-
-    // Atualizar o valor do fundo de caixa no checkout
-    updateInitialCash(checkout, newInitialCash);
-}
 
     @Override
     public void addCashInflow(long checkoutId, Payment payment, String obs) {

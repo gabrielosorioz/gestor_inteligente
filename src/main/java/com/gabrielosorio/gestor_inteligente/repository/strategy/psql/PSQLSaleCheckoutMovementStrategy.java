@@ -3,15 +3,14 @@ import com.gabrielosorio.gestor_inteligente.config.ConnectionFactory;
 import com.gabrielosorio.gestor_inteligente.config.DBScheme;
 import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.*;
-import com.gabrielosorio.gestor_inteligente.model.enums.CheckoutStatus;
-import com.gabrielosorio.gestor_inteligente.model.enums.PaymentMethod;
-import com.gabrielosorio.gestor_inteligente.model.enums.SaleStatus;
-import com.gabrielosorio.gestor_inteligente.model.enums.Status;
+import com.gabrielosorio.gestor_inteligente.model.enums.*;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,6 +44,7 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
         Map<Long, Category> categoriesMap = new HashMap<>();
         Map<Long, Supplier> suppliersMap = new HashMap<>();
         Map<String, User> usersMap = new HashMap<>(); // Cache para usuários usando UUID como String
+        Map<Long, Map<PaymentMethod, Payment>> salePaymentsMap = new HashMap<>();
 
         while (rs.next()) {
             // Extract SaleCheckoutMovement data
@@ -59,6 +59,30 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                 payment.setId(paymentId);
                 payment.setDescription(rs.getString("payment_description"));
                 paymentsMap.put(paymentId, payment);
+            }
+
+            long salePaymentMethodId = rs.getLong("salepayment_payment_id");
+            boolean hasSalePayment = !rs.wasNull();
+
+            if (hasSalePayment) {
+                PaymentMethod pm = PaymentMethod.getMethodById(salePaymentMethodId);
+
+                BigDecimal amount = rs.getBigDecimal("salepayment_amount");
+                if (amount == null) amount = BigDecimal.ZERO;
+
+                int installments = rs.getInt("salepayment_installments");
+                if (rs.wasNull() || installments <= 0) installments = 1;
+
+                Payment pay = salePaymentsMap
+                        .computeIfAbsent(saleId, __ -> new EnumMap<>(PaymentMethod.class))
+                        .computeIfAbsent(pm, __ -> new Payment(pm));
+
+                pay.setValue(amount.setScale(2, RoundingMode.HALF_UP));
+
+                // Só crédito pode ter parcelas no seu model
+                if (pm == PaymentMethod.CREDIT0) {
+                    pay.setInstallments(installments);
+                }
             }
 
             // Process Users
@@ -147,7 +171,9 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                 checkoutMovement.setValue(rs.getBigDecimal("checkoutmovement_value"));
                 checkoutMovement.setObs(rs.getString("checkoutmovement_obs"));
                 checkoutMovement.setPayment(paymentsMap.get(paymentId));
-//                checkoutMovement.setMovementTypeId(rs.getLong("checkoutmovement_checkoutmovement_type_id"));
+                long typeId = rs.getLong("checkoutmovement_checkoutmovement_type_id");
+                CheckoutMovementTypeEnum typeEnum = CheckoutMovementTypeEnum.getById(typeId);
+                checkoutMovement.setMovementType(new CheckoutMovementType(typeEnum));
                 checkoutMovementsMap.put(checkoutMovementId, checkoutMovement);
             }
 
@@ -217,6 +243,8 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                 Sale sale = new Sale();
                 sale.setId(saleId);
                 sale.setOriginalTotalPrice(rs.getBigDecimal("sale_originaltotalprice"));
+                sale.setItemsDiscount(rs.getBigDecimal("sale_items_discount"));
+                sale.setSaleDiscount(rs.getBigDecimal("sale_sale_discount"));
                 sale.setTotalDiscount(rs.getBigDecimal("sale_totaldiscount"));
                 sale.setTotalPrice(rs.getBigDecimal("sale_totalprice"));
                 sale.setStatus(SaleStatus.valueOf(rs.getString("sale_status")));
@@ -269,9 +297,24 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
             }
         }
 
+        for (Map.Entry<Long, Sale> entry : salesMap.entrySet()) {
+            Long sId = entry.getKey();
+            Sale sale = entry.getValue();
+
+            var byMethod = salePaymentsMap.get(sId);
+            if (byMethod == null || byMethod.isEmpty()) {
+                sale.setPaymentMethods(new ArrayList<>());
+                continue;
+            }
+
+            sale.setPaymentMethods(new ArrayList<>(byMethod.values()));
+        }
+
+
         // Return the result list of SaleCheckoutMovement objects
         return new ArrayList<>(saleCheckoutMovementsMap.values());
     }
+
     @Override
     public SaleCheckoutMovement add(SaleCheckoutMovement saleCheckoutMovement) {
         var query = qLoader.getQuery("insertSaleCheckoutMovement");
@@ -360,6 +403,9 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
     @Override
     public List<SaleCheckoutMovement> findBySpecification(Specification<SaleCheckoutMovement> specification) {
         var query = specification.toSql();
+        if (query == null || query.isBlank()) {
+            throw new IllegalStateException("Specification returned a null/blank SQL query. Spec=" + specification.getClass().getName());
+        }
         var params = specification.getParameters();
         Connection connection = null;
 
@@ -380,8 +426,8 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
                 }
 
             } catch (SQLException e) {
-                log.log(Level.SEVERE, "Failed to find sale checkout movement by specification. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
-                throw new RuntimeException("Sale Checkout Movement find by specification error. ", e);
+                logSqlFailure("Failed to find sale checkout movement by specification", query, params, e);
+                throw new RuntimeException("Sale Checkout Movement find by specification error: " + e.getMessage(), e);
             }
 
         } catch (Exception e){
@@ -504,4 +550,33 @@ public class PSQLSaleCheckoutMovementStrategy extends TransactionalRepositoryStr
         }
         return saleCheckoutMovements;
     }
+
+    // PSQLSaleCheckoutMovementStrategy.java
+    private void logSqlFailure(String context, String query, java.util.List<?> params, java.sql.SQLException e) {
+        log.severe(context + " - SQL:\n" + query);
+        log.severe(context + " - Params: " + params);
+
+        // Cadeia de causas
+        Throwable t = e;
+        int depth = 0;
+        while (t != null && depth < 10) {
+            log.severe(context + " cause[" + depth + "]: " + t.getClass().getName() + " - " + t.getMessage());
+            t = t.getCause();
+            depth++;
+        }
+
+        // nextException (muito comum em erros JDBC)
+        java.sql.SQLException next = e.getNextException();
+        int idx = 0;
+        while (next != null && idx < 10) {
+            log.severe(context + " nextSqlException[" + idx + "]: " + next.getMessage()
+                    + " SQLState=" + next.getSQLState()
+                    + " ErrorCode=" + next.getErrorCode());
+            next = next.getNextException();
+            idx++;
+        }
+
+        e.printStackTrace();
+    }
+
 }

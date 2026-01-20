@@ -5,10 +5,8 @@ import com.gabrielosorio.gestor_inteligente.config.QueryLoader;
 import com.gabrielosorio.gestor_inteligente.model.Product;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.SaleProduct;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.BatchInsertable;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryStrategy;
+import com.gabrielosorio.gestor_inteligente.repository.strategy.base.*;
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
-import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -16,11 +14,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<SaleProduct,Long> implements RepositoryStrategy<SaleProduct,Long>, BatchInsertable<SaleProduct> {
+public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<SaleProduct,Long> implements RepositoryStrategy<SaleProduct,Long>, BatchInsertable<SaleProduct>, BatchDeletable<Long>, BatchUpdatable<SaleProduct> {
 
     private final QueryLoader qLoader;
     private final PSQLProductStrategy productStrategy;
@@ -253,6 +253,109 @@ public class PSQLSaleProductStrategy extends TransactionalRepositoryStrategyV2<S
     private Optional<Sale> findSaleById(long id){
         return saleStrategy.find(id);
     }
+
+    @Override
+    public List<SaleProduct> updateAll(List<SaleProduct> saleProducts) {
+        if (saleProducts == null || saleProducts.isEmpty()) return saleProducts;
+
+        Connection connection = null;
+        try {
+            connection = getConnection();
+
+            var query = qLoader.getQuery("updateSaleProduct");
+
+            try (var ps = connection.prepareStatement(query)) {
+                for (SaleProduct saleProduct : saleProducts) {
+                    if (saleProduct.getId() == null) {
+                        throw new IllegalArgumentException("SaleProduct id cannot be null for batch update.");
+                    }
+
+                    ps.setLong(1, saleProduct.getSaleId());
+                    ps.setLong(2, saleProduct.getProduct().getId());
+                    ps.setLong(3, saleProduct.getQuantity());
+                    ps.setBigDecimal(4, saleProduct.getUnitPrice());
+                    ps.setBigDecimal(5, saleProduct.getOriginalSubtotal());
+                    ps.setBigDecimal(6, saleProduct.getSubTotal());
+                    ps.setBigDecimal(7, saleProduct.getDiscount());
+                    ps.setLong(8, saleProduct.getId());
+
+                    ps.addBatch();
+                }
+
+                int[] results = ps.executeBatch();
+
+                for (int r : results) {
+                    if (r == 0) {
+                        throw new RuntimeException("Batch update incomplete: one or more SaleProducts were not updated.");
+                    }
+                }
+
+                return saleProducts;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to batch update SaleProducts.", e);
+        } finally {
+            closeConnection(connection);
+        }
+    }
+
+    @Override
+    public int deleteAll(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) return 0;
+
+            List<Long> uniqueIds = (List<Long>) ids.stream()
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (uniqueIds.isEmpty()) return 0;
+
+        Connection connection = null;
+        try {
+            connection = getConnection();
+
+            var query = qLoader.getQuery("deleteSaleProductById"); // mesma query usada em remove(id) [file:58]
+
+            try (var ps = connection.prepareStatement(query)) {
+                for (Long id : uniqueIds) {
+                    ps.setLong(1, id);
+                    ps.addBatch();
+                }
+
+                int[] results = ps.executeBatch();
+
+                boolean hasUnknownCount = false;
+                int deleted = 0;
+
+                for (int r : results) {
+                    if (r == Statement.EXECUTE_FAILED) {
+                        throw new RuntimeException("Failed to batch delete SaleProducts (EXECUTE_FAILED).");
+                    }
+                    if (r == Statement.SUCCESS_NO_INFO) {
+                        hasUnknownCount = true;
+                    } else if (r > 0) {
+                        deleted += r;
+                    }
+                }
+
+                // Se o driver retornar contagens, garante consistência (apagou todos)
+                if (!hasUnknownCount && deleted != uniqueIds.size()) {
+                    throw new RuntimeException(
+                            "Batch delete incomplete. Expected " + uniqueIds.size() + " deletions, got " + deleted + "."
+                    );
+                }
+
+                return hasUnknownCount ? uniqueIds.size() : deleted;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to batch delete SaleProducts.", e);
+        } finally {
+            closeConnection(connection);
+        }
+    }
+
 
     private SaleProduct mapResultSet(ResultSet rs) throws SQLException {
         var sP = new SaleProduct();

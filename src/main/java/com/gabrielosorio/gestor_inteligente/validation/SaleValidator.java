@@ -41,14 +41,26 @@ public class SaleValidator {
     }
 
     private static void validateDiscounts(Sale sale){
+        if(sale.getItemsDiscount().compareTo(BigDecimal.ZERO) < 0){
+            throw new SaleValidationException("The items discount cannot be negative.");
+        }
+
+        if(sale.getSaleDiscount().compareTo(BigDecimal.ZERO) < 0){
+            throw new SaleValidationException("The sale discount cannot be negative.");
+        }
+
         if(sale.getTotalDiscount().compareTo(BigDecimal.ZERO) < 0){
             throw new SaleValidationException("The total discount cannot be negative.");
         }
 
-        if(sale.getTotalDiscount().compareTo(sale.getTotalPrice()) > 0){
-            throw new SaleValidationException("The discount cannot be greater than the sale price. ");
+        if(sale.getTotalDiscount().compareTo(sale.getOriginalTotalPrice()) > 0){
+            throw new SaleValidationException("The discount cannot be greater than the sale price.");
         }
 
+        BigDecimal expectedTotalDiscount = sale.getItemsDiscount().add(sale.getSaleDiscount());
+        if(sale.getTotalDiscount().compareTo(expectedTotalDiscount) != 0){
+            throw new SaleValidationException("The total discount must be equal to items discount plus sale discount.");
+        }
     }
 
 

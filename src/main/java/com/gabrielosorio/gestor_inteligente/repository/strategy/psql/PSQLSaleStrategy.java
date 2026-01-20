@@ -49,7 +49,9 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale,Lon
                 ps.setBigDecimal(5, sale.getOriginalTotalPrice());
                 ps.setBigDecimal(6, sale.getTotalPrice());
                 ps.setBigDecimal(7, sale.getTotalDiscount());
-                ps.setString(8, sale.getStatus().name());
+                ps.setBigDecimal(8, sale.getItemsDiscount());
+                ps.setBigDecimal(9, sale.getSaleDiscount());
+                ps.setString(10, sale.getStatus().name());
 
                 ps.executeUpdate();
 
@@ -63,6 +65,7 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale,Lon
                 }
 
             } catch (SQLException e) {
+                System.out.println(e.getMessage());
                 log.log(Level.SEVERE, "Failed to insert sale. {0} {1} {2}", new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
                 throw new RuntimeException("Failed to insert sale", e);
             }
@@ -192,9 +195,10 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale,Lon
                 ps.setBigDecimal(5,sale.getOriginalTotalPrice());
                 ps.setBigDecimal(6,sale.getTotalPrice());
                 ps.setBigDecimal(7,sale.getTotalDiscount());
-                ps.setString(8,sale.getStatus().name());
-                ps.setLong(9,sale.getId());
-
+                ps.setBigDecimal(8, sale.getItemsDiscount());
+                ps.setBigDecimal(9, sale.getSaleDiscount());
+                ps.setString(10,sale.getStatus().name());
+                ps.setLong(11,sale.getId());
                 int affectedRows = ps.executeUpdate();
 
                 if(affectedRows == 0){
@@ -255,11 +259,13 @@ public class PSQLSaleStrategy extends TransactionalRepositoryStrategyV2<Sale,Lon
         s.setId(rs.getLong("id"));
         s.setDateSale(rs.getTimestamp("datesale"));
         s.setDataCancel(rs.getTimestamp("dataCancel"));
-        // totalChange
+//        s.setTotalChange(rs.getBigDecimal("totalchange")); // Note:
         s.setTotalAmountPaid(rs.getBigDecimal("totalamountpaid"));
-        s.setOriginalTotalPrice(rs.getBigDecimal("originalTotalPrice"));
-        s.setTotalPrice(rs.getBigDecimal("totalPrice"));
+        s.setOriginalTotalPrice(rs.getBigDecimal("originaltotalprice"));
+        s.setTotalPrice(rs.getBigDecimal("totalprice"));
         s.setTotalDiscount(rs.getBigDecimal("totaldiscount"));
+        s.setItemsDiscount(rs.getBigDecimal("itemsdiscount"));
+        s.setSaleDiscount(rs.getBigDecimal("salediscount"));
         s.setStatus(SaleStatus.valueOf(rs.getString("status")));
         return s;
     }

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<TableView fx:id="saleTable" layoutX="6.0" layoutY="126.0" minHeight="160.0" prefHeight="430.0" prefWidth="1096.0" stylesheets="@../../css/checkoutTabTableView.css" AnchorPane.bottomAnchor="54.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="4.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<TableView fx:id="saleTable" stylesheets="@../../css/checkoutTabTableView.css" AnchorPane.bottomAnchor="54.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="4.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
     <columns>
         <TableColumn fx:id="codeCol" maxWidth="129.0" minWidth="-Infinity" prefWidth="109.0" style="-fx-alignment: center;" text="Código" />
         <TableColumn fx:id="descriptionCol" maxWidth="430.0" minWidth="380.0" prefWidth="404.0" style="-fx-alignment: center;" text="Descrição" />

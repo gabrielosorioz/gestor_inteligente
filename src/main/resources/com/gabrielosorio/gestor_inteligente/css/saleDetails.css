@@ -31,3 +31,74 @@
     -fx-border-width: 2px 0 0 0; /* 2px só em cima */
     -fx-border-style: solid;
 }
+
+/** */
+
+/* Card do método */
+.payment-card {
+    -fx-padding: 4 6;
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+
+    -fx-border-color: #e3e3e3;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.2px;
+
+    -fx-alignment: center-left;
+    -fx-spacing: 12;
+}
+
+/* Badge do ícone (quadradinho/retângulo arredondado) */
+.payment-badge {
+    -fx-min-width: 44px;
+    -fx-min-height: 36px;
+    -fx-pref-width: 44px;
+    -fx-pref-height: 36px;
+
+    -fx-alignment: center;
+    -fx-background-radius: 10;
+}
+
+/* Variações de cor por método (ajuste como quiser) */
+.payment-badge--pix    { -fx-background-color: transparent; }
+.payment-badge--green  { -fx-background-color: #6bb26b; }
+.payment-badge--blue   { -fx-background-color: #2f7dd1; }
+
+/* Título do método */
+.payment-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-text-fill: #191919;
+}
+
+/* “Pill” do valor à direita */
+.payment-amount-box {
+    -fx-padding: 6 10;
+    -fx-background-color: #f3f3f3;
+    -fx-background-radius: 10;
+
+    -fx-border-color: #e1e1e1;
+    -fx-border-radius: 10;
+    -fx-border-width: 1.0px;
+
+    -fx-alignment: center-left;
+    -fx-spacing: 6;
+}
+
+.payment-amount-currency {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-text-fill: #555;
+}
+
+.payment-amount-field {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+
+    -fx-padding: 0;
+    -fx-pref-width: 90px;
+}

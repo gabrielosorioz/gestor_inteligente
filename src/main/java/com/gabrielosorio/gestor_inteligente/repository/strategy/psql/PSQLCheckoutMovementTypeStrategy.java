@@ -8,6 +8,7 @@ import com.gabrielosorio.gestor_inteligente.repository.strategy.base.RepositoryS
 import com.gabrielosorio.gestor_inteligente.repository.specification.base.Specification;
 import com.gabrielosorio.gestor_inteligente.repository.strategy.base.TransactionalRepositoryStrategyV2;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,25 +31,28 @@ public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStr
     @Override
     public CheckoutMovementType add(CheckoutMovementType checkoutMovementType) {
         var query = qLoader.getQuery("insertCheckoutMovementType");
-        try (var connection = getConnection();
-             var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        Connection connection = null; // Variável externa
 
-            ps.setString(1, checkoutMovementType.getName());
-            ps.executeUpdate();
-
-            try (var gKeys = ps.getGeneratedKeys()) {
-                if (gKeys.next()) {
-                    checkoutMovementType.setId(gKeys.getLong("id"));
-                    log.info("CheckoutMovementType successfully inserted.");
-                } else {
-                    throw new SQLException("Failed to insert CheckoutMovementType, no key generated.");
+        try {
+            connection = getConnection(); // Obtém conexão (pode ser transacional)
+            try (var ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, checkoutMovementType.getName());
+                ps.executeUpdate();
+                try (var gKeys = ps.getGeneratedKeys()) {
+                    if (gKeys.next()) {
+                        checkoutMovementType.setId(gKeys.getLong("id"));
+                        log.info("CheckoutMovementType successfully inserted.");
+                    } else {
+                        throw new SQLException("Failed to insert CheckoutMovementType, no key generated.");
+                    }
                 }
             }
-
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to insert CheckoutMovementType. {0} {1} {2}",
                     new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to insert CheckoutMovementType", e);
+        } finally {
+            closeConnection(connection); // Delega o fechamento seguro
         }
         return checkoutMovementType;
     }
@@ -56,24 +60,25 @@ public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStr
     @Override
     public Optional<CheckoutMovementType> find(Long id) {
         var query = qLoader.getQuery("findCheckoutMovementTypeById");
+        Connection connection = null;
 
-        try (var connection = getConnection();
-             var ps = connection.prepareStatement(query)) {
-
-            ps.setLong(1, id);
-
-            try (var rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(mapResultSet(rs));
+        try {
+            connection = getConnection();
+            try (var ps = connection.prepareStatement(query)) {
+                ps.setLong(1, id);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return Optional.of(mapResultSet(rs));
+                    }
                 }
             }
-
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to find CheckoutMovementType. {0} {1} {2}",
                     new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("CheckoutMovementType search error.", e);
+        } finally {
+            closeConnection(connection);
         }
-
         return Optional.empty();
     }
 
@@ -81,105 +86,113 @@ public class PSQLCheckoutMovementTypeStrategy extends TransactionalRepositoryStr
     public List<CheckoutMovementType> findAll() {
         var checkoutMovementTypes = new ArrayList<CheckoutMovementType>();
         var query = qLoader.getQuery("findAllCheckoutMovementTypes");
+        Connection connection = null;
 
-        try (var connection = getConnection();
-             var ps = connection.prepareStatement(query);
-             var rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                var checkoutMovementType = mapResultSet(rs);
-                checkoutMovementTypes.add(checkoutMovementType);
-            }
-
-        } catch (SQLException e) {
-            log.log(Level.SEVERE, "Failed to find all CheckoutMovementTypes. {0} {1} {2}",
-                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
-            throw new RuntimeException("CheckoutMovementType find all error.", e);
-        }
-        return checkoutMovementTypes;
-    }
-
-    @Override
-    public List<CheckoutMovementType> findBySpecification(Specification<CheckoutMovementType> specification) {
-        var query = specification.toSql();
-        var params = specification.getParameters();
-        var checkoutMovementTypes = new ArrayList<CheckoutMovementType>();
-
-        try (var connection = getConnection();
-             var ps = connection.prepareStatement(query)) {
-
-            if (params.size() != ps.getParameterMetaData().getParameterCount()) {
-                throw new SQLException("Mismatch between provided parameters and expected query parameters.");
-            }
-
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
-
-            try (var rs = ps.executeQuery()) {
+        try {
+            connection = getConnection();
+            try (var ps = connection.prepareStatement(query);
+                 var rs = ps.executeQuery()) {
                 while (rs.next()) {
                     var checkoutMovementType = mapResultSet(rs);
                     checkoutMovementTypes.add(checkoutMovementType);
                 }
             }
+        } catch (SQLException e) {
+            log.log(Level.SEVERE, "Failed to find all CheckoutMovementTypes. {0} {1} {2}",
+                    new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
+            throw new RuntimeException("CheckoutMovementType find all error.", e);
+        } finally {
+            closeConnection(connection);
+        }
+        return checkoutMovementTypes;
+    }
 
+    @Override
+    public List<CheckoutMovementType> findBySpecification(Specification specification) {
+        var query = specification.toSql();
+        var params = specification.getParameters();
+        var checkoutMovementTypes = new ArrayList<CheckoutMovementType>();
+        Connection connection = null;
+
+        try {
+            connection = getConnection();
+            try (var ps = connection.prepareStatement(query)) {
+                if (params.size() != ps.getParameterMetaData().getParameterCount()) {
+                    throw new SQLException("Mismatch between provided parameters and expected query parameters.");
+                }
+
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
+
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        var checkoutMovementType = mapResultSet(rs);
+                        checkoutMovementTypes.add(checkoutMovementType);
+                    }
+                }
+            }
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to find CheckoutMovementType by specification. {0} {1} {2}",
                     new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("CheckoutMovementType find by specification error.", e);
+        } finally {
+            closeConnection(connection);
         }
-
         return checkoutMovementTypes;
     }
 
     @Override
     public CheckoutMovementType update(CheckoutMovementType checkoutMovementType) {
         var query = qLoader.getQuery("updateCheckoutMovementType");
-        try (var connection = getConnection();
-             var ps = connection.prepareStatement(query)) {
+        Connection connection = null;
 
-            ps.setString(1, checkoutMovementType.getName());
-            ps.setLong(2, checkoutMovementType.getId());
+        try {
+            connection = getConnection();
+            try (var ps = connection.prepareStatement(query)) {
+                ps.setString(1, checkoutMovementType.getName());
+                ps.setLong(2, checkoutMovementType.getId());
+                int affectedRows = ps.executeUpdate();
 
-            int affectedRows = ps.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("Failed to update CheckoutMovementType, no rows affected.");
+                if (affectedRows == 0) {
+                    throw new SQLException("Failed to update CheckoutMovementType, no rows affected.");
+                }
+                log.info("CheckoutMovementType successfully updated.");
             }
-
-            log.info("CheckoutMovementType successfully updated.");
-
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to update CheckoutMovementType. {0} {1} {2}",
                     new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException("Failed to update CheckoutMovementType", e);
+        } finally {
+            closeConnection(connection);
         }
-
         return checkoutMovementType;
     }
 
     @Override
     public boolean remove(Long id) {
         var query = qLoader.getQuery("deleteCheckoutMovementTypeById");
-        try (var connection = getConnection();
-             var ps = connection.prepareStatement(query)) {
+        Connection connection = null;
 
-            ps.setLong(1, id);
+        try {
+            connection = getConnection();
+            try (var ps = connection.prepareStatement(query)) {
+                ps.setLong(1, id);
+                int affectedRows = ps.executeUpdate();
 
-            int affectedRows = ps.executeUpdate();
-
-            if (affectedRows == 0) {
-                log.warning("No CheckoutMovementType found with id: " + id);
-                return false;
+                if (affectedRows == 0) {
+                    log.warning("No CheckoutMovementType found with id: " + id);
+                    return false;
+                }
+                log.info("CheckoutMovementType with id " + id + " successfully deleted.");
+                return true;
             }
-
-            log.info("CheckoutMovementType with id " + id + " successfully deleted.");
-            return true;
-
         } catch (SQLException e) {
             log.log(Level.SEVERE, "Failed to delete CheckoutMovementType. {0} {1} {2}",
                     new Object[]{e.getMessage(), e.getCause(), e.getSQLState()});
             throw new RuntimeException(e);
+        } finally {
+            closeConnection(connection);
         }
     }
 

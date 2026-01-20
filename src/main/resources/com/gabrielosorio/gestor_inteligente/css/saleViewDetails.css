@@ -136,3 +136,234 @@
     -fx-border-color: #999999;
 }
 
+.action-col-box {
+    -fx-min-width: 20px;
+    -fx-min-height: 20px;
+
+    -fx-pref-width: 20px;
+    -fx-pref-height: 20px;
+
+    -fx-max-width: 20px;
+    -fx-max-height: 20px;
+
+    -fx-alignment: center;
+    -fx-spacing: 0;
+
+    -fx-background-color: #ff3232;
+    -fx-background-radius: 1024; /* valor alto => vira círculo */
+}
+
+/* opcional: hover (efeito parecido com o seu setOnMouseEntered/Exited) */
+.action-col-box:hover {
+    -fx-background-color: #ff1919;
+}
+
+.action-col-icon {
+
+    -fx-min-width: 14px;
+    -fx-min-height: 14px;
+
+    -fx-pref-width: 14px;
+    -fx-pref-height: 14px;
+
+    -fx-max-width: 14px;
+    -fx-max-height: 14px;
+
+}
+
+.hbox-sale-discount {
+    -fx-padding: 4px;
+    -fx-border-color: #d9d9d9;
+    -fx-border-width: 1.4px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.hbox-sale-subtotal {
+    -fx-border-color: #d9d9d9;
+    -fx-border-width: 1.4px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.currency-vbox {
+    -fx-background-color: #6bb26b;
+    -fx-background-radius: 8 0 0 8;        /* top-left, top-right, bottom-right, bottom-left */
+}
+
+.currency-vbox-lbl {
+    -fx-font-size: 16px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-text-fill: #fff;
+}
+
+.sale-discount-field {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-background-color: #fff;
+    -fx-background-radius: 0 8 8 0;   /* top-left, top-right, bottom-right, bottom-left */
+    -fx-border-radius: 0 8 8 0;   /* top-left, top-right, bottom-right, bottom-left */
+    -fx-border-color: #6bb26b;
+    -fx-border-width: 1.4px;
+}
+
+/* Opcional: remover “fundo interno” do TextField (Modena) para não aparecer 2 camadas */
+.sale-discount-field {
+    -fx-background-insets: 0;
+}
+
+
+.sale-discount-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+}
+
+.sale-total-discount-hbox {
+    -fx-padding: 5px;
+    -fx-background-color: #ececec;
+    -fx-background-radius: 0 0 8 8;
+}
+
+.total-discount-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-text-fill: black;
+}
+
+.subtotal-price-lbl {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-text-fill: #355935;
+}
+
+.total-discount-lbl-value {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: normal;
+    -fx-font-size: 24px;
+}
+
+.client-hbox {
+    -fx-border-width: 0 0 0 1.4px;
+    -fx-border-color: #d6d6d6;
+}
+
+.save-btn {
+    /* tamanho e tipografia */
+    -fx-font-family: "Poppins";
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+
+    /* “pill button” moderno */
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 18px;
+
+    /* cor principal (mesmo verde do layout) */
+    -fx-background-color: #6bb26b;
+
+    /* borda discreta (ajuda no contraste no fundo claro) */
+    -fx-border-color: rgba(0, 0, 0, 0.08);
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+
+    /* sombra leve */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 10, 0.25, 0, 2);
+
+    /* cursor */
+    -fx-cursor: hand;
+}
+
+.save-btn:hover {
+    /* leve “lift” visual */
+    -fx-background-color: #5aa85a;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.24), 12, 0.28, 0, 3);
+}
+
+.save-btn:pressed {
+    /* efeito de pressionado */
+    -fx-background-color: #4f9b4f;
+    -fx-translate-y: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.14), 8, 0.20, 0, 1);
+}
+
+.save-btn:focused {
+    /* anel de foco acessível */
+    -fx-border-color: rgba(107, 178, 107, 0.85);
+    -fx-border-width: 2px;
+}
+
+.save-btn:disabled {
+    -fx-opacity: 0.55;
+    -fx-cursor: default;
+    -fx-effect: none;
+}
+
+
+.combo-box {
+    -fx-background-color: #e7e7e7;
+    -fx-border-color: #c0c0c0;
+    -fx-border-radius: 5px;
+    -fx-padding: 1px;
+    -fx-font-size: 10px;
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: bold;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #0077cc; /* Cor da seta */
+    -fx-padding: 2px;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z"; /* Formato da seta */
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #e7e7e7;
+    -fx-text-fill: #333;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #0077cc;
+    -fx-text-fill: white;
+}
+
+.combo-box .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #c0c0c0;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+}
+
+/* Card do troco */
+.change-card {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #d9d9d9;
+    -fx-border-width: 1.4px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 14px;
+}
+
+.change-title {
+    -fx-font-family: Poppins;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #191919;
+    -fx-letter-spacing: 0.5px;
+}
+
+.change-currency {
+    -fx-font-family: Poppins;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #005b96;
+}
+
+.change-value {
+    -fx-font-family: Poppins;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #005b96;
+}
+

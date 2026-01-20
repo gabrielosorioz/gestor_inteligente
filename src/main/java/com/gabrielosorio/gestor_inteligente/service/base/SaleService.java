@@ -1,6 +1,7 @@
 package com.gabrielosorio.gestor_inteligente.service.base;
 
 import com.gabrielosorio.gestor_inteligente.exception.SaleProcessingException;
+import com.gabrielosorio.gestor_inteligente.model.Checkout;
 import com.gabrielosorio.gestor_inteligente.model.Sale;
 import com.gabrielosorio.gestor_inteligente.model.User;
 
@@ -10,6 +11,7 @@ import java.util.List;
 public interface SaleService {
     Sale processSale(User user,Sale sale) throws SaleProcessingException;
     Sale save(Sale sale);
+    Sale updateSale(User user,Sale sale, Checkout checkout) throws SaleProcessingException;
     BigDecimal calculateTotalProfit(List<Sale> sales);
     BigDecimal calculateTotalCost(List<Sale> sales);
     BigDecimal calculateTotalSales(List<Sale> sales);

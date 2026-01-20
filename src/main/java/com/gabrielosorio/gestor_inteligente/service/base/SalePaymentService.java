@@ -7,5 +7,7 @@ import java.util.List;
 public interface SalePaymentService {
     void save(SalePayment salePayment);
     List<SalePayment> saveAll(List<SalePayment> salePayments);
-
+    List<SalePayment> findBySaleId(Long saleId);
+    int deleteByIds(List<Long> ids);
+    List<SalePayment> updateAll(List<SalePayment> salePayments);
 }
